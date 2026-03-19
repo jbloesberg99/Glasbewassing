@@ -32,8 +32,8 @@
   header .logo { font-size: 1.6rem; }
   header .htxt h1 { font-weight: 700; font-size: 1.1rem; }
   header .htxt p { font-size: 0.72rem; opacity: 0.6; }
-  .sync-indicator { margin-left: auto; font-size: 0.72rem; opacity: 0.8; display: flex; align-items: center; gap: 5px; }
-  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #2a9d63; }
+  .sync-indicator { margin-left: auto; font-size: 0.72rem; opacity: 0.85; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #2a9d63; flex-shrink: 0; }
   .sync-dot.bezig { background: #e8a020; animation: pulse 1s infinite; }
   .sync-dot.fout { background: #e05c2a; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
@@ -211,7 +211,6 @@
 </div>
 
 <script>
-// ── Config ────────────────────────────────────────────────────────────────────
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkLsVT_foj92RYOsHtWX8UVVbWfVKi01ajqPCRVikZfBhoruzmEg9y6YzHJ8G6JGQ-LA/exec';
 
 const FREQ_LABELS = {2:"2 wkn", 4.3:"1 mnd", 8.7:"2 mnd", 10.8:"2,5 mnd", 13:"3 mnd", 17.4:"4 mnd", 26:"6 mnd"};
@@ -257,21 +256,17 @@ let actieveNotitie = null;
 let modalId = null;
 let actieveTab = 'gedaan';
 let undoTimer = null;
-let syncBezig = false;
-
-// ── Sync ──────────────────────────────────────────────────────────────────────
 
 function setSyncStatus(status, tekst) {
   const dot = document.getElementById('sync-dot');
-  const txt = document.getElementById('sync-tekst');
-  dot.className = 'sync-dot' + (status === 'bezig' ? ' bezig' : status === 'fout' ? ' fout' : '');
-  txt.textContent = tekst;
+  dot.className = 'sync-dot' + (status==='bezig'?' bezig':status==='fout'?' fout':'');
+  document.getElementById('sync-tekst').textContent = tekst;
 }
 
 function rowsNaarKlanten(rows) {
-  return rows.filter(r => r.length >= 5 && r[0]).map(r => ({
+  return rows.filter(r => r.length>=5 && r[0]).map(r => ({
     id: Number(r[0]), naam: String(r[1]), plaats: String(r[2]),
-    freq: parseFloat(r[3]), laatste: String(r[4]), notitie: String(r[5] || '')
+    freq: parseFloat(r[3]), laatste: String(r[4]), notitie: String(r[5]||'')
   }));
 }
 
@@ -285,16 +280,27 @@ async function syncLaden() {
     const resp = await fetch(SCRIPT_URL + '?t=' + Date.now());
     const rows = await resp.json();
     if (Array.isArray(rows) && rows.length > 0) {
+      // Sheet heeft data — laad die
       klanten = rowsNaarKlanten(rows);
       localStorage.setItem('gw_v5', JSON.stringify(klanten));
       setSyncStatus('ok', 'Gesynchroniseerd');
       render();
-      return true;
+    } else {
+      // Sheet is leeg — upload standaarddata
+      setSyncStatus('bezig', 'Initialiseren...');
+      klanten = JSON.parse(JSON.stringify(STANDAARD));
+      await syncOpslaan();
     }
+    return true;
   } catch(e) {
     setSyncStatus('fout', 'Offline');
+    // Gebruik lokale data als fallback
+    const s = localStorage.getItem('gw_v5');
+    if (s) klanten = JSON.parse(s);
+    else klanten = JSON.parse(JSON.stringify(STANDAARD));
+    render();
+    return false;
   }
-  return false;
 }
 
 async function syncOpslaan() {
@@ -307,16 +313,10 @@ async function syncOpslaan() {
       body: JSON.stringify(klantenNaarRows(klanten))
     });
     setSyncStatus('ok', 'Opgeslagen ✓');
+    render();
   } catch(e) {
     setSyncStatus('fout', 'Opslaan mislukt');
   }
-}
-
-// ── Data ──────────────────────────────────────────────────────────────────────
-
-function lokalLaden() {
-  const s = localStorage.getItem('gw_v5');
-  klanten = s ? JSON.parse(s) : JSON.parse(JSON.stringify(STANDAARD));
 }
 
 function slaOp(omschrijving) {
@@ -336,14 +336,11 @@ function toonUndo(tekst) {
 
 function undo() {
   if (!vorigeKlanten) return;
-  klanten = vorigeKlanten;
-  vorigeKlanten = null;
+  klanten = vorigeKlanten; vorigeKlanten = null;
   document.getElementById('undo-balk').classList.remove('zichtbaar');
   if (undoTimer) clearTimeout(undoTimer);
   syncOpslaan(); render();
 }
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function volgende(laatste, freq) {
   const d = new Date(laatste);
@@ -379,37 +376,35 @@ function formatDatum(d) { return new Date(d).toLocaleDateString('nl-NL', {day:'n
 function formatLang(d) { return new Date(d).toLocaleDateString('nl-NL', {weekday:'long', day:'numeric', month:'long'}); }
 function vandaag() { return new Date().toISOString().split('T')[0]; }
 
-// ── Render ────────────────────────────────────────────────────────────────────
-
 function render() {
   const met = klanten
     .map(k => ({ ...k, dagen: dagenTot(k.laatste, k.freq), due: volgende(k.laatste, k.freq) }))
     .sort((a, b) => a.dagen - b.dagen);
 
-  document.getElementById('num-urgent').textContent = met.filter(k => status(k.dagen)==='urgent').length;
-  document.getElementById('num-soon').textContent   = met.filter(k => status(k.dagen)==='soon').length;
-  document.getElementById('num-ok').textContent     = met.filter(k => status(k.dagen)==='ok').length;
+  document.getElementById('num-urgent').textContent = met.filter(k=>status(k.dagen)==='urgent').length;
+  document.getElementById('num-soon').textContent   = met.filter(k=>status(k.dagen)==='soon').length;
+  document.getElementById('num-ok').textContent     = met.filter(k=>status(k.dagen)==='ok').length;
   document.getElementById('header-sub').textContent = `${klanten.length} klanten · op volgorde`;
 
   const kl = {urgent:'#e05c2a', soon:'#e8a020', ok:'#2a9d63'};
   ['urgent','soon','ok'].forEach(f => {
-    const el = document.getElementById('stat-' + f);
-    if (actieveFilter === f) {
-      el.style.background = kl[f]; el.style.borderColor = kl[f];
-      el.querySelector('.num').style.color = 'white';
-      el.querySelector('.lbl').style.color = 'rgba(255,255,255,0.8)';
+    const el = document.getElementById('stat-'+f);
+    if (actieveFilter===f) {
+      el.style.background=kl[f]; el.style.borderColor=kl[f];
+      el.querySelector('.num').style.color='white';
+      el.querySelector('.lbl').style.color='rgba(255,255,255,0.8)';
     } else {
-      el.style.background = 'rgba(255,255,255,0.9)';
-      el.style.borderColor = f === 'urgent' ? '#f5c4b4' : 'rgba(26,111,168,0.12)';
-      el.querySelector('.num').style.color = kl[f];
-      el.querySelector('.lbl').style.color = '#5a8aaa';
+      el.style.background='rgba(255,255,255,0.9)';
+      el.style.borderColor=f==='urgent'?'#f5c4b4':'rgba(26,111,168,0.12)';
+      el.querySelector('.num').style.color=kl[f];
+      el.querySelector('.lbl').style.color='#5a8aaa';
     }
   });
   ['all','urgent','soon','ok'].forEach(f =>
-    document.getElementById('fbtn-' + f).classList.toggle('actief', actieveFilter === f)
+    document.getElementById('fbtn-'+f).classList.toggle('actief', actieveFilter===f)
   );
 
-  const gefilterd = actieveFilter === 'all' ? met : met.filter(k => status(k.dagen) === actieveFilter);
+  const gefilterd = actieveFilter==='all' ? met : met.filter(k=>status(k.dagen)===actieveFilter);
   const el = document.getElementById('lijst');
   if (!gefilterd.length) {
     el.innerHTML = '<div class="leeg"><div class="icon">🪟</div><p>Geen klanten in deze categorie</p></div>';
@@ -417,21 +412,21 @@ function render() {
   }
   el.innerHTML = gefilterd.map(k => {
     const st = status(k.dagen);
-    const nOpen = actieveNotitie === k.id;
+    const nOpen = actieveNotitie===k.id;
     return `
       <div class="kaart ${st}">
         <div class="kaart-top">
           <div class="dot ${st}"></div>
           <div class="kaart-naam">
             <strong>${k.naam}</strong>
-            ${k.plaats ? `<span>📍 ${k.plaats}</span>` : ''}
+            ${k.plaats?`<span>📍 ${k.plaats}</span>`:''}
           </div>
           <div class="badge ${st}" onclick="openModal(${k.id})">
             ${formatDue(k.due)}<small>${formatDatum(k.due)}</small>
           </div>
         </div>
         <div class="kaart-freq">Elke ${FREQ_LABELS[k.freq]||k.freq+'wkn'} &nbsp;·&nbsp; <span style="color:#1a6fa8;cursor:pointer" onclick="openModal(${k.id})">✏ aanpassen</span></div>
-        ${nOpen ? `<textarea class="kaart-notitie-input" onchange="slaNotitieOp(${k.id},this.value)" placeholder="Notitie...">${k.notitie||''}</textarea>` : (k.notitie ? `<div class="kaart-notitie-tekst">📝 ${k.notitie}</div>` : '')}
+        ${nOpen?`<textarea class="kaart-notitie-input" onchange="slaNotitieOp(${k.id},this.value)" placeholder="Notitie...">${k.notitie||''}</textarea>`:(k.notitie?`<div class="kaart-notitie-tekst">📝 ${k.notitie}</div>`:'')}
         <div class="kaart-acties">
           <button class="btn-gedaan" onclick="openModal(${k.id})">✓ Gedaan</button>
           <button class="btn-notitie" onclick="toggleNotitie(${k.id})">${nOpen?'✕':'📝'}</button>
@@ -441,10 +436,8 @@ function render() {
   }).join('');
 }
 
-// ── Acties ────────────────────────────────────────────────────────────────────
-
-function setFilter(f) { actieveFilter = f; render(); }
-function toggleFilter(f) { actieveFilter = actieveFilter===f?'all':f; render(); }
+function setFilter(f) { actieveFilter=f; render(); }
+function toggleFilter(f) { actieveFilter=actieveFilter===f?'all':f; render(); }
 
 function toggleToevoegen() {
   const b = document.getElementById('toevoegen-body');
@@ -458,16 +451,16 @@ async function voegToe() {
   const datum = document.getElementById('nieuw-datum').value;
   if (!naam||!datum) { alert('Vul naam en datum in.'); return; }
   slaOp(`"${naam}" toegevoegd`);
-  klanten.push({ id: Date.now(), naam, plaats:'', freq, laatste: datum, notitie:'' });
+  klanten.push({ id:Date.now(), naam, plaats:'', freq, laatste:datum, notitie:'' });
   document.getElementById('nieuw-naam').value = '';
   await syncOpslaan(); render();
 }
 
-function toggleNotitie(id) { actieveNotitie = actieveNotitie===id?null:id; render(); }
+function toggleNotitie(id) { actieveNotitie=actieveNotitie===id?null:id; render(); }
 
 async function slaNotitieOp(id, val) {
   slaOp('Notitie gewijzigd');
-  klanten = klanten.map(k => k.id===id?{...k,notitie:val}:k);
+  klanten = klanten.map(k=>k.id===id?{...k,notitie:val}:k);
   await syncOpslaan();
 }
 
@@ -480,12 +473,12 @@ async function verwijder(id) {
 }
 
 function openModal(id) {
-  modalId = id;
+  modalId=id;
   const k = klanten.find(k=>k.id===id);
-  document.getElementById('modal-naam').textContent = k.naam;
-  document.getElementById('modal-gedaan-datum').value = vandaag();
-  document.getElementById('modal-gedaan-datum').max = vandaag();
-  document.getElementById('modal-volgende-datum').value = volgende(k.laatste,k.freq).toISOString().split('T')[0];
+  document.getElementById('modal-naam').textContent=k.naam;
+  document.getElementById('modal-gedaan-datum').value=vandaag();
+  document.getElementById('modal-gedaan-datum').max=vandaag();
+  document.getElementById('modal-volgende-datum').value=volgende(k.laatste,k.freq).toISOString().split('T')[0];
   setTab('gedaan'); updateVolgende();
   document.getElementById('modal').classList.add('open');
 }
@@ -493,12 +486,12 @@ function openModal(id) {
 function modalBuitenKlik(e) { if (e.target===document.getElementById('modal')) sluitModal(); }
 
 function setTab(tab) {
-  actieveTab = tab;
+  actieveTab=tab;
   document.getElementById('tab-gedaan').classList.toggle('actief', tab==='gedaan');
   document.getElementById('tab-aanpassen').classList.toggle('actief', tab==='aanpassen');
-  document.getElementById('sectie-gedaan').style.display = tab==='gedaan'?'block':'none';
-  document.getElementById('sectie-aanpassen').style.display = tab==='aanpassen'?'block':'none';
-  document.getElementById('modal-titel').textContent = tab==='gedaan'?'✓ Gedaan!':'✏ Datum aanpassen';
+  document.getElementById('sectie-gedaan').style.display=tab==='gedaan'?'block':'none';
+  document.getElementById('sectie-aanpassen').style.display=tab==='aanpassen'?'block':'none';
+  document.getElementById('modal-titel').textContent=tab==='gedaan'?'✓ Gedaan!':'✏ Datum aanpassen';
 }
 
 function updateVolgende() {
@@ -506,7 +499,7 @@ function updateVolgende() {
   if (!k) return;
   const datum = document.getElementById('modal-gedaan-datum').value;
   if (!datum) return;
-  document.getElementById('modal-volgende').textContent = formatLang(volgende(datum,k.freq));
+  document.getElementById('modal-volgende').textContent=formatLang(volgende(datum,k.freq));
 }
 
 function sluitModal() { document.getElementById('modal').classList.remove('open'); modalId=null; }
@@ -528,25 +521,13 @@ async function bevestig() {
   await syncOpslaan(); sluitModal(); render();
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
-
 if ('serviceWorker' in navigator) {
   const sw = `self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>caches.match(e.request))))`;
   navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
 }
 
 document.getElementById('nieuw-datum').value = vandaag();
-lokalLaden();
-render();
-
-// Laad vanuit Google Sheets, als dat mislukt gebruik lokale data
-syncLaden().then(ok => {
-  if (!ok) {
-    setSyncStatus('fout', 'Offline modus');
-  }
-  // Daarna elke 30 seconden verversen
-  setInterval(syncLaden, 30000);
-});
+syncLaden().then(() => setInterval(syncLaden, 30000));
 </script>
 </body>
 </html>
