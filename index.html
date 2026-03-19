@@ -1,533 +1,909 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="nl" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0d4f7c">
+<meta name="theme-color" content="#0f1623">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Glazenwasser">
-<meta name="application-name" content="Glazenwasser Planner">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="GW Planner">
 <title>Glazenwasser Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script>
   const manifest = {
-    name: "Glazenwasser Planner", short_name: "Glazenwasser",
-    description: "Klantplanner voor glazenwassers",
-    start_url: ".", display: "standalone",
-    background_color: "#eaf6ff", theme_color: "#0d4f7c", orientation: "portrait",
-    icons: [{
-      src: "data:image/svg+xml;base64," + btoa(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='32' fill='#0d4f7c'/><text y='130' x='30' font-size='120'>🪣</text></svg>`),
-      sizes: "192x192", type: "image/svg+xml"
-    }]
+    name:"Glazenwasser Planner",short_name:"GW Planner",start_url:".",display:"standalone",
+    background_color:"#0f1623",theme_color:"#0f1623",
+    icons:[{src:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxOTIgMTkyJz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9J2cnIHgxPScwJycgeTE9JzAlJyB4Mj0nMTAwJScgeTI9JzEwMCUnPjxzdG9wIG9mZnNldD0nMCcgc3RvcC1jb2xvcj0nIzE4NjVmMCcvPjxzdG9wIG9mZnNldD0nMScgc3RvcC1jb2xvcj0nIzA5NDZkMycvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPScxOTInIGhlaWdodD0nMTkyJyByeD0nNDAnIGZpbGw9J3VybCgjZyknLz48cGF0aCBkPSdNNjAgMTMyIEw5NiA1NiBMMTMyIDEzMicgc3Ryb2tlPSd3aGl0ZScgc3Ryb2tlLXdpZHRoPScxMicgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJyBmaWxsPSdub25lJy8+PGxpbmUgeDE9JzcyJyB5MT0nMTA4JyB4Mj0nMTIwJyB5Mj0nMTA4JyBzdHJva2U9J3doaXRlJyBzdHJva2Utd2lkdGg9JzEyJyBzdHJva2UtbGluZWNhcD0ncm91bmQnLz48L3N2Zz4=",sizes:"192x192",type:"image/svg+xml"}]
   };
-  const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
-  document.head.appendChild(Object.assign(document.createElement('link'), {rel:'manifest', href: URL.createObjectURL(blob)}));
+  const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+  document.head.appendChild(Object.assign(document.createElement('link'),{rel:'manifest',href:URL.createObjectURL(blob)}));
+  const savedTheme=localStorage.getItem('gw_theme')||'dark';
+  document.documentElement.setAttribute('data-theme',savedTheme);
 </script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: linear-gradient(160deg,#dff0ff,#eaf6ff,#d4ecff); color: #0d2b3e; min-height: 100vh; overscroll-behavior: none; }
+:root[data-theme="dark"] {
+  --bg:#0f1623;--surface:#161e2e;--surface2:#1c2640;--surface3:#223050;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);
+  --text:#f0f4ff;--text2:#8a9ec0;--text3:#4a6080;
+  --accent:#1865f0;--accent2:#0d4fd4;--accent-glow:rgba(24,101,240,0.25);
+  --urgent:#f87171;--urgent-s:rgba(248,113,113,0.12);--urgent-b:rgba(248,113,113,0.2);
+  --soon:#fbbf24;--soon-s:rgba(251,191,36,0.1);--soon-b:rgba(251,191,36,0.2);
+  --ok:#34d399;--ok-s:rgba(52,211,153,0.1);--ok-b:rgba(52,211,153,0.2);
+  --shadow:0 1px 3px rgba(0,0,0,0.5),0 4px 16px rgba(0,0,0,0.3);
+  --shadow2:0 8px 40px rgba(0,0,0,0.6);
+}
+:root[data-theme="light"] {
+  --bg:#f4f6fb;--surface:#ffffff;--surface2:#f0f3fa;--surface3:#e8edf7;
+  --border:rgba(0,0,0,0.06);--border2:rgba(0,0,0,0.10);
+  --text:#0f1623;--text2:#4a5a7a;--text3:#8a9abc;
+  --accent:#1865f0;--accent2:#0d4fd4;--accent-glow:rgba(24,101,240,0.15);
+  --urgent:#dc2626;--urgent-s:rgba(220,38,38,0.07);--urgent-b:rgba(220,38,38,0.15);
+  --soon:#d97706;--soon-s:rgba(217,119,6,0.07);--soon-b:rgba(217,119,6,0.15);
+  --ok:#059669;--ok-s:rgba(5,150,105,0.07);--ok-b:rgba(5,150,105,0.15);
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.06);
+  --shadow2:0 8px 40px rgba(0,0,0,0.12);
+}
 
-  header { background: #0d4f7c; color: white; padding: 16px 18px; padding-top: max(16px, env(safe-area-inset-top)); display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 16px rgba(13,79,124,0.3); position: sticky; top: 0; z-index: 10; }
-  header .logo { font-size: 1.6rem; }
-  header .htxt h1 { font-weight: 700; font-size: 1.1rem; }
-  header .htxt p { font-size: 0.72rem; opacity: 0.6; }
-  .sync-indicator { margin-left: auto; font-size: 0.72rem; opacity: 0.85; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
-  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #2a9d63; flex-shrink: 0; }
-  .sync-dot.bezig { background: #e8a020; animation: pulse 1s infinite; }
-  .sync-dot.fout { background: #e05c2a; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overscroll-behavior:none;transition:background 0.3s,color 0.3s;}
 
-  .container { max-width: 640px; margin: 0 auto; padding: 16px 12px 80px; }
+/* ── Header ── */
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 18px;padding-top:env(safe-area-inset-top);height:calc(60px + env(safe-area-inset-top));display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:20;box-shadow:var(--shadow);}
+.logo{width:34px;height:34px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 14px var(--accent-glow);}
+.logo svg{width:17px;height:17px;}
+.header-title{font-size:0.95rem;font-weight:800;letter-spacing:-0.4px;}
+.header-badge{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:2px 7px;font-size:0.67rem;font-weight:700;color:var(--text3);}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.sync-pill{display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border2);border-radius:20px;padding:4px 9px;font-size:0.67rem;font-weight:600;color:var(--text3);}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--ok);}
+.sync-dot.bezig{background:var(--soon);animation:blink 1s infinite;}
+.sync-dot.fout{background:var(--urgent);}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.icon-btn{width:34px;height:34px;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.95rem;transition:all 0.18s;}
+.icon-btn:active{transform:scale(0.9);}
 
-  .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 16px; }
-  .stat { background: rgba(255,255,255,0.9); border-radius: 13px; padding: 11px 8px; text-align: center; box-shadow: 0 2px 10px rgba(13,79,124,0.08); border: 1.5px solid rgba(26,111,168,0.12); cursor: pointer; transition: all 0.15s; user-select: none; }
-  .stat .num { font-size: 1.7rem; font-weight: 700; line-height: 1; }
-  .stat .lbl { font-size: 0.65rem; margin-top: 3px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #5a8aaa; }
+/* ── Nav tabs ── */
+.nav{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;padding:0 18px;}
+.nav::-webkit-scrollbar{display:none;}
+.nav-tab{padding:12px 16px;font-size:0.78rem;font-weight:700;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.15s;flex-shrink:0;}
+.nav-tab.actief{color:var(--accent);border-bottom-color:var(--accent);}
 
-  .toevoegen { background: rgba(255,255,255,0.9); border-radius: 14px; margin-bottom: 14px; box-shadow: 0 2px 10px rgba(13,79,124,0.07); border: 1.5px solid rgba(26,111,168,0.12); overflow: hidden; }
-  .toevoegen-toggle { width: 100%; padding: 13px 16px; background: none; border: none; display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-weight: 600; font-size: 0.88rem; color: #0d4f7c; font-family: inherit; }
-  .toevoegen-body { padding: 0 16px 16px; display: none; flex-direction: column; gap: 9px; }
-  .toevoegen-body.open { display: flex; }
-  .toevoegen-body input, .toevoegen-body select { border: 1.5px solid rgba(26,111,168,0.2); border-radius: 9px; padding: 9px 12px; font-size: 0.88rem; outline: none; width: 100%; font-family: inherit; background: white; }
-  .toevoegen-body .rij { display: flex; gap: 8px; }
-  .toevoegen-body .rij input, .toevoegen-body .rij select { flex: 1; }
-  .btn-add { background: #1a6fa8; color: white; border: none; border-radius: 9px; padding: 10px; font-weight: 700; font-size: 0.88rem; cursor: pointer; width: 100%; font-family: inherit; }
+/* ── Container ── */
+.container{max-width:640px;margin:0 auto;padding:16px 16px 100px;}
+.tab-content{display:none;}
+.tab-content.actief{display:block;}
 
-  .filter-balk { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
-  .filter-balk::-webkit-scrollbar { display: none; }
-  .filter-btn { padding: 6px 14px; border-radius: 20px; border: 1.5px solid rgba(26,111,168,0.2); background: white; font-size: 0.78rem; font-weight: 600; cursor: pointer; color: #5a8aaa; white-space: nowrap; font-family: inherit; flex-shrink: 0; }
-  .filter-btn.actief { background: #1a6fa8; color: white; border-color: #1a6fa8; }
+/* ── Stats ── */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:14px 10px 12px;text-align:center;cursor:pointer;transition:all 0.18s;box-shadow:var(--shadow);}
+.stat:active{transform:scale(0.96);}
+.stat.aktief-urgent{background:var(--urgent-s);border-color:var(--urgent-b);}
+.stat.aktief-soon{background:var(--soon-s);border-color:var(--soon-b);}
+.stat.aktief-ok{background:var(--ok-s);border-color:var(--ok-b);}
+.stat-num{font-size:1.9rem;font-weight:800;line-height:1;letter-spacing:-1px;}
+.stat-lbl{font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:4px;}
 
-  .lijst { display: flex; flex-direction: column; gap: 9px; }
-  .kaart { background: rgba(255,255,255,0.92); border-radius: 14px; padding: 14px 15px; box-shadow: 0 2px 10px rgba(13,79,124,0.07); border: 1.5px solid rgba(26,111,168,0.12); }
-  .kaart.urgent { border-color: #f5c4b4; }
-  .kaart-top { display: flex; align-items: center; gap: 11px; }
-  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .dot.urgent { background: #e05c2a; box-shadow: 0 0 0 3px rgba(224,92,42,0.2), 0 0 8px rgba(224,92,42,0.3); }
-  .dot.soon { background: #e8a020; }
-  .dot.ok { background: #2a9d63; }
-  .kaart-naam { flex: 1; min-width: 0; }
-  .kaart-naam strong { font-weight: 700; font-size: 0.92rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .kaart-naam span { font-size: 0.74rem; color: #5a8aaa; }
-  .badge { border-radius: 10px; padding: 5px 12px; font-size: 0.82rem; font-weight: 700; text-align: right; flex-shrink: 0; cursor: pointer; }
-  .badge small { display: block; font-size: 0.68rem; font-weight: 400; margin-top: 3px; }
-  .badge.urgent { background: #fff0ec; color: #c94a1a; border: 1px solid #f5c4b4; }
-  .badge.urgent small { color: #e05c2a; }
-  .badge.soon { background: #fff8ec; color: #b87800; border: 1px solid #f5dfa0; }
-  .badge.soon small { color: #e8a020; }
-  .badge.ok { background: #ecf8f3; color: #1e7a4c; border: 1px solid #b6dfc8; }
-  .badge.ok small { color: #2a9d63; }
-  .kaart-freq { font-size: 0.69rem; color: #a0b8cc; margin-top: 6px; margin-left: 21px; }
-  .kaart-notitie-tekst { margin-top: 6px; margin-left: 21px; font-size: 0.75rem; color: #1a6fa8; font-style: italic; }
-  .kaart-notitie-input { margin-top: 9px; margin-left: 21px; width: calc(100% - 21px); border: 1.5px dashed rgba(26,111,168,0.25); border-radius: 8px; padding: 7px 10px; font-size: 0.82rem; background: #e8f6ff; color: #0d2b3e; resize: none; outline: none; font-family: inherit; height: 60px; }
-  .kaart-acties { display: flex; gap: 7px; margin-top: 11px; }
-  .btn-gedaan { flex: 1; background: #e8f8f0; color: #2a9d63; border: 1px solid #b6dfc8; border-radius: 8px; padding: 10px 7px; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; }
-  .btn-notitie { background: #eef5fb; color: #1a6fa8; border: 1px solid rgba(26,111,168,0.2); border-radius: 8px; padding: 10px 12px; font-size: 0.82rem; cursor: pointer; font-family: inherit; }
-  .btn-del { background: #fff0ec; color: #e05c2a; border: 1px solid #f5c4b4; border-radius: 8px; padding: 10px; font-size: 0.82rem; cursor: pointer; font-family: inherit; }
-  .leeg { text-align: center; padding: 48px 20px; color: #5a8aaa; }
-  .leeg .icon { font-size: 2.5rem; margin-bottom: 10px; }
+/* ── Zoekbalk ── */
+.zoek-wrap{position:relative;margin-bottom:14px;}
+.zoek-input{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:11px;padding:10px 14px 10px 38px;font-family:inherit;font-size:0.88rem;font-weight:500;color:var(--text);outline:none;transition:border-color 0.18s,box-shadow 0.18s;box-shadow:var(--shadow);}
+.zoek-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.zoek-input::placeholder{color:var(--text3);}
+.zoek-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:0.9rem;pointer-events:none;}
+.zoek-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text3);cursor:pointer;font-size:0.85rem;display:none;}
 
-  .undo-balk { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0d2b3e; color: white; border-radius: 16px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 20px rgba(13,43,62,0.4); z-index: 50; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap; max-width: 92vw; }
-  .undo-balk.zichtbaar { transform: translateX(-50%) translateY(0); }
-  .undo-balk span { font-size: 0.82rem; opacity: 0.85; overflow: hidden; text-overflow: ellipsis; }
-  .undo-balk button { background: #1a6fa8; color: white; border: none; border-radius: 8px; padding: 7px 14px; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0; }
+/* ── Sorteer + filter ── */
+.toolbar{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;align-items:center;}
+.toolbar::-webkit-scrollbar{display:none;}
+.chip{padding:6px 12px;border-radius:8px;border:1px solid var(--border2);background:var(--surface);font-family:inherit;font-size:0.73rem;font-weight:600;color:var(--text2);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all 0.15s;}
+.chip:active{transform:scale(0.95);}
+.chip.actief{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 10px var(--accent-glow);}
+.chip.sort-actief{background:var(--surface2);color:var(--text);border-color:var(--border2);}
+.divider-chip{width:1px;height:20px;background:var(--border2);flex-shrink:0;}
 
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,43,62,0.6); align-items: flex-end; justify-content: center; z-index: 100; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: white; border-radius: 24px 24px 0 0; padding: 24px 20px 36px; width: 100%; max-width: 480px; box-shadow: 0 -8px 40px rgba(13,79,124,0.2); }
-  .modal-greep { width: 40px; height: 4px; background: #e0e8f0; border-radius: 2px; margin: 0 auto 20px; }
-  .modal h3 { font-weight: 700; font-size: 1rem; margin-bottom: 3px; }
-  .modal .sub { font-size: 0.83rem; color: #5a8aaa; margin-bottom: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .modal-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
-  .modal-tab { flex: 1; padding: 10px 8px; border-radius: 10px; border: 1.5px solid rgba(26,111,168,0.2); background: white; font-family: inherit; font-size: 0.85rem; font-weight: 600; color: #5a8aaa; cursor: pointer; }
-  .modal-tab.actief { background: #1a6fa8; color: white; border-color: #1a6fa8; }
-  .modal label { font-size: 0.75rem; font-weight: 700; color: #5a8aaa; text-transform: uppercase; letter-spacing: 0.04em; display: block; margin-bottom: 6px; }
-  .modal input[type=date] { width: 100%; border: 1.5px solid rgba(26,111,168,0.25); border-radius: 10px; padding: 12px; font-size: 1rem; outline: none; margin-bottom: 14px; font-family: inherit; background: white; }
-  .volgende-box { background: #ecf8f3; border-radius: 10px; padding: 12px 14px; margin-bottom: 18px; }
-  .volgende-box small { font-size: 0.72rem; color: #5a8aaa; font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 2px; }
-  .volgende-box strong { font-size: 1rem; color: #1e7a4c; display: block; }
-  .hint { font-size: 0.72rem; color: #a0b8cc; margin-bottom: 12px; line-height: 1.5; }
-  .modal-btns { display: flex; gap: 10px; }
-  .btn-annuleer { flex: 1; background: #f0f4f8; color: #5a8aaa; border: none; border-radius: 12px; padding: 13px; font-weight: 600; font-size: 0.9rem; cursor: pointer; font-family: inherit; }
-  .btn-opslaan { flex: 2; background: #2a9d63; color: white; border: none; border-radius: 12px; padding: 13px; font-weight: 700; font-size: 0.9rem; cursor: pointer; font-family: inherit; }
+/* ── Kaarten ── */
+.lijst{display:flex;flex-direction:column;gap:8px;}
+.klant-kaart{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:13px 15px;box-shadow:var(--shadow);transition:transform 0.15s;animation:kaartIn 0.22s ease both;position:relative;overflow:hidden;}
+@keyframes kaartIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.klant-kaart.urgent{border-left:3px solid var(--urgent);}
+.klant-kaart.soon{border-left:3px solid var(--soon);}
+.klant-kaart.ok{border-left:3px solid var(--ok);opacity:0.82;}
+.kaart-row1{display:flex;align-items:flex-start;gap:10px;}
+.kaart-info{flex:1;min-width:0;}
+.kaart-naam-text{font-size:0.92rem;font-weight:700;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.kaart-plaats{font-size:0.71rem;color:var(--text3);margin-top:2px;}
+.due-tag{border-radius:8px;padding:5px 10px;font-size:0.76rem;font-weight:700;text-align:right;flex-shrink:0;cursor:pointer;transition:opacity 0.15s;letter-spacing:-0.2px;}
+.due-tag:active{opacity:0.7;}
+.due-tag small{display:block;font-size:0.62rem;font-weight:500;margin-top:1px;opacity:0.75;}
+.due-tag.urgent{background:var(--urgent-s);color:var(--urgent);border:1px solid var(--urgent-b);}
+.due-tag.soon{background:var(--soon-s);color:var(--soon);border:1px solid var(--soon-b);}
+.due-tag.ok{background:var(--ok-s);color:var(--ok);border:1px solid var(--ok-b);}
+.kaart-row2{display:flex;align-items:center;justify-content:space-between;margin-top:9px;}
+.kaart-meta-left{display:flex;align-items:center;gap:6px;}
+.freq-tag{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:2px 7px;font-size:0.63rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;}
+.prijs-tag{background:var(--accent-glow);border:1px solid rgba(24,101,240,0.2);border-radius:5px;padding:2px 7px;font-size:0.63rem;font-weight:700;color:var(--accent);}
+.kaart-link{font-size:0.69rem;font-weight:600;color:var(--accent);cursor:pointer;opacity:0.7;transition:opacity 0.15s;}
+.kaart-link:active{opacity:1;}
+.kaart-notitie{margin-top:9px;font-size:0.73rem;color:var(--text3);font-style:italic;}
+.kaart-notitie-input{margin-top:9px;width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;padding:8px 11px;font-family:inherit;font-size:0.82rem;color:var(--text);resize:none;outline:none;height:55px;transition:border-color 0.18s;}
+.kaart-notitie-input:focus{border-color:var(--accent);}
+.kaart-acties{display:flex;gap:6px;margin-top:11px;}
+.btn-done{flex:1;background:var(--ok-s);color:var(--ok);border:1px solid var(--ok-b);border-radius:8px;padding:8px 7px;font-family:inherit;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.15s;}
+.btn-done:active{transform:scale(0.97);}
+.btn-note{background:var(--surface2);color:var(--text3);border:1px solid var(--border2);border-radius:8px;padding:8px 11px;font-size:0.8rem;cursor:pointer;transition:all 0.15s;}
+.btn-trash{background:var(--urgent-s);color:var(--urgent);border:1px solid var(--urgent-b);border-radius:8px;padding:8px 10px;font-size:0.8rem;cursor:pointer;transition:all 0.15s;}
+.btn-note:active,.btn-trash:active{transform:scale(0.95);}
+
+/* ── Kaart toevoegen ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px;}
+.card-toggle{width:100%;padding:14px 16px;background:none;border:none;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:inherit;font-size:0.86rem;font-weight:700;color:var(--text);}
+.card-toggle-icon{width:24px;height:24px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;color:white;font-size:1rem;font-weight:300;transition:transform 0.25s,background 0.2s;flex-shrink:0;}
+.card-toggle-icon.open{transform:rotate(45deg);background:var(--text3);}
+.card-body{padding:0 16px 16px;display:none;flex-direction:column;gap:12px;}
+.card-body.open{display:flex;animation:fadeSlide 0.2s ease;}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field-row{display:flex;gap:8px;}
+.field-row .field{flex:1;}
+.field label{font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);}
+.field input,.field select{background:var(--surface2);border:1px solid var(--border2);border-radius:9px;padding:9px 12px;font-family:inherit;font-size:0.86rem;font-weight:500;color:var(--text);outline:none;width:100%;transition:border-color 0.18s,box-shadow 0.18s;-webkit-appearance:none;}
+.field input:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.field select option{background:var(--surface2);}
+.btn-primary{background:var(--accent);color:#fff;border:none;border-radius:9px;padding:11px;font-family:inherit;font-size:0.86rem;font-weight:700;cursor:pointer;width:100%;transition:all 0.18s;box-shadow:0 2px 10px var(--accent-glow);}
+.btn-primary:active{transform:scale(0.98);background:var(--accent2);}
+
+/* ── Weekoverzicht ── */
+.week-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.week-nav{display:flex;align-items:center;gap:10px;}
+.week-nav button{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);cursor:pointer;width:30px;height:30px;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+.week-nav button:active{transform:scale(0.9);}
+.week-titel{font-size:0.88rem;font-weight:700;letter-spacing:-0.2px;}
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px;}
+.week-dag{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:8px 4px;text-align:center;font-size:0.62rem;}
+.week-dag .dag-naam{font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text3);font-size:0.58rem;}
+.week-dag .dag-num{font-size:1rem;font-weight:800;margin:2px 0;}
+.week-dag .dag-count{font-size:0.65rem;font-weight:700;color:var(--accent);}
+.week-dag.heeft-klanten{background:var(--accent-glow);border-color:rgba(24,101,240,0.25);}
+.week-dag.vandaag{border-color:var(--accent);background:var(--accent-glow);}
+.week-dag.vandaag .dag-num{color:var(--accent);}
+.week-klanten{display:flex;flex-direction:column;gap:7px;}
+.week-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.week-item-info{flex:1;min-width:0;}
+.week-item-naam{font-size:0.85rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.week-item-datum{font-size:0.7rem;color:var(--text3);margin-top:1px;}
+.week-item-badge{font-size:0.72rem;font-weight:700;padding:3px 8px;border-radius:6px;flex-shrink:0;}
+.week-item-badge.urgent{background:var(--urgent-s);color:var(--urgent);}
+.week-item-badge.soon{background:var(--soon-s);color:var(--soon);}
+.week-item-badge.ok{background:var(--ok-s);color:var(--ok);}
+.week-leeg{text-align:center;padding:30px;color:var(--text3);font-size:0.85rem;}
+
+/* ── Omzet ── */
+.omzet-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow);}
+.omzet-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.omzet-titel{font-size:0.88rem;font-weight:800;letter-spacing:-0.3px;}
+.omzet-maand{font-size:0.75rem;font-weight:600;color:var(--text3);}
+.omzet-groot{font-size:2.2rem;font-weight:800;letter-spacing:-1px;color:var(--ok);}
+.omzet-sub{font-size:0.72rem;color:var(--text3);margin-top:2px;}
+.omzet-rij{display:flex;gap:10px;margin-top:14px;}
+.omzet-stat{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;}
+.omzet-stat-num{font-size:1.2rem;font-weight:800;letter-spacing:-0.5px;}
+.omzet-stat-lbl{font-size:0.62rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-top:3px;}
+.prijs-lijst{display:flex;flex-direction:column;gap:7px;}
+.prijs-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);}
+.prijs-item-naam{flex:1;font-size:0.86rem;font-weight:600;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.prijs-input{width:80px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:6px 9px;font-family:inherit;font-size:0.86rem;font-weight:700;color:var(--text);outline:none;text-align:right;transition:border-color 0.18s;}
+.prijs-input:focus{border-color:var(--accent);}
+.prijs-euro{font-size:0.78rem;color:var(--text3);flex-shrink:0;}
+
+/* ── Undo ── */
+.undo-bar{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--surface);border:1px solid var(--border2);border-radius:13px;padding:11px 15px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow2);z-index:50;transition:transform 0.3s cubic-bezier(0.34,1.4,0.64,1);white-space:nowrap;max-width:92vw;}
+.undo-bar.show{transform:translateX(-50%) translateY(0);}
+.undo-bar span{font-size:0.78rem;color:var(--text2);font-weight:500;}
+.btn-undo{background:var(--accent);color:white;border:none;border-radius:7px;padding:5px 12px;font-family:inherit;font-size:0.76rem;font-weight:700;cursor:pointer;flex-shrink:0;transition:all 0.15s;}
+.btn-undo:active{transform:scale(0.96);}
+
+/* ── Sheet modal ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:100;align-items:flex-end;justify-content:center;}
+.overlay.open{display:flex;}
+.sheet{background:var(--surface);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:18px 18px 38px;width:100%;max-width:480px;box-shadow:var(--shadow2);animation:sheetUp 0.26s cubic-bezier(0.32,1.2,0.64,1);}
+@keyframes sheetUp{from{transform:translateY(100%);opacity:0.5}to{transform:none;opacity:1}}
+.sheet-handle{width:30px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 18px;}
+.sheet h3{font-size:1rem;font-weight:800;letter-spacing:-0.4px;margin-bottom:3px;}
+.sheet-sub{font-size:0.8rem;color:var(--text3);margin-bottom:16px;}
+.tab-row{display:flex;gap:6px;margin-bottom:16px;}
+.tab-btn{flex:1;padding:8px;border-radius:9px;border:1px solid var(--border2);background:var(--surface2);font-family:inherit;font-size:0.8rem;font-weight:600;color:var(--text3);cursor:pointer;transition:all 0.15s;}
+.tab-btn.actief{background:var(--accent);color:white;border-color:var(--accent);box-shadow:0 2px 10px var(--accent-glow);}
+.sheet label{font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);display:block;margin-bottom:7px;}
+.sheet input[type=date]{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:11px 13px;font-family:inherit;font-size:0.93rem;font-weight:500;color:var(--text);outline:none;margin-bottom:13px;transition:border-color 0.18s,box-shadow 0.18s;-webkit-appearance:none;}
+.sheet input[type=date]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.result-box{background:var(--ok-s);border:1px solid var(--ok-b);border-radius:11px;padding:12px 14px;margin-bottom:18px;}
+.result-box small{font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--ok);opacity:0.8;display:block;margin-bottom:3px;}
+.result-box strong{font-size:0.93rem;font-weight:700;color:var(--ok);}
+.hint-text{font-size:0.73rem;color:var(--text3);margin-bottom:13px;line-height:1.55;}
+.sheet-btns{display:flex;gap:8px;}
+.btn-cancel{flex:1;background:var(--surface2);color:var(--text2);border:1px solid var(--border2);border-radius:11px;padding:12px;font-family:inherit;font-weight:600;font-size:0.86rem;cursor:pointer;transition:all 0.15s;}
+.btn-save{flex:2;background:var(--accent);color:white;border:none;border-radius:11px;padding:12px;font-family:inherit;font-weight:800;font-size:0.86rem;cursor:pointer;transition:all 0.15s;box-shadow:0 3px 12px var(--accent-glow);}
+.btn-cancel:active,.btn-save:active{transform:scale(0.98);}
+
+/* Geschiedenis in sheet */
+.hist-lijst{display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto;}
+.hist-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surface2);border-radius:8px;font-size:0.78rem;}
+.hist-dot{width:6px;height:6px;border-radius:50%;background:var(--ok);flex-shrink:0;}
+.hist-datum{font-weight:700;color:var(--text);}
+.hist-ago{color:var(--text3);margin-left:auto;}
+
+.banner7{background:linear-gradient(135deg,rgba(24,101,240,0.15),rgba(24,101,240,0.05));border:1px solid rgba(24,101,240,0.2);border-radius:14px;padding:14px 16px;margin-bottom:14px;}
+.banner7-titel{font-size:0.8rem;font-weight:800;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.banner7-items{display:flex;flex-direction:column;gap:6px;}
+.banner7-item{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:0.78rem;}
+.banner7-naam{font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.banner7-dag{font-size:0.7rem;color:var(--text3);flex-shrink:0;}
+.banner7-badge{font-size:0.68rem;font-weight:700;padding:2px 7px;border-radius:5px;flex-shrink:0;}
+.leeg{text-align:center;padding:50px 20px;color:var(--text3);}
+.leeg .icon{font-size:2.3rem;margin-bottom:10px;opacity:0.3;}
+.leeg p{font-size:0.86rem;}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">🪣</div>
-  <div class="htxt">
-    <h1>Glazenwasser Planner</h1>
-    <p id="header-sub">Laden...</p>
+  <div class="logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+      <polyline points="9,22 9,12 15,12 15,22"/>
+    </svg>
   </div>
-  <div class="sync-indicator">
-    <div class="sync-dot bezig" id="sync-dot"></div>
-    <span id="sync-tekst">Sync...</span>
+  <div style="display:flex;align-items:center;gap:7px">
+    <div class="header-title">GW Planner</div>
+    <div class="header-badge" id="header-totaal">0 klanten</div>
+  </div>
+  <div class="header-right">
+    <div class="sync-pill">
+      <div class="sync-dot bezig" id="sync-dot"></div>
+      <span id="sync-tekst">Laden</span>
+    </div>
+    <div class="icon-btn" onclick="deelWhatsApp()" title="Delen via WhatsApp">📤</div>
+    <div class="icon-btn" onclick="toggleTheme()" id="theme-btn">🌙</div>
   </div>
 </header>
 
+<!-- Nav -->
+<div class="nav">
+  <div class="nav-tab actief" id="nav-klanten" onclick="setTab('klanten')">📋 Klanten</div>
+  <div class="nav-tab" id="nav-week" onclick="setTab('week')">📅 Weekoverzicht</div>
+  <div class="nav-tab" id="nav-omzet" onclick="setTab('omzet')">💰 Omzet</div>
+</div>
+
 <div class="container">
-  <div class="stats">
-    <div class="stat" id="stat-urgent" onclick="toggleFilter('urgent')" style="border-color:#f5c4b4">
-      <div class="num" id="num-urgent" style="color:#e05c2a">0</div>
-      <div class="lbl">Te doen</div>
-    </div>
-    <div class="stat" id="stat-soon" onclick="toggleFilter('soon')">
-      <div class="num" id="num-soon" style="color:#e8a020">0</div>
-      <div class="lbl">Binnenkort</div>
-    </div>
-    <div class="stat" id="stat-ok" onclick="toggleFilter('ok')">
-      <div class="num" id="num-ok" style="color:#2a9d63">0</div>
-      <div class="lbl">Op schema</div>
-    </div>
-  </div>
 
-  <div class="toevoegen">
-    <button class="toevoegen-toggle" onclick="toggleToevoegen()">
-      <span>➕ Klant toevoegen</span>
-      <span id="toggle-pijl">▾</span>
-    </button>
-    <div class="toevoegen-body" id="toevoegen-body">
-      <input type="text" id="nieuw-naam" placeholder="Naam / adres klant">
-      <div class="rij">
-        <select id="nieuw-freq">
-          <option value="2">Elke 2 weken</option>
-          <option value="4.3">Elke maand</option>
-          <option value="8.7" selected>Elke 2 maanden</option>
-          <option value="10.8">Elke 2,5 maand</option>
-          <option value="13">Elke 3 maanden</option>
-          <option value="17.4">Elke 4 maanden</option>
-          <option value="26">Elke 6 maanden</option>
-        </select>
-        <input type="date" id="nieuw-datum">
+  <!-- ── TAB: KLANTEN ── -->
+  <div class="tab-content actief" id="tab-klanten">
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat" id="stat-urgent" onclick="toggleFilter('urgent')">
+        <div class="stat-num" id="num-urgent" style="color:var(--urgent)">0</div>
+        <div class="stat-lbl">Te doen</div>
       </div>
-      <button class="btn-add" onclick="voegToe()">Toevoegen</button>
+      <div class="stat" id="stat-soon" onclick="toggleFilter('soon')">
+        <div class="stat-num" id="num-soon" style="color:var(--soon)">0</div>
+        <div class="stat-lbl">Binnenkort</div>
+      </div>
+      <div class="stat" id="stat-ok" onclick="toggleFilter('ok')">
+        <div class="stat-num" id="num-ok" style="color:var(--ok)">0</div>
+        <div class="stat-lbl">Op schema</div>
+      </div>
+    </div>
+
+    <!-- Zoekbalk -->
+    <div class="zoek-wrap">
+      <span class="zoek-icon">🔍</span>
+      <input type="text" class="zoek-input" id="zoek-input" placeholder="Zoek klant of plaats..." oninput="renderKlanten()">
+      <span class="zoek-clear" id="zoek-clear" onclick="zoekWis()">✕</span>
+    </div>
+
+    <!-- Klant toevoegen -->
+    <div class="card">
+      <button class="card-toggle" onclick="toggleToevoegen()">
+        <span>Klant toevoegen</span>
+        <div class="card-toggle-icon" id="toggle-icon">+</div>
+      </button>
+      <div class="card-body" id="card-body">
+        <div class="field">
+          <label>Naam / adres</label>
+          <input type="text" id="nieuw-naam" placeholder="Bijv. Kerkstraat 12, Amsterdam">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Frequentie</label>
+            <select id="nieuw-freq">
+              <option value="2">Elke 2 weken</option>
+              <option value="4.3">Elke maand</option>
+              <option value="8.7" selected>Elke 2 maanden</option>
+              <option value="10.8">Elke 2,5 maand</option>
+              <option value="13">Elke 3 maanden</option>
+              <option value="17.4">Elke 4 maanden</option>
+              <option value="26">Elke 6 maanden</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Volgende beurt</label>
+            <input type="date" id="nieuw-datum">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Plaats</label>
+            <input type="text" id="nieuw-plaats" placeholder="Bijv. Enkhuizen">
+          </div>
+          <div class="field">
+            <label>Prijs (€)</label>
+            <input type="number" id="nieuw-prijs" placeholder="0.00" step="0.50" min="0">
+          </div>
+        </div>
+        <button class="btn-primary" onclick="voegToe()">Toevoegen</button>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="chip actief" id="fbtn-all" onclick="setFilter('all')">Alle</div>
+      <div class="chip" id="fbtn-urgent" onclick="setFilter('urgent')">⚠ Te doen</div>
+      <div class="chip" id="fbtn-soon" onclick="setFilter('soon')">📅 Binnenkort</div>
+      <div class="chip" id="fbtn-ok" onclick="setFilter('ok')">✅ Schema</div>
+      <div class="divider-chip"></div>
+      <div class="chip sort-actief" id="sort-btn" onclick="cycleSorteer()">📅 Datum</div>
+    </div>
+
+    <div class="lijst" id="lijst"></div>
+  </div>
+
+  <!-- ── TAB: WEEK ── -->
+  <div class="tab-content" id="tab-week">
+    <!-- 7 dagen banner -->
+    <div class="banner7" id="banner7" style="display:none;margin-bottom:14px">
+      <div class="banner7-titel">⏰ Volgende 7 dagen</div>
+      <div class="banner7-items" id="banner7-items"></div>
+    </div>
+
+        <div class="week-header">
+      <div class="week-nav">
+        <button onclick="weekNav(-1)">‹</button>
+        <div class="week-titel" id="week-titel">Deze week</div>
+        <button onclick="weekNav(1)">›</button>
+      </div>
+      <div style="font-size:0.72rem;color:var(--text3);font-weight:600" id="week-sub"></div>
+    </div>
+    <div class="week-grid" id="week-grid"></div>
+    <div class="week-klanten" id="week-klanten"></div>
+  </div>
+
+  <!-- ── TAB: OMZET ── -->
+  <div class="tab-content" id="tab-omzet">
+    <div class="omzet-card">
+      <div class="omzet-top">
+        <div>
+          <div class="omzet-titel">Maandomzet</div>
+          <div class="omzet-maand" id="omzet-maand-naam"></div>
+        </div>
+      </div>
+      <div class="omzet-groot" id="omzet-totaal">€ 0,00</div>
+      <div class="omzet-sub" id="omzet-sub">gebaseerd op klanten deze maand</div>
+      <div class="omzet-rij">
+        <div class="omzet-stat">
+          <div class="omzet-stat-num" id="omzet-klanten" style="color:var(--accent)">0</div>
+          <div class="omzet-stat-lbl">Klanten</div>
+        </div>
+        <div class="omzet-stat">
+          <div class="omzet-stat-num" id="omzet-gem" style="color:var(--soon)">€0</div>
+          <div class="omzet-stat-lbl">Gemiddeld</div>
+        </div>
+        <div class="omzet-stat">
+          <div class="omzet-stat-num" id="omzet-jaar" style="color:var(--ok)">€0</div>
+          <div class="omzet-stat-lbl">Per jaar</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div style="padding:14px 16px;font-size:0.86rem;font-weight:700;">Prijs per klant instellen</div>
+      <div style="padding:0 16px 16px">
+        <div class="prijs-lijst" id="prijs-lijst"></div>
+      </div>
     </div>
   </div>
 
-  <div class="filter-balk">
-    <button class="filter-btn actief" id="fbtn-all" onclick="setFilter('all')">Alles</button>
-    <button class="filter-btn" id="fbtn-urgent" onclick="setFilter('urgent')">⚠ Te doen</button>
-    <button class="filter-btn" id="fbtn-soon" onclick="setFilter('soon')">📅 Binnenkort</button>
-    <button class="filter-btn" id="fbtn-ok" onclick="setFilter('ok')">✅ Op schema</button>
-  </div>
-
-  <div class="lijst" id="lijst"></div>
 </div>
 
-<div class="undo-balk" id="undo-balk">
+<!-- Undo -->
+<div class="undo-bar" id="undo-bar">
   <span id="undo-tekst">Wijziging opgeslagen</span>
-  <button onclick="undo()">↩ Ongedaan maken</button>
+  <button class="btn-undo" onclick="undo()">↩ Ongedaan</button>
 </div>
 
-<div class="modal-overlay" id="modal" onclick="modalBuitenKlik(event)">
-  <div class="modal" id="modal-inhoud">
-    <div class="modal-greep"></div>
-    <h3 id="modal-titel">✓ Gedaan!</h3>
-    <div class="sub" id="modal-naam"></div>
-    <div class="modal-tabs">
-      <button class="modal-tab actief" id="tab-gedaan" onclick="setTab('gedaan')">✓ Gedaan</button>
-      <button class="modal-tab" id="tab-aanpassen" onclick="setTab('aanpassen')">✏ Aanpassen</button>
+<!-- Sheet modal -->
+<div class="overlay" id="overlay" onclick="overlayKlik(event)">
+  <div class="sheet" id="sheet">
+    <div class="sheet-handle"></div>
+    <h3 id="sheet-titel">Gedaan!</h3>
+    <div class="sheet-sub" id="sheet-sub"></div>
+    <div class="tab-row">
+      <button class="tab-btn actief" id="tab-gedaan" onclick="setSheetTab('gedaan')">✓ Gedaan</button>
+      <button class="tab-btn" id="tab-aanpassen" onclick="setSheetTab('aanpassen')">✏ Aanpassen</button>
+      <button class="tab-btn" id="tab-hist" onclick="setSheetTab('hist')">📋 Historie</button>
     </div>
-    <div id="sectie-gedaan">
+    <div id="sec-gedaan">
       <label>Wanneer gedaan?</label>
-      <input type="date" id="modal-gedaan-datum" oninput="updateVolgende()">
-      <div class="volgende-box">
+      <input type="date" id="datum-gedaan" oninput="updateResultaat()">
+      <div class="result-box">
         <small>Volgende beurt wordt</small>
-        <strong id="modal-volgende"></strong>
+        <strong id="resultaat-datum">—</strong>
       </div>
     </div>
-    <div id="sectie-aanpassen" style="display:none">
-      <p class="hint">Stel de volgende beurt direct in op een datum naar keuze.</p>
+    <div id="sec-aanpassen" style="display:none"><label>Frequentie</label><select id="aanpas-freq" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:11px 13px;font-family:inherit;font-size:0.88rem;font-weight:500;color:var(--text);outline:none;margin-bottom:13px;-webkit-appearance:none;"><option value="2">Elke 2 weken</option><option value="4.3">Elke maand</option><option value="8.7">Elke 2 maanden</option><option value="10.8">Elke 2,5 maand</option><option value="13">Elke 3 maanden</option><option value="17.4">Elke 4 maanden</option><option value="26">Elke 6 maanden</option></select>
+      <p class="hint-text">Stel de volgende beurt direct in op een datum naar keuze.</p>
       <label>Volgende beurt instellen op</label>
-      <input type="date" id="modal-volgende-datum">
+      <input type="date" id="datum-volgende">
     </div>
-    <div class="modal-btns">
-      <button class="btn-annuleer" onclick="sluitModal()">Annuleren</button>
-      <button class="btn-opslaan" onclick="bevestig()">Opslaan</button>
+    <div id="sec-hist" style="display:none">
+      <div class="hist-lijst" id="hist-lijst"></div>
+    </div>
+    <div class="sheet-btns" id="sheet-btns">
+      <button class="btn-cancel" onclick="sluitSheet()">Annuleren</button>
+      <button class="btn-save" onclick="bevestig()">Opslaan</button>
     </div>
   </div>
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkLsVT_foj92RYOsHtWX8UVVbWfVKi01ajqPCRVikZfBhoruzmEg9y6YzHJ8G6JGQ-LA/exec';
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbwkLsVT_foj92RYOsHtWX8UVVbWfVKi01ajqPCRVikZfBhoruzmEg9y6YzHJ8G6JGQ-LA/exec';
+const FREQ_LABELS={2:"2 wkn",4.3:"1 mnd",8.7:"2 mnd",10.8:"2,5 mnd",13:"3 mnd",17.4:"4 mnd",26:"6 mnd"};
+const SORTEER_OPTIES=['datum','plaats','naam'];
+const SORTEER_LABELS={'datum':'📅 Datum','plaats':'📍 Plaats','naam':'🔤 Naam'};
 
-const FREQ_LABELS = {2:"2 wkn", 4.3:"1 mnd", 8.7:"2 mnd", 10.8:"2,5 mnd", 13:"3 mnd", 17.4:"4 mnd", 26:"6 mnd"};
+let klanten=[], vorigeKlanten=null, actieveFilter='all', actieveNotitie=null;
+let sheetId=null, actieveSheetTab='gedaan', undoTimer=null;
+let sorteerIdx=0, weekOffset=0, actieveNavTab='klanten';
 
-const STANDAARD = [
-  { id:1,  naam:"Pastoor Gielenstraat 56",   plaats:"Lutjebroek",    freq:26,   laatste:"2025-09-09", notitie:"" },
-  { id:2,  naam:"Waterlelie 5",               plaats:"Bovenkarspel", freq:13,   laatste:"2026-01-15", notitie:"" },
-  { id:3,  naam:"Odulpshof",                  plaats:"Lutjebroek",    freq:8.7,  laatste:"2026-01-18", notitie:"" },
-  { id:4,  naam:"Johanna de Vriesweg 19",     plaats:"Enkhuizen",     freq:8.7,  laatste:"2026-01-18", notitie:"" },
-  { id:5,  naam:"Doolhof 7",                  plaats:"Enkhuizen",     freq:8.7,  laatste:"2026-01-19", notitie:"" },
-  { id:6,  naam:"De Keur",                    plaats:"Bovenkarspel", freq:8.7,  laatste:"2026-01-20", notitie:"" },
-  { id:7,  naam:"Platanenlaan 43",            plaats:"Grootebroek",  freq:10.8, laatste:"2026-01-20", notitie:"" },
-  { id:8,  naam:"Prunushof 1",                plaats:"Enkhuizen",     freq:13,   laatste:"2026-01-15", notitie:"" },
-  { id:9,  naam:"Korenmolenlaan 70",          plaats:"Bovenkarspel", freq:8.7,  laatste:"2026-01-24", notitie:"" },
-  { id:10, naam:"Eat en Chill",               plaats:"Enkhuizen",     freq:2,    laatste:"2026-01-28", notitie:"" },
-  { id:11, naam:"Streekweg 380",              plaats:"Hoogkarspel",   freq:8.7,  laatste:"2026-01-29", notitie:"" },
-  { id:12, naam:"De Vijfhoek B, C, D",       plaats:"Enkhuizen",     freq:8.7,  laatste:"2026-01-29", notitie:"" },
-  { id:13, naam:"Leeuweriklaan 22",           plaats:"Enkhuizen",     freq:8.7,  laatste:"2026-01-29", notitie:"" },
-  { id:14, naam:"Waterweide 66",              plaats:"Hoogkarspel",   freq:8.7,  laatste:"2026-01-29", notitie:"" },
-  { id:15, naam:"De Botting 2",               plaats:"Bovenkarspel", freq:8.7,  laatste:"2026-02-05", notitie:"" },
-  { id:16, naam:"Waterlelie 7, 9, 23, 25",   plaats:"Bovenkarspel", freq:8.7,  laatste:"2026-02-05", notitie:"" },
-  { id:17, naam:"Joan Noorderweg 23",         plaats:"Enkhuizen",     freq:8.7,  laatste:"2026-02-06", notitie:"" },
-  { id:18, naam:"Kerkerbuurt 140",            plaats:"Berkhout",      freq:8.7,  laatste:"2026-02-01", notitie:"ff appe — bellen voor inplannen" },
-  { id:19, naam:"Lepenlaan 5",               plaats:"Enkhuizen",     freq:8.7,  laatste:"2026-02-19", notitie:"" },
-  { id:20, naam:"Trompet 18c",               plaats:"Enkhuizen",     freq:8.7,  laatste:"2026-02-19", notitie:"" },
-  { id:21, naam:"Pijlstaart 12, 14, 16",     plaats:"Hoogkarspel",   freq:8.7,  laatste:"2026-02-19", notitie:"" },
-  { id:22, naam:"Kavelsloot 27",             plaats:"Enkhuizen",     freq:8.7,  laatste:"2026-02-21", notitie:"" },
-  { id:23, naam:"Chim, Ma en Sav",           plaats:"Bovenkarspel", freq:8.7,  laatste:"2026-01-20", notitie:"" },
-  { id:24, naam:"Hertenkamp",                plaats:"Enkhuizen",     freq:8.7,  laatste:"2026-02-20", notitie:"" },
-  { id:25, naam:"Moeder, dochter, hoekhuis", plaats:"Bovenkarspel", freq:8.7,  laatste:"2026-02-23", notitie:"" },
-  { id:26, naam:"Bob Kager + garage",         plaats:"",              freq:17.4, laatste:"2026-02-24", notitie:"" },
-  { id:27, naam:"Ploekgras 7",               plaats:"Hoogkarspel",   freq:8.7,  laatste:"2026-02-24", notitie:"" },
-  { id:28, naam:"Zuid Spierdijkweg 55",       plaats:"",              freq:4.3,  laatste:"2026-03-03", notitie:"" },
-  { id:29, naam:"Platanenlaan 6",             plaats:"Grootebroek",  freq:8.7,  laatste:"2026-01-19", notitie:"Moet gedaan worden op 19 maart" },
-  { id:30, naam:"Gemaal 28",                 plaats:"Bovenkarspel", freq:8.7,  laatste:"2026-03-11", notitie:"" },
-  { id:31, naam:"Tureluurstraat 47",          plaats:"Enkhuizen",     freq:8.7,  laatste:"2026-01-20", notitie:"Eerste beurt 20 maart, daarna elke 2 mnd" },
-];
+// ─── Theme ───────────────────────────────────────────────────────────────────
+function toggleTheme(){
+  const h=document.documentElement,huidig=h.getAttribute('data-theme');
+  const nieuw=huidig==='dark'?'light':'dark';
+  h.setAttribute('data-theme',nieuw);
+  localStorage.setItem('gw_theme',nieuw);
+  document.getElementById('theme-btn').textContent=nieuw==='dark'?'🌙':'☀️';
+}
+document.getElementById('theme-btn').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'🌙':'☀️';
 
-let klanten = [];
-let vorigeKlanten = null;
-let actieveFilter = 'all';
-let actieveNotitie = null;
-let modalId = null;
-let actieveTab = 'gedaan';
-let undoTimer = null;
-
-function setSyncStatus(status, tekst) {
-  const dot = document.getElementById('sync-dot');
-  dot.className = 'sync-dot' + (status==='bezig'?' bezig':status==='fout'?' fout':'');
-  document.getElementById('sync-tekst').textContent = tekst;
+// ─── Nav tabs ─────────────────────────────────────────────────────────────────
+function setTab(tab){
+  actieveNavTab=tab;
+  ['klanten','week','omzet'].forEach(t=>{
+    document.getElementById('nav-'+t).classList.toggle('actief',t===tab);
+    document.getElementById('tab-'+t).classList.toggle('actief',t===tab);
+  });
+  if(tab==='week') renderWeek();
+  if(tab==='omzet') renderOmzet();
 }
 
-function rowsNaarKlanten(rows) {
-  return rows.filter(r => r.length>=5 && r[0]).map(r => ({
-    id: Number(r[0]), naam: String(r[1]), plaats: String(r[2]),
-    freq: parseFloat(r[3]), laatste: String(r[4]), notitie: String(r[5]||'')
+// ─── Sync ─────────────────────────────────────────────────────────────────────
+function syncStatus(s,t){
+  document.getElementById('sync-dot').className='sync-dot'+(s==='bezig'?' bezig':s==='fout'?' fout':'');
+  document.getElementById('sync-tekst').textContent=t;
+}
+function toKlanten(rows){
+  return rows.filter(r=>r.length>=5&&r[0]).map(r=>({
+    id:Number(r[0]),naam:String(r[1]),plaats:String(r[2]),
+    freq:parseFloat(r[3]),laatste:String(r[4]).substring(0,10),
+    notitie:String(r[5]||''),prijs:parseFloat(r[6])||0,
+    historie:r[7]?String(r[7]).split(',').filter(Boolean):[]
   }));
 }
+function toRows(kl){return kl.map(k=>[k.id,k.naam,k.plaats,k.freq,k.laatste,k.notitie,k.prijs||0,(k.historie||[]).join(',')]);}
 
-function klantenNaarRows(kl) {
-  return kl.map(k => [k.id, k.naam, k.plaats, k.freq, k.laatste, k.notitie]);
-}
-
-async function syncLaden() {
-  setSyncStatus('bezig', 'Laden...');
-  try {
-    const resp = await fetch(SCRIPT_URL + '?t=' + Date.now());
-    const rows = await resp.json();
-    if (Array.isArray(rows) && rows.length > 0) {
-      // Sheet heeft data — laad die
-      klanten = rowsNaarKlanten(rows);
-      localStorage.setItem('gw_v5', JSON.stringify(klanten));
-      setSyncStatus('ok', 'Gesynchroniseerd');
-      render();
-    } else {
-      // Sheet is leeg — upload standaarddata
-      setSyncStatus('bezig', 'Initialiseren...');
-      klanten = JSON.parse(JSON.stringify(STANDAARD));
-      await syncOpslaan();
+async function syncLaden(){
+  syncStatus('bezig','Laden...');
+  try{
+    const r=await fetch(SCRIPT_URL+'?t='+Date.now());
+    const rows=await r.json();
+    if(Array.isArray(rows)&&rows.length>0){
+      klanten=toKlanten(rows);
+      localStorage.setItem('gw_v6',JSON.stringify(klanten));
+      syncStatus('ok','Live'); render(); return true;
     }
-    return true;
-  } catch(e) {
-    setSyncStatus('fout', 'Offline');
-    // Gebruik lokale data als fallback
-    const s = localStorage.getItem('gw_v5');
-    if (s) klanten = JSON.parse(s);
-    else klanten = JSON.parse(JSON.stringify(STANDAARD));
-    render();
-    return false;
+  }catch(e){
+    syncStatus('fout','Offline');
+    const s=localStorage.getItem('gw_v6')||localStorage.getItem('gw_v5');
+    if(s){klanten=toKlanten(JSON.parse(s).map(k=>[k.id,k.naam,k.plaats,k.freq,k.laatste,k.notitie,k.prijs||0,'']));render();}
   }
+  return false;
 }
 
-async function syncOpslaan() {
-  setSyncStatus('bezig', 'Opslaan...');
-  localStorage.setItem('gw_v5', JSON.stringify(klanten));
-  try {
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify(klantenNaarRows(klanten))
-    });
-    setSyncStatus('ok', 'Opgeslagen ✓');
-    render();
-  } catch(e) {
-    setSyncStatus('fout', 'Opslaan mislukt');
-  }
+async function syncOpslaan(){
+  syncStatus('bezig','Opslaan...');
+  localStorage.setItem('gw_v6',JSON.stringify(klanten));
+  try{
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(toRows(klanten))});
+    syncStatus('ok','Opgeslagen ✓'); render();
+  }catch(e){syncStatus('fout','Fout');}
 }
 
-function slaOp(omschrijving) {
-  vorigeKlanten = JSON.parse(JSON.stringify(klanten));
-  toonUndo(omschrijving);
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function volgendeDatum(laatste,freq){const d=new Date(laatste);d.setTime(d.getTime()+freq*7*86400000);return d;}
+function laaatsteVanVolgende(v,freq){const d=new Date(v);d.setTime(d.getTime()-freq*7*86400000);return d.toISOString().split('T')[0];}
+function dgnTot(laatste,freq){const due=volgendeDatum(laatste,freq),t=new Date();t.setHours(0,0,0,0);due.setHours(0,0,0,0);return Math.round((due-t)/86400000);}
+function status(d){return d<=0?'urgent':d<=10?'soon':'ok';}
+function fmtDue(due){
+  const t=new Date();t.setHours(0,0,0,0);const d=new Date(due);d.setHours(0,0,0,0);
+  const diff=Math.round((d-t)/86400000);
+  if(diff<0)return`${Math.abs(diff)}d te laat`;
+  if(diff===0)return'Vandaag!';if(diff===1)return'Morgen';
+  if(diff<7)return`Over ${diff}d`;
+  return d.toLocaleDateString('nl-NL',{day:'numeric',month:'short'});
+}
+function fmtDatum(d){return new Date(d).toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'});}
+function fmtLang(d){return new Date(d).toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'});}
+function fmtEuro(n){return'€ '+Number(n||0).toFixed(2).replace('.',',');}
+function vandaag(){return new Date().toISOString().split('T')[0];}
+
+// ─── Undo ─────────────────────────────────────────────────────────────────────
+function slaOp(txt){
+  vorigeKlanten=JSON.parse(JSON.stringify(klanten));
+  document.getElementById('undo-tekst').textContent=txt;
+  document.getElementById('undo-bar').classList.add('show');
+  if(undoTimer)clearTimeout(undoTimer);
+  undoTimer=setTimeout(()=>{document.getElementById('undo-bar').classList.remove('show');vorigeKlanten=null;},6000);
+}
+function undo(){
+  if(!vorigeKlanten)return;
+  klanten=vorigeKlanten;vorigeKlanten=null;
+  document.getElementById('undo-bar').classList.remove('show');
+  if(undoTimer)clearTimeout(undoTimer);
+  syncOpslaan();render();
 }
 
-function toonUndo(tekst) {
-  document.getElementById('undo-tekst').textContent = tekst;
-  document.getElementById('undo-balk').classList.add('zichtbaar');
-  if (undoTimer) clearTimeout(undoTimer);
-  undoTimer = setTimeout(() => {
-    document.getElementById('undo-balk').classList.remove('zichtbaar');
-    vorigeKlanten = null;
-  }, 6000);
+
+// ─── WhatsApp delen ───────────────────────────────────────────────────────────
+function deelWhatsApp(){
+  const url='https://jbloesberg99.github.io/Glasbewassing';
+  const tekst='Hoi! Hier is de link naar onze Glazenwasser Planner app: '+url;
+  window.open('https://wa.me/?text='+encodeURIComponent(tekst),'_blank');
 }
 
-function undo() {
-  if (!vorigeKlanten) return;
-  klanten = vorigeKlanten; vorigeKlanten = null;
-  document.getElementById('undo-balk').classList.remove('zichtbaar');
-  if (undoTimer) clearTimeout(undoTimer);
-  syncOpslaan(); render();
+// ─── Google Maps ──────────────────────────────────────────────────────────────
+function openMaps(naam,plaats){
+  const query=encodeURIComponent(naam+' '+plaats);
+  window.open('https://maps.google.com/?q='+query,'_blank');
 }
 
-function volgende(laatste, freq) {
-  const d = new Date(laatste);
-  d.setTime(d.getTime() + freq * 7 * 86400000);
-  return d;
-}
-function laaatsteVanVolgende(gewenst, freq) {
-  const d = new Date(gewenst);
-  d.setTime(d.getTime() - freq * 7 * 86400000);
-  return d.toISOString().split('T')[0];
-}
-function dagenTot(laatste, freq) {
-  const due = volgende(laatste, freq);
-  const today = new Date(); today.setHours(0,0,0,0); due.setHours(0,0,0,0);
-  return Math.round((due - today) / 86400000);
-}
-function status(dagen) {
-  if (dagen <= 0) return 'urgent';
-  if (dagen <= 10) return 'soon';
-  return 'ok';
-}
-function formatDue(due) {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const d = new Date(due); d.setHours(0,0,0,0);
-  const diff = Math.round((d - today) / 86400000);
-  if (diff < 0) return `${Math.abs(diff)}d te laat`;
-  if (diff === 0) return 'Vandaag!';
-  if (diff === 1) return 'Morgen';
-  if (diff < 7) return `Over ${diff} dagen`;
-  return d.toLocaleDateString('nl-NL', {day:'numeric', month:'long'});
-}
-function formatDatum(d) { return new Date(d).toLocaleDateString('nl-NL', {day:'numeric', month:'short', year:'numeric'}); }
-function formatLang(d) { return new Date(d).toLocaleDateString('nl-NL', {weekday:'long', day:'numeric', month:'long'}); }
-function vandaag() { return new Date().toISOString().split('T')[0]; }
-
-function render() {
-  const met = klanten
-    .map(k => ({ ...k, dagen: dagenTot(k.laatste, k.freq), due: volgende(k.laatste, k.freq) }))
-    .sort((a, b) => a.dagen - b.dagen);
-
-  document.getElementById('num-urgent').textContent = met.filter(k=>status(k.dagen)==='urgent').length;
-  document.getElementById('num-soon').textContent   = met.filter(k=>status(k.dagen)==='soon').length;
-  document.getElementById('num-ok').textContent     = met.filter(k=>status(k.dagen)==='ok').length;
-  document.getElementById('header-sub').textContent = `${klanten.length} klanten · op volgorde`;
-
-  const kl = {urgent:'#e05c2a', soon:'#e8a020', ok:'#2a9d63'};
-  ['urgent','soon','ok'].forEach(f => {
-    const el = document.getElementById('stat-'+f);
-    if (actieveFilter===f) {
-      el.style.background=kl[f]; el.style.borderColor=kl[f];
-      el.querySelector('.num').style.color='white';
-      el.querySelector('.lbl').style.color='rgba(255,255,255,0.8)';
-    } else {
-      el.style.background='rgba(255,255,255,0.9)';
-      el.style.borderColor=f==='urgent'?'#f5c4b4':'rgba(26,111,168,0.12)';
-      el.querySelector('.num').style.color=kl[f];
-      el.querySelector('.lbl').style.color='#5a8aaa';
-    }
-  });
-  ['all','urgent','soon','ok'].forEach(f =>
-    document.getElementById('fbtn-'+f).classList.toggle('actief', actieveFilter===f)
-  );
-
-  const gefilterd = actieveFilter==='all' ? met : met.filter(k=>status(k.dagen)===actieveFilter);
-  const el = document.getElementById('lijst');
-  if (!gefilterd.length) {
-    el.innerHTML = '<div class="leeg"><div class="icon">🪟</div><p>Geen klanten in deze categorie</p></div>';
-    return;
-  }
-  el.innerHTML = gefilterd.map(k => {
-    const st = status(k.dagen);
-    const nOpen = actieveNotitie===k.id;
-    return `
-      <div class="kaart ${st}">
-        <div class="kaart-top">
-          <div class="dot ${st}"></div>
-          <div class="kaart-naam">
-            <strong>${k.naam}</strong>
-            ${k.plaats?`<span>📍 ${k.plaats}</span>`:''}
-          </div>
-          <div class="badge ${st}" onclick="openModal(${k.id})">
-            ${formatDue(k.due)}<small>${formatDatum(k.due)}</small>
-          </div>
-        </div>
-        <div class="kaart-freq">Elke ${FREQ_LABELS[k.freq]||k.freq+'wkn'} &nbsp;·&nbsp; <span style="color:#1a6fa8;cursor:pointer" onclick="openModal(${k.id})">✏ aanpassen</span></div>
-        ${nOpen?`<textarea class="kaart-notitie-input" onchange="slaNotitieOp(${k.id},this.value)" placeholder="Notitie...">${k.notitie||''}</textarea>`:(k.notitie?`<div class="kaart-notitie-tekst">📝 ${k.notitie}</div>`:'')}
-        <div class="kaart-acties">
-          <button class="btn-gedaan" onclick="openModal(${k.id})">✓ Gedaan</button>
-          <button class="btn-notitie" onclick="toggleNotitie(${k.id})">${nOpen?'✕':'📝'}</button>
-          <button class="btn-del" onclick="verwijder(${k.id})">🗑</button>
-        </div>
-      </div>`;
+// ─── 7 dagen banner ───────────────────────────────────────────────────────────
+function renderBanner7(){
+  const nu=new Date(); nu.setHours(0,0,0,0);
+  const over7=new Date(nu.getTime()+7*86400000);
+  const komend=klanten.filter(k=>{
+    const due=volgendeDatum(k.laatste,k.freq); due.setHours(0,0,0,0);
+    return due>=nu && due<=over7;
+  }).map(k=>({...k,due:volgendeDatum(k.laatste,k.freq)}))
+    .sort((a,b)=>a.due-b.due);
+  
+  const banner=document.getElementById('banner7');
+  const itemsEl=document.getElementById('banner7-items');
+  
+  if(!komend.length){banner.style.display='none';return;}
+  banner.style.display='block';
+  
+  const dagNamen=['zo','ma','di','wo','do','vr','za'];
+  itemsEl.innerHTML=komend.map(k=>{
+    const d=dgnTot(k.laatste,k.freq);
+    const due=k.due; due.setHours(0,0,0,0);
+    const dag=d===0?'vandaag':d===1?'morgen':dagNamen[due.getDay()]+' '+due.getDate()+' '+due.toLocaleDateString('nl-NL',{month:'short'});
+    const st=status(d);
+    const colors={urgent:'var(--urgent)',soon:'var(--soon)',ok:'var(--ok)'};
+    const bgs={urgent:'var(--urgent-s)',soon:'var(--soon-s)',ok:'var(--ok-s)'};
+    return`<div class="banner7-item">
+      <span class="banner7-naam">${k.naam}</span>
+      <span class="banner7-dag">${k.plaats||''}</span>
+      <span class="banner7-badge" style="background:${bgs[st]};color:${colors[st]}">${dag}</span>
+    </div>`;
   }).join('');
 }
 
-function setFilter(f) { actieveFilter=f; render(); }
-function toggleFilter(f) { actieveFilter=actieveFilter===f?'all':f; render(); }
+// ─── Render klanten ───────────────────────────────────────────────────────────
+function render(){renderKlanten();if(actieveNavTab==='week')renderWeek();if(actieveNavTab==='omzet')renderOmzet();}
 
-function toggleToevoegen() {
-  const b = document.getElementById('toevoegen-body');
-  b.classList.toggle('open');
-  document.getElementById('toggle-pijl').textContent = b.classList.contains('open')?'▴':'▾';
-}
+function renderKlanten(){
+  const zoekTerm=document.getElementById('zoek-input').value.toLowerCase().trim();
+  document.getElementById('zoek-clear').style.display=zoekTerm?'block':'none';
 
-async function voegToe() {
-  const naam = document.getElementById('nieuw-naam').value.trim();
-  const freq = parseFloat(document.getElementById('nieuw-freq').value);
-  const datum = document.getElementById('nieuw-datum').value;
-  if (!naam||!datum) { alert('Vul naam en datum in.'); return; }
-  slaOp(`"${naam}" toegevoegd`);
-  klanten.push({ id:Date.now(), naam, plaats:'', freq, laatste:datum, notitie:'' });
-  document.getElementById('nieuw-naam').value = '';
-  await syncOpslaan(); render();
-}
+  let verrijkt=klanten.map(k=>({...k,d:dgnTot(k.laatste,k.freq),due:volgendeDatum(k.laatste,k.freq)}));
 
-function toggleNotitie(id) { actieveNotitie=actieveNotitie===id?null:id; render(); }
+  // Filter
+  if(actieveFilter!=='all') verrijkt=verrijkt.filter(k=>status(k.d)===actieveFilter);
 
-async function slaNotitieOp(id, val) {
-  slaOp('Notitie gewijzigd');
-  klanten = klanten.map(k=>k.id===id?{...k,notitie:val}:k);
-  await syncOpslaan();
-}
+  // Zoek
+  if(zoekTerm) verrijkt=verrijkt.filter(k=>k.naam.toLowerCase().includes(zoekTerm)||k.plaats.toLowerCase().includes(zoekTerm));
 
-async function verwijder(id) {
-  if (!confirm('Klant verwijderen?')) return;
-  const k = klanten.find(k=>k.id===id);
-  slaOp(`"${k.naam}" verwijderd`);
-  klanten = klanten.filter(k=>k.id!==id);
-  await syncOpslaan(); render();
-}
+  // Sorteer
+  const sorteer=SORTEER_OPTIES[sorteerIdx];
+  if(sorteer==='datum') verrijkt.sort((a,b)=>a.d-b.d);
+  else if(sorteer==='plaats') verrijkt.sort((a,b)=>a.plaats.localeCompare(b.plaats,'nl')||a.d-b.d);
+  else if(sorteer==='naam') verrijkt.sort((a,b)=>a.naam.localeCompare(b.naam,'nl'));
 
-function openModal(id) {
-  modalId=id;
-  const k = klanten.find(k=>k.id===id);
-  document.getElementById('modal-naam').textContent=k.naam;
-  document.getElementById('modal-gedaan-datum').value=vandaag();
-  document.getElementById('modal-gedaan-datum').max=vandaag();
-  document.getElementById('modal-volgende-datum').value=volgende(k.laatste,k.freq).toISOString().split('T')[0];
-  setTab('gedaan'); updateVolgende();
-  document.getElementById('modal').classList.add('open');
-}
+  const alle=klanten.map(k=>({...k,d:dgnTot(k.laatste,k.freq)}));
+  document.getElementById('num-urgent').textContent=alle.filter(k=>status(k.d)==='urgent').length;
+  document.getElementById('num-soon').textContent=alle.filter(k=>status(k.d)==='soon').length;
+  document.getElementById('num-ok').textContent=alle.filter(k=>status(k.d)==='ok').length;
+  document.getElementById('header-totaal').textContent=klanten.length+' klanten';
 
-function modalBuitenKlik(e) { if (e.target===document.getElementById('modal')) sluitModal(); }
+  ['urgent','soon','ok'].forEach(f=>{
+    const el=document.getElementById('stat-'+f);
+    el.className='stat'+(actieveFilter===f?` aktief-${f}`:'');
+  });
+  ['all','urgent','soon','ok'].forEach(f=>document.getElementById('fbtn-'+f).classList.toggle('actief',actieveFilter===f));
+  document.getElementById('sort-btn').textContent=SORTEER_LABELS[SORTEER_OPTIES[sorteerIdx]];
 
-function setTab(tab) {
-  actieveTab=tab;
-  document.getElementById('tab-gedaan').classList.toggle('actief', tab==='gedaan');
-  document.getElementById('tab-aanpassen').classList.toggle('actief', tab==='aanpassen');
-  document.getElementById('sectie-gedaan').style.display=tab==='gedaan'?'block':'none';
-  document.getElementById('sectie-aanpassen').style.display=tab==='aanpassen'?'block':'none';
-  document.getElementById('modal-titel').textContent=tab==='gedaan'?'✓ Gedaan!':'✏ Datum aanpassen';
-}
+  const el=document.getElementById('lijst');
+  if(!verrijkt.length){el.innerHTML='<div class="leeg"><div class="icon">🔍</div><p>Geen resultaten</p></div>';return;}
 
-function updateVolgende() {
-  const k = klanten.find(k=>k.id===modalId);
-  if (!k) return;
-  const datum = document.getElementById('modal-gedaan-datum').value;
-  if (!datum) return;
-  document.getElementById('modal-volgende').textContent=formatLang(volgende(datum,k.freq));
-}
-
-function sluitModal() { document.getElementById('modal').classList.remove('open'); modalId=null; }
-
-async function bevestig() {
-  const k = klanten.find(k=>k.id===modalId);
-  if (!k) return;
-  if (actieveTab==='gedaan') {
-    const datum = document.getElementById('modal-gedaan-datum').value;
-    if (!datum) return;
-    slaOp(`"${k.naam}" gemarkeerd als gedaan`);
-    klanten = klanten.map(k=>k.id===modalId?{...k,laatste:datum}:k);
+  // Groepeer bij sorteren op plaats
+  if(sorteer==='plaats'&&!zoekTerm&&actieveFilter==='all'){
+    const groepen={};
+    verrijkt.forEach(k=>{const p=k.plaats||'Overig';if(!groepen[p])groepen[p]=[];groepen[p].push(k);});
+    el.innerHTML=Object.entries(groepen).map(([plaats,ks])=>`
+      <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);padding:10px 2px 5px;display:flex;align-items:center;gap:8px">
+        <span>📍 ${plaats}</span><span style="background:var(--surface2);border-radius:5px;padding:1px 6px;color:var(--text3)">${ks.length}</span>
+      </div>
+      ${ks.map((k,i)=>kaartHtml(k,i)).join('')}
+    `).join('');
   } else {
-    const gewenst = document.getElementById('modal-volgende-datum').value;
-    if (!gewenst) return;
-    slaOp(`Datum "${k.naam}" aangepast`);
-    klanten = klanten.map(k=>k.id===modalId?{...k,laatste:laaatsteVanVolgende(gewenst,k.freq)}:k);
+    el.innerHTML=verrijkt.map((k,i)=>kaartHtml(k,i)).join('');
   }
-  await syncOpslaan(); sluitModal(); render();
 }
 
-if ('serviceWorker' in navigator) {
-  const sw = `self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>caches.match(e.request))))`;
+function kaartHtml(k,i){
+  const st=status(k.d);const nOpen=actieveNotitie===k.id;
+  return `
+  <div class="klant-kaart ${st}" style="animation-delay:${i*0.03}s">
+    <div class="kaart-row1">
+      <div class="kaart-info">
+        <div class="kaart-naam-text">${k.naam}</div>
+        ${k.plaats?`<div class="kaart-plaats">📍 ${k.plaats}</div>`:''}
+      </div>
+      <div class="due-tag ${st}" onclick="openSheet(${k.id})">
+        ${fmtDue(k.due)}<small>${fmtDatum(k.due)}</small>
+      </div>
+    </div>
+    <div class="kaart-row2">
+      <div class="kaart-meta-left">
+        <span class="freq-tag">${FREQ_LABELS[k.freq]||k.freq+'wkn'}</span>
+        ${k.prijs?`<span class="prijs-tag">${fmtEuro(k.prijs)}</span>`:''}
+      </div>
+      <span class="kaart-link" onclick="openSheet(${k.id})">Aanpassen ›</span>
+    </div>
+    ${nOpen?`<textarea class="kaart-notitie-input" onchange="slaNotitieOp(${k.id},this.value)" placeholder="Notitie...">${k.notitie||''}</textarea>`:(k.notitie?`<div class="kaart-notitie">📝 ${k.notitie}</div>`:'')}
+    <div class="kaart-acties">
+      <button class="btn-done" onclick="openSheet(${k.id})">✓ Gedaan</button>
+      <button class="btn-note" onclick="toggleNotitie(${k.id})">${nOpen?'✕':'📝'}</button>
+      ${k.plaats?`<button class="btn-note" onclick="openMaps('${k.naam}','${k.plaats}')" title="Open in Maps">🗺️</button>`:''}
+      <button class="btn-trash" onclick="verwijder(${k.id})">🗑</button>
+    </div>
+  </div>`;
+}
+
+// ─── Week ─────────────────────────────────────────────────────────────────────
+function renderWeek(){
+  renderBanner7();
+  const vandaagD=new Date(); vandaagD.setHours(0,0,0,0);
+  const maandag=new Date(vandaagD);
+  maandag.setDate(vandaagD.getDate()-vandaagD.getDay()+1+weekOffset*7);
+
+  const dagen=['Ma','Di','Wo','Do','Vr','Za','Zo'];
+  const weekDagen=Array.from({length:7},(_,i)=>{const d=new Date(maandag);d.setDate(maandag.getDate()+i);return d;});
+
+  document.getElementById('week-sub').textContent=
+    weekDagen[0].toLocaleDateString('nl-NL',{day:'numeric',month:'short'})+' – '+
+    weekDagen[6].toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'});
+
+  if(weekOffset===0) document.getElementById('week-titel').textContent='Deze week';
+  else if(weekOffset===1) document.getElementById('week-titel').textContent='Volgende week';
+  else if(weekOffset===-1) document.getElementById('week-titel').textContent='Vorige week';
+  else document.getElementById('week-titel').textContent=(weekOffset>0?`+${weekOffset}`:`${weekOffset}`)+' weken';
+
+  // Klanten per dag
+  const klantPerDag={};
+  klanten.forEach(k=>{
+    const due=volgendeDatum(k.laatste,k.freq);due.setHours(0,0,0,0);
+    const key=due.toISOString().split('T')[0];
+    if(!klantPerDag[key])klantPerDag[key]=[];
+    klantPerDag[key].push(k);
+  });
+
+  document.getElementById('week-grid').innerHTML=weekDagen.map((d,i)=>{
+    const key=d.toISOString().split('T')[0];
+    const cnt=klantPerDag[key]?.length||0;
+    const isVandaag=d.getTime()===vandaagD.getTime();
+    return`<div class="week-dag ${cnt>0?'heeft-klanten':''} ${isVandaag?'vandaag':''}">
+      <div class="dag-naam">${dagen[i]}</div>
+      <div class="dag-num">${d.getDate()}</div>
+      ${cnt>0?`<div class="dag-count">${cnt}×</div>`:'<div class="dag-count" style="opacity:0">0</div>'}
+    </div>`;
+  }).join('');
+
+  // Klanten deze week
+  const weekKlanten=[];
+  weekDagen.forEach(d=>{
+    const key=d.toISOString().split('T')[0];
+    (klantPerDag[key]||[]).forEach(k=>weekKlanten.push({...k,dueDate:d}));
+  });
+
+  const el=document.getElementById('week-klanten');
+  if(!weekKlanten.length){el.innerHTML='<div class="week-leeg">Geen klanten deze week 🎉</div>';return;}
+  el.innerHTML=weekKlanten.map(k=>{
+    const d=dgnTot(k.laatste,k.freq);const st=status(d);
+    return`<div class="week-item">
+      <div class="week-item-info">
+        <div class="week-item-naam">${k.naam}</div>
+        <div class="week-item-datum">${k.dueDate.toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'})}${k.plaats?' · 📍'+k.plaats:''}</div>
+      </div>
+      <span class="week-item-badge ${st}">${fmtDue(k.due||volgendeDatum(k.laatste,k.freq))}</span>
+    </div>`;
+  }).join('');
+}
+
+function weekNav(d){weekOffset+=d;renderWeek();}
+
+// ─── Omzet ────────────────────────────────────────────────────────────────────
+function renderOmzet(){
+  const nu=new Date();
+  document.getElementById('omzet-maand-naam').textContent=nu.toLocaleDateString('nl-NL',{month:'long',year:'numeric'});
+
+  // Klanten die deze maand aan de beurt zijn
+  const eersteDag=new Date(nu.getFullYear(),nu.getMonth(),1);
+  const laatsteDag=new Date(nu.getFullYear(),nu.getMonth()+1,0);
+
+  const dezeMaraand=klanten.filter(k=>{
+    const due=volgendeDatum(k.laatste,k.freq);
+    return due>=eersteDag&&due<=laatsteDag;
+  });
+
+  const totaal=dezeMaraand.reduce((s,k)=>s+(k.prijs||0),0);
+  const metPrijs=dezeMaraand.filter(k=>k.prijs>0);
+  const gem=metPrijs.length?totaal/metPrijs.length:0;
+  const jaarTotaal=klanten.reduce((s,k)=>{
+    const beurtPerJaar=52/k.freq;
+    return s+(k.prijs||0)*beurtPerJaar;
+  },0);
+
+  document.getElementById('omzet-totaal').textContent=fmtEuro(totaal);
+  document.getElementById('omzet-klanten').textContent=dezeMaraand.length;
+  document.getElementById('omzet-gem').textContent=fmtEuro(gem);
+  document.getElementById('omzet-jaar').textContent='€'+Math.round(jaarTotaal);
+  document.getElementById('omzet-sub').textContent=`${dezeMaraand.length} klanten gepland deze maand`;
+
+  // Prijslijst
+  document.getElementById('prijs-lijst').innerHTML=klanten.map(k=>`
+    <div class="prijs-item">
+      <div class="prijs-item-naam">${k.naam}${k.plaats?` <span style="color:var(--text3);font-weight:400">· ${k.plaats}</span>`:''}</div>
+      <span class="prijs-euro">€</span>
+      <input type="number" class="prijs-input" value="${k.prijs||''}" placeholder="0" step="0.50" min="0"
+        onchange="updatePrijs(${k.id},this.value)" onblur="updatePrijs(${k.id},this.value)">
+    </div>
+  `).join('');
+}
+
+async function updatePrijs(id,val){
+  klanten=klanten.map(k=>k.id===id?{...k,prijs:parseFloat(val)||0}:k);
+  await syncOpslaan();
+  if(actieveNavTab==='omzet')renderOmzet();
+}
+
+// ─── Acties ───────────────────────────────────────────────────────────────────
+function setFilter(f){actieveFilter=f;renderKlanten();}
+function toggleFilter(f){actieveFilter=actieveFilter===f?'all':f;renderKlanten();}
+function cycleSorteer(){sorteerIdx=(sorteerIdx+1)%SORTEER_OPTIES.length;renderKlanten();}
+function zoekWis(){document.getElementById('zoek-input').value='';document.getElementById('zoek-clear').style.display='none';renderKlanten();}
+
+function toggleToevoegen(){
+  const b=document.getElementById('card-body');
+  const i=document.getElementById('toggle-icon');
+  b.classList.toggle('open');i.classList.toggle('open');
+}
+
+async function voegToe(){
+  const naam=document.getElementById('nieuw-naam').value.trim();
+  const freq=parseFloat(document.getElementById('nieuw-freq').value);
+  const vd=document.getElementById('nieuw-datum').value;
+  const plaats=document.getElementById('nieuw-plaats').value.trim();
+  const prijs=parseFloat(document.getElementById('nieuw-prijs').value)||0;
+  if(!naam||!vd){alert('Vul naam en volgende beurt in.');return;}
+  const laatste=laaatsteVanVolgende(vd,freq);
+  slaOp(`"${naam}" toegevoegd`);
+  klanten.push({id:Date.now(),naam,plaats,freq,laatste,notitie:'',prijs,historie:[]});
+  document.getElementById('nieuw-naam').value='';
+  document.getElementById('nieuw-datum').value='';
+  document.getElementById('nieuw-plaats').value='';
+  document.getElementById('nieuw-prijs').value='';
+  await syncOpslaan();render();
+}
+
+function toggleNotitie(id){actieveNotitie=actieveNotitie===id?null:id;renderKlanten();}
+async function slaNotitieOp(id,val){slaOp('Notitie gewijzigd');klanten=klanten.map(k=>k.id===id?{...k,notitie:val}:k);await syncOpslaan();}
+
+async function verwijder(id){
+  const k=klanten.find(k=>k.id===id);
+  const bevestigd=window.confirm?window.confirm(`"${k.naam}" verwijderen?`):true;
+  if(!bevestigd)return;
+  slaOp(`"${k.naam}" verwijderd`);
+  klanten=klanten.filter(k=>k.id!==id);
+  await syncOpslaan();render();
+}
+
+// ─── Sheet ────────────────────────────────────────────────────────────────────
+function openSheet(id){
+  sheetId=id;
+  const k=klanten.find(k=>k.id===id);
+  document.getElementById('sheet-sub').textContent=k.naam;
+  document.getElementById('datum-gedaan').value=vandaag();
+  document.getElementById('datum-gedaan').max=vandaag();
+  document.getElementById('datum-volgende').value=volgendeDatum(k.laatste,k.freq).toISOString().split('T')[0];document.getElementById('aanpas-freq').value=k.freq;
+  setSheetTab('gedaan');updateResultaat();
+  document.getElementById('overlay').classList.add('open');
+}
+
+function overlayKlik(e){if(e.target===document.getElementById('overlay'))sluitSheet();}
+function sluitSheet(){document.getElementById('overlay').classList.remove('open');sheetId=null;}
+
+function setSheetTab(tab){
+  actieveSheetTab=tab;
+  ['gedaan','aanpassen','hist'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('actief',t===tab);
+    document.getElementById('sec-'+t).style.display=t===tab?'block':'none';
+  });
+  document.getElementById('sheet-btns').style.display=tab==='hist'?'none':'flex';
+  document.getElementById('sheet-titel').textContent=tab==='gedaan'?'✓ Gedaan!':tab==='aanpassen'?'Datum aanpassen':'Geschiedenis';
+
+  if(tab==='hist'){
+    const k=klanten.find(k=>k.id===sheetId);
+    const hist=k?.historie||[];
+    const el=document.getElementById('hist-lijst');
+    if(!hist.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--text3);font-size:0.82rem;">Nog geen geschiedenis</div>';return;}
+    el.innerHTML=[...hist].reverse().map(d=>{
+      const datum=new Date(d);const nu=new Date();
+      const diff=Math.round((nu-datum)/86400000);
+      const ago=diff===0?'vandaag':diff===1?'gisteren':`${diff} dagen geleden`;
+      return`<div class="hist-item"><div class="hist-dot"></div><div class="hist-datum">${datum.toLocaleDateString('nl-NL',{day:'numeric',month:'long',year:'numeric'})}</div><div class="hist-ago">${ago}</div></div>`;
+    }).join('');
+  }
+}
+
+function updateResultaat(){
+  const k=klanten.find(k=>k.id===sheetId);if(!k)return;
+  const d=document.getElementById('datum-gedaan').value;if(!d)return;
+  document.getElementById('resultaat-datum').textContent=fmtLang(volgendeDatum(d,k.freq));
+}
+
+async function bevestig(){
+  const k=klanten.find(k=>k.id===sheetId);if(!k)return;
+  if(actieveSheetTab==='gedaan'){
+    const d=document.getElementById('datum-gedaan').value;if(!d)return;
+    slaOp(`"${k.naam}" gedaan`);
+    const hist=[...(k.historie||[]),d];
+    klanten=klanten.map(k=>k.id===sheetId?{...k,laatste:d,historie:hist}:k);
+  } else {
+    const v=document.getElementById('datum-volgende').value;const nieuwFreq=parseFloat(document.getElementById('aanpas-freq').value);if(!v)return;
+    slaOp(`Datum "${k.naam}" aangepast`);
+    klanten=klanten.map(k=>k.id===sheetId?{...k,freq:nieuwFreq,laatste:laaatsteVanVolgende(v,nieuwFreq)}:k);
+  }
+  await syncOpslaan();sluitSheet();render();
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+if('serviceWorker' in navigator){
+  const sw=`self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>caches.match(e.request))))`;
   navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
 }
-
-document.getElementById('nieuw-datum').value = vandaag();
-syncLaden().then(() => setInterval(syncLaden, 30000));
+document.getElementById('nieuw-datum').value=vandaag();
+syncLaden().then(()=>setInterval(syncLaden,30000));
 </script>
 </body>
 </html>
