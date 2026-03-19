@@ -9,50 +9,34 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Glazenwasser">
 <meta name="application-name" content="Glazenwasser Planner">
-<meta name="description" content="Klantplanner voor glazenwassers">
 <title>Glazenwasser Planner</title>
-
-<!-- PWA manifest inline via JS -->
 <script>
   const manifest = {
-    name: "Glazenwasser Planner",
-    short_name: "Glazenwasser",
+    name: "Glazenwasser Planner", short_name: "Glazenwasser",
     description: "Klantplanner voor glazenwassers",
-    start_url: ".",
-    display: "standalone",
-    background_color: "#eaf6ff",
-    theme_color: "#0d4f7c",
-    orientation: "portrait",
-    icons: [
-      {
-        src: "data:image/svg+xml;base64," + btoa(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='32' fill='#0d4f7c'/><text y='130' x='30' font-size='120'>🪣</text></svg>`),
-        sizes: "192x192",
-        type: "image/svg+xml"
-      }
-    ]
+    start_url: ".", display: "standalone",
+    background_color: "#eaf6ff", theme_color: "#0d4f7c", orientation: "portrait",
+    icons: [{
+      src: "data:image/svg+xml;base64," + btoa(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='32' fill='#0d4f7c'/><text y='130' x='30' font-size='120'>🪣</text></svg>`),
+      sizes: "192x192", type: "image/svg+xml"
+    }]
   };
   const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('link');
-  link.rel = 'manifest'; link.href = url;
-  document.head.appendChild(link);
+  document.head.appendChild(Object.assign(document.createElement('link'), {rel:'manifest', href: URL.createObjectURL(blob)}));
 </script>
-
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: linear-gradient(160deg,#dff0ff,#eaf6ff,#d4ecff); color: #0d2b3e; min-height: 100vh; min-height: 100dvh; overscroll-behavior: none; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: linear-gradient(160deg,#dff0ff,#eaf6ff,#d4ecff); color: #0d2b3e; min-height: 100vh; overscroll-behavior: none; }
 
   header { background: #0d4f7c; color: white; padding: 16px 18px; padding-top: max(16px, env(safe-area-inset-top)); display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 16px rgba(13,79,124,0.3); position: sticky; top: 0; z-index: 10; }
   header .logo { font-size: 1.6rem; }
   header .htxt h1 { font-weight: 700; font-size: 1.1rem; }
   header .htxt p { font-size: 0.72rem; opacity: 0.6; }
-
-  /* Installeer banner */
-  .install-banner { background: #1a6fa8; color: white; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-  .install-banner p { font-size: 0.82rem; line-height: 1.4; }
-  .install-banner p strong { display: block; font-size: 0.88rem; }
-  .btn-installeer { background: white; color: #1a6fa8; border: none; border-radius: 8px; padding: 8px 14px; font-weight: 700; font-size: 0.82rem; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0; }
-  .btn-sluit-banner { background: none; border: none; color: rgba(255,255,255,0.7); font-size: 1.2rem; cursor: pointer; padding: 4px; flex-shrink: 0; }
+  .sync-indicator { margin-left: auto; font-size: 0.72rem; opacity: 0.8; display: flex; align-items: center; gap: 5px; }
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #2a9d63; }
+  .sync-dot.bezig { background: #e8a020; animation: pulse 1s infinite; }
+  .sync-dot.fout { background: #e05c2a; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
   .container { max-width: 640px; margin: 0 auto; padding: 16px 12px 80px; }
 
@@ -72,7 +56,7 @@
 
   .filter-balk { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
   .filter-balk::-webkit-scrollbar { display: none; }
-  .filter-btn { padding: 6px 14px; border-radius: 20px; border: 1.5px solid rgba(26,111,168,0.2); background: white; font-size: 0.78rem; font-weight: 600; cursor: pointer; color: #5a8aaa; white-space: nowrap; font-family: inherit; flex-shrink: 0; user-select: none; }
+  .filter-btn { padding: 6px 14px; border-radius: 20px; border: 1.5px solid rgba(26,111,168,0.2); background: white; font-size: 0.78rem; font-weight: 600; cursor: pointer; color: #5a8aaa; white-space: nowrap; font-family: inherit; flex-shrink: 0; }
   .filter-btn.actief { background: #1a6fa8; color: white; border-color: #1a6fa8; }
 
   .lijst { display: flex; flex-direction: column; gap: 9px; }
@@ -104,14 +88,12 @@
   .leeg { text-align: center; padding: 48px 20px; color: #5a8aaa; }
   .leeg .icon { font-size: 2.5rem; margin-bottom: 10px; }
 
-  /* Undo balk */
   .undo-balk { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0d2b3e; color: white; border-radius: 16px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 20px rgba(13,43,62,0.4); z-index: 50; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap; max-width: 92vw; }
   .undo-balk.zichtbaar { transform: translateX(-50%) translateY(0); }
   .undo-balk span { font-size: 0.82rem; opacity: 0.85; overflow: hidden; text-overflow: ellipsis; }
   .undo-balk button { background: #1a6fa8; color: white; border: none; border-radius: 8px; padding: 7px 14px; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0; }
 
-  /* Modal */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,43,62,0.6); align-items: flex-end; justify-content: center; z-index: 100; padding: 0; }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,43,62,0.6); align-items: flex-end; justify-content: center; z-index: 100; }
   .modal-overlay.open { display: flex; }
   .modal { background: white; border-radius: 24px 24px 0 0; padding: 24px 20px 36px; width: 100%; max-width: 480px; box-shadow: 0 -8px 40px rgba(13,79,124,0.2); }
   .modal-greep { width: 40px; height: 4px; background: #e0e8f0; border-radius: 2px; margin: 0 auto 20px; }
@@ -139,14 +121,11 @@
     <h1>Glazenwasser Planner</h1>
     <p id="header-sub">Laden...</p>
   </div>
+  <div class="sync-indicator">
+    <div class="sync-dot bezig" id="sync-dot"></div>
+    <span id="sync-tekst">Sync...</span>
+  </div>
 </header>
-
-<!-- Installeer banner (verschijnt alleen als app nog niet geïnstalleerd is) -->
-<div class="install-banner" id="install-banner" style="display:none">
-  <p><strong>📲 Installeer als app</strong>Zet op je thuisscherm voor snelle toegang</p>
-  <button class="btn-installeer" id="btn-installeer" onclick="installeer()">Installeren</button>
-  <button class="btn-sluit-banner" onclick="sluitBanner()">✕</button>
-</div>
 
 <div class="container">
   <div class="stats">
@@ -197,13 +176,11 @@
   <div class="lijst" id="lijst"></div>
 </div>
 
-<!-- Undo balk -->
 <div class="undo-balk" id="undo-balk">
   <span id="undo-tekst">Wijziging opgeslagen</span>
   <button onclick="undo()">↩ Ongedaan maken</button>
 </div>
 
-<!-- Modal (slide-up sheet) -->
 <div class="modal-overlay" id="modal" onclick="modalBuitenKlik(event)">
   <div class="modal" id="modal-inhoud">
     <div class="modal-greep"></div>
@@ -222,7 +199,7 @@
       </div>
     </div>
     <div id="sectie-aanpassen" style="display:none">
-      <p class="hint">Stel de volgende beurt direct in op een datum naar keuze. De frequentie blijft hetzelfde.</p>
+      <p class="hint">Stel de volgende beurt direct in op een datum naar keuze.</p>
       <label>Volgende beurt instellen op</label>
       <input type="date" id="modal-volgende-datum">
     </div>
@@ -234,6 +211,9 @@
 </div>
 
 <script>
+// ── Config ────────────────────────────────────────────────────────────────────
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkLsVT_foj92RYOsHtWX8UVVbWfVKi01ajqPCRVikZfBhoruzmEg9y6YzHJ8G6JGQ-LA/exec';
+
 const FREQ_LABELS = {2:"2 wkn", 4.3:"1 mnd", 8.7:"2 mnd", 10.8:"2,5 mnd", 13:"3 mnd", 17.4:"4 mnd", 26:"6 mnd"};
 
 const STANDAARD = [
@@ -277,47 +257,70 @@ let actieveNotitie = null;
 let modalId = null;
 let actieveTab = 'gedaan';
 let undoTimer = null;
-let deferredPrompt = null;
+let syncBezig = false;
 
-// ── PWA installatie ──────────────────────────────────────────────────────────
+// ── Sync ──────────────────────────────────────────────────────────────────────
 
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  if (!localStorage.getItem('banner_gesloten')) {
-    document.getElementById('install-banner').style.display = 'flex';
+function setSyncStatus(status, tekst) {
+  const dot = document.getElementById('sync-dot');
+  const txt = document.getElementById('sync-tekst');
+  dot.className = 'sync-dot' + (status === 'bezig' ? ' bezig' : status === 'fout' ? ' fout' : '');
+  txt.textContent = tekst;
+}
+
+function rowsNaarKlanten(rows) {
+  return rows.filter(r => r.length >= 5 && r[0]).map(r => ({
+    id: Number(r[0]), naam: String(r[1]), plaats: String(r[2]),
+    freq: parseFloat(r[3]), laatste: String(r[4]), notitie: String(r[5] || '')
+  }));
+}
+
+function klantenNaarRows(kl) {
+  return kl.map(k => [k.id, k.naam, k.plaats, k.freq, k.laatste, k.notitie]);
+}
+
+async function syncLaden() {
+  setSyncStatus('bezig', 'Laden...');
+  try {
+    const resp = await fetch(SCRIPT_URL + '?t=' + Date.now());
+    const rows = await resp.json();
+    if (Array.isArray(rows) && rows.length > 0) {
+      klanten = rowsNaarKlanten(rows);
+      localStorage.setItem('gw_v5', JSON.stringify(klanten));
+      setSyncStatus('ok', 'Gesynchroniseerd');
+      render();
+      return true;
+    }
+  } catch(e) {
+    setSyncStatus('fout', 'Offline');
   }
-});
-
-window.addEventListener('appinstalled', () => {
-  document.getElementById('install-banner').style.display = 'none';
-  deferredPrompt = null;
-});
-
-async function installeer() {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const result = await deferredPrompt.userChoice;
-  deferredPrompt = null;
-  document.getElementById('install-banner').style.display = 'none';
+  return false;
 }
 
-function sluitBanner() {
-  document.getElementById('install-banner').style.display = 'none';
-  localStorage.setItem('banner_gesloten', '1');
+async function syncOpslaan() {
+  setSyncStatus('bezig', 'Opslaan...');
+  localStorage.setItem('gw_v5', JSON.stringify(klanten));
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify(klantenNaarRows(klanten))
+    });
+    setSyncStatus('ok', 'Opgeslagen ✓');
+  } catch(e) {
+    setSyncStatus('fout', 'Opslaan mislukt');
+  }
 }
 
-// ── Data ─────────────────────────────────────────────────────────────────────
+// ── Data ──────────────────────────────────────────────────────────────────────
 
-function opslaan() { localStorage.setItem('gw_v5', JSON.stringify(klanten)); }
-function laden() {
+function lokalLaden() {
   const s = localStorage.getItem('gw_v5');
   klanten = s ? JSON.parse(s) : JSON.parse(JSON.stringify(STANDAARD));
 }
 
 function slaOp(omschrijving) {
   vorigeKlanten = JSON.parse(JSON.stringify(klanten));
-  opslaan();
   toonUndo(omschrijving);
 }
 
@@ -335,13 +338,12 @@ function undo() {
   if (!vorigeKlanten) return;
   klanten = vorigeKlanten;
   vorigeKlanten = null;
-  opslaan();
   document.getElementById('undo-balk').classList.remove('zichtbaar');
   if (undoTimer) clearTimeout(undoTimer);
-  render();
+  syncOpslaan(); render();
 }
 
-// ── Datum helpers ─────────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function volgende(laatste, freq) {
   const d = new Date(laatste);
@@ -387,7 +389,7 @@ function render() {
   document.getElementById('num-urgent').textContent = met.filter(k => status(k.dagen)==='urgent').length;
   document.getElementById('num-soon').textContent   = met.filter(k => status(k.dagen)==='soon').length;
   document.getElementById('num-ok').textContent     = met.filter(k => status(k.dagen)==='ok').length;
-  document.getElementById('header-sub').textContent = `${klanten.length} klanten · op volgorde van volgende beurt`;
+  document.getElementById('header-sub').textContent = `${klanten.length} klanten · op volgorde`;
 
   const kl = {urgent:'#e05c2a', soon:'#e8a020', ok:'#2a9d63'};
   ['urgent','soon','ok'].forEach(f => {
@@ -403,19 +405,16 @@ function render() {
       el.querySelector('.lbl').style.color = '#5a8aaa';
     }
   });
-
   ['all','urgent','soon','ok'].forEach(f =>
     document.getElementById('fbtn-' + f).classList.toggle('actief', actieveFilter === f)
   );
 
   const gefilterd = actieveFilter === 'all' ? met : met.filter(k => status(k.dagen) === actieveFilter);
   const el = document.getElementById('lijst');
-
   if (!gefilterd.length) {
     el.innerHTML = '<div class="leeg"><div class="icon">🪟</div><p>Geen klanten in deze categorie</p></div>';
     return;
   }
-
   el.innerHTML = gefilterd.map(k => {
     const st = status(k.dagen);
     const nOpen = actieveNotitie === k.id;
@@ -428,143 +427,126 @@ function render() {
             ${k.plaats ? `<span>📍 ${k.plaats}</span>` : ''}
           </div>
           <div class="badge ${st}" onclick="openModal(${k.id})">
-            ${formatDue(k.due)}
-            <small>${formatDatum(k.due)}</small>
+            ${formatDue(k.due)}<small>${formatDatum(k.due)}</small>
           </div>
         </div>
-        <div class="kaart-freq">
-          Elke ${FREQ_LABELS[k.freq] || k.freq + 'wkn'}
-          &nbsp;·&nbsp;
-          <span style="color:#1a6fa8;cursor:pointer" onclick="openModal(${k.id})">✏ aanpassen</span>
-        </div>
-        ${nOpen
-          ? `<textarea class="kaart-notitie-input" onchange="slaNotitieOp(${k.id}, this.value)" placeholder="Notitie...">${k.notitie || ''}</textarea>`
-          : (k.notitie ? `<div class="kaart-notitie-tekst">📝 ${k.notitie}</div>` : '')
-        }
+        <div class="kaart-freq">Elke ${FREQ_LABELS[k.freq]||k.freq+'wkn'} &nbsp;·&nbsp; <span style="color:#1a6fa8;cursor:pointer" onclick="openModal(${k.id})">✏ aanpassen</span></div>
+        ${nOpen ? `<textarea class="kaart-notitie-input" onchange="slaNotitieOp(${k.id},this.value)" placeholder="Notitie...">${k.notitie||''}</textarea>` : (k.notitie ? `<div class="kaart-notitie-tekst">📝 ${k.notitie}</div>` : '')}
         <div class="kaart-acties">
           <button class="btn-gedaan" onclick="openModal(${k.id})">✓ Gedaan</button>
-          <button class="btn-notitie" onclick="toggleNotitie(${k.id})">${nOpen ? '✕' : '📝'}</button>
+          <button class="btn-notitie" onclick="toggleNotitie(${k.id})">${nOpen?'✕':'📝'}</button>
           <button class="btn-del" onclick="verwijder(${k.id})">🗑</button>
         </div>
-      </div>
-    `;
+      </div>`;
   }).join('');
 }
 
 // ── Acties ────────────────────────────────────────────────────────────────────
 
 function setFilter(f) { actieveFilter = f; render(); }
-function toggleFilter(f) { actieveFilter = actieveFilter === f ? 'all' : f; render(); }
+function toggleFilter(f) { actieveFilter = actieveFilter===f?'all':f; render(); }
 
 function toggleToevoegen() {
   const b = document.getElementById('toevoegen-body');
-  const p = document.getElementById('toggle-pijl');
   b.classList.toggle('open');
-  p.textContent = b.classList.contains('open') ? '▴' : '▾';
+  document.getElementById('toggle-pijl').textContent = b.classList.contains('open')?'▴':'▾';
 }
 
-function voegToe() {
+async function voegToe() {
   const naam = document.getElementById('nieuw-naam').value.trim();
   const freq = parseFloat(document.getElementById('nieuw-freq').value);
   const datum = document.getElementById('nieuw-datum').value;
-  if (!naam || !datum) { alert('Vul naam en datum in.'); return; }
+  if (!naam||!datum) { alert('Vul naam en datum in.'); return; }
   slaOp(`"${naam}" toegevoegd`);
-  klanten.push({ id: Date.now(), naam, plaats: '', freq, laatste: datum, notitie: '' });
-  opslaan();
+  klanten.push({ id: Date.now(), naam, plaats:'', freq, laatste: datum, notitie:'' });
   document.getElementById('nieuw-naam').value = '';
-  render();
+  await syncOpslaan(); render();
 }
 
-function toggleNotitie(id) { actieveNotitie = actieveNotitie === id ? null : id; render(); }
+function toggleNotitie(id) { actieveNotitie = actieveNotitie===id?null:id; render(); }
 
-function slaNotitieOp(id, val) {
+async function slaNotitieOp(id, val) {
   slaOp('Notitie gewijzigd');
-  klanten = klanten.map(k => k.id === id ? { ...k, notitie: val } : k);
-  opslaan();
+  klanten = klanten.map(k => k.id===id?{...k,notitie:val}:k);
+  await syncOpslaan();
 }
 
-function verwijder(id) {
+async function verwijder(id) {
   if (!confirm('Klant verwijderen?')) return;
-  const k = klanten.find(k => k.id === id);
+  const k = klanten.find(k=>k.id===id);
   slaOp(`"${k.naam}" verwijderd`);
-  klanten = klanten.filter(k => k.id !== id);
-  opslaan(); render();
+  klanten = klanten.filter(k=>k.id!==id);
+  await syncOpslaan(); render();
 }
 
 function openModal(id) {
   modalId = id;
-  const k = klanten.find(k => k.id === id);
+  const k = klanten.find(k=>k.id===id);
   document.getElementById('modal-naam').textContent = k.naam;
   document.getElementById('modal-gedaan-datum').value = vandaag();
   document.getElementById('modal-gedaan-datum').max = vandaag();
-  document.getElementById('modal-volgende-datum').value = volgende(k.laatste, k.freq).toISOString().split('T')[0];
-  setTab('gedaan');
-  updateVolgende();
+  document.getElementById('modal-volgende-datum').value = volgende(k.laatste,k.freq).toISOString().split('T')[0];
+  setTab('gedaan'); updateVolgende();
   document.getElementById('modal').classList.add('open');
 }
 
-function modalBuitenKlik(e) {
-  if (e.target === document.getElementById('modal')) sluitModal();
-}
+function modalBuitenKlik(e) { if (e.target===document.getElementById('modal')) sluitModal(); }
 
 function setTab(tab) {
   actieveTab = tab;
-  document.getElementById('tab-gedaan').classList.toggle('actief', tab === 'gedaan');
-  document.getElementById('tab-aanpassen').classList.toggle('actief', tab === 'aanpassen');
-  document.getElementById('sectie-gedaan').style.display = tab === 'gedaan' ? 'block' : 'none';
-  document.getElementById('sectie-aanpassen').style.display = tab === 'aanpassen' ? 'block' : 'none';
-  document.getElementById('modal-titel').textContent = tab === 'gedaan' ? '✓ Gedaan!' : '✏ Datum aanpassen';
+  document.getElementById('tab-gedaan').classList.toggle('actief', tab==='gedaan');
+  document.getElementById('tab-aanpassen').classList.toggle('actief', tab==='aanpassen');
+  document.getElementById('sectie-gedaan').style.display = tab==='gedaan'?'block':'none';
+  document.getElementById('sectie-aanpassen').style.display = tab==='aanpassen'?'block':'none';
+  document.getElementById('modal-titel').textContent = tab==='gedaan'?'✓ Gedaan!':'✏ Datum aanpassen';
 }
 
 function updateVolgende() {
-  const k = klanten.find(k => k.id === modalId);
+  const k = klanten.find(k=>k.id===modalId);
   if (!k) return;
   const datum = document.getElementById('modal-gedaan-datum').value;
   if (!datum) return;
-  document.getElementById('modal-volgende').textContent = formatLang(volgende(datum, k.freq));
+  document.getElementById('modal-volgende').textContent = formatLang(volgende(datum,k.freq));
 }
 
-function sluitModal() { document.getElementById('modal').classList.remove('open'); modalId = null; }
+function sluitModal() { document.getElementById('modal').classList.remove('open'); modalId=null; }
 
-function bevestig() {
-  const k = klanten.find(k => k.id === modalId);
+async function bevestig() {
+  const k = klanten.find(k=>k.id===modalId);
   if (!k) return;
-  if (actieveTab === 'gedaan') {
+  if (actieveTab==='gedaan') {
     const datum = document.getElementById('modal-gedaan-datum').value;
     if (!datum) return;
     slaOp(`"${k.naam}" gemarkeerd als gedaan`);
-    klanten = klanten.map(k => k.id === modalId ? { ...k, laatste: datum } : k);
+    klanten = klanten.map(k=>k.id===modalId?{...k,laatste:datum}:k);
   } else {
     const gewenst = document.getElementById('modal-volgende-datum').value;
     if (!gewenst) return;
     slaOp(`Datum "${k.naam}" aangepast`);
-    klanten = klanten.map(k => k.id === modalId ? { ...k, laatste: laaatsteVanVolgende(gewenst, k.freq) } : k);
+    klanten = klanten.map(k=>k.id===modalId?{...k,laatste:laaatsteVanVolgende(gewenst,k.freq)}:k);
   }
-  opslaan(); sluitModal(); render();
-}
-
-// ── Service Worker (offline werking) ─────────────────────────────────────────
-if ('serviceWorker' in navigator) {
-  const swCode = `
-    const CACHE = 'gw-v1';
-    self.addEventListener('install', e => {
-      self.skipWaiting();
-    });
-    self.addEventListener('fetch', e => {
-      e.respondWith(
-        caches.match(e.request).then(r => r || fetch(e.request).catch(() => new Response('Offline', {status: 503})))
-      );
-    });
-  `;
-  const swBlob = new Blob([swCode], {type: 'application/javascript'});
-  const swUrl = URL.createObjectURL(swBlob);
-  navigator.serviceWorker.register(swUrl).catch(() => {});
+  await syncOpslaan(); sluitModal(); render();
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
+
+if ('serviceWorker' in navigator) {
+  const sw = `self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>caches.match(e.request))))`;
+  navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
+}
+
 document.getElementById('nieuw-datum').value = vandaag();
-laden();
+lokalLaden();
 render();
+
+// Laad vanuit Google Sheets, als dat mislukt gebruik lokale data
+syncLaden().then(ok => {
+  if (!ok) {
+    setSyncStatus('fout', 'Offline modus');
+  }
+  // Daarna elke 30 seconden verversen
+  setInterval(syncLaden, 30000);
+});
 </script>
 </body>
 </html>
