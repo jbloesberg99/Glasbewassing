@@ -10,7 +10,6 @@
 <meta name="apple-mobile-web-app-title" content="Purgato">
 <title>Purgato Planner</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="manifest" href="/Glasbewassing/manifest.json">
 <script>
   const t=localStorage.getItem('gw_theme')||'light';
   document.documentElement.setAttribute('data-theme',t);
@@ -39,8 +38,6 @@
   --shadow:0 1px 3px rgba(0,0,0,0.4),0 4px 12px rgba(0,0,0,0.3);
   --shadow2:0 8px 32px rgba(0,0,0,0.6);
 }
-
-/* ── Reset ── */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overscroll-behavior:none;transition:background 0.25s,color 0.25s;font-size:14px;}
 
@@ -219,6 +216,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);height:56
 .peuro{font-size:0.72rem;color:var(--text3);}
 .pinput{width:72px;background:var(--surface2);border:1px solid var(--border2);border-radius:7px;padding:5px 8px;font-family:inherit;font-size:0.82rem;font-weight:700;color:var(--text);outline:none;text-align:right;}
 .pinput:focus{border-color:var(--accent);}
+.omzet-sub-lbl{font-size:0.7rem;color:var(--text3);margin-top:2px;margin-bottom:12px;}
 .btn-save-omzet{width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:13px;font-family:inherit;font-size:0.9rem;font-weight:800;cursor:pointer;transition:all 0.15s;margin-top:4px;}
 .btn-save-omzet:active{background:var(--accent2);}
 
@@ -364,12 +362,11 @@ header{background:var(--surface);border-bottom:1px solid var(--border);height:56
   <!-- OMZET -->
   <div class="tab" id="tab-omzet">
     <div class="omzet-top">
-      <div class="omzet-lbl">Maandomzet</div>
-      <div class="omzet-maand" id="omzet-maand"></div>
+      <div class="omzet-lbl">Jaaroverzicht</div>
       <div class="omzet-bedrag" id="omzet-bedrag">€ 0,00</div>
+      <div class="omzet-sub-lbl">verwachte jaaromzet</div>
       <div class="omzet-stats">
-        <div class="os"><div class="os-n" id="os-klanten" style="color:var(--accent)">0</div><div class="os-l">Klanten</div></div>
-        <div class="os"><div class="os-n" id="os-gem" style="color:var(--soon)">€0</div><div class="os-l">Gemiddeld</div></div>
+        <div class="os"><div class="os-n" id="os-klanten" style="color:var(--accent)">0</div><div class="os-l">Totaal klanten</div></div>
         <div class="os"><div class="os-n" id="os-jaar" style="color:var(--ok)">€0</div><div class="os-l">Per jaar</div></div>
       </div>
     </div>
@@ -425,49 +422,90 @@ header{background:var(--surface);border-bottom:1px solid var(--border);height:56
   </div>
 </div>
 
-<script>
-const SCRIPT_URL='https://script.google.com/macros/s/AKfycbwkLsVT_foj92RYOsHtWX8UVVbWfVKi01ajqPCRVikZfBhoruzmEg9y6YzHJ8G6JGQ-LA/exec';
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBDc1KYZCCaDEZZuR273Trmo68ra0uyeYQ",
+  authDomain: "purgato-glasbewassing.firebaseapp.com",
+  projectId: "purgato-glasbewassing",
+  storageBucket: "purgato-glasbewassing.firebasestorage.app",
+  messagingSenderId: "316969127191",
+  appId: "1:316969127191:web:6b3bf4fbb1c9076569bb52"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const klantenCol = collection(db, 'klanten');
+
 const FL={2:"2 wkn",4.3:"1 mnd",8.7:"2 mnd",10.8:"2,5 mnd",13:"3 mnd",17.4:"4 mnd",26:"6 mnd"};
 const SO=['datum','plaats','naam'];const SL={datum:'📅 Datum',plaats:'📍 Plaats',naam:'🔤 Naam'};
 
 let kl=[],vK=null,actF='all',actN=null,sId=null,actST='gedaan',uT=null,si=0,wo=0,navTab='klanten';
 
-// Theme
+// ── Theme ──
 function updateTheme(){const d=document.documentElement.getAttribute('data-theme')==='dark';document.getElementById('th-ic').textContent=d?'🌙':'☀️';document.getElementById('sw-track').classList.toggle('on',d);}
-function toggleTheme(){const h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('gw_theme',n);updateTheme();}
+window.toggleTheme=function(){const h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('gw_theme',n);updateTheme();}
 updateTheme();
 
-// Nav
-function gaNaar(tab){
+// ── Nav ──
+window.gaNaar=function(tab){
   navTab=tab;
   ['klanten','week','omzet'].forEach(t=>{document.getElementById('nav-'+t).classList.toggle('on',t===tab);document.getElementById('tab-'+t).classList.toggle('on',t===tab);});
   if(tab==='week')renderWeek();if(tab==='omzet')renderOmzet();
 }
 
-// Sync
+// ── Sync status ──
 function syncS(s){document.getElementById('sync-dot').className='sync-dot'+(s==='bezig'?' bezig':s==='fout'?' fout':'');}
 
-function toK(rows){return rows.filter(r=>r.length>=5&&r[0]).map(r=>({id:Number(r[0]),naam:String(r[1]),plaats:String(r[2]),freq:parseFloat(r[3]),laatste:String(r[4]).substring(0,10),notitie:String(r[5]||''),prijs:parseFloat(r[6])||0,historie:r[7]?String(r[7]).split(',').filter(Boolean):[] }));}
-function toR(k){return k.map(x=>[x.id,x.naam,x.plaats,x.freq,x.laatste,x.notitie,x.prijs||0,(x.historie||[]).join(',')]);}
-
-async function syncLoad(){
+// ── Firebase: opslaan (één klant) ──
+async function fbSave(k){
   syncS('bezig');
-  try{const r=await fetch(SCRIPT_URL+'?t='+Date.now());const rows=await r.json();
-    if(Array.isArray(rows)&&rows.length>0){kl=toK(rows);localStorage.setItem('gw_v6',JSON.stringify(kl));syncS('ok');render();return true;}
-  }catch(e){syncS('fout');const s=localStorage.getItem('gw_v6')||localStorage.getItem('gw_v5');
-    if(s){try{const p=JSON.parse(s);kl=Array.isArray(p[0])?toK(p):p.map(x=>({...x,prijs:x.prijs||0,historie:x.historie||[]}));render();}catch(e2){}}
-  }return false;
+  try{
+    await setDoc(doc(db,'klanten',String(k.id)),{
+      naam:k.naam,plaats:k.plaats||'',freq:k.freq,
+      laatste:k.laatste,notitie:k.notitie||'',
+      prijs:k.prijs||0,historie:k.historie||[]
+    });
+    syncS('ok');
+  }catch(e){console.error(e);syncS('fout');}
 }
 
-async function syncSave(){
-  syncS('bezig');localStorage.setItem('gw_v6',JSON.stringify(kl));
-  try{await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(toR(kl))});syncS('ok');render();}
-  catch(e){syncS('fout');}
+// ── Firebase: verwijderen ──
+async function fbDelete(id){
+  syncS('bezig');
+  try{await deleteDoc(doc(db,'klanten',String(id)));syncS('ok');}
+  catch(e){console.error(e);syncS('fout');}
 }
 
-// Helpers
-function vD(l,f){const d=new Date(l);d.setTime(d.getTime()+f*7*86400000);return d;}
-function lVV(v,f){const d=new Date(v);d.setTime(d.getTime()-f*7*86400000);return d.toISOString().split('T')[0];}
+// ── Firebase: alles opslaan (voor bulk, bijv. omzet) ──
+async function fbSaveAll(){
+  syncS('bezig');
+  try{
+    await Promise.all(kl.map(k=>setDoc(doc(db,'klanten',String(k.id)),{
+      naam:k.naam,plaats:k.plaats||'',freq:k.freq,
+      laatste:k.laatste,notitie:k.notitie||'',
+      prijs:k.prijs||0,historie:k.historie||[]
+    })));
+    syncS('ok');
+  }catch(e){console.error(e);syncS('fout');}
+}
+
+// ── Firebase: realtime listener ──
+function startListener(){
+  onSnapshot(klantenCol,(snap)=>{
+    const nieuw=snap.docs.map(d=>({id:Number(d.id),...d.data(),prijs:d.data().prijs||0,historie:d.data().historie||[]}));
+    // Alleen updaten als er echt een verschil is (voorkom render loops)
+    if(JSON.stringify(nieuw)!==JSON.stringify(kl)){kl=nieuw;render();}
+    syncS('ok');
+  },(err)=>{console.error(err);syncS('fout');});
+}
+
+// ── Helpers ──
+function vD(l,f){const[y,m,d]=l.split('-').map(Number);const dt=new Date(y,m-1,d);dt.setDate(dt.getDate()+Math.round(f*7));return dt;}
+function lVV(v,f){const[y,m,d]=v.split('-').map(Number);const dt=new Date(y,m-1,d);dt.setDate(dt.getDate()-Math.round(f*7));return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;}
 function dT(l,f){const due=vD(l,f),t=new Date();t.setHours(0,0,0,0);due.setHours(0,0,0,0);return Math.round((due-t)/86400000);}
 function st(d){return d<=0?'urgent':d<=10?'soon':'ok';}
 function fD(due){const t=new Date();t.setHours(0,0,0,0);const d=new Date(due);d.setHours(0,0,0,0);const df=Math.round((d-t)/86400000);if(df<0)return`${Math.abs(df)}d te laat`;if(df===0)return'Vandaag!';if(df===1)return'Morgen';if(df<7)return`Over ${df}d`;return d.toLocaleDateString('nl-NL',{day:'numeric',month:'short'});}
@@ -476,15 +514,15 @@ function fL(d){return new Date(d).toLocaleDateString('nl-NL',{weekday:'long',day
 function fE(n){return'€ '+Number(n||0).toFixed(2).replace('.',',');}
 function vnd(){return new Date().toISOString().split('T')[0];}
 
-// Undo
+// ── Undo ──
 function slaOp(txt){vK=JSON.parse(JSON.stringify(kl));document.getElementById('undo-t').textContent=txt;document.getElementById('undo').classList.add('show');if(uT)clearTimeout(uT);uT=setTimeout(()=>{document.getElementById('undo').classList.remove('show');vK=null;},6000);}
-function undo(){if(!vK)return;kl=vK;vK=null;document.getElementById('undo').classList.remove('show');if(uT)clearTimeout(uT);syncSave();render();}
+window.undo=async function(){if(!vK)return;const herstel=vK;vK=null;document.getElementById('undo').classList.remove('show');if(uT)clearTimeout(uT);kl=herstel;await fbSaveAll();render();}
 
-// WhatsApp & Maps
-function deelWhatsApp(){window.open('https://wa.me/?text='+encodeURIComponent('Purgato Planner app: https://jbloesberg99.github.io/Glasbewassing'),'_blank');}
-function openMaps(naam,plaats){window.open('https://maps.google.com/?q='+encodeURIComponent(naam+' '+plaats),'_blank');}
+// ── WhatsApp & Maps ──
+window.deelWhatsApp=function(){window.open('https://wa.me/?text='+encodeURIComponent('Purgato Planner app: https://jbloesberg99.github.io/Glasbewassing'),'_blank');}
+window.openMaps=function(naam,plaats){window.open('https://maps.google.com/?q='+encodeURIComponent(naam+' '+plaats),'_blank');}
 
-// Render
+// ── Render ──
 function render(){renderK();if(navTab==='week')renderWeek();if(navTab==='omzet')renderOmzet();}
 
 function renderK(){
@@ -495,17 +533,14 @@ function renderK(){
   if(z)v=v.filter(x=>x.naam.toLowerCase().includes(z)||x.plaats.toLowerCase().includes(z));
   const s=SO[si];
   if(s==='datum')v.sort((a,b)=>a.d-b.d);else if(s==='plaats')v.sort((a,b)=>a.plaats.localeCompare(b.plaats,'nl')||a.d-b.d);else v.sort((a,b)=>a.naam.localeCompare(b.naam,'nl'));
-
   const alle=kl.map(x=>({...x,d:dT(x.laatste,x.freq)}));
   ['urgent','soon','ok'].forEach(f=>{document.getElementById('sn-'+f).textContent=alle.filter(x=>st(x.d)===f).length;});
   document.getElementById('h-totaal').textContent=kl.length;
   ['urgent','soon','ok'].forEach(f=>{const el=document.getElementById('sc-'+f);el.className='stat-card'+(actF===f?` s-${f}`:'');});
   ['all','urgent','soon','ok'].forEach(f=>document.getElementById('f-'+f).classList.toggle('on',actF===f));
   document.getElementById('sort-btn').textContent=SL[SO[si]];
-
   const el=document.getElementById('list');
   if(!v.length){el.innerHTML='<div class="leeg"><div class="leeg-ic">🔍</div><p>Geen resultaten</p></div>';return;}
-
   if(s==='plaats'&&!z&&actF==='all'){
     const gr={};v.forEach(x=>{const p=x.plaats||'Overig';if(!gr[p])gr[p]=[];gr[p].push(x);});
     el.innerHTML=Object.entries(gr).map(([p,xs])=>`<div class="groep-lbl">📍 ${p}<span class="groep-n">${xs.length}</span></div>${xs.map((x,i)=>kHtml(x,i)).join('')}`).join('');
@@ -533,7 +568,7 @@ function kHtml(x,i){
   </div>`;
 }
 
-// Week
+// ── Week ──
 function renderBanner7(){
   const nu=new Date();nu.setHours(0,0,0,0);const over7=new Date(nu.getTime()+7*86400000);
   const kom=kl.filter(x=>{const d=vD(x.laatste,x.freq);d.setHours(0,0,0,0);return d>=nu&&d<=over7;}).map(x=>({...x,due:vD(x.laatste,x.freq)})).sort((a,b)=>a.due-b.due);
@@ -562,55 +597,68 @@ function renderWeek(){
   if(!wk.length){el.innerHTML='<div class="week-leeg">Geen klanten deze week 🎉</div>';return;}
   el.innerHTML=wk.map(x=>{const d=dT(x.laatste,x.freq);const s=st(d);return`<div class="witem"><div class="wi-info"><div class="wi-naam">${x.naam}</div><div class="wi-datum">${x.dueDate.toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'})}${x.plaats?' · 📍'+x.plaats:''}</div></div><span class="wi-badge ${s}">${fD(vD(x.laatste,x.freq))}</span></div>`;}).join('');
 }
-function weekNav(d){wo+=d;renderWeek();}
+window.weekNav=function(d){wo+=d;renderWeek();}
 
-// Omzet
+// ── Omzet ──
 function renderOmzet(){
-  const nu=new Date();document.getElementById('omzet-maand').textContent=nu.toLocaleDateString('nl-NL',{month:'long',year:'numeric'});
-  const e=new Date(nu.getFullYear(),nu.getMonth(),1),l=new Date(nu.getFullYear(),nu.getMonth()+1,0);
-  const dm=kl.filter(x=>{const d=vD(x.laatste,x.freq);return d>=e&&d<=l;});
-  const tot=dm.reduce((s,x)=>s+(x.prijs||0),0);const mp=dm.filter(x=>x.prijs>0);
-  const gem=mp.length?tot/mp.length:0;const jaar=kl.reduce((s,x)=>s+(x.prijs||0)*(52/x.freq),0);
-  document.getElementById('omzet-bedrag').textContent=fE(tot);
-  document.getElementById('os-klanten').textContent=dm.length;
-  document.getElementById('os-gem').textContent=fE(gem);
+  const jaar=kl.reduce((s,x)=>s+(x.prijs||0)*(52/x.freq),0);
+  document.getElementById('omzet-bedrag').textContent=fE(jaar);
+  document.getElementById('os-klanten').textContent=kl.length;
   document.getElementById('os-jaar').textContent='€'+Math.round(jaar);
-  document.getElementById('prijs-list').innerHTML=kl.map(x=>`<div class="pitem" data-id="${x.id}"><div class="pnaam">${x.naam}${x.plaats?` <span style="color:var(--text3);font-weight:400">· ${x.plaats}</span>`:''}</div><span class="peuro">€</span><input type="number" class="pinput" value="${x.prijs||''}" placeholder="0" step="0.50" min="0" onchange="updPrijs(${x.id},this.value)"></div>`).join('');
+  document.getElementById('prijs-list').innerHTML=kl.map(x=>`<div class="pitem" data-id="${x.id}"><div class="pnaam">${x.naam}${x.plaats?` <span style="color:var(--text3);font-weight:400">· ${x.plaats}</span>`:''}</div><span class="peuro">€</span><input type="number" class="pinput" value="${x.prijs||''}" placeholder="0" step="0.50" min="0"></div>`).join('');
 }
 
-async function updPrijs(id,val){kl=kl.map(x=>x.id===id?{...x,prijs:parseFloat(val)||0}:x);if(navTab==='omzet')renderOmzet();}
-
-async function slaOmzetOp(){
-  document.querySelectorAll('.pitem').forEach(el=>{const id=parseInt(el.getAttribute('data-id'));const val=el.querySelector('.pinput').value;if(id)kl=kl.map(x=>x.id===id?{...x,prijs:parseFloat(val)||0}:x);});
-  await syncSave();gaNaar('klanten');
+window.slaOmzetOp=async function(){
+  document.querySelectorAll('.pitem').forEach(el=>{
+    const id=parseInt(el.getAttribute('data-id'));
+    const val=parseFloat(el.querySelector('.pinput').value)||0;
+    if(id) kl=kl.map(x=>x.id===id?{...x,prijs:val}:x);
+  });
+  await fbSaveAll();
+  gaNaar('klanten');
 }
 
-// Acties
-function setF(f){actF=f;renderK();}
-function toggleF(f){actF=actF===f?'all':f;renderK();}
-function cycleSorteer(){si=(si+1)%SO.length;renderK();}
-function zoekWis(){document.getElementById('zoek-in').value='';document.getElementById('zoek-x').style.display='none';renderK();}
-function toggleAdd(){const b=document.getElementById('add-body'),i=document.getElementById('add-ic');b.classList.toggle('open');i.classList.toggle('open');}
+// ── Acties ──
+window.setF=function(f){actF=f;renderK();}
+window.toggleF=function(f){actF=actF===f?'all':f;renderK();}
+window.cycleSorteer=function(){si=(si+1)%SO.length;renderK();}
+window.zoekWis=function(){document.getElementById('zoek-in').value='';document.getElementById('zoek-x').style.display='none';renderK();}
+window.toggleAdd=function(){const b=document.getElementById('add-body'),i=document.getElementById('add-ic');b.classList.toggle('open');i.classList.toggle('open');}
 
-async function voegToe(){
+window.voegToe=async function(){
   const naam=document.getElementById('n-naam').value.trim();
   const freq=parseFloat(document.getElementById('n-freq').value);
   const vd=document.getElementById('n-datum').value;
   const plaats=document.getElementById('n-plaats').value.trim();
   const prijs=parseFloat(document.getElementById('n-prijs').value)||0;
   if(!naam||!vd){alert('Vul naam en volgende beurt in.');return;}
+  const nieuw={id:Date.now(),naam,plaats,freq,laatste:lVV(vd,freq),notitie:'',prijs,historie:[]};
   slaOp(`"${naam}" toegevoegd`);
-  kl.push({id:Date.now(),naam,plaats,freq,laatste:lVV(vd,freq),notitie:'',prijs,historie:[]});
+  kl.push(nieuw);
   document.getElementById('n-naam').value='';document.getElementById('n-datum').value='';
   document.getElementById('n-plaats').value='';document.getElementById('n-prijs').value='';
-  await syncSave();render();
+  renderK();
+  await fbSave(nieuw);
 }
 
-function togN(id){actN=actN===id?null:id;renderK();}
-async function slaNotitie(id,val){slaOp('Notitie gewijzigd');kl=kl.map(x=>x.id===id?{...x,notitie:val}:x);await syncSave();}
-async function del(id){const x=kl.find(x=>x.id===id);if(window.confirm&&!window.confirm(`"${x.naam}" verwijderen?`))return;slaOp(`"${x.naam}" verwijderd`);kl=kl.filter(x=>x.id!==id);await syncSave();render();}
+window.togN=function(id){actN=actN===id?null:id;renderK();}
 
-function openSheet(id){
+window.slaNotitie=async function(id,val){
+  slaOp('Notitie gewijzigd');
+  kl=kl.map(x=>x.id===id?{...x,notitie:val}:x);
+  await fbSave(kl.find(x=>x.id===id));
+}
+
+window.del=async function(id){
+  const x=kl.find(x=>x.id===id);
+  if(!confirm(`"${x.naam}" verwijderen?`))return;
+  slaOp(`"${x.naam}" verwijderd`);
+  kl=kl.filter(x=>x.id!==id);
+  renderK();
+  await fbDelete(id);
+}
+
+window.openSheet=function(id){
   sId=id;const x=kl.find(x=>x.id===id);
   document.getElementById('s-sub').textContent=x.naam;
   document.getElementById('s-datum-gedaan').value=vnd();document.getElementById('s-datum-gedaan').max=vnd();
@@ -618,10 +666,10 @@ function openSheet(id){
   document.getElementById('s-freq').value=x.freq;document.getElementById('s-naam').value=x.naam;document.getElementById('s-plaats').value=x.plaats||'';
   sTab('gedaan');updateRes();document.getElementById('overlay').classList.add('open');
 }
-function overlayKlik(e){if(e.target===document.getElementById('overlay'))sluitSheet();}
-function sluitSheet(){document.getElementById('overlay').classList.remove('open');sId=null;}
+window.overlayKlik=function(e){if(e.target===document.getElementById('overlay'))sluitSheet();}
+window.sluitSheet=function(){document.getElementById('overlay').classList.remove('open');sId=null;}
 
-function sTab(tab){
+window.sTab=function(tab){
   actST=tab;['gedaan','aanpassen','hist'].forEach(t=>{document.getElementById('st-'+t).classList.toggle('on',t===tab);document.getElementById('ss-'+t).style.display=t===tab?'block':'none';});
   document.getElementById('s-btns').style.display=tab==='hist'?'none':'flex';
   document.getElementById('s-title').textContent=tab==='gedaan'?'✓ Gedaan!':tab==='aanpassen'?'Aanpassen':'Geschiedenis';
@@ -631,20 +679,37 @@ function sTab(tab){
   }
 }
 
-function updateRes(){const x=kl.find(x=>x.id===sId);if(!x)return;const d=document.getElementById('s-datum-gedaan').value;if(!d)return;document.getElementById('s-result').textContent=fL(vD(d,x.freq));}
+window.updateRes=function(){const x=kl.find(x=>x.id===sId);if(!x)return;const d=document.getElementById('s-datum-gedaan').value;if(!d)return;document.getElementById('s-result').textContent=fL(vD(d,x.freq));}
 
-async function bevestig(){
+window.bevestig=async function(){
   const x=kl.find(x=>x.id===sId);if(!x)return;
-  if(actST==='gedaan'){const d=document.getElementById('s-datum-gedaan').value;if(!d)return;slaOp(`"${x.naam}" gedaan`);const h=[...(x.historie||[]),d];kl=kl.map(x=>x.id===sId?{...x,laatste:d,historie:h}:x);}
-  else{const v=document.getElementById('s-datum-volgende').value;const f=parseFloat(document.getElementById('s-freq').value);const n=document.getElementById('s-naam').value.trim()||x.naam;const p=document.getElementById('s-plaats').value.trim();if(!v)return;slaOp(`"${x.naam}" aangepast`);kl=kl.map(x=>x.id===sId?{...x,naam:n,plaats:p,freq:f,laatste:lVV(v,f)}:x);}
-  await syncSave();sluitSheet();render();
+  if(actST==='gedaan'){
+    const d=document.getElementById('s-datum-gedaan').value;if(!d)return;
+    slaOp(`"${x.naam}" gedaan`);
+    const h=[...(x.historie||[]),d];
+    kl=kl.map(x=>x.id===sId?{...x,laatste:d,historie:h}:x);
+    sluitSheet();renderK();
+    await fbSave(kl.find(x=>x.id===sId));
+  } else {
+    const v=document.getElementById('s-datum-volgende').value;
+    const f=parseFloat(document.getElementById('s-freq').value);
+    const n=document.getElementById('s-naam').value.trim()||x.naam;
+    const p=document.getElementById('s-plaats').value.trim();
+    if(!v)return;
+    slaOp(`"${x.naam}" aangepast`);
+    kl=kl.map(x=>x.id===sId?{...x,naam:n,plaats:p,freq:f,laatste:lVV(v,f)}:x);
+    sluitSheet();renderK();
+    await fbSave(kl.find(x=>x.id===sId));
+  }
 }
 
-// Init
-if('serviceWorker' in navigator){const sw=`self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>caches.match(e.request))))`;navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});}
+// ── Init ──
 document.getElementById('n-datum').value=vnd();
 setTimeout(()=>{const s=document.getElementById('splash');s.classList.add('hide');setTimeout(()=>s.style.display='none',500);},2500);
-syncLoad().then(()=>setInterval(syncLoad,30000));
+
+// Start Firebase realtime listener
+startListener();
+
 </script>
 </body>
 </html>
