@@ -694,9 +694,10 @@ window.bevestig=async function(){
     const d=document.getElementById('s-datum-gedaan').value;if(!d)return;
     slaOp(`"${x.naam}" gedaan`);
     const h=[...(x.historie||[]),d];
-    kl=kl.map(x=>x.id===sId?{...x,laatste:d,historie:h}:x);
+    kl=kl.map(k=>k.id===sId?{...k,laatste:d,historie:h}:k);
+    const opgeslagen=kl.find(k=>k.id===sId);
     sluitSheet();renderK();
-    await fbSave(kl.find(x=>x.id===sId));
+    await fbSave(opgeslagen);
   } else {
     const v=document.getElementById('s-datum-volgende').value;
     const f=parseFloat(document.getElementById('s-freq').value);
@@ -704,9 +705,10 @@ window.bevestig=async function(){
     const p=document.getElementById('s-plaats').value.trim();
     if(!v)return;
     slaOp(`"${x.naam}" aangepast`);
-    kl=kl.map(x=>x.id===sId?{...x,naam:n,plaats:p,freq:f,laatste:lVV(v,f)}:x);
+    kl=kl.map(k=>k.id===sId?{...k,naam:n,plaats:p,freq:f,laatste:lVV(v,f)}:k);
+    const opgeslagen=kl.find(k=>k.id===sId);
     sluitSheet();renderK();
-    await fbSave(kl.find(x=>x.id===sId));
+    await fbSave(opgeslagen);
   }
 }
 
