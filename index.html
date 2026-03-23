@@ -462,6 +462,7 @@ function syncS(s){document.getElementById('sync-dot').className='sync-dot'+(s===
 
 // ── Firebase: opslaan (één klant) ──
 async function fbSave(k){
+  _bezig=true;
   syncS('bezig');
   try{
     await setDoc(doc(db,'klanten',String(k.id)),{
@@ -471,17 +472,21 @@ async function fbSave(k){
     });
     syncS('ok');
   }catch(e){console.error(e);syncS('fout');}
+  finally{_bezig=false;}
 }
 
 // ── Firebase: verwijderen ──
 async function fbDelete(id){
+  _bezig=true;
   syncS('bezig');
   try{await deleteDoc(doc(db,'klanten',String(id)));syncS('ok');}
   catch(e){console.error(e);syncS('fout');}
+  finally{_bezig=false;}
 }
 
 // ── Firebase: alles opslaan (voor bulk, bijv. omzet) ──
 async function fbSaveAll(){
+  _bezig=true;
   syncS('bezig');
   try{
     await Promise.all(kl.map(k=>setDoc(doc(db,'klanten',String(k.id)),{
@@ -491,13 +496,15 @@ async function fbSaveAll(){
     })));
     syncS('ok');
   }catch(e){console.error(e);syncS('fout');}
+  finally{_bezig=false;}
 }
 
 // ── Firebase: realtime listener ──
+let _bezig=false; // voorkom dat listener lokale wijziging overschrijft
 function startListener(){
   onSnapshot(klantenCol,(snap)=>{
+    if(_bezig)return; // wacht tot lokale schrijfactie klaar is
     const nieuw=snap.docs.map(d=>({id:Number(d.id),...d.data(),prijs:d.data().prijs||0,historie:d.data().historie||[]}));
-    // Alleen updaten als er echt een verschil is (voorkom render loops)
     if(JSON.stringify(nieuw)!==JSON.stringify(kl)){kl=nieuw;render();}
     syncS('ok');
   },(err)=>{console.error(err);syncS('fout');});
