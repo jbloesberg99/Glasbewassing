@@ -570,6 +570,7 @@ function kHtml(x,i){
       <button class="b-done" onclick="openSheet(${x.id})">✓ Gedaan</button>
       <button class="b-note" onclick="togN(${x.id})">${nO?'✕':'📝'}</button>
       ${x.plaats?`<button class="b-map" onclick="openMaps('${x.naam.replace(/'/g,"\\'")}','${x.plaats.replace(/'/g,"\\'")}')">🗺️</button>`:''}
+      <button class="b-map" onclick="kopieer(${x.id})" title="Kopieer">📋</button>
       <button class="b-del" onclick="del(${x.id})">🗑</button>
     </div>
   </div>`;
@@ -649,6 +650,16 @@ window.voegToe=async function(){
 }
 
 window.togN=function(id){actN=actN===id?null:id;renderK();}
+
+window.kopieer=async function(id){
+  const x=kl.find(x=>x.id===id);if(!x)return;
+  const nieuw={...x,id:Date.now(),naam:x.naam+" (kopie)",notitie:"",historie:[]};
+  slaOp(`"${x.naam}" gekopieerd`);
+  kl.push(nieuw);
+  renderK();
+  await fbSave(nieuw);
+  setTimeout(()=>openSheet(nieuw.id),300);
+}
 
 window.slaNotitie=async function(id,val){
   slaOp('Notitie gewijzigd');
