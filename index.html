@@ -539,7 +539,7 @@ function renderK(){
   if(actF!=='all')v=v.filter(x=>st(x.d)===actF);
   if(z)v=v.filter(x=>x.naam.toLowerCase().includes(z)||x.plaats.toLowerCase().includes(z));
   const s=SO[si];
-  if(s==='datum')v.sort((a,b)=>a.d-b.d);else if(s==='plaats')v.sort((a,b)=>a.plaats.localeCompare(b.plaats,'nl')||a.d-b.d);else v.sort((a,b)=>a.naam.localeCompare(b.naam,'nl'));
+  if(s==='datum')v.sort((a,b)=>a.d-b.d||a.naam.localeCompare(b.naam,'nl'));else if(s==='plaats')v.sort((a,b)=>a.plaats.localeCompare(b.plaats,'nl')||a.d-b.d||a.naam.localeCompare(b.naam,'nl'));else v.sort((a,b)=>a.naam.localeCompare(b.naam,'nl'));
   const alle=kl.map(x=>({...x,d:dT(x.laatste,x.freq)}));
   ['urgent','soon','ok'].forEach(f=>{document.getElementById('sn-'+f).textContent=alle.filter(x=>st(x.d)===f).length;});
   document.getElementById('h-totaal').textContent=kl.length;
@@ -613,7 +613,8 @@ function renderOmzet(){
   document.getElementById('omzet-bedrag').textContent=fE(jaar);
   document.getElementById('os-klanten').textContent=kl.length;
   document.getElementById('os-jaar').textContent='€'+Math.round(jaar);
-  document.getElementById('prijs-list').innerHTML=kl.map(x=>`<div class="pitem" data-id="${x.id}"><div class="pnaam">${x.naam}${x.plaats?` <span style="color:var(--text3);font-weight:400">· ${x.plaats}</span>`:''}</div><span class="peuro">€</span><input type="number" class="pinput" value="${x.prijs||''}" placeholder="0" step="0.50" min="0"></div>`).join('');
+  const gesorteerd=[...kl].sort((a,b)=>a.naam.localeCompare(b.naam,'nl'));
+  document.getElementById('prijs-list').innerHTML=gesorteerd.map(x=>`<div class="pitem" data-id="${x.id}"><div class="pnaam">${x.naam}${x.plaats?` <span style="color:var(--text3);font-weight:400">· ${x.plaats}</span>`:''}</div><span class="peuro">€</span><input type="number" class="pinput" value="${x.prijs||''}" placeholder="0" step="0.50" min="0"></div>`).join('');
 }
 
 window.slaOmzetOp=async function(){
