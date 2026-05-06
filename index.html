@@ -1192,6 +1192,17 @@ window.bevestig=async function(){
   }
 }
 
+let _bezig = false;
+
+function startListener(){
+  onSnapshot(klantenCol,(snap)=>{
+    if(_bezig)return;
+    const nieuw=snap.docs.map(d=>({id:Number(d.id),...d.data(),prijs:d.data().prijs||0,historie:d.data().historie||[]}));
+    if(JSON.stringify(nieuw)!==JSON.stringify(kl)){kl=nieuw;window.render();}
+    window.syncS('ok');
+  },(err)=>{console.error(err);window.syncS('fout');});
+}
+
 // Init — direct startscherm tonen zonder splash wachten
 document.getElementById('n-datum').value=vnd();
 const splash = document.getElementById('splash');
@@ -1201,8 +1212,9 @@ setTimeout(() => {
   document.getElementById('startscherm').classList.add('open');
 }, 500);
 
+startListener();
+
 </script>
 </body>
 </html>
-
 
