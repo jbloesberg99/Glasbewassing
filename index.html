@@ -1154,6 +1154,7 @@ window.kopieer=async function(id){
 }
 window.slaNotitie=async function(id,val){
   slaOp('Notitie gewijzigd');kl=kl.map(x=>x.id===id?{...x,notitie:val}:x);
+  await window.fbSave(kl.find(x=>x.id===id));
 }
 window.del=async function(id){
   const x=kl.find(x=>x.id===id);if(!confirm(`"${x.naam}" verwijderen?`))return;
@@ -1229,6 +1230,3 @@ startListener();
 </script>
 </body>
 </html>
-
-
-
