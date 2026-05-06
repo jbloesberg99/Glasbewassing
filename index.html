@@ -49,9 +49,24 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 .splash-cleaning{font-size:0.95rem;font-weight:400;color:rgba(255,255,255,0.75);letter-spacing:0.24em;margin-top:5px;}
 .splash-sub{font-size:0.8rem;font-weight:500;color:rgba(255,255,255,0.45);letter-spacing:0.14em;text-transform:uppercase;margin-top:48px;}
 
+/* ── Startscherm ── */
+#startscherm{display:none;position:fixed;inset:0;background:var(--green);flex-direction:column;align-items:center;justify-content:center;z-index:900;padding:32px 24px;}
+#startscherm.open{display:flex;}
+.start-brand{text-align:center;margin-bottom:56px;}
+.start-purgato{font-size:2.4rem;font-weight:800;color:#fff;letter-spacing:0.14em;text-transform:uppercase;line-height:1;}
+.start-cleaning{font-size:0.9rem;font-weight:400;color:rgba(255,255,255,0.65);letter-spacing:0.24em;margin-top:5px;}
+.start-kies{font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:16px;}
+.start-btns{display:flex;flex-direction:column;gap:12px;width:100%;max-width:320px;}
+.start-btn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:16px;padding:20px 22px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:all 0.18s;text-align:left;width:100%;}
+.start-btn:active{transform:scale(0.97);background:rgba(255,255,255,0.2);}
+.start-btn-ic{font-size:1.8rem;flex-shrink:0;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.15);border-radius:12px;}
+.start-btn-info{flex:1;}
+.start-btn-title{font-size:0.95rem;font-weight:800;color:#fff;letter-spacing:-0.2px;}
+.start-btn-sub{font-size:0.72rem;color:rgba(255,255,255,0.6);margin-top:2px;font-weight:500;}
+
 /* ── Header ── */
 header{background:var(--surface);border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;padding:0 16px;gap:10px;position:sticky;top:0;z-index:20;box-shadow:var(--shadow);}
-.h-logo{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:1.1rem;font-weight:bold;color:#fff;flex-shrink:0;}
+.h-logo{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:1.1rem;font-weight:bold;color:#fff;flex-shrink:0;cursor:pointer;}
 .h-title{font-size:0.95rem;font-weight:800;letter-spacing:-0.3px;}
 .h-badge{background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:1px 6px;font-size:0.62rem;font-weight:700;color:var(--text3);}
 .h-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
@@ -253,27 +268,188 @@ header{background:var(--surface);border-bottom:1px solid var(--border);height:56
 .hi-dot{width:5px;height:5px;border-radius:50%;background:var(--ok);flex-shrink:0;}
 .hi-d{font-weight:700;}
 .hi-ago{color:var(--text3);margin-left:auto;font-size:0.68rem;}
+
+/* ── Winstcalculator ── */
+#app-winst{display:none;}
+#app-winst.on{display:block;}
+#app-glas{display:none;}
+#app-glas.on{display:block;}
+
+/* Mode toggle */
+.wc-mode-toggle{display:flex;gap:6px;margin-bottom:16px;}
+.wc-mode-btn{flex:1;padding:10px;border-radius:10px;border:1px solid var(--border2);background:var(--surface);font-family:inherit;font-size:0.82rem;font-weight:700;color:var(--text3);cursor:pointer;transition:all 0.15s;text-align:center;}
+.wc-mode-btn.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+/* Card */
+.wc-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow);}
+.wc-card-title{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:12px;}
+
+/* Fields */
+.wc-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.wc-field{display:flex;flex-direction:column;gap:5px;}
+.wc-field.full{grid-column:1/-1;}
+.wc-field label{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);}
+.wc-field-wrap{display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;transition:border-color 0.15s;}.wc-field-wrap:focus-within{border-color:var(--accent);}
+.wc-field-prefix{padding:0 4px 0 10px;font-size:0.82rem;font-weight:700;color:var(--text3);pointer-events:none;flex-shrink:0;}
+.wc-field-suffix{padding:0 10px 0 4px;font-size:0.75rem;color:var(--text3);pointer-events:none;flex-shrink:0;}
+.wc-field input{flex:1;width:100%;background:transparent;border:none;padding:9px 0;font-family:inherit;font-size:0.9rem;font-weight:700;color:var(--text);outline:none;-webkit-appearance:none;min-width:0;}
+.wc-field input:focus{border-color:var(--accent);}
+.wc-field input.np{padding-left:10px;}
+
+/* Resultaat */
+.wc-result-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.wc-res-card{border-radius:11px;padding:13px 12px;border:1px solid var(--border);}
+.wc-res-card.groen{background:var(--ok-s);border-color:var(--ok-b);}
+.wc-res-card.grijs{background:var(--surface2);}
+.wc-res-card.rood{background:var(--urgent-s);border-color:var(--urgent-b);}
+.wc-res-card.oranje{background:var(--soon-s);border-color:var(--soon-b);}
+.wc-res-card.groot{grid-column:1/-1;}
+.wc-res-label{font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:3px;}
+.wc-res-card.groen .wc-res-label{color:var(--ok);}
+.wc-res-card.rood .wc-res-label{color:var(--urgent);}
+.wc-res-card.oranje .wc-res-label{color:var(--soon);}
+.wc-res-bedrag{font-size:1.4rem;font-weight:800;letter-spacing:-0.5px;line-height:1;}
+.wc-res-card.groen .wc-res-bedrag{color:var(--ok);}
+.wc-res-card.rood .wc-res-bedrag{color:var(--urgent);}
+.wc-res-card.oranje .wc-res-bedrag{color:var(--soon);}
+.wc-res-sub{font-size:0.65rem;color:var(--text3);margin-top:3px;}
+
+/* Breakdown */
+.wc-breakdown{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 13px;}
+.wc-breakdown-title{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;}
+.wc-br-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border);font-size:0.75rem;}
+.wc-br-row:last-child{border-bottom:none;font-weight:800;font-size:0.82rem;color:var(--text);padding-top:8px;margin-top:2px;}
+.wc-br-row .lbl{color:var(--text2);}
+.wc-br-row .val{font-weight:700;}
+.wc-br-row .val.pos{color:var(--ok);}
+.wc-br-row .val.neg{color:var(--urgent);}
+.wc-br-row .val.neu{color:var(--text3);}
+
+/* Extra uur badge */
+.wc-extra-badge{background:rgba(45,107,58,0.08);border:1px solid rgba(45,107,58,0.2);border-radius:8px;padding:10px 12px;margin-top:10px;font-size:0.75rem;color:var(--text2);line-height:1.6;}
+.wc-extra-badge strong{color:var(--ok);font-weight:700;}
+
+/* Tabel */
+.wc-tabel-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:12px;}
+.wc-tabel-hdr{padding:12px 14px;font-size:0.82rem;font-weight:700;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.wc-tabel-sub{font-size:0.68rem;color:var(--text3);font-weight:500;}
+.wc-tabel{width:100%;border-collapse:collapse;font-size:0.75rem;}
+.wc-tabel th{background:var(--surface2);padding:7px 8px;text-align:center;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);border-bottom:1px solid var(--border);}
+.wc-tabel th:first-child{text-align:left;}
+.wc-tabel td{padding:8px;text-align:center;border-bottom:1px solid var(--border);font-weight:700;}
+.wc-tabel td:first-child{text-align:left;font-weight:600;font-size:0.7rem;color:var(--text2);}
+.wc-tabel tr:last-child td{border-bottom:none;}
+.wc-tabel .cel-verlies{background:var(--urgent-s);color:var(--urgent);}
+.wc-tabel .cel-laag{background:var(--soon-s);color:var(--soon);}
+.wc-tabel .cel-ok{color:var(--text);}
+.wc-tabel .cel-goed{background:var(--ok-s);color:var(--ok);}
+.tarief-tabs{display:flex;gap:5px;margin-bottom:12px;}
+.tarief-tab{flex:1;padding:7px 4px;border-radius:8px;border:1px solid var(--border2);background:var(--surface);font-family:inherit;font-size:0.72rem;font-weight:700;color:var(--text3);cursor:pointer;text-align:center;transition:all 0.12s;}
+.tarief-tab.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+.wc-info{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:12px;font-size:0.72rem;color:var(--text3);line-height:1.6;}
+.wc-info strong{color:var(--text2);font-weight:700;}
+
+.wc-hero{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow);}
+.wc-hero-lbl{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:2px;}
+.wc-mode-toggle{display:flex;gap:6px;margin-bottom:14px;}
+.wc-mode-btn{flex:1;padding:8px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);font-family:inherit;font-size:0.75rem;font-weight:700;color:var(--text3);cursor:pointer;transition:all 0.15s;}
+.wc-mode-btn.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+.wc-row{display:flex;gap:8px;margin-bottom:10px;}
+.wc-field{flex:1;display:flex;flex-direction:column;gap:4px;}
+.wc-field label{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);}
+.wc-field select,.wc-field input{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:0.84rem;font-weight:600;color:var(--text);outline:none;width:100%;-webkit-appearance:none;transition:border-color 0.15s;}
+.wc-field select:focus,.wc-field input:focus{border-color:var(--accent);}
+
+.wc-result-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.wc-res-card{border-radius:11px;padding:13px 12px;border:1px solid var(--border);}
+.wc-res-card.zwart{background:rgba(17,17,17,0.04);border-color:rgba(17,17,17,0.1);}
+[data-theme="dark"] .wc-res-card.zwart{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.08);}
+.wc-res-card.wit{background:var(--ok-s);border-color:var(--ok-b);}
+.wc-res-card.verlies{background:var(--urgent-s);border-color:var(--urgent-b);}
+.wc-res-title{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:4px;}
+.wc-res-card.wit .wc-res-title{color:var(--ok);}
+.wc-res-card.verlies .wc-res-title{color:var(--urgent);}
+.wc-res-bedrag{font-size:1.5rem;font-weight:800;letter-spacing:-0.5px;line-height:1;}
+.wc-res-card.wit .wc-res-bedrag{color:var(--ok);}
+.wc-res-card.verlies .wc-res-bedrag{color:var(--urgent);}
+.wc-res-sub{font-size:0.65rem;color:var(--text3);margin-top:3px;}
+
+.wc-formule{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-top:10px;}
+.wc-formule-title{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;}
+.wc-formule-regel{font-size:0.72rem;color:var(--text2);padding:3px 0;display:flex;justify-content:space-between;border-bottom:1px solid var(--border);}
+.wc-formule-regel:last-child{border-bottom:none;font-weight:700;color:var(--text);}
+.wc-formule-regel span:last-child{font-weight:700;}
+
+.wc-tabel-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:12px;}
+.wc-tabel-hdr{padding:12px 14px;font-size:0.82rem;font-weight:700;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.wc-tabel-sub{font-size:0.68rem;color:var(--text3);font-weight:500;}
+.wc-tabel{width:100%;border-collapse:collapse;font-size:0.75rem;}
+.wc-tabel th{background:var(--surface2);padding:7px 8px;text-align:center;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);border-bottom:1px solid var(--border);}
+.wc-tabel th:first-child{text-align:left;}
+.wc-tabel td{padding:8px;text-align:center;border-bottom:1px solid var(--border);font-weight:700;}
+.wc-tabel td:first-child{text-align:left;font-weight:600;font-size:0.7rem;color:var(--text2);}
+.wc-tabel tr:last-child td{border-bottom:none;}
+.wc-tabel .cel-verlies{background:var(--urgent-s);color:var(--urgent);}
+.wc-tabel .cel-laag{background:var(--soon-s);color:var(--soon);}
+.wc-tabel .cel-ok{color:var(--text);}
+.wc-tabel .cel-goed{background:var(--ok-s);color:var(--ok);}
+.wc-tabel tr.huidig td{outline:2px solid var(--accent);outline-offset:-1px;}
+
+.wc-info{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:12px;font-size:0.72rem;color:var(--text3);line-height:1.6;}
+.wc-info strong{color:var(--text2);font-weight:700;}
+
+.tarief-tabs{display:flex;gap:5px;margin-bottom:12px;}
+.tarief-tab{flex:1;padding:7px 4px;border-radius:8px;border:1px solid var(--border2);background:var(--surface);font-family:inherit;font-size:0.72rem;font-weight:700;color:var(--text3);cursor:pointer;text-align:center;transition:all 0.12s;}
+.tarief-tab.on{background:var(--accent);color:#fff;border-color:var(--accent);}
 </style>
 </head>
 <body>
 
+<!-- Splash -->
 <div class="splash" id="splash">
   <div class="splash-brand">
     <div class="splash-purgato">PURGATO</div>
     <div class="splash-cleaning">Cleaning</div>
   </div>
-  <div class="splash-sub">Glasbewassing</div>
+  <div class="splash-sub">Laden...</div>
 </div>
 
-<header>
-  <div class="h-logo">P</div>
+<!-- Startscherm -->
+<div id="startscherm">
+  <div class="start-brand">
+    <div class="start-purgato">PURGATO</div>
+    <div class="start-cleaning">Cleaning</div>
+  </div>
+  <div class="start-kies">Kies een module</div>
+  <div class="start-btns">
+    <div class="start-btn" onclick="openModule('glas')">
+      <div class="start-btn-ic">🪟</div>
+      <div class="start-btn-info">
+        <div class="start-btn-title">Glasbewassing</div>
+        <div class="start-btn-sub">Klanten, planning & omzet</div>
+      </div>
+    </div>
+    <div class="start-btn" onclick="openModule('winst')">
+      <div class="start-btn-ic">💰</div>
+      <div class="start-btn-info">
+        <div class="start-btn-title">Winstcalculator</div>
+        <div class="start-btn-sub">Zwart vs. officieel — CAO 2026</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<header id="main-header" style="display:none;">
+  <div class="h-logo" onclick="naarStart()" title="Home">P</div>
   <div style="display:flex;align-items:center;gap:6px">
-    <div class="h-title">Purgato Planner</div>
-    <div class="h-badge" id="h-totaal">0</div>
+    <div class="h-title" id="h-title">Purgato Planner</div>
+    <div class="h-badge" id="h-totaal" style="display:none">0</div>
   </div>
   <div class="h-right">
-    <div class="sync-dot bezig" id="sync-dot" title="Sync status"></div>
-    <div class="icon-btn" onclick="deelWhatsApp()" style="width:30px;height:30px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.85rem;">📤</div>
+    <div class="sync-dot bezig" id="sync-dot" title="Sync status" style="display:none"></div>
+    <div class="icon-btn" id="h-share" onclick="deelWhatsApp()" style="display:none;width:30px;height:30px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;align-items:center;justify-content:center;cursor:pointer;font-size:0.85rem;">📤</div>
     <div class="theme-switch" onclick="toggleTheme()">
       <span class="th-icon" id="th-ic">☀️</span>
       <div class="sw-track" id="sw-track"><div class="sw-thumb"></div></div>
@@ -281,109 +457,248 @@ header{background:var(--surface);border-bottom:1px solid var(--border);height:56
   </div>
 </header>
 
-<div class="nav">
+<!-- Nav glasbewassing -->
+<div class="nav" id="nav-glas" style="display:none;">
+  <div class="nav-item" onclick="naarStart()" style="color:var(--text3);">← Menu</div>
   <div class="nav-item on" id="nav-klanten" onclick="gaNaar('klanten')">📋 Klanten</div>
   <div class="nav-item" id="nav-week" onclick="gaNaar('week')">📅 Week</div>
   <div class="nav-item" id="nav-omzet" onclick="gaNaar('omzet')">💰 Omzet</div>
 </div>
 
-<div class="page">
-
-  <!-- KLANTEN -->
-  <div class="tab on" id="tab-klanten">
-    <div class="stats">
-      <div class="stat-card" id="sc-urgent" onclick="toggleF('urgent')"><div class="stat-n" id="sn-urgent" style="color:var(--urgent)">0</div><div class="stat-l">Te doen</div></div>
-      <div class="stat-card" id="sc-soon" onclick="toggleF('soon')"><div class="stat-n" id="sn-soon" style="color:var(--soon)">0</div><div class="stat-l">Binnenkort</div></div>
-      <div class="stat-card" id="sc-ok" onclick="toggleF('ok')"><div class="stat-n" id="sn-ok" style="color:var(--ok)">0</div><div class="stat-l">Op schema</div></div>
-    </div>
-
-    <div class="zoek">
-      <span class="zoek-ic">🔍</span>
-      <input class="zoek-in" id="zoek-in" placeholder="Zoek klant of plaats..." oninput="renderK()">
-      <span class="zoek-x" id="zoek-x" onclick="zoekWis()">✕</span>
-    </div>
-
-    <div class="add-card">
-      <button class="add-toggle" onclick="toggleAdd()">
-        <span>Klant toevoegen</span>
-        <div class="add-icon" id="add-ic">+</div>
-      </button>
-      <div class="add-body" id="add-body">
-        <div class="f"><label>Naam / adres</label><input type="text" id="n-naam" placeholder="Bijv. Kerkstraat 12"></div>
-        <div class="f-row">
-          <div class="f"><label>Frequentie</label>
-            <select id="n-freq">
-              <option value="2">Elke 2 weken</option><option value="4.3">Elke maand</option>
-              <option value="8.7" selected>Elke 2 maanden</option><option value="10.8">Elke 2,5 maand</option>
-              <option value="13">Elke 3 maanden</option><option value="17.4">Elke 4 maanden</option>
-              <option value="26">Elke 6 maanden</option>
-            </select>
-          </div>
-          <div class="f"><label>Volgende beurt</label><input type="date" id="n-datum"></div>
-        </div>
-        <div class="f-row">
-          <div class="f"><label>Plaats</label><input type="text" id="n-plaats" placeholder="Bijv. Enkhuizen"></div>
-          <div class="f"><label>Prijs (€)</label><input type="number" id="n-prijs" placeholder="0.00" step="0.50" min="0"></div>
-        </div>
-        <button class="btn-add" onclick="voegToe()">Toevoegen</button>
-      </div>
-    </div>
-
-    <div class="toolbar">
-      <div class="chip on" id="f-all" onclick="setF('all')">Alle</div>
-      <div class="chip" id="f-urgent" onclick="setF('urgent')">⚠ Te doen</div>
-      <div class="chip" id="f-soon" onclick="setF('soon')">📅 Binnenkort</div>
-      <div class="chip" id="f-ok" onclick="setF('ok')">✅ Schema</div>
-      <div class="sep"></div>
-      <div class="chip sort" id="sort-btn" onclick="cycleSorteer()">📅 Datum</div>
-    </div>
-
-    <div class="list" id="list"></div>
-  </div>
-
-  <!-- WEEK -->
-  <div class="tab" id="tab-week">
-    <div class="b7" id="b7" style="display:none">
-      <div class="b7-title">⏰ Volgende 7 dagen</div>
-      <div class="b7-items" id="b7-items"></div>
-    </div>
-    <div class="week-hdr">
-      <div class="week-nav">
-        <button onclick="weekNav(-1)">‹</button>
-        <div class="week-t" id="week-t">Deze week</div>
-        <button onclick="weekNav(1)">›</button>
-      </div>
-      <div style="font-size:0.68rem;color:var(--text3);font-weight:600" id="week-sub"></div>
-    </div>
-    <div class="week-grid" id="week-grid"></div>
-    <div class="week-list" id="week-list"></div>
-  </div>
-
-  <!-- OMZET -->
-  <div class="tab" id="tab-omzet">
-    <div class="omzet-top">
-      <div class="omzet-lbl">Jaaroverzicht</div>
-      <div class="omzet-bedrag" id="omzet-bedrag">€ 0,00</div>
-      <div class="omzet-sub-lbl">verwachte jaaromzet</div>
-      <div class="omzet-stats">
-        <div class="os"><div class="os-n" id="os-klanten" style="color:var(--accent)">0</div><div class="os-l">Totaal klanten</div></div>
-        <div class="os"><div class="os-n" id="os-jaar" style="color:var(--ok)">€0</div><div class="os-l">Per jaar</div></div>
-      </div>
-    </div>
-    <div class="prijs-card">
-      <div class="prijs-card-hdr">Prijs per klant</div>
-      <div class="prijs-list" id="prijs-list"></div>
-    </div>
-    <button class="btn-save-omzet" onclick="slaOmzetOp()">💾 Opslaan</button>
-  </div>
-
+<!-- Nav winstcalculator -->
+<div class="nav" id="nav-winst" style="display:none;">
+  <div class="nav-item" onclick="naarStart()" style="color:var(--text3);">← Menu</div>
+  <div class="nav-item on" id="nav-wc-calc" onclick="gaWinst('calc')">🧮 Calculator</div>
+  <div class="nav-item" id="nav-wc-tabel" onclick="gaWinst('tabel')">📊 Overzicht</div>
+  <div class="nav-item" id="nav-wc-info" onclick="gaWinst('info')">ℹ️ Toelichting</div>
 </div>
 
+<div class="page" id="main-page" style="display:none;">
+
+  <!-- ═══════════════ GLASBEWASSING ═══════════════ -->
+  <div id="app-glas">
+    <div class="tab on" id="tab-klanten">
+      <div class="stats">
+        <div class="stat-card" id="sc-urgent" onclick="toggleF('urgent')"><div class="stat-n" id="sn-urgent" style="color:var(--urgent)">0</div><div class="stat-l">Te doen</div></div>
+        <div class="stat-card" id="sc-soon" onclick="toggleF('soon')"><div class="stat-n" id="sn-soon" style="color:var(--soon)">0</div><div class="stat-l">Binnenkort</div></div>
+        <div class="stat-card" id="sc-ok" onclick="toggleF('ok')"><div class="stat-n" id="sn-ok" style="color:var(--ok)">0</div><div class="stat-l">Op schema</div></div>
+      </div>
+      <div class="zoek">
+        <span class="zoek-ic">🔍</span>
+        <input class="zoek-in" id="zoek-in" placeholder="Zoek klant of plaats..." oninput="renderK()">
+        <span class="zoek-x" id="zoek-x" onclick="zoekWis()">✕</span>
+      </div>
+      <div class="add-card">
+        <button class="add-toggle" onclick="toggleAdd()">
+          <span>Klant toevoegen</span>
+          <div class="add-icon" id="add-ic">+</div>
+        </button>
+        <div class="add-body" id="add-body">
+          <div class="f"><label>Naam / adres</label><input type="text" id="n-naam" placeholder="Bijv. Kerkstraat 12"></div>
+          <div class="f-row">
+            <div class="f"><label>Frequentie</label>
+              <select id="n-freq">
+                <option value="2">Elke 2 weken</option><option value="4.3">Elke maand</option>
+                <option value="8.7" selected>Elke 2 maanden</option><option value="10.8">Elke 2,5 maand</option>
+                <option value="13">Elke 3 maanden</option><option value="17.4">Elke 4 maanden</option>
+                <option value="26">Elke 6 maanden</option>
+              </select>
+            </div>
+            <div class="f"><label>Volgende beurt</label><input type="date" id="n-datum"></div>
+          </div>
+          <div class="f-row">
+            <div class="f"><label>Plaats</label><input type="text" id="n-plaats" placeholder="Bijv. Enkhuizen"></div>
+            <div class="f"><label>Prijs (€)</label><input type="number" id="n-prijs" placeholder="0.00" step="0.50" min="0"></div>
+          </div>
+          <button class="btn-add" onclick="voegToe()">Toevoegen</button>
+        </div>
+      </div>
+      <div class="toolbar">
+        <div class="chip on" id="f-all" onclick="setF('all')">Alle</div>
+        <div class="chip" id="f-urgent" onclick="setF('urgent')">⚠ Te doen</div>
+        <div class="chip" id="f-soon" onclick="setF('soon')">📅 Binnenkort</div>
+        <div class="chip" id="f-ok" onclick="setF('ok')">✅ Schema</div>
+        <div class="sep"></div>
+        <div class="chip sort" id="sort-btn" onclick="cycleSorteer()">📅 Datum</div>
+      </div>
+      <div class="list" id="list"></div>
+    </div>
+
+    <div class="tab" id="tab-week">
+      <div class="b7" id="b7" style="display:none">
+        <div class="b7-title">⏰ Volgende 7 dagen</div>
+        <div class="b7-items" id="b7-items"></div>
+      </div>
+      <div class="week-hdr">
+        <div class="week-nav">
+          <button onclick="weekNav(-1)">‹</button>
+          <div class="week-t" id="week-t">Deze week</div>
+          <button onclick="weekNav(1)">›</button>
+        </div>
+        <div style="font-size:0.68rem;color:var(--text3);font-weight:600" id="week-sub"></div>
+      </div>
+      <div class="week-grid" id="week-grid"></div>
+      <div class="week-list" id="week-list"></div>
+    </div>
+
+    <div class="tab" id="tab-omzet">
+      <div class="omzet-top">
+        <div class="omzet-lbl">Jaaroverzicht</div>
+        <div class="omzet-bedrag" id="omzet-bedrag">€ 0,00</div>
+        <div class="omzet-sub-lbl">verwachte jaaromzet</div>
+        <div class="omzet-stats">
+          <div class="os"><div class="os-n" id="os-klanten" style="color:var(--accent)">0</div><div class="os-l">Totaal klanten</div></div>
+          <div class="os"><div class="os-n" id="os-jaar" style="color:var(--ok)">€0</div><div class="os-l">Per jaar</div></div>
+        </div>
+      </div>
+      <div class="prijs-card">
+        <div class="prijs-card-hdr">Prijs per klant</div>
+        <div class="prijs-list" id="prijs-list"></div>
+      </div>
+      <button class="btn-save-omzet" onclick="slaOmzetOp()">💾 Opslaan</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ WINSTCALCULATOR ═══════════════ -->
+  <div id="app-winst">
+
+    <!-- TAB: CALCULATOR -->
+    <div class="tab on" id="tab-wc-calc">
+
+      <div class="wc-mode-toggle">
+        <div class="wc-mode-btn on" id="mb-zwart" onclick="wcSetMode('zwart')">⬛ Zwart</div>
+        <div class="wc-mode-btn" id="mb-wit" onclick="wcSetMode('wit')">⬜ Officieel (wit)</div>
+      </div>
+
+      <div class="wc-card">
+        <div class="wc-card-title">Klus invoeren</div>
+        <div class="wc-field-grid">
+
+          <div class="wc-field">
+            <label>Klantprijs per uur</label>
+            <div class="wc-field-wrap">
+              <span class="wc-field-prefix">€</span>
+              <input type="number" id="wc-klantprijs" value="35" min="0" step="0.5" oninput="wcBereken()">
+              <span class="wc-field-suffix">/uur</span>
+            </div>
+          </div>
+
+          <div class="wc-field">
+            <label>Belasting %</label>
+            <div class="wc-field-wrap">
+              <input type="number" id="wc-belasting" value="35" min="0" max="60" step="1" class="np" oninput="wcBereken()">
+              <span class="wc-field-suffix">%</span>
+            </div>
+          </div>
+
+          <div class="wc-field">
+            <label>Gefactureerde uren</label>
+            <div class="wc-field-wrap">
+              <input type="number" id="wc-uren-klant" value="4" min="0" step="0.5" class="np" oninput="wcBereken()">
+              <span class="wc-field-suffix">uur</span>
+            </div>
+          </div>
+
+          <div class="wc-field">
+            <label>Betaalde uren werknemer</label>
+            <div class="wc-field-wrap">
+              <input type="number" id="wc-uren-werk" value="3" min="0" step="0.5" class="np" oninput="wcBereken()">
+              <span class="wc-field-suffix">uur</span>
+            </div>
+          </div>
+
+          <div class="wc-field full">
+            <label id="wc-loon-label">Uurloon werknemer (zwart)</label>
+            <div class="wc-field-wrap">
+              <span class="wc-field-prefix">€</span>
+              <input type="number" id="wc-loon" value="16" min="0" step="0.1" oninput="wcBereken()">
+              <span class="wc-field-suffix">/uur</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="wc-card">
+        <div class="wc-card-title">Resultaat</div>
+        <div class="wc-result-grid" id="wc-result-grid"></div>
+        <div class="wc-breakdown" id="wc-breakdown"></div>
+        <div id="wc-extra-info"></div>
+      </div>
+
+    </div>
+
+    <!-- TAB: OVERZICHT TABEL -->
+    <div class="tab" id="tab-wc-tabel">
+      <div class="tarief-tabs">
+        <div class="tarief-tab on" id="tt-35" onclick="setTarief(35)">35% — buffer</div>
+        <div class="tarief-tab" id="tt-30" onclick="setTarief(30)">30% — realistisch</div>
+        <div class="tarief-tab" id="tt-25" onclick="setTarief(25)">25% — optimistisch</div>
+      </div>
+
+      <div class="wc-tabel-wrap">
+        <div class="wc-tabel-hdr">⬛ Zwart <span class="wc-tabel-sub">Formule: (Klantprijs × factor) − Loon</span></div>
+        <div style="overflow-x:auto;"><table class="wc-tabel" id="tbl-zwart"></table></div>
+      </div>
+
+      <div class="wc-tabel-wrap">
+        <div class="wc-tabel-hdr">⬜ Officieel (wit) — CAO LG1 <span class="wc-tabel-sub">Formule: (Klantprijs − Loon × 1,44) × factor</span></div>
+        <div style="overflow-x:auto;"><table class="wc-tabel" id="tbl-wit"></table></div>
+      </div>
+    </div>
+
+    <!-- TAB: INFO -->
+    <div class="tab" id="tab-wc-info">
+      <div class="wc-info">
+        <strong>CAO Schoonmaak- en Glazenwassersbedrijf — 1 januari 2026</strong><br>
+        Loongroep 1 (schoonmaker) per dienstjaar:<br>
+        • Dienstjaar 1: € 15,52/uur<br>
+        • Dienstjaar 2: € 16,08/uur<br>
+        • Dienstjaar 3: € 16,55/uur<br>
+        • Dienstjaar 4: € 17,05/uur
+      </div>
+      <div class="wc-info">
+        <strong>Werkgeverslasten 44%</strong><br>
+        • Vakantiegeld: 8%<br>
+        • Sociale premies (WW/ZW/WIA): 8%<br>
+        • Pensioen (schoonmaakfonds): 8%<br>
+        • Eindejaarsuitkering (cao): 5%<br>
+        • Vakantie-uren opbouw (cao 10%): 10%<br>
+        • Verzuimverzekering: 4%<br>
+        • Overige kosten: 1%
+      </div>
+      <div class="wc-info">
+        <strong>Belastingtarieven</strong><br>
+        • 35% — worst case, jouw reservering<br>
+        • 30% — realistisch na aftrekposten<br>
+        • 25% — optimistisch na alle vrijstellingen<br><br>
+        <strong>Let op:</strong> klantprijzen zijn excl. btw (21%). Reiskosten worden apart gefactureerd aan de klant.
+      </div>
+      <div class="wc-info">
+        <strong>Formules</strong><br>
+        Zwart: (Klantprijs × (1 − belasting%)) − Uurloon<br>
+        Officieel: (Klantprijs − Brutoloon × 1,44) × (1 − belasting%)<br><br>
+        Bij officieel zijn loonkosten + werkgeverslasten volledig aftrekbaar als bedrijfskosten, waardoor je belasting betaalt over een veel lagere grondslag.
+      </div>
+      <div class="wc-info">
+        <strong>Kleuren in de tabel</strong><br>
+        🔴 Rood = verlies (onder €0)<br>
+        🟠 Oranje = laag (€0 – €4/uur)<br>
+        ⬜ Grijs = matig (€4 – €8/uur)<br>
+        🟢 Groen = goed (€8+/uur)
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Undo -->
 <div class="undo" id="undo">
   <span id="undo-t">Opgeslagen</span>
   <button class="b-undo" onclick="undo()">↩ Ongedaan</button>
 </div>
 
+<!-- Sheet -->
 <div class="overlay" id="overlay" onclick="overlayKlik(event)">
   <div class="sheet">
     <div class="s-handle"></div>
@@ -422,10 +737,230 @@ header{background:var(--surface);border-bottom:1px solid var(--border);height:56
   </div>
 </div>
 
+<script>
+// ════════════════════════════════
+// MODULE ROUTING
+// ════════════════════════════════
+let actModule = null;
+
+function openModule(mod) {
+  actModule = mod;
+  document.getElementById('startscherm').classList.remove('open');
+  document.getElementById('main-header').style.display = 'flex';
+  document.getElementById('main-page').style.display = 'block';
+
+  if (mod === 'glas') {
+    document.getElementById('h-title').textContent = 'Glasbewassing';
+    document.getElementById('h-totaal').style.display = '';
+    document.getElementById('sync-dot').style.display = '';
+    document.getElementById('h-share').style.display = 'flex';
+    document.getElementById('nav-glas').style.display = 'flex';
+    document.getElementById('nav-winst').style.display = 'none';
+    document.getElementById('app-glas').classList.add('on');
+    document.getElementById('app-winst').classList.remove('on');
+    renderK();
+  } else {
+    document.getElementById('h-title').textContent = 'Winstcalculator';
+    document.getElementById('h-totaal').style.display = 'none';
+    document.getElementById('sync-dot').style.display = 'none';
+    document.getElementById('h-share').style.display = 'none';
+    document.getElementById('nav-glas').style.display = 'none';
+    document.getElementById('nav-winst').style.display = 'flex';
+    document.getElementById('app-winst').classList.add('on');
+    document.getElementById('app-glas').classList.remove('on');
+    wcBereken();
+    renderTabel(35);
+  }
+}
+
+function naarStart() {
+  document.getElementById('startscherm').classList.add('open');
+  document.getElementById('main-header').style.display = 'none';
+  document.getElementById('main-page').style.display = 'none';
+  document.getElementById('nav-glas').style.display = 'none';
+  document.getElementById('nav-winst').style.display = 'none';
+}
+
+// ════════════════════════════════
+// WINSTCALCULATOR
+// ════════════════════════════════
+let wcMode = 'zwart';
+let wcTarief = 35;
+
+function wcSetMode(m) {
+  wcMode = m;
+  document.getElementById('mb-zwart').classList.toggle('on', m === 'zwart');
+  document.getElementById('mb-wit').classList.toggle('on', m === 'wit');
+  document.getElementById('wc-loon-label').textContent = m === 'zwart' ? 'Uurloon werknemer (zwart)' : 'CAO-uurloon werknemer (bruto)';
+  wcBereken();
+}
+
+function gaWinst(tab) {
+  ['calc','tabel','info'].forEach(t => {
+    document.getElementById('nav-wc-'+t).classList.toggle('on', t === tab);
+    document.getElementById('tab-wc-'+t).classList.toggle('on', t === tab);
+  });
+  if(tab==='tabel') renderTabel(wcTarief);
+}
+
+function setTarief(t) {
+  wcTarief = t;
+  [35,30,25].forEach(x => document.getElementById('tt-'+x).classList.toggle('on', x === t));
+  renderTabel(t);
+}
+
+function fEur(n, teken=true) {
+  const abs = Math.abs(n).toFixed(2).replace('.', ',');
+  if(!teken) return '€' + abs;
+  if(n < 0) return '−€' + abs;
+  return '€' + abs;
+}
+
+function wcKleur(n) {
+  if(n < 0) return 'rood';
+  if(n < 4) return 'oranje';
+  if(n >= 8) return 'groen';
+  return 'grijs';
+}
+
+function wcBereken() {
+  const klantprijs = parseFloat(document.getElementById('wc-klantprijs').value)||0;
+  const belasting  = parseFloat(document.getElementById('wc-belasting').value)||0;
+  const urenKlant  = parseFloat(document.getElementById('wc-uren-klant').value)||0;
+  const urenWerk   = parseFloat(document.getElementById('wc-uren-werk').value)||0;
+  const loon       = parseFloat(document.getElementById('wc-loon').value)||0;
+  const factor     = 1 - belasting/100;
+  const urenExtra  = Math.max(0, urenKlant - urenWerk);
+  const omzet      = klantprijs * urenKlant;
+
+  let winstWerknemer, loonkosten, loonkostenRaw, winstExtra, totaal;
+
+  if(wcMode === 'zwart'){
+    // Zwart: omzet × factor − loon (loon niet aftrekbaar)
+    loonkostenRaw = loon * urenWerk;
+    loonkosten = loonkostenRaw;
+    winstWerknemer = (klantprijs * urenWerk * factor) - loonkosten;
+    winstExtra = klantprijs * urenExtra * factor;
+    totaal = winstWerknemer + winstExtra;
+  } else {
+    // Wit: (omzet − loon × 1.44) × factor
+    loonkostenRaw = loon * urenWerk;
+    loonkosten = loonkostenRaw * 1.44;
+    winstWerknemer = ((klantprijs * urenWerk) - loonkosten) * factor;
+    winstExtra = klantprijs * urenExtra * factor;
+    totaal = winstWerknemer + winstExtra;
+  }
+
+  const totaalPerUur = urenKlant > 0 ? totaal / urenKlant : 0;
+  const cTotaal = wcKleur(totaalPerUur);
+  const cExtra = urenExtra > 0 ? 'groen' : 'grijs';
+
+  document.getElementById('wc-result-grid').innerHTML = `
+    <div class="wc-res-card ${cTotaal} groot">
+      <div class="wc-res-label">Totale netto winst klus</div>
+      <div class="wc-res-bedrag">${fEur(totaal)}</div>
+      <div class="wc-res-sub">${fEur(totaalPerUur)} per uur gemiddeld · ${urenKlant} uur gefactureerd</div>
+    </div>
+    <div class="wc-res-card ${cTotaal}">
+      <div class="wc-res-label">Winst op ${urenWerk} werknemersuren</div>
+      <div class="wc-res-bedrag">${fEur(winstWerknemer)}</div>
+      <div class="wc-res-sub">${urenWerk > 0 ? fEur(winstWerknemer/urenWerk)+'/uur' : '—'}</div>
+    </div>
+    <div class="wc-res-card ${cExtra}">
+      <div class="wc-res-label">Jouw ${urenExtra} extra uur${urenExtra !== 1 ? 'en' : ''}</div>
+      <div class="wc-res-bedrag">${urenExtra > 0 ? fEur(winstExtra) : '—'}</div>
+      <div class="wc-res-sub">${urenExtra > 0 ? fEur(winstExtra/urenExtra)+'/uur (alleen IB)' : 'geen extra uren'}</div>
+    </div>`;
+
+  let rows = '';
+  rows += `<div class="wc-br-row"><span class="lbl">Omzet (${urenKlant} uur × €${klantprijs.toFixed(2)})</span><span class="val pos">${fEur(omzet, false)}</span></div>`;
+
+  if(wcMode === 'zwart'){
+    rows += `<div class="wc-br-row"><span class="lbl">Loon werknemer (${urenWerk} uur × €${loon.toFixed(2)})</span><span class="val neg">−${fEur(loonkosten, false)}</span></div>`;
+    rows += `<div class="wc-br-row"><span class="lbl">= Netto na belasting ${belasting}% over omzet</span><span class="val neu">${fEur(omzet * factor, false)}</span></div>`;
+    if(urenExtra > 0){
+      rows += `<div class="wc-br-row"><span class="lbl">↑ waarvan ${urenExtra} extra uur (alleen IB)</span><span class="val pos">${fEur(winstExtra, false)}</span></div>`;
+    }
+  } else {
+    rows += `<div class="wc-br-row"><span class="lbl">Brutoloon (${urenWerk} uur × €${loon.toFixed(2)})</span><span class="val neg">−${fEur(loonkostenRaw, false)}</span></div>`;
+    rows += `<div class="wc-br-row"><span class="lbl">Werkgeverslasten 44%</span><span class="val neg">−${fEur(loonkostenRaw * 0.44, false)}</span></div>`;
+    rows += `<div class="wc-br-row"><span class="lbl">= Belastbare winst</span><span class="val neu">${fEur(omzet - loonkosten, false)}</span></div>`;
+    rows += `<div class="wc-br-row"><span class="lbl">Belasting ${belasting}%</span><span class="val neg">−${fEur((omzet - loonkosten) * belasting/100, false)}</span></div>`;
+    if(urenExtra > 0){
+      rows += `<div class="wc-br-row"><span class="lbl">↑ waarvan ${urenExtra} extra uur (alleen IB)</span><span class="val pos">${fEur(winstExtra, false)}</span></div>`;
+    }
+  }
+
+  rows += `<div class="wc-br-row"><span class="lbl">Netto winst</span><span class="val ${totaal>=0?'pos':'neg'}">${fEur(totaal)}</span></div>`;
+  document.getElementById('wc-breakdown').innerHTML = `<div class="wc-breakdown-title">Stap voor stap</div>${rows}`;
+
+  const ei = document.getElementById('wc-extra-info');
+  if(urenExtra > 0){
+    ei.innerHTML = `<div class="wc-extra-badge">💡 Over jouw <strong>${urenExtra} extra uur</strong> betaal je alleen ${belasting}% IB — geen loonkosten. Dat levert <strong>${fEur(winstExtra)}</strong> op, ofwel <strong>${fEur(winstExtra/urenExtra)}/uur</strong> netto.</div>`;
+  } else {
+    ei.innerHTML = '';
+  }
+}
+
+function renderTabel(tarief) {
+  const factor = 1 - tarief / 100;
+  const klanten = [30,32,34,35,36,38,40,42,45];
+
+  const zwartLonen = [{l:'€15,00', v:15},{l:'€16,00', v:16},{l:'€17,00', v:17},{l:'€18,00', v:18}];
+  let html = '<thead><tr><th>Loon ↓ / Klant →</th>';
+  klanten.forEach(k => html += `<th>€${k}</th>`);
+  html += '</tr></thead><tbody>';
+  zwartLonen.forEach(({l, v}) => {
+    html += `<tr><td>${l}/uur</td>`;
+    klanten.forEach(k => {
+      const w = Math.round((k * factor - v) * 100) / 100;
+      const cls = w < 0 ? 'cel-verlies' : w < 4 ? 'cel-laag' : w >= 8 ? 'cel-goed' : 'cel-ok';
+      html += `<td class="${cls}">${fEur(w)}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  document.getElementById('tbl-zwart').innerHTML = html;
+
+  const witLonen = [{l:'DJ1 €15,52', v:15.52},{l:'DJ2 €16,08', v:16.08},{l:'DJ3 €16,55', v:16.55},{l:'DJ4 €17,05', v:17.05}];
+  html = '<thead><tr><th>Dienstjaar ↓ / Klant →</th>';
+  klanten.forEach(k => html += `<th>€${k}</th>`);
+  html += '</tr></thead><tbody>';
+  witLonen.forEach(({l, v}) => {
+    html += `<tr><td>${l}</td>`;
+    klanten.forEach(k => {
+      const w = Math.round(((k - v * 1.44) * factor) * 100) / 100;
+      const cls = w < 0 ? 'cel-verlies' : w < 4 ? 'cel-laag' : w >= 8 ? 'cel-goed' : 'cel-ok';
+      html += `<td class="${cls}">${fEur(w)}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  document.getElementById('tbl-wit').innerHTML = html;
+}
+
+// ════════════════════════════════
+// THEME
+// ════════════════════════════════
+function updateTheme(){
+  const d = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.getElementById('th-ic').textContent = d ? '🌙' : '☀️';
+  document.getElementById('sw-track').classList.toggle('on', d);
+}
+window.toggleTheme = function() {
+  const h = document.documentElement;
+  const n = h.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  h.setAttribute('data-theme', n);
+  localStorage.setItem('gw_theme', n);
+  updateTheme();
+}
+updateTheme();
+</script>
+
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBDc1KYZCCaDEZZuR273Trmo68ra0uyeYQ",
@@ -440,77 +975,35 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const klantenCol = collection(db, 'klanten');
 
+let kl = [], vK = null, actF = 'all', actN = null, sId = null, actST = 'gedaan', uT = null, si = 0, wo = 0, navTab = 'klanten';
+
 const FL={2:"2 wkn",4.3:"1 mnd",8.7:"2 mnd",10.8:"2,5 mnd",13:"3 mnd",17.4:"4 mnd",26:"6 mnd"};
 const SO=['datum','plaats','naam'];const SL={datum:'📅 Datum',plaats:'📍 Plaats',naam:'🔤 Naam'};
 
-let kl=[],vK=null,actF='all',actN=null,sId=null,actST='gedaan',uT=null,si=0,wo=0,navTab='klanten';
-
-// ── Theme ──
-function updateTheme(){const d=document.documentElement.getAttribute('data-theme')==='dark';document.getElementById('th-ic').textContent=d?'🌙':'☀️';document.getElementById('sw-track').classList.toggle('on',d);}
-window.toggleTheme=function(){const h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('gw_theme',n);updateTheme();}
-updateTheme();
-
-// ── Nav ──
-window.gaNaar=function(tab){
-  navTab=tab;
-  ['klanten','week','omzet'].forEach(t=>{document.getElementById('nav-'+t).classList.toggle('on',t===tab);document.getElementById('tab-'+t).classList.toggle('on',t===tab);});
-  if(tab==='week')renderWeek();if(tab==='omzet')renderOmzet();
-}
-
-// ── Sync status ──
-function syncS(s){document.getElementById('sync-dot').className='sync-dot'+(s==='bezig'?' bezig':s==='fout'?' fout':'');}
-
-// ── Firebase: opslaan (één klant) ──
-async function fbSave(k){
-  _bezig=true;
-  syncS('bezig');
+window.syncS = function syncS(s){}
+window.fbSave = async function fbSave(k){
+  _bezig=true; window.syncS('bezig');
   try{
-    await setDoc(doc(db,'klanten',String(k.id)),{
-      naam:k.naam,plaats:k.plaats||'',freq:k.freq,
-      laatste:k.laatste,notitie:k.notitie||'',
-      prijs:k.prijs||0,historie:k.historie||[]
-    });
-    syncS('ok');
-  }catch(e){console.error(e);syncS('fout');}
+    await setDoc(doc(db,'klanten',String(k.id)),{naam:k.naam,plaats:k.plaats||'',freq:k.freq,laatste:k.laatste,notitie:k.notitie||'',prijs:k.prijs||0,historie:k.historie||[]});
+    window.syncS('ok');
+  }catch(e){console.error(e);window.syncS('fout');}
   finally{_bezig=false;}
 }
-
-// ── Firebase: verwijderen ──
-async function fbDelete(id){
-  _bezig=true;
-  syncS('bezig');
-  try{await deleteDoc(doc(db,'klanten',String(id)));syncS('ok');}
-  catch(e){console.error(e);syncS('fout');}
+window.fbDelete = async function fbDelete(id){
+  _bezig=true; window.syncS('bezig');
+  try{await deleteDoc(doc(db,'klanten',String(id)));window.syncS('ok');}
+  catch(e){console.error(e);window.syncS('fout');}
   finally{_bezig=false;}
 }
-
-// ── Firebase: alles opslaan (voor bulk, bijv. omzet) ──
-async function fbSaveAll(){
-  _bezig=true;
-  syncS('bezig');
+window.fbSaveAll = async function fbSaveAll(){
+  _bezig=true; window.syncS('bezig');
   try{
-    await Promise.all(kl.map(k=>setDoc(doc(db,'klanten',String(k.id)),{
-      naam:k.naam,plaats:k.plaats||'',freq:k.freq,
-      laatste:k.laatste,notitie:k.notitie||'',
-      prijs:k.prijs||0,historie:k.historie||[]
-    })));
-    syncS('ok');
-  }catch(e){console.error(e);syncS('fout');}
+    await Promise.all(kl.map(k=>setDoc(doc(db,'klanten',String(k.id)),{naam:k.naam,plaats:k.plaats||'',freq:k.freq,laatste:k.laatste,notitie:k.notitie||'',prijs:k.prijs||0,historie:k.historie||[]})));
+    window.syncS('ok');
+  }catch(e){console.error(e);window.syncS('fout');}
   finally{_bezig=false;}
 }
 
-// ── Firebase: realtime listener ──
-let _bezig=false; // voorkom dat listener lokale wijziging overschrijft
-function startListener(){
-  onSnapshot(klantenCol,(snap)=>{
-    if(_bezig)return; // wacht tot lokale schrijfactie klaar is
-    const nieuw=snap.docs.map(d=>({id:Number(d.id),...d.data(),prijs:d.data().prijs||0,historie:d.data().historie||[]}));
-    if(JSON.stringify(nieuw)!==JSON.stringify(kl)){kl=nieuw;render();}
-    syncS('ok');
-  },(err)=>{console.error(err);syncS('fout');});
-}
-
-// ── Helpers ──
 function vD(l,f){const[y,m,d]=l.split('-').map(Number);const dt=new Date(y,m-1,d);dt.setDate(dt.getDate()+Math.round(f*7));return dt;}
 function lVV(v,f){const[y,m,d]=v.split('-').map(Number);const dt=new Date(y,m-1,d);dt.setDate(dt.getDate()-Math.round(f*7));return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;}
 function dT(l,f){const due=vD(l,f),t=new Date();t.setHours(0,0,0,0);due.setHours(0,0,0,0);return Math.round((due-t)/86400000);}
@@ -522,18 +1015,20 @@ function fE(n){return'€ '+Number(n||0).toFixed(2).replace('.',',');}
 function vnd(){return new Date().toISOString().split('T')[0];}
 function natSort(a,b){return a.localeCompare(b,"nl",{numeric:true,sensitivity:"base"});}
 
-// ── Undo ──
-function slaOp(txt){vK=JSON.parse(JSON.stringify(kl));document.getElementById('undo-t').textContent=txt;document.getElementById('undo').classList.add('show');if(uT)clearTimeout(uT);uT=setTimeout(()=>{document.getElementById('undo').classList.remove('show');vK=null;},6000);}
-window.undo=async function(){if(!vK)return;const herstel=vK;vK=null;document.getElementById('undo').classList.remove('show');if(uT)clearTimeout(uT);kl=herstel;await fbSaveAll();render();}
-
-// ── WhatsApp & Maps ──
+window.slaOp = function slaOp(txt){vK=JSON.parse(JSON.stringify(kl));document.getElementById('undo-t').textContent=txt;document.getElementById('undo').classList.add('show');if(uT)clearTimeout(uT);uT=setTimeout(()=>{document.getElementById('undo').classList.remove('show');vK=null;},6000);}
+window.undo=async function(){if(!vK)return;const herstel=vK;vK=null;document.getElementById('undo').classList.remove('show');if(uT)clearTimeout(uT);kl=herstel;render();}
 window.deelWhatsApp=function(){window.open('https://wa.me/?text='+encodeURIComponent('Purgato Planner app: https://jbloesberg99.github.io/Glasbewassing'),'_blank');}
 window.openMaps=function(naam,plaats){window.open('https://maps.google.com/?q='+encodeURIComponent(naam+' '+plaats),'_blank');}
 
-// ── Render ──
-function render(){renderK();if(navTab==='week')renderWeek();if(navTab==='omzet')renderOmzet();}
+window.gaNaar=function(tab){
+  navTab=tab;
+  ['klanten','week','omzet'].forEach(t=>{document.getElementById('nav-'+t).classList.toggle('on',t===tab);document.getElementById('tab-'+t).classList.toggle('on',t===tab);});
+  if(tab==='week')renderWeek();if(tab==='omzet')renderOmzet();
+}
 
-function renderK(){
+window.render = function render(){renderK();if(navTab==='week')renderWeek();if(navTab==='omzet')renderOmzet();}
+
+window.renderK = function renderK(){
   const z=document.getElementById('zoek-in').value.toLowerCase().trim();
   document.getElementById('zoek-x').style.display=z?'block':'none';
   let v=kl.map(x=>({...x,d:dT(x.laatste,x.freq),due:vD(x.laatste,x.freq)}));
@@ -552,10 +1047,10 @@ function renderK(){
   if(s==='plaats'&&!z&&actF==='all'){
     const gr={};v.forEach(x=>{const p=x.plaats||'Overig';if(!gr[p])gr[p]=[];gr[p].push(x);});
     el.innerHTML=Object.entries(gr).map(([p,xs])=>`<div class="groep-lbl">📍 ${p}<span class="groep-n">${xs.length}</span></div>${xs.map((x,i)=>kHtml(x,i)).join('')}`).join('');
-  } else {el.innerHTML=v.map((x,i)=>kHtml(x,i)).join('');}
+  }else{el.innerHTML=v.map((x,i)=>kHtml(x,i)).join('');}
 }
 
-function kHtml(x,i){
+window.kHtml = function kHtml(x,i){
   const s=st(x.d);const nO=actN===x.id;
   return`<div class="kkaart ${s}" style="animation-delay:${i*0.025}s">
     <div class="kr1">
@@ -570,15 +1065,14 @@ function kHtml(x,i){
     <div class="kacties">
       <button class="b-done" onclick="openSheet(${x.id})">✓ Gedaan</button>
       <button class="b-note" onclick="togN(${x.id})">${nO?'✕':'📝'}</button>
-      ${x.plaats?`<button class="b-map" onclick="openMaps('${x.naam.replace(/'/g,"\\'")}','${x.plaats.replace(/'/g,"\\'")}')">🗺️</button>`:''}
+      ${x.plaats?`<button class="b-map" onclick="openMaps('${x.naam.replace(/'/g,"\'")}','${x.plaats.replace(/'/g,"\'")}')">🗺️</button>`:''}
       <button class="b-map" onclick="kopieer(${x.id})" title="Kopieer">📋</button>
       <button class="b-del" onclick="del(${x.id})">🗑</button>
     </div>
   </div>`;
 }
 
-// ── Week ──
-function renderBanner7(){
+window.renderBanner7 = function renderBanner7(){
   const nu=new Date();nu.setHours(0,0,0,0);const over7=new Date(nu.getTime()+7*86400000);
   const kom=kl.filter(x=>{const d=vD(x.laatste,x.freq);d.setHours(0,0,0,0);return d>=nu&&d<=over7;}).map(x=>({...x,due:vD(x.laatste,x.freq)})).sort((a,b)=>a.due-b.due);
   const b=document.getElementById('b7');if(!kom.length){b.style.display='none';return;}b.style.display='block';
@@ -591,7 +1085,7 @@ function renderBanner7(){
   }).join('');
 }
 
-function renderWeek(){
+window.renderWeek = function renderWeek(){
   renderBanner7();
   const vd=new Date();vd.setHours(0,0,0,0);
   const ma=new Date(vd);ma.setDate(vd.getDate()-vd.getDay()+1+wo*7);
@@ -608,8 +1102,7 @@ function renderWeek(){
 }
 window.weekNav=function(d){wo+=d;renderWeek();}
 
-// ── Omzet ──
-function renderOmzet(){
+window.renderOmzet = function renderOmzet(){
   const jaar=kl.reduce((s,x)=>s+(x.prijs||0)*(52/x.freq),0);
   document.getElementById('omzet-bedrag').textContent=fE(jaar);
   document.getElementById('os-klanten').textContent=kl.length;
@@ -622,13 +1115,11 @@ window.slaOmzetOp=async function(){
   document.querySelectorAll('.pitem').forEach(el=>{
     const id=parseInt(el.getAttribute('data-id'));
     const val=parseFloat(el.querySelector('.pinput').value)||0;
-    if(id) kl=kl.map(x=>x.id===id?{...x,prijs:val}:x);
+    if(id)kl=kl.map(x=>x.id===id?{...x,prijs:val}:x);
   });
-  await fbSaveAll();
   gaNaar('klanten');
 }
 
-// ── Acties ──
 window.setF=function(f){actF=f;renderK();}
 window.toggleF=function(f){actF=actF===f?'all':f;renderK();}
 window.cycleSorteer=function(){si=(si+1)%SO.length;renderK();}
@@ -643,41 +1134,25 @@ window.voegToe=async function(){
   const prijs=parseFloat(document.getElementById('n-prijs').value)||0;
   if(!naam||!vd){alert('Vul naam en volgende beurt in.');return;}
   const nieuw={id:Date.now(),naam,plaats,freq,laatste:lVV(vd,freq),notitie:'',prijs,historie:[]};
-  slaOp(`"${naam}" toegevoegd`);
-  kl.push(nieuw);
+  slaOp(`"${naam}" toegevoegd`);kl.push(nieuw);
   document.getElementById('n-naam').value='';document.getElementById('n-datum').value='';
   document.getElementById('n-plaats').value='';document.getElementById('n-prijs').value='';
   renderK();
-  await fbSave(nieuw);
 }
 
 window.togN=function(id){actN=actN===id?null:id;renderK();}
-
 window.kopieer=async function(id){
   const x=kl.find(x=>x.id===id);if(!x)return;
   const nieuw={...x,id:Date.now(),naam:x.naam+" (kopie)",notitie:"",historie:[]};
-  slaOp(`"${x.naam}" gekopieerd`);
-  kl.push(nieuw);
-  renderK();
-  await fbSave(nieuw);
-  setTimeout(()=>openSheet(nieuw.id),300);
+  slaOp(`"${x.naam}" gekopieerd`);kl.push(nieuw);renderK();
 }
-
 window.slaNotitie=async function(id,val){
-  slaOp('Notitie gewijzigd');
-  kl=kl.map(x=>x.id===id?{...x,notitie:val}:x);
-  await fbSave(kl.find(x=>x.id===id));
+  slaOp('Notitie gewijzigd');kl=kl.map(x=>x.id===id?{...x,notitie:val}:x);
 }
-
 window.del=async function(id){
-  const x=kl.find(x=>x.id===id);
-  if(!confirm(`"${x.naam}" verwijderen?`))return;
-  slaOp(`"${x.naam}" verwijderd`);
-  kl=kl.filter(x=>x.id!==id);
-  renderK();
-  await fbDelete(id);
+  const x=kl.find(x=>x.id===id);if(!confirm(`"${x.naam}" verwijderen?`))return;
+  slaOp(`"${x.naam}" verwijderd`);kl=kl.filter(x=>x.id!==id);renderK();
 }
-
 window.openSheet=function(id){
   sId=id;const x=kl.find(x=>x.id===id);
   document.getElementById('s-sub').textContent=x.naam;
@@ -688,7 +1163,6 @@ window.openSheet=function(id){
 }
 window.overlayKlik=function(e){if(e.target===document.getElementById('overlay'))sluitSheet();}
 window.sluitSheet=function(){document.getElementById('overlay').classList.remove('open');sId=null;}
-
 window.sTab=function(tab){
   actST=tab;['gedaan','aanpassen','hist'].forEach(t=>{document.getElementById('st-'+t).classList.toggle('on',t===tab);document.getElementById('ss-'+t).style.display=t===tab?'block':'none';});
   document.getElementById('s-btns').style.display=tab==='hist'?'none':'flex';
@@ -698,20 +1172,15 @@ window.sTab=function(tab){
     el.innerHTML=[...h].reverse().map(d=>{const dt=new Date(d);const diff=Math.round((new Date()-dt)/86400000);const ago=diff===0?'vandaag':diff===1?'gisteren':`${diff} dagen geleden`;return`<div class="hi"><div class="hi-dot"></div><div class="hi-d">${dt.toLocaleDateString('nl-NL',{day:'numeric',month:'long',year:'numeric'})}</div><div class="hi-ago">${ago}</div></div>`;}).join('');
   }
 }
-
 window.updateRes=function(){const x=kl.find(x=>x.id===sId);if(!x)return;const d=document.getElementById('s-datum-gedaan').value;if(!d)return;document.getElementById('s-result').textContent=fL(vD(d,x.freq));}
-
 window.bevestig=async function(){
   const x=kl.find(x=>x.id===sId);if(!x)return;
   if(actST==='gedaan'){
     const d=document.getElementById('s-datum-gedaan').value;if(!d)return;
-    slaOp(`"${x.naam}" gedaan`);
-    const h=[...(x.historie||[]),d];
+    slaOp(`"${x.naam}" gedaan`);const h=[...(x.historie||[]),d];
     kl=kl.map(k=>k.id===sId?{...k,laatste:d,historie:h}:k);
-    const opgeslagen=kl.find(k=>k.id===sId);
     sluitSheet();renderK();
-    await fbSave(opgeslagen);
-  } else {
+  }else{
     const v=document.getElementById('s-datum-volgende').value;
     const f=parseFloat(document.getElementById('s-freq').value);
     const n=document.getElementById('s-naam').value.trim()||x.naam;
@@ -719,20 +1188,21 @@ window.bevestig=async function(){
     if(!v)return;
     slaOp(`"${x.naam}" aangepast`);
     kl=kl.map(k=>k.id===sId?{...k,naam:n,plaats:p,freq:f,laatste:lVV(v,f)}:k);
-    const opgeslagen=kl.find(k=>k.id===sId);
     sluitSheet();renderK();
-    await fbSave(opgeslagen);
   }
 }
 
-// ── Init ──
+// Init — direct startscherm tonen zonder splash wachten
 document.getElementById('n-datum').value=vnd();
-setTimeout(()=>{const s=document.getElementById('splash');s.classList.add('hide');setTimeout(()=>s.style.display='none',500);},2500);
-
-// Start Firebase realtime listener
-startListener();
+const splash = document.getElementById('splash');
+splash.classList.add('hide');
+setTimeout(() => {
+  splash.style.display = 'none';
+  document.getElementById('startscherm').classList.add('open');
+}, 500);
 
 </script>
 </body>
 </html>
+
 
