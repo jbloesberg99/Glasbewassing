@@ -980,7 +980,11 @@ let kl = [], vK = null, actF = 'all', actN = null, sId = null, actST = 'gedaan',
 const FL={2:"2 wkn",4.3:"1 mnd",8.7:"2 mnd",10.8:"2,5 mnd",13:"3 mnd",17.4:"4 mnd",26:"6 mnd"};
 const SO=['datum','plaats','naam'];const SL={datum:'📅 Datum',plaats:'📍 Plaats',naam:'🔤 Naam'};
 
-window.syncS = function syncS(s){}
+window.syncS = function syncS(s){
+  const el = document.getElementById('sync-dot');
+  if(el) el.className = 'sync-dot' + (s==='bezig' ? ' bezig' : s==='fout' ? ' fout' : '');
+}
+
 window.fbSave = async function fbSave(k){
   _bezig=true; window.syncS('bezig');
   try{
