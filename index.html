@@ -1216,18 +1216,19 @@ splash.classList.add('hide');
 setTimeout(() => {
   splash.style.display = 'none';
   document.getElementById('startscherm').classList.add('open');
+  const savedModule = localStorage.getItem('purgato_module');
+  if(savedModule) {
+    openModule(savedModule);
+  } else {
+    document.getElementById('startscherm').classList.add('open');
+  }
 }, 500);
-
-// Herstel vorige module na refresh
-const savedModule = localStorage.getItem('purgato_module');
-if(savedModule) {
-  openModule(savedModule);
-}
 
 startListener();
 
 </script>
 </body>
 </html>
+
 
 
