@@ -75,58 +75,121 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 .splash-sub::before,.splash-sub::after{content:'';width:16px;height:1px;background:rgba(255,255,255,0.2);}
 
 /* ── Startscherm ── */
+/* ── Startscherm ── */
 #startscherm{
   display:none;position:fixed;inset:0;z-index:900;
-  background:linear-gradient(160deg,#1d4d28 0%,#2a6636 45%,#3a8048 100%);
-  flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;
+  background:linear-gradient(160deg,#0e2318 0%,#163824 30%,#1c4a2c 60%,#112a1c 100%);
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 24px 52px;
 }
+/* Dot grid texture */
 #startscherm::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 70% 60% at 50% 35%,rgba(80,180,100,0.15) 0%,transparent 70%);
-  pointer-events:none;
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,0.045) 1px,transparent 1px);
+  background-size:32px 32px;
+}
+/* Ambient glow blobs */
+#startscherm::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 55% at 10% 15%,rgba(74,222,128,0.1) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 85%,rgba(56,189,248,0.07) 0%,transparent 55%),
+    radial-gradient(ellipse 100% 60% at 50% 50%,rgba(45,107,58,0.15) 0%,transparent 65%);
 }
 #startscherm.open{display:flex;}
-.start-brand{text-align:center;margin-bottom:52px;position:relative;}
-.start-purgato{font-size:2.6rem;font-weight:900;color:#fff;letter-spacing:0.18em;text-transform:uppercase;line-height:1;}
-.start-cleaning{font-size:0.78rem;font-weight:500;color:rgba(255,255,255,0.55);letter-spacing:0.32em;margin-top:6px;text-transform:uppercase;}
 
-.start-kies{
-  font-size:0.62rem;font-weight:700;color:rgba(255,255,255,0.4);
-  letter-spacing:0.2em;text-transform:uppercase;margin-bottom:14px;
-  display:flex;align-items:center;gap:8px;
+/* Branding */
+.sm-brand{
+  text-align:center;margin-bottom:44px;
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;align-items:center;
 }
-.start-kies::before,.start-kies::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.12);}
-.start-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:340px;position:relative;}
+.sm-purgato{
+  font-size:3.2rem;font-weight:900;color:#fff;
+  letter-spacing:0.22em;text-transform:uppercase;line-height:1;
+  text-shadow:0 0 60px rgba(74,222,128,0.35),0 2px 20px rgba(0,0,0,0.4);
+  overflow:hidden;white-space:nowrap;
+  display:inline-flex;align-items:center;
+}
+.sm-cursor{
+  display:inline-block;width:2px;height:0.85em;
+  background:rgba(255,255,255,0.7);border-radius:1px;
+  margin-left:3px;vertical-align:middle;
+  animation:sm-blink 0.7s step-end infinite;
+}
+.sm-cursor.hide{display:none;}
+@keyframes sm-blink{0%,100%{opacity:1}50%{opacity:0}}
+.sm-sub{
+  font-size:0.82rem;color:rgba(255,255,255,0.45);
+  letter-spacing:0.38em;text-transform:uppercase;margin-top:12px;
+  overflow:hidden;white-space:nowrap;
+  display:inline-flex;align-items:center;
+}
+.sm-sub-cursor{
+  display:inline-block;width:1.5px;height:0.75em;
+  background:rgba(255,255,255,0.4);border-radius:1px;
+  margin-left:2px;vertical-align:middle;
+  animation:sm-blink 0.7s step-end infinite;
+}
+.sm-sub-cursor.hide{display:none;}
 
-/* Double-bezel module buttons */
-.start-btn-outer{
-  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
-  border-radius:20px;padding:2px;
+/* Grid */
+.sm-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:16px;width:100%;max-width:340px;
+  position:relative;z-index:1;
 }
-.start-btn{
-  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);
-  border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:16px;
-  cursor:pointer;transition:all 0.3s var(--ease-out);text-align:left;width:100%;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.15);
+/* 3 apps: eerste full width */
+.sm-grid:has(.module-card:first-child:nth-last-child(3)) .module-card:first-child{
+  grid-column:1/-1;aspect-ratio:2.4/1;
 }
-.start-btn:active{transform:scale(0.975);background:rgba(255,255,255,0.18);}
-.start-btn-ic{
-  font-size:1.5rem;flex-shrink:0;width:46px;height:46px;
+
+.module-card{
+  border-radius:28px;
+  padding:22px 16px 20px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;
+  cursor:pointer;position:relative;overflow:hidden;
+  aspect-ratio:1/1.05;
+  transition:transform 0.22s cubic-bezier(0.32,0.72,0,1),box-shadow 0.22s ease,opacity 0.22s ease;
+  box-shadow:0 10px 40px rgba(0,0,0,0.5),0 2px 8px rgba(0,0,0,0.25);
+}
+/* Top-right decorative glow orb inside card */
+.module-card::before{
+  content:'';position:absolute;
+  top:-50%;right:-40%;
+  width:140%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,0.2) 0%,transparent 60%);
+  pointer-events:none;
+}
+/* Inner edge highlight */
+.module-card::after{
+  content:'';position:absolute;inset:0;border-radius:28px;pointer-events:none;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.35),
+    inset 0 -1px 0 rgba(0,0,0,0.2),
+    inset 1px 0 0 rgba(255,255,255,0.1),
+    inset -1px 0 0 rgba(0,0,0,0.05);
+}
+.module-card:hover{transform:translateY(-5px) scale(1.02);box-shadow:0 20px 48px rgba(0,0,0,0.55);}
+.module-card:active{transform:scale(0.94);box-shadow:0 4px 16px rgba(0,0,0,0.4);}
+
+/* Identity gradients */
+.mc-glas{background:linear-gradient(145deg,#4db8f0 0%,#1a8fd1 45%,#0a5f96 100%);}
+.mc-winst{background:linear-gradient(145deg,#fbbf24 0%,#f59e0b 40%,#d97706 100%);}
+
+/* Icon */
+.mc-icon-wrap{
+  width:54px;height:54px;border-radius:18px;
   display:flex;align-items:center;justify-content:center;
-  background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
-  border-radius:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.2);
+  background:rgba(255,255,255,0.22);
+  border:1px solid rgba(255,255,255,0.4);
+  box-shadow:0 4px 16px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.5);
+  flex-shrink:0;margin-bottom:14px;
 }
-.start-btn-info{flex:1;}
-.start-btn-title{font-size:0.95rem;font-weight:800;color:#fff;letter-spacing:-0.3px;}
-.start-btn-sub{font-size:0.7rem;color:rgba(255,255,255,0.55);margin-top:2px;font-weight:500;}
-.start-btn-arrow{
-  width:28px;height:28px;border-radius:50%;
-  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
-  display:flex;align-items:center;justify-content:center;
-  font-size:0.8rem;color:rgba(255,255,255,0.6);flex-shrink:0;
-  transition:transform 0.3s var(--ease-spring);
-}
-.start-btn:active .start-btn-arrow{transform:translateX(3px);}
+.mc-text{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.mc-name{font-size:0.88rem;font-weight:800;color:#fff;letter-spacing:-0.2px;line-height:1.2;}
+.mc-desc{font-size:0.58rem;color:rgba(255,255,255,0.6);font-weight:500;}
 
 /* ── Header ── */
 header{
@@ -648,6 +711,7 @@ header{
 .wc-res-card.grijs{background:var(--surface2);}
 .wc-res-card.rood{background:var(--urgent-s);border-color:var(--urgent-b);}
 .wc-res-card.oranje{background:var(--soon-s);border-color:var(--soon-b);}
+.wc-res-card.geel{background:rgba(132,204,22,0.07);border-color:rgba(101,163,13,0.22);}
 .wc-res-card.groot{grid-column:1/-1;}
 .wc-res-card.zwart{background:rgba(17,17,17,0.04);border-color:rgba(17,17,17,0.1);}
 [data-theme="dark"] .wc-res-card.zwart{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.08);}
@@ -657,9 +721,11 @@ header{
 .wc-res-card.groen .wc-res-label,.wc-res-card.wit .wc-res-title{color:var(--ok);}
 .wc-res-card.rood .wc-res-label,.wc-res-card.verlies .wc-res-title{color:var(--urgent);}
 .wc-res-card.oranje .wc-res-label{color:var(--soon);}
+.wc-res-card.geel .wc-res-label{color:#65a30d;}
 .wc-res-bedrag{font-size:1.45rem;font-weight:900;letter-spacing:-0.5px;line-height:1;}
 .wc-res-card.groen .wc-res-bedrag,.wc-res-card.wit .wc-res-bedrag{color:var(--ok);}
 .wc-res-card.rood .wc-res-bedrag,.wc-res-card.verlies .wc-res-bedrag{color:var(--urgent);}
+.wc-res-card.geel .wc-res-bedrag{color:#65a30d;}
 .wc-res-sub{font-size:0.63rem;color:var(--text3);margin-top:3px;font-weight:500;}
 
 /* Breakdown */
@@ -967,9 +1033,19 @@ header{
 .wc-res-card.oranje.groot .wc-res-bedrag{color:#fff!important;}
 .wc-res-card.oranje.groot .wc-res-sub{color:rgba(255,255,255,0.55)!important;}
 
+.wc-res-card.geel.groot{
+  background:linear-gradient(145deg,#3d5c08,#6ea310)!important;
+  border:none!important;
+  box-shadow:0 10px 32px rgba(101,163,13,0.35)!important;
+}
+.wc-res-card.geel.groot .wc-res-label{color:rgba(255,255,255,0.6)!important;}
+.wc-res-card.geel.groot .wc-res-bedrag{color:#fff!important;}
+.wc-res-card.geel.groot .wc-res-sub{color:rgba(255,255,255,0.55)!important;}
+
 /* Winstcalculator sub-cards: subtiele gradient */
 .wc-res-card.groen:not(.groot){background:linear-gradient(145deg,rgba(42,102,54,0.1),rgba(42,102,54,0.04))!important;}
 .wc-res-card.rood:not(.groot){background:linear-gradient(145deg,rgba(220,38,38,0.1),rgba(220,38,38,0.04))!important;}
+.wc-res-card.geel:not(.groot){background:linear-gradient(145deg,rgba(101,163,13,0.1),rgba(101,163,13,0.04))!important;}
 .wc-res-card.oranje:not(.groot){background:linear-gradient(145deg,rgba(217,119,6,0.1),rgba(217,119,6,0.04))!important;}
 
 /* Winstcalculator inputs: sterker focus state */
@@ -1060,38 +1136,10 @@ header{
 }
 
 /* 2. Startscherm: second animated orb + title glow */
-#startscherm::after {
-  content: '';
-  position: absolute;
-  bottom: 6%;
-  right: -10%;
-  width: min(60vw, 280px);
-  height: min(60vw, 280px);
-  background: radial-gradient(circle, rgba(100,230,120,0.14) 0%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  animation: orb-drift 14s ease-in-out infinite alternate;
-}
-@keyframes orb-drift {
-  from { transform: translate(0,0) scale(1); }
-  to   { transform: translate(-18px,-28px) scale(1.08); }
-}
-.start-purgato {
-  text-shadow: 0 2px 32px rgba(100,230,130,0.35), 0 0 60px rgba(80,200,100,0.2) !important;
-}
-/* Decorative line under subtitle */
-.start-cleaning::after {
-  content: '';
-  display: block;
-  width: 36px;
-  height: 2px;
-  background: rgba(255,255,255,0.25);
-  border-radius: 2px;
-  margin: 10px auto 0;
-}
-/* Button outer: glass shimmer on press */
-.start-btn:hover {
-  background: rgba(255,255,255,0.15) !important;
+/* 3 apps: first kaart full width */
+.sm-grid:has(.module-card:first-child:nth-last-child(3)) .module-card:first-child {
+  grid-column: 1 / -1;
+  aspect-ratio: 2/1;
 }
 
 /* 3. Header: logo shimmer */
@@ -1166,13 +1214,15 @@ header{
 .kkaart.urgent::before { box-shadow: 2px 0 10px rgba(220,38,38,0.25) !important; }
 .kkaart.soon::before   { box-shadow: 2px 0 10px rgba(217,119,6,0.25) !important; }
 
-/* 7. Week grid: today tile more dramatic */
+/* 7. Week grid: today tile — solid fill, white text */
 .wdag.vd {
-  background: linear-gradient(145deg, rgba(42,102,54,0.18), rgba(42,102,54,0.08)) !important;
+  background: var(--accent) !important;
   border-color: var(--accent) !important;
-  box-shadow: 0 0 0 2px var(--accent), 0 4px 12px rgba(42,102,54,0.2) !important;
+  box-shadow: 0 4px 16px rgba(42,102,54,0.35) !important;
 }
-.wdag.vd .dd { color: var(--accent) !important; font-weight: 900 !important; }
+.wdag.vd .dd { color: #fff !important; font-weight: 900 !important; }
+.wdag.vd .dn { color: rgba(255,255,255,0.8) !important; opacity: 1 !important; }
+.wdag.vd .dc { color: rgba(255,255,255,0.75) !important; }
 
 /* 8. Omzet top card: premium gradient */
 .omzet-top {
@@ -1210,6 +1260,7 @@ header{
 }
 .wc-hero-amount.verlies { color: #dc2626 !important; }
 .wc-hero-amount.laag    { color: #d97706 !important; }
+.wc-hero-amount.matig   { color: #65a30d !important; }
 .wc-hero-amount.goed    { color: #2a6636 !important; }
 .wc-hero-mode {
   font-size: 0.67rem !important; color: var(--text3) !important;
@@ -1480,36 +1531,70 @@ header{
 #nav-glas .nav-item.on::after { display: none !important; }
 #nav-glas .nav-item:first-child { color: var(--text3) !important; }
 
-/* Week view: betere kleuren */
+/* Week view: dag-tegels */
 
-/* Dag-tegels: meer karakter */
 .wdag {
   border-radius: 12px !important;
   padding: 8px 3px !important;
-  transition: all 0.2s var(--ease-out) !important;
+  cursor: pointer !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease !important;
+  user-select: none !important;
 }
+.wdag:hover {
+  transform: translateY(-2px) scale(1.04) !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.12) !important;
+  background: var(--surface3) !important;
+}
+.wdag:active { transform: scale(0.96) !important; }
+
 .wdag .dn { font-size: 0.48rem !important; letter-spacing: 0.06em !important; }
 .wdag .dd { font-size: 0.95rem !important; }
 
-/* Dag met klanten: duidelijker groen */
+/* Dag met klanten: neutraal verhoogd, kleine dot-indicator */
 .wdag.hk {
-  background: linear-gradient(145deg, rgba(42,102,54,0.14), rgba(42,102,54,0.06)) !important;
-  border-color: rgba(42,102,54,0.28) !important;
-  box-shadow: 0 2px 8px rgba(42,102,54,0.12) !important;
+  background: var(--surface) !important;
+  border-color: var(--border2) !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08) !important;
 }
-.wdag.hk .dd { color: var(--ok) !important; font-weight: 900 !important; }
-.wdag.hk .dc { color: var(--ok) !important; }
+.wdag.hk:hover { background: var(--surface2) !important; }
+.wdag.hk .dd { color: var(--text) !important; font-weight: 900 !important; }
+.wdag.hk .dc {
+  background: var(--accent) !important;
+  color: #fff !important;
+  font-size: 0.52rem !important;
+  font-weight: 800 !important;
+  border-radius: 99px !important;
+  padding: 1px 5px !important;
+  display: inline-block !important;
+  margin-top: 1px !important;
+}
 
-/* Vandaag: sterke groene ring + fill */
+/* Vandaag: vol groen, witte tekst — altijd goed leesbaar */
 .wdag.vd {
-  background: linear-gradient(145deg, rgba(42,102,54,0.22), rgba(42,102,54,0.1)) !important;
+  background: var(--accent) !important;
   border-color: var(--accent) !important;
-  box-shadow: 0 0 0 2px var(--accent), 0 4px 14px rgba(42,102,54,0.22) !important;
+  box-shadow: 0 4px 16px rgba(42,102,54,0.35) !important;
 }
-.wdag.vd .dd { color: var(--accent) !important; font-weight: 900 !important; }
-.wdag.vd .dn { color: var(--accent) !important; opacity: 0.7; }
+.wdag.vd:hover { background: var(--accent2) !important; transform: translateY(-2px) scale(1.04) !important; }
+.wdag.vd .dd { color: #fff !important; font-weight: 900 !important; }
+.wdag.vd .dn { color: rgba(255,255,255,0.85) !important; opacity: 1 !important; }
+.wdag.vd .dc { color: rgba(255,255,255,0.75) !important; }
 
-/* Week nav buttons: ronder, meer body */
+/* Geselecteerde dag: amber highlight */
+.wdag.sel {
+  background: rgba(217,119,6,0.14) !important;
+  border-color: rgba(217,119,6,0.45) !important;
+  box-shadow: 0 0 0 2px rgba(217,119,6,0.3), 0 4px 12px rgba(217,119,6,0.15) !important;
+}
+.wdag.sel .dd { color: #b45309 !important; font-weight: 900 !important; }
+.wdag.sel .dn { color: #b45309 !important; }
+.wdag.sel .dc { color: #b45309 !important; }
+.wdag.vd.sel {
+  background: var(--accent2) !important;
+  box-shadow: 0 0 0 2px rgba(217,119,6,0.5), 0 4px 16px rgba(42,102,54,0.3) !important;
+}
+
+/* Week nav buttons */
 .week-nav button {
   border-radius: 10px !important;
   font-weight: 800 !important;
@@ -1538,6 +1623,11 @@ header{
 .witem.ok {
   border-left-color: var(--ok) !important;
 }
+
+/* Override ::before bar color per status */
+.witem.urgent::before { background: var(--urgent) !important; }
+.witem.soon::before   { background: var(--soon) !important; }
+.witem.ok::before     { background: var(--ok) !important; }
 
 /* Status badges: volle kleur gradient pills */
 .wi-badge.urgent {
@@ -1628,6 +1718,243 @@ header{
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: none; }
 }
+
+/* ── Entrance animations ── */
+@keyframes entryUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+.app-entering .stat-shell {
+  animation: entryUp 0.45s cubic-bezier(0.32,0.72,0,1) both;
+}
+.app-entering .stat-shell:nth-child(1) { animation-delay: 0.02s; }
+.app-entering .stat-shell:nth-child(2) { animation-delay: 0.07s; }
+.app-entering .stat-shell:nth-child(3) { animation-delay: 0.12s; }
+.app-entering .add-card   { animation: entryUp 0.45s cubic-bezier(0.32,0.72,0,1) 0.08s both; }
+.app-entering .zoek       { animation: entryUp 0.45s cubic-bezier(0.32,0.72,0,1) 0.04s both; }
+.app-entering .wc-hero-banner { animation: entryUp 0.45s cubic-bezier(0.32,0.72,0,1) 0.02s both; }
+.app-entering .wc-mode-toggle { animation: entryUp 0.45s cubic-bezier(0.32,0.72,0,1) 0.08s both; }
+.app-entering .wc-row         { animation: entryUp 0.45s cubic-bezier(0.32,0.72,0,1) 0.13s both; }
+.app-entering #wc-result-grid { animation: entryUp 0.45s cubic-bezier(0.32,0.72,0,1) 0.19s both; }
+.app-entering #wc-breakdown   { animation: entryUp 0.45s cubic-bezier(0.32,0.72,0,1) 0.24s both; }
+
+/* ── Scroll-reveal ── */
+.reveal {
+  opacity: 0; transform: translateY(14px);
+  transition: opacity 0.42s cubic-bezier(0.32,0.72,0,1), transform 0.42s cubic-bezier(0.32,0.72,0,1);
+}
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ── Hero banner glow ── */
+.wc-hero-banner { position: relative !important; overflow: hidden !important; }
+.wc-hero-banner::before {
+  content: '';
+  position: absolute; inset: 0; border-radius: inherit;
+  background: radial-gradient(ellipse 90% 65% at 50% 100%, var(--hglow, transparent) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.6s ease, background 0.6s ease;
+  pointer-events: none; z-index: 0;
+}
+.wc-hero-banner > * { position: relative; z-index: 1; }
+.wc-hero-banner.goed    { --hglow: rgba(42,102,54,0.35); }
+.wc-hero-banner.matig   { --hglow: rgba(101,163,13,0.30); }
+.wc-hero-banner.laag    { --hglow: rgba(217,119,6,0.28); }
+.wc-hero-banner.verlies { --hglow: rgba(220,38,38,0.28); }
+.wc-hero-banner.goed::before,
+.wc-hero-banner.matig::before,
+.wc-hero-banner.laag::before,
+.wc-hero-banner.verlies::before { opacity: 1; animation: glowPulse 3s ease-in-out infinite; }
+@keyframes glowPulse {
+  0%,100% { opacity: 0.7; } 50% { opacity: 1; }
+}
+
+/* ── Hero amount transition ── */
+.wc-hero-amount { transition: color 0.4s cubic-bezier(0.32,0.72,0,1) !important; }
+
+/* ════════════════════════════════════
+   HOVER STATES — alleen op echte pointer (geen touch)
+   ════════════════════════════════════ */
+@media (hover: hover) {
+  /* Klantenkaarten */
+  .kkaart:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+    border-color: var(--border2);
+    transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1),
+                box-shadow 0.22s ease,
+                border-color 0.18s ease;
+  }
+
+  /* Stat kaarten */
+  .stat-shell:hover .stat-card {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s ease;
+  }
+
+  /* Nav items */
+  .nav-item:hover {
+    color: var(--text2);
+    background: var(--surface2);
+    border-radius: 8px;
+    transition: all 0.15s ease;
+  }
+  .nav-item.on:hover { color: var(--accent); background: var(--accent-glow); }
+
+  /* Filter chips */
+  .chip:hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+  }
+
+  /* Knoppen */
+  .btn-add:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(42,102,54,0.35);
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+  }
+  .btn-groen:hover, [class*="btn-"]:hover:not(.btn-add) {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+    transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), filter 0.18s ease;
+  }
+
+  /* Week items */
+  .witem:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.09);
+    border-color: var(--border2);
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, border-color 0.15s ease;
+  }
+
+  /* Header logo */
+  .h-logo:hover {
+    transform: scale(1.1) rotate(-4deg);
+    box-shadow: 0 4px 16px rgba(42,102,54,0.4);
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+  }
+
+  /* Theme switch */
+  .theme-switch:hover {
+    background: var(--surface3);
+    transform: scale(1.05);
+    transition: all 0.18s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  /* Add-card toggle */
+  .add-toggle:hover {
+    background: var(--surface2);
+    transition: background 0.15s ease;
+  }
+
+  /* Winstcalculator mode buttons */
+  .wc-mode-btn:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  /* Tarief knoppen */
+  .wc-tarief-btn:hover, [id^="tt-"]:hover {
+    transform: scale(1.06);
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  /* Week dag tiles (versterkt bestaande hover) */
+  .wdag:hover {
+    transform: translateY(-3px) scale(1.05) !important;
+    transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1) !important;
+  }
+
+  /* Actie-icoon knoppen (edit/delete in sheets) */
+  .kac-btn:hover, .s-icon-btn:hover, .wkn-btn:hover {
+    transform: scale(1.15);
+    color: var(--accent);
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), color 0.15s ease;
+  }
+
+  /* Link tekst */
+  .klink:hover { opacity: 1; transition: opacity 0.15s ease; }
+
+  /* Actie-knoppen op klantenkaarten */
+  .b-done:hover {
+    transform: translateY(-2px) scale(1.04) !important;
+    box-shadow: 0 8px 22px rgba(42,102,54,0.45), inset 0 1px 0 rgba(255,255,255,0.18) !important;
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease !important;
+  }
+  .b-note:hover {
+    transform: translateY(-3px) scale(1.1) !important;
+    box-shadow: 0 8px 20px rgba(99,102,241,0.5), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease !important;
+  }
+  .b-loc:hover {
+    transform: translateY(-3px) scale(1.1) !important;
+    box-shadow: 0 8px 20px rgba(6,182,212,0.5), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease !important;
+  }
+  .b-copy:hover {
+    transform: translateY(-3px) scale(1.1) !important;
+    box-shadow: 0 8px 20px rgba(245,158,11,0.5), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease !important;
+  }
+  .b-del:hover {
+    transform: translateY(-3px) scale(1.1) !important;
+    filter: brightness(1.1) !important;
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), filter 0.15s ease !important;
+  }
+  .icon-btn:hover {
+    transform: scale(1.12) !important;
+    background: var(--surface3) !important;
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), background 0.15s ease !important;
+  }
+}
+
+/* ── Success toast ── */
+.s-toast {
+  position: fixed; bottom: 88px; left: 50%;
+  transform: translateX(-50%) translateY(24px);
+  background: linear-gradient(145deg,#1e5c2e,#2d7a40);
+  color: #fff; border-radius: 40px;
+  padding: 11px 20px 11px 14px;
+  display: flex; align-items: center; gap: 9px;
+  box-shadow: 0 8px 28px rgba(42,102,54,0.45), inset 0 1px 0 rgba(255,255,255,0.15);
+  font-size: 0.78rem; font-weight: 700;
+  white-space: nowrap; pointer-events: none;
+  opacity: 0; z-index: 200;
+  transition: transform 0.38s cubic-bezier(0.34,1.56,0.64,1), opacity 0.28s ease;
+}
+.s-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.s-toast-ic { font-size: 1rem; line-height: 1; }
+
+/* ── Sheet close animatie ── */
+@keyframes sheetDown { from { transform: translateY(0); opacity: 1; } to { transform: translateY(100%); opacity: 0; } }
+@keyframes overlayOut { from { opacity: 1; } to { opacity: 0; } }
+.overlay.closing { animation: overlayOut 0.26s ease forwards; pointer-events: none; }
+.overlay.closing .sheet { animation: sheetDown 0.26s cubic-bezier(0.32,0.72,0,1) forwards; }
+
+/* ── Touch active feedback (werkt op Android & iOS) ── */
+.kkaart:active       { transform: scale(0.97) !important; transition: transform 0.1s ease !important; }
+.witem:active        { transform: scale(0.98) !important; transition: transform 0.1s ease !important; }
+.wdag:active         { transform: scale(0.93) !important; transition: transform 0.1s ease !important; }
+.nav-item:active     { transform: scale(0.95) !important; }
+.chip:active         { transform: scale(0.93) !important; transition: transform 0.1s ease !important; }
+.wc-mode-btn:active  { transform: scale(0.95) !important; transition: transform 0.1s ease !important; }
+
+/* ── Touch pop (Android/iOS) ── */
+@media (hover: none) and (pointer: coarse) {
+  .tpop.kkaart      { transform: translateY(-3px) scale(1.02) !important; box-shadow: 0 8px 28px rgba(0,0,0,0.13) !important; transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s ease !important; }
+  .tpop.witem       { transform: translateY(-2px) scale(1.01) !important; box-shadow: 0 6px 20px rgba(0,0,0,0.1) !important; transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1) !important; }
+  .tpop.wdag        { transform: translateY(-3px) scale(1.06) !important; transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1) !important; }
+  .tpop.chip        { transform: scale(1.08) !important; transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1) !important; }
+  .tpop.stat-shell .stat-card { transform: translateY(-2px) scale(1.03) !important; transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1) !important; }
+  .tpop.b-done      { transform: translateY(-2px) scale(1.05) !important; transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1) !important; }
+  .tpop.b-note      { transform: scale(1.15) !important; transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1) !important; }
+  .tpop.b-loc       { transform: scale(1.15) !important; transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1) !important; }
+  .tpop.b-copy      { transform: scale(1.15) !important; transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1) !important; }
+  .tpop.b-del       { transform: scale(1.15) !important; transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1) !important; }
+  .tpop.wc-mode-btn { transform: scale(1.04) !important; transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1) !important; }
+  .tpop.nav-item    { transform: scale(1.05) !important; transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1) !important; }
+}
 </style>
 </head>
 <body>
@@ -1643,30 +1970,41 @@ header{
 
 <!-- Startscherm -->
 <div id="startscherm">
-  <div class="start-brand">
-    <div class="start-purgato">PURGATO</div>
-    <div class="start-cleaning">Cleaning</div>
+  <div class="sm-brand">
+    <div class="sm-purgato"><span id="sm-p-text"></span><span class="sm-cursor" id="sm-p-cur"></span></div>
+    <div class="sm-sub"><span id="sm-s-text"></span><span class="sm-sub-cursor hide" id="sm-s-cur"></span></div>
   </div>
-  <div class="start-kies">Kies een module</div>
-  <div class="start-btns">
-    <div class="start-btn-outer">
-      <div class="start-btn" onclick="openModule('glas')">
-        <div class="start-btn-ic" style="background:linear-gradient(145deg,#38bdf8,#0369a1);border:none;box-shadow:0 4px 14px rgba(3,105,161,0.5),inset 0 1px 0 rgba(255,255,255,0.3)"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3" fill="rgba(255,255,255,0.15)"/><rect x="2" y="2" width="20" height="8" rx="2" fill="rgba(255,255,255,0.25)"/><rect x="2" y="2" width="20" height="2.5" rx="1.2" fill="rgba(255,255,255,0.35)"/><line x1="12" y1="10" x2="12" y2="22" stroke="white" stroke-width="1.8"/><circle cx="8" cy="16" r="2" fill="white"/><circle cx="16" cy="14" r="2" fill="white"/></svg></div>
-        <div class="start-btn-info">
-          <div class="start-btn-title">Glasbewassing</div>
-          <div class="start-btn-sub">Klanten, planning &amp; omzet</div>
-        </div>
-        <div class="start-btn-arrow">›</div>
+
+  <div class="sm-grid">
+    <!-- Glasbewassing -->
+    <div class="module-card mc-glas" onclick="openModule('glas')">
+      <div class="mc-icon-wrap">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="18" rx="3"/>
+          <line x1="2" y1="8" x2="22" y2="8"/>
+          <line x1="8" y1="8" x2="8" y2="21"/>
+          <circle cx="15" cy="14.5" r="2" fill="white" stroke="none" opacity=".9"/>
+          <path d="M13 18.5 Q15 16.5 17 18.5" stroke-width="1.5" fill="none" opacity=".6"/>
+        </svg>
+      </div>
+      <div class="mc-text">
+        <div class="mc-name">Glasbewassing</div>
+        <div class="mc-desc">Klanten · Planning · Omzet</div>
       </div>
     </div>
-    <div class="start-btn-outer">
-      <div class="start-btn" onclick="openModule('winst')">
-        <div class="start-btn-ic" style="background:linear-gradient(145deg,#fbbf24,#d97706);border:none;box-shadow:0 4px 14px rgba(217,119,6,0.5),inset 0 1px 0 rgba(255,255,255,0.3)"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><polyline points="4,17 9,12 13,15 20,7" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="15,7 20,7 20,12" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><line x1="4" y1="20" x2="20" y2="20" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-        <div class="start-btn-info">
-          <div class="start-btn-title">Winstcalculator</div>
-          <div class="start-btn-sub">Zwart vs. officieel — CAO 2026</div>
-        </div>
-        <div class="start-btn-arrow">›</div>
+
+    <!-- Winstcalculator -->
+    <div class="module-card mc-winst" onclick="openModule('winst')">
+      <div class="mc-icon-wrap">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3,17 8,11 12,14 21,5"/>
+          <polyline points="16,5 21,5 21,10"/>
+          <line x1="3" y1="21" x2="21" y2="21" opacity=".35"/>
+        </svg>
+      </div>
+      <div class="mc-text">
+        <div class="mc-name">Winstcalculator</div>
+        <div class="mc-desc">Zwart vs. officieel</div>
       </div>
     </div>
   </div>
@@ -1958,6 +2296,12 @@ header{
   </div>
 </div>
 
+<!-- Success toast -->
+<div class="s-toast" id="s-toast">
+  <span class="s-toast-ic">✓</span>
+  <span id="s-toast-t">Opgeslagen</span>
+</div>
+
 <!-- Undo toast -->
 <div class="undo" id="undo">
   <span id="undo-t">Opgeslagen</span>
@@ -2028,6 +2372,10 @@ function openModule(mod) {
   document.getElementById('startscherm').classList.remove('open');
   document.getElementById('main-header').style.display = 'flex';
   document.getElementById('main-page').style.display = 'block';
+  // Entrance animation
+  const appEl = document.getElementById(mod === 'glas' ? 'app-glas' : 'app-winst');
+  appEl.classList.add('app-entering');
+  setTimeout(() => appEl.classList.remove('app-entering'), 700);
 
   if (mod === 'glas') {
     document.getElementById('h-title').textContent = 'Glasbewassing';
@@ -2053,6 +2401,39 @@ function openModule(mod) {
   }
 }
 
+
+function _smTypewriter() {
+  const pEl = document.getElementById('sm-p-text');
+  const pCur = document.getElementById('sm-p-cur');
+  const sEl = document.getElementById('sm-s-text');
+  const sCur = document.getElementById('sm-s-cur');
+  const pText = 'PURGATO';
+  const sText = 'Cleaning';
+  pEl.textContent = '';
+  sEl.textContent = '';
+  sCur.classList.add('hide');
+  pCur.classList.remove('hide');
+  let i = 0;
+  const typeP = setInterval(() => {
+    pEl.textContent += pText[i++];
+    if (i >= pText.length) {
+      clearInterval(typeP);
+      setTimeout(() => {
+        pCur.classList.add('hide');
+        sCur.classList.remove('hide');
+        let j = 0;
+        const typeS = setInterval(() => {
+          sEl.textContent += sText[j++];
+          if (j >= sText.length) {
+            clearInterval(typeS);
+            setTimeout(() => sCur.classList.add('hide'), 700);
+          }
+        }, 95);
+      }, 220);
+    }
+  }, 115);
+}
+
 function naarStart() {
   localStorage.removeItem('purgato_module');
   document.getElementById('startscherm').classList.add('open');
@@ -2060,6 +2441,7 @@ function naarStart() {
   document.getElementById('main-page').style.display = 'none';
   document.getElementById('nav-glas').style.display = 'none';
   document.getElementById('nav-winst').style.display = 'none';
+  setTimeout(_smTypewriter, 80);
 }
 
 // ════════════════════════════════
@@ -2090,6 +2472,25 @@ function setTarief(t) {
   renderTabel(t);
 }
 
+// Animated number counter for hero amount
+function animHero(el, toVal, urenKlant) {
+  if (urenKlant <= 0) { el.textContent = '—'; el.dataset.val = '0'; return; }
+  const from = parseFloat(el.dataset.val) || 0;
+  el.dataset.val = toVal;
+  if (Math.abs(toVal - from) < 0.005) { el.textContent = fEur(toVal); return; }
+  const dur = Math.min(500, 80 + Math.abs(toVal - from) * 18);
+  const start = performance.now();
+  const ease = t => 1 - Math.pow(1 - t, 3);
+  const raf = now => {
+    const t = Math.min(1, (now - start) / dur);
+    const v = from + (toVal - from) * ease(t);
+    el.textContent = fEur(v);
+    if (t < 1) requestAnimationFrame(raf);
+    else el.textContent = fEur(toVal);
+  };
+  requestAnimationFrame(raf);
+}
+
 function fEur(n, teken=true) {
   const abs = Math.abs(n).toFixed(2).replace('.', ',');
   if(!teken) return '€' + abs;
@@ -2100,8 +2501,8 @@ function fEur(n, teken=true) {
 function wcKleur(n) {
   if(n < 0) return 'rood';
   if(n < 4) return 'oranje';
-  if(n >= 8) return 'groen';
-  return 'grijs';
+  if(n < 8) return 'geel';
+  return 'groen';
 }
 
 function wcBereken() {
@@ -2139,8 +2540,8 @@ function wcBereken() {
   const heroBanner = document.getElementById('wc-hero-banner');
   const heroMode   = document.getElementById('wc-hero-mode');
   if(heroAmount){
-    const heroKleur = totaalPerUur < 0 ? 'verlies' : totaalPerUur < 4 ? 'laag' : 'goed';
-    heroAmount.textContent = urenKlant > 0 ? fEur(totaalPerUur) : '—';
+    const heroKleur = totaalPerUur < 0 ? 'verlies' : totaalPerUur < 4 ? 'laag' : totaalPerUur < 8 ? 'matig' : 'goed';
+    animHero(heroAmount, totaalPerUur, urenKlant);
     heroAmount.className = 'wc-hero-amount ' + heroKleur;
     if(heroBanner) heroBanner.className = 'wc-hero-banner ' + heroKleur;
     if(heroMode) heroMode.textContent = (wcMode==='zwart'?'Zwart':'Officieel') + ' · ' + belasting + '% belasting · ' + urenKlant + ' uur';
@@ -2266,7 +2667,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const klantenCol = collection(db, 'klanten');
 
-let kl = [], vK = null, actF = 'all', actN = null, sId = null, actST = 'gedaan', uT = null, si = 0, wo = 0, navTab = 'klanten';
+let kl = [], vK = null, actF = 'all', actN = null, sId = null, actST = 'gedaan', uT = null, si = 0, wo = 0, navTab = 'klanten', selectedWDag = null;
 
 const FL={2:"2 wkn",4.3:"1 mnd",8.7:"2 mnd",10.8:"2,5 mnd",13:"3 mnd",17.4:"4 mnd",26:"6 mnd"};
 const SO=['datum','plaats','naam'];const SL={datum:'Datum',plaats:'Plaats',naam:'Naam'};
@@ -2389,13 +2790,22 @@ window.renderWeek = function renderWeek(){
   document.getElementById('week-sub').textContent=wd[0].toLocaleDateString('nl-NL',{day:'numeric',month:'short'})+' – '+wd[6].toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'});
   document.getElementById('week-t').textContent=wo===0?'Deze week':wo===1?'Volgende week':wo===-1?'Vorige week':(wo>0?`+${wo}`:`${wo}`)+' weken';
   const kpd={};kl.forEach(x=>{const d=vD(x.laatste,x.freq);d.setHours(0,0,0,0);const k=d.toISOString().split('T')[0];if(!kpd[k])kpd[k]=[];kpd[k].push(x);});
-  document.getElementById('week-grid').innerHTML=wd.map((d,i)=>{const k=d.toISOString().split('T')[0];const c=kpd[k]?.length||0;const iv=d.getTime()===vd.getTime();return`<div class="wdag ${c>0?'hk':''} ${iv?'vd':''}"><div class="dn">${dn[i]}</div><div class="dd">${d.getDate()}</div>${c>0?`<div class="dc">${c}×</div>`:'<div class="dc" style="opacity:0">0</div>'}</div>`;}).join('');
-  const wk=[];wd.forEach(d=>{const k=d.toISOString().split('T')[0];(kpd[k]||[]).forEach(x=>wk.push({...x,dueDate:d}));});
+  // reset selectedWDag if it's not in this week
+  if(selectedWDag && !wd.find(d=>d.toISOString().split('T')[0]===selectedWDag)) selectedWDag=null;
+  document.getElementById('week-grid').innerHTML=wd.map((d,i)=>{
+    const k=d.toISOString().split('T')[0];const c=kpd[k]?.length||0;const iv=d.getTime()===vd.getTime();
+    const sel=selectedWDag===k?' sel':'';
+    return`<div class="wdag ${c>0?'hk':''} ${iv?'vd':''}${sel}" onclick="wdagKlik('${k}')"><div class="dn">${dn[i]}</div><div class="dd">${d.getDate()}</div>${c>0?`<div class="dc">${c}×</div>`:'<div class="dc" style="opacity:0">0</div>'}</div>`;
+  }).join('');
+  // build week items, filtered by selected day if set
+  const wk=[];wd.forEach(d=>{const k=d.toISOString().split('T')[0];(kpd[k]||[]).forEach(x=>wk.push({...x,dueDate:d,dateKey:k}));});
+  const gefilterd = selectedWDag ? wk.filter(x=>x.dateKey===selectedWDag) : wk;
   const el=document.getElementById('week-list');
-  if(!wk.length){el.innerHTML='<div class="week-leeg">Geen klanten deze week</div>';return;}
-  el.innerHTML=wk.map(x=>{const d=dT(x.laatste,x.freq);const s=st(d);return`<div class="witem ${s}"><div class="wi-info"><div class="wi-naam">${x.naam}</div><div class="wi-datum">${x.dueDate.toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'})}${x.plaats?` · <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-bottom:1px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> `+x.plaats:''}</div></div><span class="wi-badge ${s}">${fD(vD(x.laatste,x.freq))}</span></div>`;}).join('');
+  if(!gefilterd.length){el.innerHTML=`<div class="week-leeg">${selectedWDag?'Geen klanten op deze dag':'Geen klanten deze week'}</div>`;return;}
+  el.innerHTML=gefilterd.map(x=>{const d=dT(x.laatste,x.freq);const s=st(d);return`<div class="witem ${s}"><div class="wi-info"><div class="wi-naam">${x.naam}</div><div class="wi-datum">${x.dueDate.toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'})}${x.plaats?` · <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-bottom:1px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> `+x.plaats:''}</div></div><span class="wi-badge ${s}">${fD(vD(x.laatste,x.freq))}</span></div>`;}).join('');
 }
-window.weekNav=function(d){wo+=d;renderWeek();}
+window.wdagKlik=function(k){selectedWDag=(selectedWDag===k?null:k);renderWeek();}
+window.weekNav=function(d){wo+=d;selectedWDag=null;renderWeek();}
 
 window.renderOmzet = function renderOmzet(){
   const jaar=kl.reduce((s,x)=>s+(x.prijs||0)*(52/x.freq),0);
@@ -2458,7 +2868,11 @@ window.openSheet=function(id){
   sTab('gedaan');updateRes();document.getElementById('overlay').classList.add('open');
 }
 window.overlayKlik=function(e){if(e.target===document.getElementById('overlay'))sluitSheet();}
-window.sluitSheet=function(){document.getElementById('overlay').classList.remove('open');sId=null;}
+window.sluitSheet=function(){
+  const ov=document.getElementById('overlay');
+  ov.classList.add('closing');
+  setTimeout(()=>{ov.classList.remove('open','closing');sId=null;},260);
+}
 window.sTab=function(tab){
   actST=tab;['gedaan','aanpassen','hist'].forEach(t=>{document.getElementById('st-'+t).classList.toggle('on',t===tab);document.getElementById('ss-'+t).style.display=t===tab?'block':'none';});
   document.getElementById('s-btns').style.display=tab==='hist'?'none':'flex';
@@ -2473,18 +2887,21 @@ window.bevestig=async function(){
   const x=kl.find(x=>x.id===sId);if(!x)return;
   if(actST==='gedaan'){
     const d=document.getElementById('s-datum-gedaan').value;if(!d)return;
-    slaOp(`"${x.naam}" gedaan`);const h=[...(x.historie||[]),d];
+    haptic(25);
+    const h=[...(x.historie||[]),d];
     kl=kl.map(k=>k.id===sId?{...k,laatste:d,historie:h}:k);
     sluitSheet();renderK();
+    setTimeout(()=>showToast(`${x.naam} gemarkeerd als gedaan`),300);
   }else{
     const v=document.getElementById('s-datum-volgende').value;
     const f=parseFloat(document.getElementById('s-freq').value);
     const n=document.getElementById('s-naam').value.trim()||x.naam;
     const p=document.getElementById('s-plaats').value.trim();
     if(!v)return;
-    slaOp(`"${x.naam}" aangepast`);
+    haptic(15);
     kl=kl.map(k=>k.id===sId?{...k,naam:n,plaats:p,freq:f,laatste:lVV(v,f)}:k);
     sluitSheet();renderK();
+    setTimeout(()=>showToast(`${n} opgeslagen`),300);
   }
 }
 
@@ -2504,16 +2921,69 @@ const splash = document.getElementById('splash');
 splash.classList.add('hide');
 setTimeout(() => {
   splash.style.display = 'none';
-  document.getElementById('startscherm').classList.add('open');
   const savedModule = localStorage.getItem('purgato_module');
   if(savedModule) {
     openModule(savedModule);
   } else {
     document.getElementById('startscherm').classList.add('open');
+    setTimeout(_smTypewriter, 200);
   }
 }, 500);
 
 startListener();
+
+// ── Haptic feedback ──
+function haptic(ms = 10) {
+  try { if (navigator.vibrate) navigator.vibrate(ms); } catch(e) {}
+}
+
+// ── Success toast ──
+let _toastT = null;
+function showToast(msg) {
+  const el = document.getElementById('s-toast');
+  document.getElementById('s-toast-t').textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastT);
+  _toastT = setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+// Touch pop voor Android/iOS
+(function(){
+  const SEL = '.kkaart,.witem,.wdag,.chip,.stat-shell,.b-done,.b-note,.b-loc,.b-copy,.b-del,.wc-mode-btn,.nav-item';
+  let _el = null, _t = null;
+  document.addEventListener('touchstart', e => {
+    const el = e.target.closest(SEL);
+    if (!el) return;
+    _el = el;
+    el.classList.add('tpop');
+    clearTimeout(_t);
+    haptic(8);
+  }, { passive: true });
+  function _pop() {
+    if (_el) { const el = _el; _el = null; _t = setTimeout(() => el.classList.remove('tpop'), 220); }
+  }
+  document.addEventListener('touchend',    _pop, { passive: true });
+  document.addEventListener('touchcancel', () => { if(_el){ _el.classList.remove('tpop'); _el=null; } }, { passive: true });
+})();
+
+// Scroll-reveal observer — marks .reveal elements visible when they enter viewport
+const _revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); _revealObs.unobserve(e.target); } });
+}, { threshold: 0.08 });
+
+// Hook into renderK so kkaarten get reveal class after each render
+const _origRenderK = window.renderK;
+window.renderK = function() {
+  _origRenderK && _origRenderK.apply(this, arguments);
+  setTimeout(() => {
+    document.querySelectorAll('.kkaart:not(.reveal)').forEach((el, i) => {
+      el.classList.add('reveal');
+      el.style.transitionDelay = (i * 0.04) + 's';
+      _revealObs.observe(el);
+    });
+  }, 0);
+};
 </script>
 </body>
 </html>
+
