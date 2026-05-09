@@ -2879,6 +2879,7 @@ window.slaOmzetOp=async function(){
     const val=parseFloat(el.querySelector('.pinput').value)||0;
     if(id)kl=kl.map(x=>x.id===id?{...x,prijs:val}:x);
   });
+  await window.fbSaveAll();
   gaNaar('klanten');
 }
 
@@ -2900,6 +2901,7 @@ window.voegToe=async function(){
   document.getElementById('n-naam').value='';document.getElementById('n-datum').value='';
   document.getElementById('n-plaats').value='';document.getElementById('n-prijs').value='';
   renderK();
+  await window.fbSave(nieuw);
 }
 
 window.togN=function(id){actN=actN===id?null:id;renderK();}
@@ -2907,6 +2909,7 @@ window.kopieer=async function(id){
   const x=kl.find(x=>x.id===id);if(!x)return;
   const nieuw={...x,id:Date.now(),naam:x.naam+" (kopie)",notitie:"",historie:[]};
   slaOp(`"${x.naam}" gekopieerd`);kl.push(nieuw);renderK();
+  await window.fbSave(nieuw);
 }
 window.slaNotitie=async function(id,val){
   slaOp('Notitie gewijzigd');kl=kl.map(x=>x.id===id?{...x,notitie:val}:x);
@@ -2915,6 +2918,7 @@ window.slaNotitie=async function(id,val){
 window.del=async function(id){
   const x=kl.find(x=>x.id===id);if(!confirm(`"${x.naam}" verwijderen?`))return;
   slaOp(`"${x.naam}" verwijderd`);kl=kl.filter(x=>x.id!==id);renderK();
+  await window.fbDelete(id);
 }
 window.openSheet=function(id){
   sId=id;const x=kl.find(x=>x.id===id);
@@ -2948,6 +2952,7 @@ window.bevestig=async function(){
     const h=[...(x.historie||[]),d];
     kl=kl.map(k=>k.id===sId?{...k,laatste:d,historie:h}:k);
     sluitSheet();renderK();
+    await window.fbSave(kl.find(k=>k.id===sId));
     setTimeout(()=>showToast(`${x.naam} gemarkeerd als gedaan`),300);
   }else{
     const v=document.getElementById('s-datum-volgende').value;
@@ -2958,6 +2963,7 @@ window.bevestig=async function(){
     haptic(15);
     kl=kl.map(k=>k.id===sId?{...k,naam:n,plaats:p,freq:f,laatste:lVV(v,f)}:k);
     sluitSheet();renderK();
+    await window.fbSave(kl.find(k=>k.id===sId));
     setTimeout(()=>showToast(`${n} opgeslagen`),300);
   }
 }
