@@ -160,6 +160,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 .mc-glas{background:linear-gradient(145deg,#4db8f0 0%,#1a8fd1 45%,#0a5f96 100%);}
 .mc-winst{background:linear-gradient(145deg,#fbbf24 0%,#f59e0b 40%,#d97706 100%);}
 .mc-uren{background:linear-gradient(145deg,#a78bfa 0%,#7c3aed 45%,#5b21b6 100%);}
+.mc-extra{background:linear-gradient(145deg,#fb923c 0%,#ea580c 45%,#c2410c 100%);}
 
 /* Icon */
 .mc-icon-wrap{
@@ -1833,6 +1834,44 @@ header{
 /* ── Uren Registratie ── */
 #app-uren{display:none;}
 #app-uren.on{display:block;}
+
+/* ── Module 4 — Dashboard ── */
+#app-extra{display:none;}
+#app-extra.on{display:block;}
+.d-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;}
+.d-st{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;}
+.d-badge{border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap;border:1px solid;}
+.d-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.d-bar-wrap{height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;}
+.d-bar-fill{height:100%;border-radius:2px;}
+.d-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.d-hdr-title{font-size:22px;font-weight:800;margin:2px 0 0;letter-spacing:-0.02em;}
+.d-hdr-sub{font-size:12px;color:var(--text3);}
+.d-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#6EE7B7,#3B82F6);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;flex-shrink:0;}
+.d-kpi{position:relative;overflow:hidden;}
+.d-kpi-orb{position:absolute;top:-8px;right:-8px;width:50px;height:50px;border-radius:50%;}
+.d-kpi-val{font-size:21px;font-weight:800;letter-spacing:-0.02em;margin-top:20px;}
+.d-kpi-lbl{font-size:11px;color:var(--text3);margin-top:2px;}
+.d-kpi-lbl2{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;}
+.d-kpi-sub{font-size:11px;color:var(--text3);margin-top:3px;}
+.d-rev-row{margin-bottom:10px;}
+.d-rev-top{display:flex;justify-content:space-between;margin-bottom:4px;}
+.d-rev-name{display:flex;align-items:center;gap:7px;font-size:13px;}
+.d-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;display:inline-block;}
+.d-qbtn{display:flex;align-items:center;gap:10px;border-radius:12px;padding:13px 14px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;width:100%;}
+.d-cust-row{cursor:pointer;margin-bottom:8px;}
+.d-cust-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.d-cust-name{font-weight:700;font-size:15px;margin-bottom:5px;}
+.d-cust-badges{display:flex;gap:5px;flex-wrap:wrap;}
+.d-cust-avatar{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;flex-shrink:0;}
+.d-emp-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex-shrink:0;}
+.d-back{display:flex;align-items:center;gap:7px;background:none;border:none;color:var(--text3);cursor:pointer;padding:0;font-family:inherit;font-size:14px;margin-bottom:14px;}
+.d-addr-row{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface2);border-radius:8px;font-size:13px;margin-bottom:6px;}
+.d-plan-item{display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:12px;}
+.d-day-group{margin-bottom:14px;}
+.d-day-lbl{font-size:11px;font-weight:600;color:var(--text3);margin-bottom:7px;letter-spacing:0.05em;}
+.d-nav-btn{background:var(--surface2);border:1px solid var(--border);border-radius:8px;width:32px;height:32px;cursor:pointer;color:var(--text);font-size:18px;display:flex;align-items:center;justify-content:center;font-family:inherit;}
+.d-emp-row{display:flex;align-items:center;gap:12px;padding:12px 14px;margin-bottom:8px;}
 .ur-week-sep{
   display:flex;align-items:center;gap:10px;
   padding:20px 2px 8px;
@@ -1995,6 +2034,22 @@ header{
       </div>
     </div>
 
+    <!-- Module 4 (placeholder) -->
+    <div class="module-card mc-extra" onclick="openModule('extra')">
+      <div class="mc-icon-wrap">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="8" height="8" rx="2"/>
+          <rect x="13" y="3" width="8" height="8" rx="2"/>
+          <rect x="3" y="13" width="8" height="8" rx="2"/>
+          <rect x="13" y="13" width="8" height="8" rx="2"/>
+        </svg>
+      </div>
+      <div class="mc-text">
+        <div class="mc-name">Dashboard</div>
+        <div class="mc-desc">Overzicht · Statistieken</div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -2036,6 +2091,20 @@ header{
   <div class="nav-item" onclick="naarStart()" style="color:var(--text3);">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> Menu
   </div>
+</div>
+
+<!-- Nav dashboard -->
+<div class="nav" id="nav-extra" style="display:none;">
+  <div class="nav-item" onclick="naarStart()" style="color:var(--text3);">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> Menu
+  </div>
+  <div class="nav-item on" id="ne-dashboard" onclick="dNav('dashboard')">Home</div>
+  <div class="nav-item" id="ne-customers" onclick="dNav('customers')">Klanten</div>
+  <div class="nav-item" id="ne-planning" onclick="dNav('planning')">Planning</div>
+  <div class="nav-item" id="ne-employees" onclick="dNav('employees')">Team</div>
+  <div class="nav-item" id="ne-analytics" onclick="dNav('analytics')">Analyse</div>
+  <div class="nav-item" id="ne-maintenance" onclick="dNav('maintenance')">Onderhoud</div>
+  <div class="nav-item" id="ne-beheer" onclick="dNav('beheer')">⚙ Beheer</div>
 </div>
 
 <div class="page" id="main-page" style="display:none;">
@@ -2304,6 +2373,10 @@ header{
     <div id="ur-list"></div>
   </div>
 
+  <div id="app-extra">
+    <div id="extra-list"></div>
+  </div>
+
 </div>
 
 
@@ -2384,14 +2457,14 @@ function openModule(mod) {
   document.getElementById('main-header').style.display = 'flex';
   document.getElementById('main-page').style.display = 'block';
   // Entrance animation
-  const appIds = { glas:'app-glas', winst:'app-winst', uren:'app-uren' };
+  const appIds = { glas:'app-glas', winst:'app-winst', uren:'app-uren', extra:'app-extra' };
   const appEl = document.getElementById(appIds[mod] || 'app-glas');
   appEl.classList.add('app-entering');
   setTimeout(() => appEl.classList.remove('app-entering'), 700);
 
   // Reset all
-  ['app-glas','app-winst','app-uren'].forEach(id => document.getElementById(id).classList.remove('on'));
-  ['nav-glas','nav-winst','nav-uren'].forEach(id => document.getElementById(id).style.display = 'none');
+  ['app-glas','app-winst','app-uren','app-extra'].forEach(id => document.getElementById(id).classList.remove('on'));
+  ['nav-glas','nav-winst','nav-uren','nav-extra'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
   document.getElementById('h-totaal').style.display = 'none';
   document.getElementById('sync-dot').style.display = 'none';
   document.getElementById('h-share').style.display = 'none';
@@ -2415,6 +2488,11 @@ function openModule(mod) {
     document.getElementById('nav-uren').style.display = 'flex';
     document.getElementById('app-uren').classList.add('on');
     startUrenListener();
+  } else if (mod === 'extra') {
+    document.getElementById('h-title').textContent = 'Dashboard';
+    document.getElementById('nav-extra').style.display = 'flex';
+    document.getElementById('app-extra').classList.add('on');
+    if (window.startExtraModule) window.startExtraModule();
   }
 }
 
@@ -2459,6 +2537,7 @@ function naarStart() {
   document.getElementById('nav-glas').style.display = 'none';
   document.getElementById('nav-winst').style.display = 'none';
   document.getElementById('nav-uren').style.display = 'none';
+  document.getElementById('nav-extra').style.display = 'none';
   setTimeout(_smTypewriter, 80);
 }
 
@@ -2670,7 +2749,7 @@ updateTheme();
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, doc, setDoc, deleteDoc, addDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBDc1KYZCCaDEZZuR273Trmo68ra0uyeYQ",
@@ -2685,6 +2764,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const klantenCol = collection(db, 'klanten');
 const urenCol = collection(db, 'uren');
+const _dDashDoc = doc(db, 'config', 'dashboard');
 
 let kl = [], vK = null, actF = 'all', actN = null, sId = null, actST = 'gedaan', uT = null, si = 0, wo = 0, navTab = 'klanten', selectedWDag = null;
 
@@ -2731,7 +2811,7 @@ function vnd(){return new Date().toISOString().split('T')[0];}
 function natSort(a,b){return a.localeCompare(b,"nl",{numeric:true,sensitivity:"base"});}
 
 window.slaOp = function slaOp(txt){vK=JSON.parse(JSON.stringify(kl));document.getElementById('undo-t').textContent=txt;document.getElementById('undo').classList.add('show');if(uT)clearTimeout(uT);uT=setTimeout(()=>{document.getElementById('undo').classList.remove('show');vK=null;},6000);}
-window.undo=async function(){if(!vK)return;const herstel=vK;vK=null;document.getElementById('undo').classList.remove('show');if(uT)clearTimeout(uT);kl=herstel;render();}
+window.undo=async function(){if(!vK)return;const herstel=vK;vK=null;document.getElementById('undo').classList.remove('show');if(uT)clearTimeout(uT);kl=herstel;render();await window.fbSaveAll();}
 window.deelWhatsApp=function(){window.open('https://wa.me/?text='+encodeURIComponent('Purgato Planner app: https://jbloesberg99.github.io/Glasbewassing'),'_blank');}
 window.openMaps=function(naam,plaats){window.open('https://maps.google.com/?q='+encodeURIComponent(naam+' '+plaats),'_blank');}
 
@@ -2979,16 +3059,7 @@ function startListener(){
   },(err)=>{console.error(err);window.syncS('fout');});
 }
 
-document.getElementById('n-datum').value=vnd();
-const _savedMod = sessionStorage.getItem('purgato_module');
-if(_savedMod) {
-  openModule(_savedMod);
-} else {
-  document.getElementById('startscherm').classList.add('open');
-  setTimeout(_smTypewriter, 120);
-}
-
-startListener();
+// init block moved to bottom — see end of module script
 
 // ── Haptic feedback ──
 function haptic(ms = 10) {
@@ -3147,6 +3218,290 @@ window.urOpslaan = async function(iso, silent = false) {
   }
 };
 
+// ════════════════════════════════
+// DASHBOARD (MODULE 4)
+// ════════════════════════════════
+let _DE=[
+  {id:1,name:"Sam (eigenaar)",color:"#6EE7B7",isOwner:true},
+  {id:2,name:"Maria",color:"#93C5FD",isOwner:false},
+  {id:3,name:"Kevin",color:"#FCA5A5",isOwner:false},
+  {id:4,name:"Lisa",color:"#FDE68A",isOwner:false},
+];
+let _DC=[
+  {id:1,name:"Appie",addresses:["Hoofdstraat 1, Amsterdam"],schedule:[{day:null,frequency:"monthly",hours:null}],rate:35,monthlyRevenue:400,notes:"Vaste klant, factuur per maand",color:"#6366F1"},
+  {id:2,name:"Flower Valley",addresses:["Bloemenlaan 22, Haarlem"],schedule:[{day:"Zondag",frequency:"weekly",hours:4},{day:"Dinsdag",frequency:"weekly",hours:4},{day:"Donderdag",frequency:"weekly",hours:4}],rate:35,monthlyRevenue:null,notes:"3x per week, 4 uur per beurt",color:"#8B5CF6"},
+  {id:3,name:"Second House",addresses:["Adres A – 1x per maand","Adres B – 1x per maand","Adres C – 1x per maand","Adres D – 2x per maand"],schedule:[{day:null,frequency:"monthly",hours:3}],rate:35,monthlyRevenue:null,notes:"4 adressen, variabele freq.",color:"#EC4899"},
+  {id:4,name:"Vast PS",addresses:Array.from({length:27},(_,i)=>`Adres ${i+1}`),schedule:[{day:null,frequency:"biweekly",hours:2.5}],rate:35,monthlyRevenue:null,notes:"27 adressen, 2–3 uur p.a., 1x per 2 weken",color:"#F59E0B"},
+  {id:5,name:"Amsterdam",addresses:["Keizersgracht 88, Amsterdam"],schedule:[{day:"Woensdag",frequency:"weekly",hours:3},{day:"Vrijdag",frequency:"weekly",hours:3}],rate:35,monthlyRevenue:null,notes:"2x per week, 3 uur per keer",color:"#10B981"},
+  {id:6,name:"Kapper",addresses:["Dorpsstraat 5, Utrecht"],schedule:[{day:"Maandag",frequency:"weekly",hours:2}],rate:35,monthlyRevenue:null,notes:"1x per week, 2 uur",color:"#3B82F6"},
+  {id:7,name:"Hertenkamp",addresses:["Hertenkampweg 3, Apeldoorn"],schedule:[{day:"Maandag",frequency:"weekly",hours:2},{day:"Woensdag",frequency:"weekly",hours:2},{day:"Vrijdag",frequency:"weekly",hours:2}],rate:35,monthlyRevenue:null,notes:"Ma/Wo/Vr, 2 uur per keer",color:"#14B8A6"},
+];
+let _DM=[
+  {id:1,custId:1,title:"Beglazing binnen/buiten",frequency:"monthly",color:"#6366F1"},
+  {id:2,custId:1,title:"Reiniging rand gebouw",frequency:"halfyearly",color:"#8B5CF6"},
+  {id:3,custId:1,title:"Vegen terrein",frequency:"biweekly",color:"#EC4899"},
+  {id:4,custId:1,title:"Blad/zwerfvuil",frequency:"biweekly",color:"#F59E0B"},
+  {id:5,custId:1,title:"Bosschage",frequency:"biweekly",color:"#10B981"},
+  {id:6,custId:1,title:"Spinnenrag",frequency:"quarterly",color:"#3B82F6"},
+];
+const _DFL={weekly:"Wekelijks",biweekly:"2-wekelijks",monthly:"Maandelijks",quarterly:"Kwartaal",halfyearly:"Halfjaarlijks"};
+const _DDAYS=["Maandag","Dinsdag","Woensdag","Donderdag","Vrijdag","Zaterdag","Zondag"];
+
+let _dPage='dashboard',_dCustSel=null,_dPlanWk=1,_dMCust=1,_dMTask=null,_dMStatus={};
+
+function _dISOWeek(date){
+  const d=new Date(date);d.setHours(0,0,0,0);
+  d.setDate(d.getDate()+3-((d.getDay()+6)%7));
+  const w1=new Date(d.getFullYear(),0,4);
+  return 1+Math.round(((d-w1)/86400000-3+((w1.getDay()+6)%7))/7);
+}
+function _dCalcRev(c){
+  if(c.monthlyRevenue)return c.monthlyRevenue;
+  let t=0;
+  c.schedule.forEach(s=>{const h=s.hours||0;if(s.frequency==="weekly")t+=h*4.33;else if(s.frequency==="biweekly")t+=h*2.17;else t+=h;});
+  const m=c.id===4?27:c.id===3?4:1;
+  return Math.round(t*m*(c.rate||35));
+}
+function _dCalcHrs(c){
+  let t=0;
+  c.schedule.forEach(s=>{const h=s.hours||0;if(s.frequency==="weekly")t+=h*4.33;else if(s.frequency==="biweekly")t+=h*2.17;else t+=h;});
+  const m=c.id===4?27:c.id===3?4:1;
+  return Math.round(t*m);
+}
+function _dGenOccs(task,startDate,year){
+  const occs=[];const end=new Date(year,11,31);let cur=new Date(startDate);
+  const adv=()=>{switch(task.frequency){case"weekly":cur.setDate(cur.getDate()+7);break;case"biweekly":cur.setDate(cur.getDate()+14);break;case"monthly":cur.setMonth(cur.getMonth()+1);break;case"quarterly":cur.setMonth(cur.getMonth()+3);break;case"halfyearly":cur.setMonth(cur.getMonth()+6);break;default:cur.setDate(cur.getDate()+14);}};
+  while(cur<=end){if(cur.getFullYear()===year)occs.push({week:_dISOWeek(cur),date:new Date(cur)});adv();}
+  return occs;
+}
+function _dBadge(text,color='#6366F1'){return `<span class="d-badge" style="background:${color}22;color:${color};border-color:${color}44">${text}</span>`;}
+function _dCard(content,style=''){return `<div class="d-card" style="${style}">${content}</div>`;}
+function _dST(text){return `<div class="d-st">${text}</div>`;}
+
+function _dRenderDashboard(){
+  const totalRev=_DC.reduce((s,c)=>s+_dCalcRev(c),0);
+  const totalHrs=_DC.reduce((s,c)=>s+_dCalcHrs(c),0);
+  const sorted=[..._DC].sort((a,b)=>_dCalcRev(b)-_dCalcRev(a));
+  const kpis=[
+    {label:"Maandomzet",val:`€${totalRev.toLocaleString('nl')}`,color:"#6EE7B7"},
+    {label:"Uren/maand",val:`${totalHrs}u`,color:"#93C5FD"},
+    {label:"Klanten",val:_DC.length,color:"#FCA5A5"},
+    {label:"Team",val:_DE.length-1,color:"#FDE68A"},
+  ];
+  const kpiHtml=kpis.map(k=>`<div class="d-card d-kpi"><div class="d-kpi-orb" style="background:${k.color}18"></div><div class="d-kpi-val">${k.val}</div><div class="d-kpi-lbl">${k.label}</div></div>`).join('');
+  const revHtml=sorted.map(c=>{const rev=_dCalcRev(c);const pct=Math.round(rev/totalRev*100);return `<div class="d-rev-row"><div class="d-rev-top"><div class="d-rev-name"><span class="d-dot" style="background:${c.color}"></span>${c.name}</div><span style="font-size:13px;font-weight:700;color:${c.color}">€${rev.toLocaleString('nl')}</span></div><div class="d-bar-wrap"><div class="d-bar-fill" style="width:${pct}%;background:${c.color}"></div></div></div>`;}).join('');
+  const qnav=[{label:"Klanten",page:"customers",color:"#93C5FD"},{label:"Planning",page:"planning",color:"#6EE7B7"},{label:"Onderhoud",page:"maintenance",color:"#FDE68A"},{label:"Analyse",page:"analytics",color:"#C4B5FD"}].map(a=>`<button class="d-qbtn" style="background:${a.color}15;border:1px solid ${a.color}30;color:var(--text)" onclick="dNav('${a.page}')"><span style="color:${a.color}">●</span> ${a.label}</button>`).join('');
+  return `<div class="d-hdr"><div><div class="d-hdr-sub">Goedemiddag, Sam 👋</div><h1 class="d-hdr-title">Dashboard</h1></div><div class="d-avatar">S</div></div><div class="d-grid-2" style="margin-bottom:14px">${kpiHtml}</div>${_dCard(`${_dST('Omzet per klant')}<div>${revHtml}</div>`,'margin-bottom:14px')}<div class="d-grid-2">${qnav}</div>`;
+}
+
+function _dRenderCustomers(){
+  if(_dCustSel!==null){const c=_DC.find(x=>x.id===_dCustSel);if(c)return _dRenderCustDetail(c);}
+  const rows=_DC.map(c=>{const rev=_dCalcRev(c);const hrs=_dCalcHrs(c);return `<div class="d-card d-cust-row" onclick="dSelCust(${c.id})" style="border-left:3px solid ${c.color};padding:13px 14px"><div class="d-cust-top"><div><div class="d-cust-name">${c.name}</div><div class="d-cust-badges">${_dBadge(_DFL[c.schedule[0]?.frequency],c.color)} ${_dBadge(c.addresses.length+' adr.','#475569')}</div></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;color:${c.color}">€${rev.toLocaleString('nl')}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${hrs}u/mnd</div></div></div></div>`;}).join('');
+  return `<div class="d-hdr"><h1 class="d-hdr-title" style="margin:0">Klanten</h1></div><div style="display:flex;flex-direction:column;gap:8px">${rows}</div>`;
+}
+function _dRenderCustDetail(c){
+  const rev=_dCalcRev(c);const hrs=_dCalcHrs(c);
+  const schedHtml=c.schedule.map(s=>`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">${s.day?_dBadge(s.day,c.color):''}${_dBadge(_DFL[s.frequency],'#64748B')}${s.hours?_dBadge(s.hours+'u','#475569'):''}</div>`).join('');
+  const addrHtml=c.addresses.map(a=>`<div class="d-addr-row"><span style="color:${c.color}">📍</span>${a}</div>`).join('');
+  return `<button class="d-back" onclick="dBack()">← Terug</button><div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><div class="d-cust-avatar" style="background:${c.color}28;border:2px solid ${c.color};color:${c.color}">${c.name[0]}</div><h2 style="margin:0;font-size:20px;font-weight:800">${c.name}</h2></div><div class="d-grid-2" style="margin-bottom:10px">${_dCard(`<div class="d-kpi-lbl2">Omzet/mnd</div><div style="font-size:22px;font-weight:800;color:${c.color}">€${rev.toLocaleString('nl')}</div><div class="d-kpi-sub">€${c.rate}/uur</div>`)} ${_dCard(`<div class="d-kpi-lbl2">Uren/mnd</div><div style="font-size:22px;font-weight:800">${hrs}u</div><div class="d-kpi-sub">${c.addresses.length} adressen</div>`)}</div>${_dCard(`${_dST('Planning')}${schedHtml}`,'margin-bottom:10px')}${_dCard(`${_dST('Adressen ('+c.addresses.length+')')}<div>${addrHtml}</div>`,'margin-bottom:10px')}${_dCard(`${_dST('Notities')}<div style="font-size:14px;line-height:1.6;color:var(--text2)">${c.notes}</div>`)}`;
+}
+
+function _dRenderPlanning(){
+  const byDay={};_DDAYS.forEach(d=>(byDay[d]=[]));
+  _DC.forEach(c=>c.schedule.forEach(s=>{if(s.day){if(!byDay[s.day])byDay[s.day]=[];byDay[s.day].push({c,hours:s.hours});}}));
+  const pillsHtml=_DDAYS.map(d=>{const has=(byDay[d]||[]).length>0;return `<div style="flex-shrink:0;padding:4px 9px;border-radius:16px;background:${has?'rgba(99,102,241,0.18)':'var(--surface2)'};border:1px solid ${has?'rgba(99,102,241,0.4)':'var(--border)'};font-size:11px;font-weight:${has?700:400};color:${has?'#A5B4FC':'var(--text3)'}">${d.slice(0,2)}</div>`;}).join('');
+  const daysHtml=_DDAYS.map(day=>{const items=byDay[day]||[];if(!items.length)return '';const itemsHtml=items.map(item=>`<div class="d-plan-item" style="background:${item.c.color}12;border:1px solid ${item.c.color}28;border-left:3px solid ${item.c.color}"><div style="flex:1"><div style="font-weight:700;font-size:14px">${item.c.name}</div><div style="font-size:12px;color:var(--text3);margin-top:2px">${item.c.addresses[0]}</div></div>${item.hours?_dBadge(item.hours+'u',item.c.color):''}</div>`).join('');return `<div class="d-day-group"><div class="d-day-lbl">${day.toUpperCase()}</div><div style="display:flex;flex-direction:column;gap:7px">${itemsHtml}</div></div>`;}).join('');
+  return `<div class="d-hdr"><h1 class="d-hdr-title" style="margin:0">Planning</h1><div style="display:flex;align-items:center;gap:6px"><button class="d-nav-btn" onclick="dPlanPrev()">‹</button><span style="font-weight:700;font-size:14px;min-width:52px;text-align:center">Wk ${_dPlanWk}</span><button class="d-nav-btn" onclick="dPlanNext()">›</button></div></div><div style="display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px">${pillsHtml}</div>${daysHtml}`;
+}
+
+function _dRenderEmployees(){
+  const totalHrs=_DC.reduce((s,c)=>s+_dCalcHrs(c),0);
+  const ownerHrs=Math.round(totalHrs*0.35);const staffHrs=totalHrs-ownerHrs;
+  const pct=Math.round(staffHrs/totalHrs*100);const ok=pct>=75;const col=ok?'#6EE7B7':'#FCA5A5';
+  const teamHtml=_DE.map(e=>{const hrs=e.isOwner?ownerHrs:Math.round(staffHrs/(_DE.length-1));return `<div class="d-card d-emp-row"><div class="d-emp-avatar" style="background:${e.color}22;border:2px solid ${e.color};color:${e.color}">${e.name[0]}</div><div style="flex:1"><div style="font-weight:700;font-size:14px">${e.name}</div><div style="font-size:12px;color:var(--text3)">${e.isOwner?'Eigenaar':'Medewerker'}</div></div>${_dBadge(hrs+'u/mnd',e.color)}</div>`;}).join('');
+  return `<div class="d-hdr"><h1 class="d-hdr-title" style="margin:0">Medewerkers</h1></div><div class="d-card" style="background:${ok?'rgba(110,231,183,0.07)':'rgba(252,165,165,0.07)'};border-color:${ok?'rgba(110,231,183,0.2)':'rgba(252,165,165,0.2)'};margin-bottom:14px">${_dST('Schaaldoel — personeel vs eigenaar')}<div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:14px">Personeel aandeel</span><span style="font-weight:800;font-size:18px;color:${col}">${pct}%</span></div><div class="d-bar-wrap"><div class="d-bar-fill" style="width:${pct}%;background:${col}"></div></div><div style="font-size:12px;color:var(--text3);margin-top:6px">Doel: ≥ 75% via personeel</div></div><div class="d-grid-2" style="margin-bottom:14px">${_dCard(`<div class="d-kpi-lbl2">Personeel/mnd</div><div style="font-size:22px;font-weight:800;color:#6EE7B7">${staffHrs}u</div>`)} ${_dCard(`<div class="d-kpi-lbl2">Eigenaar/mnd</div><div style="font-size:22px;font-weight:800;color:#FCA5A5">${ownerHrs}u</div>`)}</div>${_dST('Team')}<div style="display:flex;flex-direction:column;gap:8px">${teamHtml}</div>`;
+}
+
+function _dRenderAnalytics(){
+  const sorted=[..._DC].sort((a,b)=>_dCalcRev(b)-_dCalcRev(a));
+  const totalRev=_DC.reduce((s,c)=>s+_dCalcRev(c),0);const totalHrs=_DC.reduce((s,c)=>s+_dCalcHrs(c),0);
+  const rows=sorted.map((c,i)=>{const rev=_dCalcRev(c);const hrs=_dCalcHrs(c);const rph=hrs>0?Math.round(rev/hrs):0;const pct=Math.round(rev/totalRev*100);return `<div class="d-card" style="border-left:3px solid ${c.color};padding:12px 14px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:7px"><div style="display:flex;align-items:center;gap:7px"><span style="font-size:11px;font-weight:700;color:var(--text3)">#${i+1}</span><span style="font-weight:700;font-size:14px">${c.name}</span></div><span style="font-weight:800;color:${c.color};font-size:15px">€${rev.toLocaleString('nl')}</span></div><div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px">${_dBadge(hrs+'u/mnd','#475569')} ${_dBadge('€'+rph+'/uur',rph>=35?'#6EE7B7':'#FCA5A5')} ${_dBadge(pct+'%',c.color)}</div><div class="d-bar-wrap"><div class="d-bar-fill" style="width:${pct}%;background:${c.color}"></div></div></div>`;}).join('');
+  return `<div class="d-hdr"><h1 class="d-hdr-title" style="margin:0">Analyse</h1></div><div class="d-grid-2" style="margin-bottom:14px">${_dCard(`<div class="d-kpi-lbl2">Jaaromzet</div><div style="font-size:18px;font-weight:800;color:#6EE7B7">€${(totalRev*12).toLocaleString('nl')}</div>`)} ${_dCard(`<div class="d-kpi-lbl2">Omzet/uur</div><div style="font-size:18px;font-weight:800;color:#93C5FD">€${Math.round(totalRev/totalHrs)}</div>`)}</div>${_dST('Klantprestaties')}${rows}`;
+}
+
+function _dRenderMaintenance(){
+  const year=2026;const tasks=_DM.filter(t=>t.custId===_dMCust);
+  if(_dMTask!==null){const task=tasks.find(t=>t.id===_dMTask);if(task)return _dRenderMaintTask(task,year);}
+  const custPills=_DC.map(c=>`<button onclick="dMaintCust(${c.id})" style="flex-shrink:0;padding:5px 12px;border-radius:16px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${_dMCust===c.id?c.color:'var(--surface2)'};border:1px solid ${_dMCust===c.id?c.color:'var(--border)'};color:${_dMCust===c.id?'#000':'var(--text3)'}">${c.name}</button>`).join('');
+  if(!tasks.length)return `<div class="d-hdr"><h1 class="d-hdr-title" style="margin:0">Onderhoud ${year}</h1></div><div style="display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px">${custPills}</div>${_dCard('<div style="text-align:center;padding:26px;color:var(--text3)">Geen taken voor deze klant</div>')}`;
+  const occMap={};tasks.forEach(t=>{occMap[t.id]=_dGenOccs(t,'2026-01-01',year);});
+  const weeks=Array.from({length:52},(_,i)=>i+1);
+  const heatmap=tasks.map(task=>{const occs=occMap[task.id]||[];const occWeeks=new Set(occs.map(o=>o.week));const dots=weeks.map(w=>{const has=occWeeks.has(w);const done=_dMStatus[`${task.id}-${w}`]==='completed';return `<div style="width:9px;height:9px;border-radius:2px;flex-shrink:0;background:${has?(done?task.color:task.color+'55'):'var(--surface2)'}"></div>`;}).join('');return `<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--text3);margin-bottom:3px;display:flex;align-items:center;gap:5px"><div style="width:7px;height:7px;background:${task.color};border-radius:2px;flex-shrink:0"></div>${task.title}</div><div style="display:flex;gap:1.5px">${dots}</div></div>`;}).join('');
+  const taskList=tasks.map(task=>{const occs=occMap[task.id]||[];const done=occs.filter(o=>_dMStatus[`${task.id}-${o.week}`]==='completed').length;const pct=occs.length>0?Math.round(done/occs.length*100):0;return `<div class="d-card" onclick="dMaintTask(${task.id})" style="border-left:3px solid ${task.color};padding:12px 14px;cursor:pointer;margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:7px"><div style="font-weight:700;font-size:14px">${task.title}</div>${_dBadge(_DFL[task.frequency],task.color)}</div><div style="display:flex;align-items:center;gap:10px"><div class="d-bar-wrap" style="flex:1"><div class="d-bar-fill" style="width:${pct}%;background:${task.color}"></div></div><span style="font-size:12px;color:var(--text3)">${done}/${occs.length}</span></div></div>`;}).join('');
+  return `<div class="d-hdr"><h1 class="d-hdr-title" style="margin:0">Onderhoud ${year}</h1></div><div style="display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px">${custPills}</div>${_dCard(`${_dST('Jaaroverzicht (week 1–52)')}<div>${heatmap}</div>`,'margin-bottom:14px')}${_dST('Taken — tik om bij te houden')}${taskList}`;
+}
+function _dRenderMaintTask(task,year){
+  const occs=_dGenOccs(task,'2026-01-01',year);
+  const done=occs.filter(o=>_dMStatus[`${task.id}-${o.week}`]==='completed').length;
+  const occHtml=occs.map(o=>{const k=`${task.id}-${o.week}`;const isDone=_dMStatus[k]==='completed';return `<button onclick="dToggle(${task.id},${o.week})" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:${isDone?task.color+'18':'var(--surface)'};border:1px solid ${isDone?task.color+'40':'var(--border)'};border-radius:12px;cursor:pointer;color:var(--text);text-align:left;width:100%;font-family:inherit;margin-bottom:7px"><div style="width:24px;height:24px;border-radius:50%;background:${isDone?task.color:'var(--surface2)'};border:2px solid ${isDone?task.color:'var(--border2)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;color:${isDone?'#000':'transparent'}">${isDone?'✓':''}</div><div style="flex:1"><div style="font-weight:600;font-size:14px">Week ${o.week}</div><div style="font-size:12px;color:var(--text3)">${o.date.toLocaleDateString('nl-NL',{day:'numeric',month:'long'})}</div></div>${_dBadge(isDone?'Afgerond':'Gepland',isDone?task.color:'#475569')}</button>`;}).join('');
+  return `<button class="d-back" onclick="dBack()">← Terug</button><div style="display:flex;align-items:center;gap:9px;margin-bottom:14px"><div style="width:10px;height:10px;border-radius:3px;background:${task.color};flex-shrink:0"></div><h2 style="margin:0;font-size:18px;font-weight:800">${task.title}</h2></div><div class="d-grid-2" style="margin-bottom:14px">${_dCard(`<div class="d-kpi-lbl2">Frequentie</div><div style="font-weight:700;margin-top:4px">${_DFL[task.frequency]}</div>`)} ${_dCard(`<div class="d-kpi-lbl2">Voortgang</div><div style="font-weight:700;color:${task.color};margin-top:4px">${done}/${occs.length}</div>`)}</div>${_dST('Momenten 2026')}${occHtml}`;
+}
+
+// ── Beheer state & persistence ──
+const _DCOLORS=['#6366F1','#8B5CF6','#EC4899','#EF4444','#F59E0B','#10B981','#3B82F6','#14B8A6','#F97316','#84CC16'];
+let _dBeheerSec='klanten',_dBeheerEdit=null,_dBeheerIsNew=false,_dBeheerSchedRows=[];
+
+let _dDashUnsub=null;
+
+async function _dSaveData(){
+  try{
+    await setDoc(_dDashDoc,{customers:_DC,employees:_DE,tasks:_DM,updatedAt:Date.now()});
+  }catch(e){console.error('dash save:',e);}
+}
+
+function _dStartDashListener(){
+  if(_dDashUnsub)return;
+  _dDashUnsub=onSnapshot(_dDashDoc,snap=>{
+    if(!snap.exists()){
+      // Eerste keer: sla standaarddata op in Firestore
+      _dSaveData();
+      return;
+    }
+    const d=snap.data();
+    if(d.customers&&d.customers.length)_DC=d.customers;
+    if(d.employees&&d.employees.length)_DE=d.employees;
+    if(d.tasks)_DM=d.tasks;
+    _dRenderAll();
+  },err=>console.error('dash listener:',err));
+}
+
+function _dFld(){return `background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:0.84rem;font-weight:500;color:var(--text);width:100%;outline:none;box-sizing:border-box`;}
+function _dLbl(t){return `<div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-bottom:4px;margin-top:14px">${t}</div>`;}
+function _dColorPicker(sel){return _DCOLORS.map(c=>`<div onclick="dPickColor('${c}')" id="dcp-${c.slice(1)}" style="width:26px;height:26px;border-radius:50%;background:${c};cursor:pointer;border:3px solid ${sel===c?'var(--text)':'transparent'};box-sizing:border-box;flex-shrink:0"></div>`).join('');}
+
+function _dSchedRowHtml(s,i){
+  const dayOpts=['', ..._DDAYS].map(d=>`<option value="${d}" ${(s.day||'')=== d?'selected':''}>${d||'Geen dag'}</option>`).join('');
+  const freqOpts=Object.entries(_DFL).map(([k,v])=>`<option value="${k}" ${s.frequency===k?'selected':''}>${v}</option>`).join('');
+  return `<div style="display:flex;gap:6px;align-items:center;margin-bottom:8px"><select id="dss-d-${i}" style="${_dFld()};flex:1.4">${dayOpts}</select><select id="dss-f-${i}" style="${_dFld()};flex:1">${freqOpts}</select><input type="number" id="dss-h-${i}" value="${s.hours||''}" placeholder="u" min="0" step="0.5" style="${_dFld()};width:54px;flex-shrink:0"><button onclick="dBRemSched(${i})" style="background:none;border:none;color:var(--urgent);cursor:pointer;font-size:18px;padding:0 4px;flex-shrink:0;line-height:1">×</button></div>`;
+}
+function _dReadSched(){return _dBeheerSchedRows.map((_,i)=>({day:document.getElementById('dss-d-'+i)?.value||null,frequency:document.getElementById('dss-f-'+i)?.value||'monthly',hours:parseFloat(document.getElementById('dss-h-'+i)?.value)||null}));}
+function _dRerendSched(){const c=document.getElementById('d-sched-cont');if(c)c.innerHTML=_dBeheerSchedRows.map((s,i)=>_dSchedRowHtml(s,i)).join('');}
+
+// ── Beheer render ──
+function _dRenderBeheer(){
+  if(_dBeheerEdit)return _dRenderBeheerForm();
+  const pills=['klanten','employees','taken'].map(s=>`<button onclick="dBSec('${s}')" style="padding:6px 14px;border-radius:16px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${_dBeheerSec===s?'var(--accent)':'var(--surface2)'};border:1px solid ${_dBeheerSec===s?'var(--accent)':'var(--border)'};color:${_dBeheerSec===s?'#fff':'var(--text3)'}">${{klanten:'Klanten',employees:'Medewerkers',taken:'Taken'}[s]}</button>`).join('');
+  let content='';
+  if(_dBeheerSec==='klanten'){
+    content=_DC.map(c=>`<div class="d-card" style="display:flex;align-items:center;gap:10px;padding:12px 14px;margin-bottom:8px;border-left:3px solid ${c.color}"><div style="flex:1"><div style="font-weight:700;font-size:14px">${c.name}</div><div style="font-size:12px;color:var(--text3);margin-top:2px">${c.addresses.length} adres · €${_dCalcRev(c)}/mnd</div></div><button onclick="dBEdit('customer',${c.id})" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:var(--text)">Bewerk</button></div>`).join('')
+    +`<button onclick="dBNew('customer')" style="width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;margin-top:4px">+ Nieuwe klant</button>`;
+  } else if(_dBeheerSec==='employees'){
+    content=_DE.map(e=>`<div class="d-card d-emp-row"><div class="d-emp-avatar" style="background:${e.color}22;border:2px solid ${e.color};color:${e.color};width:36px;height:36px;font-size:14px">${e.name[0]}</div><div style="flex:1"><div style="font-weight:700;font-size:14px">${e.name}</div><div style="font-size:12px;color:var(--text3)">${e.isOwner?'Eigenaar':'Medewerker'}</div></div><button onclick="dBEdit('employee',${e.id})" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:var(--text)">Bewerk</button></div>`).join('')
+    +`<button onclick="dBNew('employee')" style="width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;margin-top:4px">+ Nieuwe medewerker</button>`;
+  } else {
+    content=_DM.map(t=>{const cu=_DC.find(c=>c.id===t.custId);return `<div class="d-card" style="display:flex;align-items:center;gap:10px;padding:12px 14px;margin-bottom:8px;border-left:3px solid ${t.color}"><div style="flex:1"><div style="font-weight:700;font-size:14px">${t.title}</div><div style="font-size:12px;color:var(--text3);margin-top:2px">${cu?cu.name:'?'} · ${_DFL[t.frequency]}</div></div><button onclick="dBEdit('task',${t.id})" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:var(--text)">Bewerk</button></div>`;}).join('')
+    +`<button onclick="dBNew('task')" style="width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;margin-top:4px">+ Nieuwe taak</button>`;
+  }
+  return `<div class="d-hdr"><h1 class="d-hdr-title" style="margin:0">Beheer</h1></div><div style="display:flex;gap:8px;margin-bottom:16px">${pills}</div>${content}`;
+}
+
+function _dRenderBeheerForm(){
+  const {type}=_dBeheerEdit;
+  if(type==='customer'){
+    const isNew=_dBeheerIsNew;const c=isNew?null:_DC.find(x=>x.id===_dBeheerEdit.id);
+    const sel=isNew?'#6366F1':(c?.color||'#6366F1');
+    const sched=_dBeheerSchedRows.map((s,i)=>_dSchedRowHtml(s,i)).join('');
+    return `<button class="d-back" onclick="dBBack()">← Terug</button><h2 style="font-size:18px;font-weight:800;margin-bottom:14px">${isNew?'Nieuwe klant':c.name+' bewerken'}</h2>${_dLbl('Naam')}<input type="text" id="df-naam" value="${isNew?'':c.name}" placeholder="Klantnaam" style="${_dFld()}">${_dLbl('Kleur')}<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">${_dColorPicker(sel)}</div><input type="hidden" id="df-color" value="${sel}"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div>${_dLbl('Tarief (€/uur)')}<input type="number" id="df-rate" value="${isNew?35:c.rate}" min="0" step="0.5" style="${_dFld()}"></div><div>${_dLbl('Vaste omzet/mnd')}<input type="number" id="df-mrev" value="${isNew?'':(c.monthlyRevenue||'')}" placeholder="Leeg = auto" min="0" style="${_dFld()}"></div></div>${_dLbl('Planning')}<div id="d-sched-cont">${sched}</div><button onclick="dBAddSched()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 12px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:var(--text);margin-top:4px">+ Regel</button>${_dLbl('Adressen (één per regel)')}<textarea id="df-addrs" rows="3" placeholder="Adres 1&#10;Adres 2" style="${_dFld()};resize:vertical">${isNew?'':c.addresses.join('\n')}</textarea>${_dLbl('Notities')}<textarea id="df-notes" rows="2" style="${_dFld()};resize:vertical">${isNew?'':c.notes}</textarea><button onclick="dBSaveCust(${isNew?'null':c.id})" style="width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;margin-top:18px">Opslaan</button>${!isNew?`<button onclick="dBDel('customer',${c.id})" style="width:100%;background:none;border:1px solid var(--urgent);border-radius:10px;padding:10px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--urgent);margin-top:8px">Verwijderen</button>`:''}`;
+  }
+  if(type==='employee'){
+    const isNew=_dBeheerIsNew;const e=isNew?null:_DE.find(x=>x.id===_dBeheerEdit.id);
+    const sel=isNew?'#6EE7B7':(e?.color||'#6EE7B7');const isOwner=isNew?false:e.isOwner;
+    return `<button class="d-back" onclick="dBBack()">← Terug</button><h2 style="font-size:18px;font-weight:800;margin-bottom:14px">${isNew?'Nieuwe medewerker':e.name+' bewerken'}</h2>${_dLbl('Naam')}<input type="text" id="df-naam" value="${isNew?'':e.name}" placeholder="Naam" style="${_dFld()}">${_dLbl('Kleur')}<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">${_dColorPicker(sel)}</div><input type="hidden" id="df-color" value="${sel}">${_dLbl('Rol')}<div style="display:flex;gap:8px;margin-top:4px"><button id="drole-mw" onclick="dSetRole(false)" style="flex:1;padding:9px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;background:${!isOwner?'var(--accent)':'var(--surface2)'};border:1px solid ${!isOwner?'var(--accent)':'var(--border)'};color:${!isOwner?'#fff':'var(--text)'}">Medewerker</button><button id="drole-ow" onclick="dSetRole(true)" style="flex:1;padding:9px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;background:${isOwner?'var(--accent)':'var(--surface2)'};border:1px solid ${isOwner?'var(--accent)':'var(--border)'};color:${isOwner?'#fff':'var(--text)'}">Eigenaar</button></div><input type="hidden" id="df-role" value="${isOwner?'1':'0'}"><button onclick="dBSaveEmp(${isNew?'null':e.id})" style="width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;margin-top:18px">Opslaan</button>${!isNew?`<button onclick="dBDel('employee',${e.id})" style="width:100%;background:none;border:1px solid var(--urgent);border-radius:10px;padding:10px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--urgent);margin-top:8px">Verwijderen</button>`:''}`;
+  }
+  // task
+  const isNew=_dBeheerIsNew;const t=isNew?null:_DM.find(x=>x.id===_dBeheerEdit.id);
+  const sel=isNew?'#6366F1':(t?.color||'#6366F1');
+  const selCust=isNew?(_DC[0]?.id||1):t.custId;const selFreq=isNew?'monthly':t.frequency;
+  const custOpts=_DC.map(c=>`<option value="${c.id}" ${selCust===c.id?'selected':''}>${c.name}</option>`).join('');
+  const freqOpts=Object.entries(_DFL).map(([k,v])=>`<option value="${k}" ${selFreq===k?'selected':''}>${v}</option>`).join('');
+  return `<button class="d-back" onclick="dBBack()">← Terug</button><h2 style="font-size:18px;font-weight:800;margin-bottom:14px">${isNew?'Nieuwe taak':t.title+' bewerken'}</h2>${_dLbl('Taaknaam')}<input type="text" id="df-naam" value="${isNew?'':t.title}" placeholder="Naam van taak" style="${_dFld()}">${_dLbl('Klant')}<select id="df-cust" style="${_dFld()}">${custOpts}</select>${_dLbl('Frequentie')}<select id="df-freq" style="${_dFld()}">${freqOpts}</select>${_dLbl('Kleur')}<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">${_dColorPicker(sel)}</div><input type="hidden" id="df-color" value="${sel}"><button onclick="dBSaveTask(${isNew?'null':t.id})" style="width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;margin-top:18px">Opslaan</button>${!isNew?`<button onclick="dBDel('task',${t.id})" style="width:100%;background:none;border:1px solid var(--urgent);border-radius:10px;padding:10px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--urgent);margin-top:8px">Verwijderen</button>`:''}`;
+}
+
+// ── Beheer window exports ──
+window.dBSec=function(s){_dBeheerSec=s;_dRenderAll();};
+window.dBEdit=function(type,id){_dBeheerEdit={type,id};_dBeheerIsNew=false;if(type==='customer'){const c=_DC.find(x=>x.id===id);_dBeheerSchedRows=c?JSON.parse(JSON.stringify(c.schedule)):[];}else _dBeheerSchedRows=[];_dRenderAll();};
+window.dBNew=function(type){_dBeheerEdit={type,id:null};_dBeheerIsNew=true;_dBeheerSchedRows=type==='customer'?[{day:null,frequency:'weekly',hours:null}]:[];_dRenderAll();};
+window.dBBack=function(){_dBeheerEdit=null;_dBeheerIsNew=false;_dRenderAll();};
+window.dPickColor=function(col){document.getElementById('df-color').value=col;_DCOLORS.forEach(c=>{const el=document.getElementById('dcp-'+c.slice(1));if(el)el.style.borderColor=c===col?'var(--text)':'transparent';});};
+window.dSetRole=function(isOwner){document.getElementById('df-role').value=isOwner?'1':'0';const mw=document.getElementById('drole-mw');const ow=document.getElementById('drole-ow');if(mw){mw.style.background=isOwner?'var(--surface2)':'var(--accent)';mw.style.borderColor=isOwner?'var(--border)':'var(--accent)';mw.style.color=isOwner?'var(--text)':'#fff';}if(ow){ow.style.background=isOwner?'var(--accent)':'var(--surface2)';ow.style.borderColor=isOwner?'var(--accent)':'var(--border)';ow.style.color=isOwner?'#fff':'var(--text)';}};
+window.dBAddSched=function(){_dBeheerSchedRows=_dReadSched();_dBeheerSchedRows.push({day:null,frequency:'weekly',hours:null});_dRerendSched();};
+window.dBRemSched=function(i){_dBeheerSchedRows=_dReadSched();_dBeheerSchedRows.splice(i,1);_dRerendSched();};
+window.dBSaveCust=function(id){
+  const naam=document.getElementById('df-naam')?.value.trim();if(!naam){alert('Naam is verplicht');return;}
+  const color=document.getElementById('df-color').value;
+  const rate=parseFloat(document.getElementById('df-rate').value)||35;
+  const mrevRaw=document.getElementById('df-mrev').value;
+  const monthlyRevenue=mrevRaw?parseFloat(mrevRaw)||null:null;
+  const addrs=(document.getElementById('df-addrs').value||'').split('\n').map(a=>a.trim()).filter(a=>a);
+  if(!addrs.length)addrs.push('Adres onbekend');
+  const notes=(document.getElementById('df-notes').value||'').trim();
+  const schedule=_dReadSched();if(!schedule.length)schedule.push({day:null,frequency:'monthly',hours:null});
+  if(id===null){_DC.push({id:Date.now(),name:naam,addresses:addrs,schedule,rate,monthlyRevenue,notes,color});}
+  else{const idx=_DC.findIndex(c=>c.id===id);if(idx>=0)_DC[idx]={..._DC[idx],name:naam,addresses:addrs,schedule,rate,monthlyRevenue,notes,color};}
+  _dSaveData();_dBeheerEdit=null;_dBeheerIsNew=false;_dRenderAll();
+};
+window.dBSaveEmp=function(id){
+  const naam=document.getElementById('df-naam')?.value.trim();if(!naam){alert('Naam is verplicht');return;}
+  const color=document.getElementById('df-color').value;
+  const isOwner=document.getElementById('df-role').value==='1';
+  if(id===null){_DE.push({id:Date.now(),name:naam,color,isOwner});}
+  else{const idx=_DE.findIndex(e=>e.id===id);if(idx>=0)_DE[idx]={..._DE[idx],name:naam,color,isOwner};}
+  _dSaveData();_dBeheerEdit=null;_dBeheerIsNew=false;_dRenderAll();
+};
+window.dBSaveTask=function(id){
+  const naam=document.getElementById('df-naam')?.value.trim();if(!naam){alert('Naam is verplicht');return;}
+  const color=document.getElementById('df-color').value;
+  const custId=parseInt(document.getElementById('df-cust').value);
+  const frequency=document.getElementById('df-freq').value;
+  if(id===null){_DM.push({id:Date.now(),custId,title:naam,frequency,color});}
+  else{const idx=_DM.findIndex(t=>t.id===id);if(idx>=0)_DM[idx]={..._DM[idx],title:naam,custId,frequency,color};}
+  _dSaveData();_dBeheerEdit=null;_dBeheerIsNew=false;_dRenderAll();
+};
+window.dBDel=function(type,id){
+  if(!confirm('Verwijderen?'))return;
+  if(type==='customer')_DC=_DC.filter(c=>c.id!==id);
+  else if(type==='employee')_DE=_DE.filter(e=>e.id!==id);
+  else if(type==='task')_DM=_DM.filter(t=>t.id!==id);
+  _dSaveData();_dBeheerEdit=null;_dBeheerIsNew=false;_dRenderAll();
+};
+
+function _dUpdateNav(){
+  ['dashboard','customers','planning','employees','analytics','maintenance','beheer'].forEach(p=>{const el=document.getElementById('ne-'+p);if(el)el.classList.toggle('on',_dPage===p);});
+}
+function _dRenderAll(){
+  const el=document.getElementById('extra-list');if(!el)return;
+  switch(_dPage){
+    case'dashboard':el.innerHTML=_dRenderDashboard();break;
+    case'customers':el.innerHTML=_dRenderCustomers();break;
+    case'planning':el.innerHTML=_dRenderPlanning();break;
+    case'employees':el.innerHTML=_dRenderEmployees();break;
+    case'analytics':el.innerHTML=_dRenderAnalytics();break;
+    case'maintenance':el.innerHTML=_dRenderMaintenance();break;
+    case'beheer':el.innerHTML=_dRenderBeheer();break;
+  }
+  _dUpdateNav();
+}
+
+window.startExtraModule=function(){_dPage='dashboard';_dCustSel=null;_dMTask=null;_dPlanWk=_dISOWeek(new Date());_dStartDashListener();_dRenderAll();};
+window.dNav=function(page){_dPage=page;_dCustSel=null;_dMTask=null;_dRenderAll();};
+window.dSelCust=function(id){_dCustSel=id;_dRenderAll();};
+window.dBack=function(){_dCustSel=null;_dMTask=null;_dRenderAll();};
+window.dPlanPrev=function(){_dPlanWk=Math.max(1,_dPlanWk-1);_dRenderAll();};
+window.dPlanNext=function(){_dPlanWk=Math.min(52,_dPlanWk+1);_dRenderAll();};
+window.dMaintCust=function(id){_dMCust=id;_dMTask=null;_dRenderAll();};
+window.dMaintTask=function(id){_dMTask=id;_dRenderAll();};
+window.dToggle=function(tid,w){const k=`${tid}-${w}`;_dMStatus[k]=_dMStatus[k]==='completed'?'planned':'completed';_dRenderAll();};
+
 // Scroll-reveal observer — marks .reveal elements visible when they enter viewport
 const _revealObs = new IntersectionObserver((entries) => {
   entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); _revealObs.unobserve(e.target); } });
@@ -3164,6 +3519,17 @@ window.renderK = function() {
     });
   }, 0);
 };
+
+// ── App init (hier pas, zodat alle window.* functies al klaarstaan) ──
+document.getElementById('n-datum').value = vnd();
+const _savedMod = sessionStorage.getItem('purgato_module');
+if (_savedMod) {
+  openModule(_savedMod);
+} else {
+  document.getElementById('startscherm').classList.add('open');
+  setTimeout(_smTypewriter, 120);
+}
+startListener();
 </script>
 </body>
 </html>
