@@ -8,6 +8,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Purgato">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-512.png">
 <title>Purgato Planner</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>
@@ -52,27 +54,6 @@
 body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overscroll-behavior:none;transition:background 0.3s var(--ease-out),color 0.3s var(--ease-out);font-size:14px;}
 
 /* ── Splash ── */
-.splash{
-  position:fixed;inset:0;z-index:9999;
-  background:linear-gradient(160deg,#1d4d28 0%,#2a6636 45%,#3a8048 100%);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  transition:opacity 0.5s var(--ease-out);
-}
-.splash::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(80,180,100,0.18) 0%,transparent 70%);
-  pointer-events:none;
-}
-.splash.hide{opacity:0;pointer-events:none;}
-.splash-brand{text-align:center;position:relative;}
-.splash-purgato{font-size:3rem;font-weight:900;color:#fff;letter-spacing:0.18em;text-transform:uppercase;line-height:1;}
-.splash-cleaning{font-size:0.8rem;font-weight:500;color:rgba(255,255,255,0.6);letter-spacing:0.32em;margin-top:6px;text-transform:uppercase;}
-.splash-sub{
-  font-size:0.7rem;font-weight:600;color:rgba(255,255,255,0.35);
-  letter-spacing:0.18em;text-transform:uppercase;margin-top:64px;
-  display:flex;align-items:center;gap:8px;
-}
-.splash-sub::before,.splash-sub::after{content:'';width:16px;height:1px;background:rgba(255,255,255,0.2);}
 
 /* ── Startscherm ── */
 /* ── Startscherm ── */
@@ -80,13 +61,18 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
   display:none;position:fixed;inset:0;z-index:900;
   background:linear-gradient(160deg,#0e2318 0%,#163824 30%,#1c4a2c 60%,#112a1c 100%);
   flex-direction:column;align-items:center;justify-content:center;
-  padding:40px 24px 52px;
+  padding:24px 20px 32px;
 }
-/* Dot grid texture */
+/* Diagonal line pattern */
 #startscherm::before{
   content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
-  background-image:radial-gradient(circle,rgba(255,255,255,0.045) 1px,transparent 1px);
-  background-size:32px 32px;
+  background-image:repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,0.04) 0px,
+    rgba(255,255,255,0.04) 1px,
+    transparent 1px,
+    transparent 28px
+  );
 }
 /* Ambient glow blobs */
 #startscherm::after{
@@ -100,7 +86,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 
 /* Branding */
 .sm-brand{
-  text-align:center;margin-bottom:44px;
+  text-align:center;margin-bottom:28px;
   position:relative;z-index:1;
   display:flex;flex-direction:column;align-items:center;
 }
@@ -136,12 +122,8 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 /* Grid */
 .sm-grid{
   display:grid;grid-template-columns:1fr 1fr;
-  gap:16px;width:100%;max-width:340px;
+  gap:14px;width:100%;max-width:340px;
   position:relative;z-index:1;
-}
-/* 3 apps: eerste full width */
-.sm-grid:has(.module-card:first-child:nth-last-child(3)) .module-card:first-child{
-  grid-column:1/-1;aspect-ratio:2.4/1;
 }
 
 .module-card{
@@ -177,6 +159,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 /* Identity gradients */
 .mc-glas{background:linear-gradient(145deg,#4db8f0 0%,#1a8fd1 45%,#0a5f96 100%);}
 .mc-winst{background:linear-gradient(145deg,#fbbf24 0%,#f59e0b 40%,#d97706 100%);}
+.mc-uren{background:linear-gradient(145deg,#a78bfa 0%,#7c3aed 45%,#5b21b6 100%);}
 
 /* Icon */
 .mc-icon-wrap{
@@ -267,6 +250,7 @@ header{
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   border-bottom:1px solid var(--border);
   display:flex;overflow-x:auto;scrollbar-width:none;padding:0 12px;gap:2px;
+  position:sticky;top:56px;z-index:15;
 }
 .nav::-webkit-scrollbar{display:none;}
 .nav-item{
@@ -1136,11 +1120,6 @@ header{
 }
 
 /* 2. Startscherm: second animated orb + title glow */
-/* 3 apps: first kaart full width */
-.sm-grid:has(.module-card:first-child:nth-last-child(3)) .module-card:first-child {
-  grid-column: 1 / -1;
-  aspect-ratio: 2/1;
-}
 
 /* 3. Header: logo shimmer */
 .h-logo { overflow: hidden !important; position: relative !important; }
@@ -1932,6 +1911,88 @@ header{
 .overlay.closing { animation: overlayOut 0.26s ease forwards; pointer-events: none; }
 .overlay.closing .sheet { animation: sheetDown 0.26s cubic-bezier(0.32,0.72,0,1) forwards; }
 
+/* ── Uren Registratie ── */
+#app-uren{display:none;}
+#app-uren.on{display:block;}
+.ur-week-sep{
+  display:flex;align-items:center;gap:10px;
+  padding:20px 2px 8px;
+}
+.ur-week-sep:first-child{padding-top:4px;}
+.ur-week-sep-lbl{
+  font-size:0.62rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.1em;color:var(--text3);white-space:nowrap;flex-shrink:0;
+}
+.ur-week-sep-line{flex:1;height:1px;background:var(--border);}
+.ur-dag{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;margin-bottom:10px;overflow:hidden;
+  box-shadow:var(--shadow);
+  border-left:3px solid transparent;
+  animation:entryUp 0.32s cubic-bezier(0.32,0.72,0,1) both;
+}
+.ur-dag.today{
+  border-left-color:#7c3aed;
+  background:linear-gradient(135deg,rgba(124,58,237,0.04) 0%,var(--surface) 60%);
+}
+.ur-dag.heeft-notitie{
+  border-left-color:var(--accent);
+  background:linear-gradient(135deg,rgba(45,107,58,0.03) 0%,var(--surface) 50%);
+}
+.ur-dag.today.heeft-notitie{
+  border-left-color:#7c3aed;
+  background:linear-gradient(135deg,rgba(124,58,237,0.05) 0%,var(--surface) 60%);
+}
+.ur-dag-hdr{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px 8px;
+}
+.ur-dag-nr{
+  font-size:1.5rem;font-weight:800;line-height:1;letter-spacing:-1px;
+  color:var(--border2);min-width:34px;
+}
+.ur-dag.heeft-notitie .ur-dag-nr{color:var(--text2);}
+.ur-dag.today .ur-dag-nr{color:#7c3aed;}
+.ur-dag-info{flex:1;}
+.ur-dag-naam{
+  font-size:0.82rem;font-weight:800;color:var(--text2);letter-spacing:-0.2px;
+}
+.ur-dag.heeft-notitie .ur-dag-naam,.ur-dag.today .ur-dag-naam{color:var(--text);}
+.ur-dag.today .ur-dag-naam{color:#7c3aed;}
+.ur-dag-sub{font-size:0.62rem;color:var(--text3);font-weight:600;margin-top:1px;}
+.ur-dag-pill{
+  font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;
+  padding:3px 8px;border-radius:99px;
+  background:rgba(124,58,237,0.1);color:#7c3aed;
+  display:none;
+}
+.ur-dag.today .ur-dag-pill{display:inline-block;}
+.ur-notitie{
+  margin:0 14px 4px;border:none;border-top:1px solid var(--border);
+  background:transparent;
+  padding:10px 0 8px;
+  font-family:inherit;font-size:0.83rem;color:var(--text);
+  line-height:1.6;outline:none;resize:none;width:calc(100% - 28px);
+  min-height:44px;box-sizing:border-box;overflow:hidden;
+}
+.ur-dag:not(.heeft-notitie) .ur-notitie{
+  background:rgba(0,0,0,0.015);
+  border-radius:0 0 13px 13px;
+  margin:0;padding:10px 14px 10px;
+  width:100%;border-top:1px solid var(--border);
+}
+[data-theme="dark"] .ur-dag:not(.heeft-notitie) .ur-notitie{background:rgba(255,255,255,0.02);}
+.ur-notitie::placeholder{color:var(--text3);}
+.ur-status-row{
+  display:flex;justify-content:flex-end;
+  padding:0 14px 8px;min-height:20px;
+}
+.ur-opgeslagen{
+  font-size:0.65rem;color:#7c3aed;font-weight:700;
+  opacity:0;transition:opacity 0.3s;letter-spacing:0.02em;
+}
+.ur-opgeslagen.show{opacity:1;}
+
 /* ── Touch active feedback (werkt op Android & iOS) ── */
 .kkaart:active       { transform: scale(0.97) !important; transition: transform 0.1s ease !important; }
 .witem:active        { transform: scale(0.98) !important; transition: transform 0.1s ease !important; }
@@ -1960,13 +2021,6 @@ header{
 <body>
 
 <!-- Splash -->
-<div class="splash" id="splash">
-  <div class="splash-brand">
-    <div class="splash-purgato">PURGATO</div>
-    <div class="splash-cleaning">Cleaning</div>
-  </div>
-  <div class="splash-sub">Laden</div>
-</div>
 
 <!-- Startscherm -->
 <div id="startscherm">
@@ -2007,6 +2061,21 @@ header{
         <div class="mc-desc">Zwart vs. officieel</div>
       </div>
     </div>
+
+    <!-- Uren Registratie -->
+    <div class="module-card mc-uren" onclick="openModule('uren')">
+      <div class="mc-icon-wrap">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/>
+          <polyline points="12,7 12,12 15.5,14"/>
+        </svg>
+      </div>
+      <div class="mc-text">
+        <div class="mc-name">Uren Registratie</div>
+        <div class="mc-desc">Dag · Week · Overzicht</div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -2041,6 +2110,13 @@ header{
   <div class="nav-item on" id="nav-wc-calc" onclick="gaWinst('calc')"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3h5v2h-5V6zM6.5 7C7.33 7 8 7.67 8 8.5S7.33 10 6.5 10 5 9.33 5 8.5 5.67 7 6.5 7zm5.5 11H5v-1l3-3.5 1.9 1.5 1.6-1.5V18zm4.5 0h-2v-2h-2v-2h2v-2h2v2h2v2h-2v2z"/></svg> Calculator</div>
   <div class="nav-item" id="nav-wc-tabel" onclick="gaWinst('tabel')"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zM16.2 13h2.8v6h-2.8z"/></svg> Overzicht</div>
   <div class="nav-item" id="nav-wc-info" onclick="gaWinst('info')"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg> Toelichting</div>
+</div>
+
+<!-- Nav uren -->
+<div class="nav" id="nav-uren" style="display:none;">
+  <div class="nav-item" onclick="naarStart()" style="color:var(--text3);">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> Menu
+  </div>
 </div>
 
 <div class="page" id="main-page" style="display:none;">
@@ -2294,7 +2370,14 @@ header{
 
     </div>
   </div>
+
+  <!-- UREN REGISTRATIE -->
+  <div id="app-uren">
+    <div id="ur-list"></div>
+  </div>
+
 </div>
+
 
 <!-- Success toast -->
 <div class="s-toast" id="s-toast">
@@ -2373,9 +2456,17 @@ function openModule(mod) {
   document.getElementById('main-header').style.display = 'flex';
   document.getElementById('main-page').style.display = 'block';
   // Entrance animation
-  const appEl = document.getElementById(mod === 'glas' ? 'app-glas' : 'app-winst');
+  const appIds = { glas:'app-glas', winst:'app-winst', uren:'app-uren' };
+  const appEl = document.getElementById(appIds[mod] || 'app-glas');
   appEl.classList.add('app-entering');
   setTimeout(() => appEl.classList.remove('app-entering'), 700);
+
+  // Reset all
+  ['app-glas','app-winst','app-uren'].forEach(id => document.getElementById(id).classList.remove('on'));
+  ['nav-glas','nav-winst','nav-uren'].forEach(id => document.getElementById(id).style.display = 'none');
+  document.getElementById('h-totaal').style.display = 'none';
+  document.getElementById('sync-dot').style.display = 'none';
+  document.getElementById('h-share').style.display = 'none';
 
   if (mod === 'glas') {
     document.getElementById('h-title').textContent = 'Glasbewassing';
@@ -2383,21 +2474,19 @@ function openModule(mod) {
     document.getElementById('sync-dot').style.display = '';
     document.getElementById('h-share').style.display = 'flex';
     document.getElementById('nav-glas').style.display = 'flex';
-    document.getElementById('nav-winst').style.display = 'none';
     document.getElementById('app-glas').classList.add('on');
-    document.getElementById('app-winst').classList.remove('on');
     renderK();
-  } else {
+  } else if (mod === 'winst') {
     document.getElementById('h-title').textContent = 'Winstcalculator';
-    document.getElementById('h-totaal').style.display = 'none';
-    document.getElementById('sync-dot').style.display = 'none';
-    document.getElementById('h-share').style.display = 'none';
-    document.getElementById('nav-glas').style.display = 'none';
     document.getElementById('nav-winst').style.display = 'flex';
     document.getElementById('app-winst').classList.add('on');
-    document.getElementById('app-glas').classList.remove('on');
     wcBereken();
     renderTabel(35);
+  } else if (mod === 'uren') {
+    document.getElementById('h-title').textContent = 'Uren Registratie';
+    document.getElementById('nav-uren').style.display = 'flex';
+    document.getElementById('app-uren').classList.add('on');
+    startUrenListener();
   }
 }
 
@@ -2441,6 +2530,7 @@ function naarStart() {
   document.getElementById('main-page').style.display = 'none';
   document.getElementById('nav-glas').style.display = 'none';
   document.getElementById('nav-winst').style.display = 'none';
+  document.getElementById('nav-uren').style.display = 'none';
   setTimeout(_smTypewriter, 80);
 }
 
@@ -2652,7 +2742,7 @@ updateTheme();
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getFirestore, collection, doc, setDoc, deleteDoc, addDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBDc1KYZCCaDEZZuR273Trmo68ra0uyeYQ",
@@ -2666,6 +2756,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const klantenCol = collection(db, 'klanten');
+const urenCol = collection(db, 'uren');
 
 let kl = [], vK = null, actF = 'all', actN = null, sId = null, actST = 'gedaan', uT = null, si = 0, wo = 0, navTab = 'klanten', selectedWDag = null;
 
@@ -2917,18 +3008,13 @@ function startListener(){
 }
 
 document.getElementById('n-datum').value=vnd();
-const splash = document.getElementById('splash');
-splash.classList.add('hide');
-setTimeout(() => {
-  splash.style.display = 'none';
-  const savedModule = localStorage.getItem('purgato_module');
-  if(savedModule) {
-    openModule(savedModule);
-  } else {
-    document.getElementById('startscherm').classList.add('open');
-    setTimeout(_smTypewriter, 200);
-  }
-}, 500);
+const savedModule = localStorage.getItem('purgato_module');
+if(savedModule) {
+  openModule(savedModule);
+} else {
+  document.getElementById('startscherm').classList.add('open');
+  setTimeout(_smTypewriter, 120);
+}
 
 startListener();
 
@@ -2966,6 +3052,129 @@ function showToast(msg) {
   document.addEventListener('touchcancel', () => { if(_el){ _el.classList.remove('tpop'); _el=null; } }, { passive: true });
 })();
 
+// ════════════════════════════════
+// UREN REGISTRATIE
+// ════════════════════════════════
+let _urData = {};  // { 'YYYY-MM-DD': { id, notitie } }
+let _urUnsub = null;
+
+window.startUrenListener = function() {
+  renderUren(); // toon meteen de lege structuur zonder te wachten op Firebase
+  if (_urUnsub) return;
+  _urUnsub = onSnapshot(urenCol, snap => {
+    _urData = {};
+    snap.docs.forEach(d => { _urData[d.id] = { id: d.id, notitie: d.data().notitie || '' }; });
+    // Vul alleen textareas in die niet actief bewerkt worden
+    const dagen = _urDagen(30);
+    dagen.forEach(iso => {
+      const ta = document.getElementById('ur-' + iso);
+      if (ta && document.activeElement !== ta) {
+        const val = (_urData[iso] || {}).notitie || '';
+        ta.value = val;
+        urResize(iso);
+      }
+    });
+  }, err => console.error('uren:', err));
+};
+
+function _urDagen(n) {
+  const days = [];
+  for (let i = 0; i < n; i++) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    days.push(d.toISOString().slice(0, 10));
+  }
+  return days;
+}
+
+function _urFmtDate(iso) {
+  const [y, m, d] = iso.split('-');
+  const daysShort = ['zo','ma','di','wo','do','vr','za'];
+  const daysFull = ['Zondag','Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Zaterdag'];
+  const date = new Date(iso);
+  const idx = date.getDay();
+  const months = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+  return { dow: daysShort[idx], dagNaam: daysFull[idx], dag: parseInt(d), maand: `${months[parseInt(m)-1]} ${y}`, label: `${parseInt(d)} ${months[parseInt(m)-1]} ${y}` };
+}
+
+function renderUren() {
+  const list = document.getElementById('ur-list');
+  if (!list) return;
+  const today = new Date().toISOString().slice(0, 10);
+  const dagen = _urDagen(30);
+
+  const weekLabel = iso => {
+    const diff = Math.round((new Date(today) - new Date(iso)) / 86400000);
+    if (diff <= 0) return 'Vandaag';
+    if (diff <= 6) return 'Deze week';
+    if (diff <= 13) return 'Vorige week';
+    if (diff <= 20) return '2 weken geleden';
+    return '3 weken geleden';
+  };
+
+  let html = '';
+  let lastLabel = null;
+  dagen.forEach(iso => {
+    const isToday = iso === today;
+    const { dow, dagNaam, label, dag, maand } = _urFmtDate(iso);
+    const val = (_urData[iso] || {}).notitie || '';
+    const wl = weekLabel(iso);
+    if (wl !== lastLabel) {
+      html += `<div class="ur-week-sep"><span class="ur-week-sep-lbl">${wl}</span><span class="ur-week-sep-line"></span></div>`;
+      lastLabel = wl;
+    }
+    const heeftNotitie = val.trim().length > 0;
+    html += `<div class="ur-dag${isToday ? ' today' : ''}${heeftNotitie ? ' heeft-notitie' : ''}">
+      <div class="ur-dag-hdr">
+        <div class="ur-dag-nr">${dag}</div>
+        <div class="ur-dag-info">
+          <div class="ur-dag-naam">${isToday ? 'Vandaag' : dagNaam}</div>
+          <div class="ur-dag-sub">${maand}${isToday ? ' · ' + dow : ''}</div>
+        </div>
+        <span class="ur-dag-pill">Nu</span>
+      </div>
+      <textarea class="ur-notitie" id="ur-${iso}" placeholder="Wat heb je gedaan?" oninput="urAutoSave('${iso}')">${_urEsc(val)}</textarea>
+      <div class="ur-status-row">
+        <span class="ur-opgeslagen" id="ur-ok-${iso}">✓ opgeslagen</span>
+      </div>
+    </div>`;
+  });
+  list.innerHTML = html;
+  dagen.forEach(iso => urResize(iso));
+}
+
+function _urEsc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function urResize(iso) {
+  const ta = document.getElementById('ur-' + iso);
+  if (!ta) return;
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+}
+
+const _urTimers = {};
+window.urAutoSave = function(iso) {
+  urResize(iso);
+  clearTimeout(_urTimers[iso]);
+  _urTimers[iso] = setTimeout(() => urOpslaan(iso, true), 1500);
+};
+
+window.urOpslaan = async function(iso, silent = false) {
+  const ta = document.getElementById('ur-' + iso);
+  if (!ta) return;
+  const notitie = ta.value;
+  try {
+    await setDoc(doc(db, 'uren', iso), { notitie });
+    if (!silent) haptic(15);
+    const ok = document.getElementById('ur-ok-' + iso);
+    if (ok) { ok.classList.add('show'); setTimeout(() => ok.classList.remove('show'), 1800); }
+    if (!silent) showToast('Notitie opgeslagen');
+  } catch(e) {
+    console.error('urOpslaan:', e);
+  }
+};
+
 // Scroll-reveal observer — marks .reveal elements visible when they enter viewport
 const _revealObs = new IntersectionObserver((entries) => {
   entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); _revealObs.unobserve(e.target); } });
@@ -2986,4 +3195,3 @@ window.renderK = function() {
 </script>
 </body>
 </html>
-
