@@ -268,7 +268,7 @@ header{
 }
 
 /* ── Page ── */
-.page{max-width:600px;margin:0 auto;padding:14px 12px 88px;}
+.page{max-width:600px;margin:0 auto;padding:14px 12px max(88px,calc(60px + env(safe-area-inset-bottom)));}
 .tab{display:none;}.tab.on{display:block;}
 
 /* ── Stats ── */
@@ -698,6 +698,84 @@ header{
 #app-glas{display:none;}
 #app-glas.on{display:block;}
 
+/* ── Weer tab ── */
+.weer-wrap{padding:2px 0;}
+.weer-kaart{
+  background:linear-gradient(145deg,#38bdf8 0%,#0284c7 50%,#075985 100%);
+  border-radius:20px;padding:20px;margin-bottom:14px;
+  box-shadow:0 8px 32px rgba(2,132,199,0.3),inset 0 1px 0 rgba(255,255,255,0.2);
+  position:relative;overflow:hidden;
+}
+.weer-kaart::before{
+  content:'';position:absolute;top:-50%;right:-15%;
+  width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,0.18) 0%,transparent 65%);
+  pointer-events:none;
+}
+.weer-kaart-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.weer-stad{font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.65);letter-spacing:0.08em;text-transform:uppercase;}
+.weer-cond{font-size:1rem;font-weight:700;color:#fff;margin-top:3px;}
+.weer-ic-big{font-size:3rem;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.15));}
+.weer-temp-row{display:flex;align-items:flex-end;gap:14px;margin-bottom:14px;}
+.weer-temp-big{font-size:3.8rem;font-weight:900;color:#fff;line-height:1;letter-spacing:-3px;}
+.weer-temp-detail{color:rgba(255,255,255,0.75);font-size:0.8rem;font-weight:600;padding-bottom:7px;line-height:1.6;}
+.werkbaar-badge{
+  border-radius:10px;padding:9px 13px;font-size:0.78rem;font-weight:700;
+  background:rgba(0,0,0,0.18);color:#fff;letter-spacing:0.01em;
+  border:1px solid rgba(255,255,255,0.15);
+}
+.weer-strip-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 12px 10px;margin-bottom:10px;box-shadow:var(--shadow);}
+.weer-strip-lbl{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:10px;}
+.weer-strip{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
+.weer-strip::-webkit-scrollbar{display:none;}
+.weer-dag{
+  flex-shrink:0;min-width:60px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:12px;padding:10px 6px;text-align:center;
+  transition:transform 0.15s var(--ease-spring);
+}
+.weer-dag:active{transform:scale(0.95);}
+.weer-dag.vandaag{background:var(--accent);border-color:var(--accent2);}
+.weer-dag.vandaag .weer-dag-naam,.weer-dag.vandaag .weer-dag-max{color:#fff;}
+.weer-dag.vandaag .weer-dag-min{color:rgba(255,255,255,0.65);}
+.weer-dag.vandaag .weer-dag-rain{color:rgba(255,255,255,0.85) !important;}
+.weer-dag-naam{font-size:0.62rem;font-weight:700;color:var(--text3);margin-bottom:6px;text-transform:capitalize;}
+.weer-dag-ic{font-size:1.4rem;margin-bottom:5px;line-height:1;}
+.weer-dag-max{font-size:0.84rem;font-weight:800;color:var(--text);}
+.weer-dag-min{font-size:0.68rem;color:var(--text3);margin-top:1px;}
+.weer-dag-rain{font-size:0.62rem;font-weight:700;margin-top:5px;}
+.weer-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:70px 20px;gap:14px;color:var(--text3);font-size:0.84rem;font-weight:600;}
+.weer-spin{width:28px;height:28px;border:3px solid var(--border2);border-top-color:#0284c7;border-radius:50%;animation:spin 0.75s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.weer-error{text-align:center;padding:60px 20px 40px;}
+.weer-update{font-size:0.6rem;color:var(--text3);text-align:center;margin:4px 0 8px;}
+.weer-refresh{display:block;margin:0 auto 4px;background:none;border:1px solid var(--border2);border-radius:8px;padding:7px 18px;font-family:inherit;font-size:0.76rem;font-weight:600;color:var(--text3);cursor:pointer;transition:background 0.15s;}
+.weer-refresh:active{background:var(--surface2);}
+
+/* ── Buienradar bar chart ── */
+.br-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 12px 10px;margin-bottom:10px;box-shadow:var(--shadow);}
+.br-titel{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:8px;}
+.br-sam{font-size:0.8rem;font-weight:700;color:var(--text2);margin-bottom:10px;}
+.br-chart{display:flex;align-items:flex-end;gap:2px;height:60px;overflow:hidden;}
+.br-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;flex:1;min-width:0;}
+.br-bar{width:100%;border-radius:3px 3px 0 0;min-height:2px;transition:height 0.3s ease;}
+.br-lbl{font-size:0.52rem;color:var(--text3);margin-top:3px;white-space:nowrap;height:11px;line-height:11px;}
+
+/* ── Hourly strip ── */
+.uur-strip-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 12px 10px;margin-bottom:10px;box-shadow:var(--shadow);}
+.uur-strip-lbl{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:10px;}
+.uur-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
+.uur-strip::-webkit-scrollbar{display:none;}
+.uur-dag{flex-shrink:0;min-width:52px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:9px 5px;text-align:center;}
+.uur-dag.nu{background:var(--accent);border-color:var(--accent2);}
+.uur-dag.nu .uur-naam,.uur-dag.nu .uur-temp{color:#fff;}
+.uur-dag.nu .uur-rain{color:rgba(255,255,255,0.85) !important;}
+.uur-naam{font-size:0.6rem;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:lowercase;}
+.uur-dag.nu .uur-naam{color:rgba(255,255,255,0.8);}
+.uur-ic{font-size:1.3rem;line-height:1;margin-bottom:4px;}
+.uur-temp{font-size:0.82rem;font-weight:800;color:var(--text);}
+.uur-rain{font-size:0.6rem;font-weight:700;margin-top:3px;}
+
 /* ── Winstcalculator ── */
 .wc-mode-toggle{display:flex;gap:5px;margin-bottom:14px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:3px;}
 .wc-mode-btn{
@@ -894,7 +972,7 @@ header{
 .wc-tabel-hdr{padding:13px 16px;font-size:0.82rem;font-weight:800;}
 
 /* Bottom sheet: more generous */
-.sheet{border-radius:28px 28px 0 0;padding:16px 18px 48px;}
+.sheet{border-radius:28px 28px 0 0;padding:16px 18px max(48px,calc(20px + env(safe-area-inset-bottom)));}
 .s-handle{width:36px;margin-bottom:20px;}
 .s-title{font-size:1rem;letter-spacing:-0.3px;}
 .s-tabs{border-radius:14px;padding:4px;gap:4px;}
@@ -1868,7 +1946,7 @@ header{
 .n-empty-s{font-size:0.76rem;color:var(--text3);}
 /* FAB */
 .n-fab{
-  position:fixed;bottom:24px;right:20px;
+  position:fixed;bottom:max(24px,calc(10px + env(safe-area-inset-bottom)));right:20px;
   width:54px;height:54px;border-radius:50%;
   background:linear-gradient(145deg,#22d3ee,#0891b2);
   border:none;color:#fff;font-size:1.6rem;line-height:1;
@@ -1934,6 +2012,22 @@ header{
 .d-rev-name{display:flex;align-items:center;gap:7px;font-size:13px;}
 .d-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;display:inline-block;}
 .d-qbtn{display:flex;align-items:center;gap:10px;border-radius:12px;padding:13px 14px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;width:100%;}
+
+/* ── Maand inkomsten grafiek ── */
+.dm-chart{display:flex;gap:3px;height:96px;}
+.dm-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:opacity 0.12s;}
+.dm-bar-col:active{opacity:0.55;}
+.dm-bar-area{flex:1;width:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:1px;}
+.dm-bar{width:100%;transition:height 0.35s cubic-bezier(0.34,1.1,0.64,1);}
+.dm-bar-wit{background:#6EE7B7;border-radius:0;}
+.dm-bar-zwart{background:#C4B5FD;border-radius:2px 2px 0 0;}
+.dm-bar-zwart+.dm-bar-wit{border-radius:0;}
+.dm-bar-area .dm-bar-wit:only-child{border-radius:2px 2px 0 0;}
+.dm-bar-sel-w{background:var(--accent)!important;}
+.dm-bar-sel-z{background:#7C3AED!important;}
+.dm-bar-lbl{font-size:0.5rem;color:var(--text3);margin-top:4px;font-weight:600;height:14px;line-height:14px;text-align:center;}
+.dm-nu .dm-bar-lbl{color:var(--accent);font-weight:800;}
+.dm-sel .dm-bar-lbl{color:var(--text);font-weight:800;}
 .d-cust-row{cursor:pointer;margin-bottom:8px;}
 .d-cust-top{display:flex;justify-content:space-between;align-items:flex-start;}
 .d-cust-name{font-weight:700;font-size:15px;margin-bottom:5px;}
@@ -2169,6 +2263,7 @@ header{
   <div class="nav-item on" id="nav-klanten" onclick="gaNaar('klanten')"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg> Klanten</div>
   <div class="nav-item" id="nav-week" onclick="gaNaar('week')"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13zM8 10H6v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H6v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg> Week</div>
   <div class="nav-item" id="nav-omzet" onclick="gaNaar('omzet')"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg> Omzet</div>
+  <div class="nav-item" id="nav-weer" onclick="gaNaar('weer')"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 11H1v2h3v-2zm9-9h-2v2.99h2V2zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 11v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/></svg> Weer</div>
 </div>
 
 <!-- Nav winstcalculator -->
@@ -2309,6 +2404,12 @@ header{
         <div class="btn-save-ic"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></div>
       </button>
     </div>
+
+    <!-- WEER TAB -->
+    <div class="tab" id="tab-weer">
+      <div class="weer-loading"><div class="weer-spin"></div><div>Weer ophalen...</div></div>
+    </div>
+
   </div>
 
   <!-- WINSTCALCULATOR -->
@@ -2874,7 +2975,16 @@ updateTheme();
 // Set base history state so the first back-press lands somewhere we control
 history.replaceState({ purgato: 'start' }, '');
 
-window.addEventListener('popstate', function() {
+let _backBusy = false;
+window.addEventListener('popstate', function(e) {
+  // Negeer history-entries die niet van Purgato zijn (bijv. TWA login-redirect)
+  if (!e.state || !e.state.purgato) return;
+
+  // Guard: voorkomt dat snelle dubbele taps meerdere navigaties triggeren
+  if (_backBusy) return;
+  _backBusy = true;
+  setTimeout(function() { _backBusy = false; }, 350);
+
   // Priority 1: notes modal open → close it, stay in module
   const nOv = document.getElementById('n-overlay');
   if (nOv && nOv.classList.contains('open')) {
@@ -2970,12 +3080,20 @@ function natSort(a,b){return a.localeCompare(b,"nl",{numeric:true,sensitivity:"b
 window.slaOp = function slaOp(txt){vK=JSON.parse(JSON.stringify(kl));document.getElementById('undo-t').textContent=txt;document.getElementById('undo').classList.add('show');if(uT)clearTimeout(uT);uT=setTimeout(()=>{document.getElementById('undo').classList.remove('show');vK=null;},6000);}
 window.undo=async function(){if(!vK)return;const herstel=vK;vK=null;document.getElementById('undo').classList.remove('show');if(uT)clearTimeout(uT);kl=herstel;render();await window.fbSaveAll();}
 window.deelWhatsApp=function(){window.open('https://wa.me/?text='+encodeURIComponent('Purgato Planner app: https://jbloesberg99.github.io/Glasbewassing'),'_blank');}
-window.openMaps=function(naam,plaats){window.open('https://maps.google.com/?q='+encodeURIComponent(naam+' '+plaats),'_blank');}
+window.openMaps=function(id){const x=kl.find(x=>x.id===id);if(!x)return;window.open('https://maps.google.com/?q='+encodeURIComponent(x.naam+' '+(x.plaats||'')),'_blank');}
+// HTML escape helper — voorkomt XSS bij user-gegenereerde content in innerHTML
+function _hEsc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 window.gaNaar=function(tab){
   navTab=tab;
-  ['klanten','week','omzet'].forEach(t=>{document.getElementById('nav-'+t).classList.toggle('on',t===tab);document.getElementById('tab-'+t).classList.toggle('on',t===tab);});
-  if(tab==='week')renderWeek();if(tab==='omzet')renderOmzet();
+  ['klanten','week','omzet','weer'].forEach(t=>{
+    const n=document.getElementById('nav-'+t);const te=document.getElementById('tab-'+t);
+    if(n)n.classList.toggle('on',t===tab);
+    if(te)te.classList.toggle('on',t===tab);
+  });
+  if(tab==='week')renderWeek();
+  if(tab==='omzet')renderOmzet();
+  if(tab==='weer')window.renderWeer();
 }
 
 window.render = function render(){renderK();if(navTab==='week')renderWeek();if(navTab==='omzet')renderOmzet();}
@@ -2998,7 +3116,7 @@ window.renderK = function renderK(){
   if(!v.length){el.innerHTML='<div class="leeg"><div class="leeg-ic"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><p>Geen resultaten</p></div>';return;}
   if(s==='plaats'&&!z&&actF==='all'){
     const gr={};v.forEach(x=>{const p=x.plaats||'Overig';if(!gr[p])gr[p]=[];gr[p].push(x);});
-    el.innerHTML=Object.entries(gr).map(([p,xs])=>`<div class="groep-lbl"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${p}<span class="groep-n">${xs.length}</span></div>${xs.map((x,i)=>kHtml(x,i)).join('')}`).join('');
+    el.innerHTML=Object.entries(gr).map(([p,xs])=>`<div class="groep-lbl"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${_hEsc(p)}<span class="groep-n">${xs.length}</span></div>${xs.map((x,i)=>kHtml(x,i)).join('')}`).join('');
   }else{el.innerHTML=v.map((x,i)=>kHtml(x,i)).join('');}
 }
 
@@ -3006,18 +3124,18 @@ window.kHtml = function kHtml(x,i){
   const s=st(x.d);const nO=actN===x.id;
   return`<div class="kkaart ${s}" style="animation-delay:${i*0.03}s">
     <div class="kr1">
-      <div class="ki"><div class="kn">${x.naam}</div>${x.plaats?`<div class="kp">${IC.pin} ${x.plaats}</div>`:''}</div>
+      <div class="ki"><div class="kn">${_hEsc(x.naam)}</div>${x.plaats?`<div class="kp">${IC.pin} ${_hEsc(x.plaats)}</div>`:''}</div>
       <div class="dtag ${s}" onclick="openSheet(${x.id})">${fD(x.due)}<small>${fDt(x.due)}</small></div>
     </div>
     <div class="kr2">
       <div class="km"><span class="ftag">${FL[x.freq]||x.freq+'wkn'}</span>${x.prijs?`<span class="ptag">${fE(x.prijs)}</span>`:''}</div>
       <span class="klink" onclick="openSheet(${x.id})">Aanpassen ›</span>
     </div>
-    ${nO?`<textarea class="knotitie-in" onchange="slaNotitie(${x.id},this.value)" placeholder="Notitie...">${x.notitie||''}</textarea>`:(x.notitie?`<div class="knotitie">${IC.pencil} ${x.notitie}</div>`:'')}
+    ${nO?`<textarea class="knotitie-in" oninput="slaNotitie(${x.id},this.value)" placeholder="Notitie...">${_hEsc(x.notitie||'')}</textarea>`:(x.notitie?`<div class="knotitie">${IC.pencil} ${_hEsc(x.notitie)}</div>`:'')}
     <div class="kacties">
       <button class="b-done" onclick="openSheet(${x.id})">${IC.check} Gedaan</button>
       <button class="b-note" onclick="togN(${x.id})" title="${nO?'Sluiten':'Notitie'}">${nO?IC.x:IC.pencil}</button>
-      ${x.plaats?`<button class="b-loc" onclick="openMaps('${x.naam.replace(/'/g,"\\'")}','${x.plaats.replace(/'/g,"\\'")}')"> ${IC.map}</button>`:''}
+      ${x.plaats?`<button class="b-loc" onclick="openMaps(${x.id})"> ${IC.map}</button>`:''}
       <button class="b-copy" onclick="kopieer(${x.id})" title="Kopieer">${IC.copy}</button>
       <button class="b-del" onclick="del(${x.id})">${IC.trash}</button>
     </div>
@@ -3033,7 +3151,7 @@ window.renderBanner7 = function renderBanner7(){
     const d=dT(x.laatste,x.freq);const due=new Date(x.due);due.setHours(0,0,0,0);
     const dag=d===0?'vandaag':d===1?'morgen':dn[due.getDay()]+' '+due.getDate()+' '+due.toLocaleDateString('nl-NL',{month:'short'});
     const s=st(d);const c={urgent:'var(--urgent)',soon:'var(--soon)',ok:'var(--ok)'};const bg={urgent:'var(--urgent-s)',soon:'var(--soon-s)',ok:'var(--ok-s)'};
-    return`<div class="b7-item"><span class="b7-naam">${x.naam}</span><span class="b7-pl">${x.plaats||''}</span><span class="b7-badge" style="background:${bg[s]};color:${c[s]}">${dag}</span></div>`;
+    return`<div class="b7-item"><span class="b7-naam">${_hEsc(x.naam)}</span><span class="b7-pl">${_hEsc(x.plaats||'')}</span><span class="b7-badge" style="background:${bg[s]};color:${c[s]}">${dag}</span></div>`;
   }).join('');
 }
 
@@ -3077,7 +3195,7 @@ window.renderWeek = function renderWeek(){
     html+=`<div class="wk-group"><div class="wk-group-hdr"><span class="wk-group-hdr-lbl">${dayLbl}</span><span class="wk-group-hdr-line"></span></div>`;
     items.forEach(x=>{
       const s=st(dT(x.laatste,x.freq));
-      html+=`<div class="witem ${s}" style="margin-bottom:6px"><div class="wi-info"><div class="wi-naam">${x.naam}</div>${x.plaats?`<div class="wi-sub">${locIc} ${x.plaats}</div>`:''}</div><span class="wi-badge ${s}">${fD(vD(x.laatste,x.freq))}</span></div>`;
+      html+=`<div class="witem ${s}" style="margin-bottom:6px"><div class="wi-info"><div class="wi-naam">${_hEsc(x.naam)}</div>${x.plaats?`<div class="wi-sub">${locIc} ${_hEsc(x.plaats)}</div>`:''}</div><span class="wi-badge ${s}">${fD(vD(x.laatste,x.freq))}</span></div>`;
     });
     html+='</div>';
   });
@@ -3102,7 +3220,7 @@ window.renderOmzet = function renderOmzet(){
     const barW=Math.round(bijdrage/maxJaar*100);
     return `<div class="pitem" data-id="${x.id}">
       <div class="pitem-bar" style="width:${barW}%"></div>
-      <div class="pnaam">${x.naam}${x.plaats?` <span style="color:var(--text3);font-weight:400">· ${x.plaats}</span>`:''}</div>
+      <div class="pnaam">${_hEsc(x.naam)}${x.plaats?` <span style="color:var(--text3);font-weight:400">· ${_hEsc(x.plaats)}</span>`:''}</div>
       <span class="pitem-pct">${pct}%</span>
       <span class="peuro">€</span>
       <input type="number" class="pinput" value="${x.prijs||''}" placeholder="0" step="0.50" min="0">
@@ -3133,7 +3251,7 @@ window.voegToe=async function(){
   const plaats=document.getElementById('n-plaats').value.trim();
   const prijs=parseFloat(document.getElementById('n-prijs').value)||0;
   if(!naam||!vd){alert('Vul naam en volgende beurt in.');return;}
-  const nieuw={id:Date.now(),naam,plaats,freq,laatste:lVV(vd,freq),notitie:'',prijs,historie:[]};
+  const nieuw={id:Date.now()*100+Math.floor(Math.random()*100),naam,plaats,freq,laatste:lVV(vd,freq),notitie:'',prijs,historie:[]};
   slaOp(`"${naam}" toegevoegd`);kl.push(nieuw);
   document.getElementById('n-naam').value='';document.getElementById('n-datum').value='';
   document.getElementById('n-plaats').value='';document.getElementById('n-prijs').value='';
@@ -3144,7 +3262,7 @@ window.voegToe=async function(){
 window.togN=function(id){actN=actN===id?null:id;renderK();}
 window.kopieer=async function(id){
   const x=kl.find(x=>x.id===id);if(!x)return;
-  const nieuw={...x,id:Date.now(),naam:x.naam+" (kopie)",notitie:"",historie:[]};
+  const nieuw={...x,id:Date.now()*100+Math.floor(Math.random()*100),naam:x.naam+" (kopie)",notitie:"",historie:[]};
   slaOp(`"${x.naam}" gekopieerd`);kl.push(nieuw);renderK();
   await window.fbSave(nieuw);
 }
@@ -3153,12 +3271,15 @@ window.slaNotitie=async function(id,val){
   await window.fbSave(kl.find(x=>x.id===id));
 }
 window.del=async function(id){
-  const x=kl.find(x=>x.id===id);if(!confirm(`"${x.naam}" verwijderen?`))return;
+  const x=kl.find(x=>x.id===id);
+  if(!x){renderK();return;} // al verwijderd op ander apparaat
+  if(!confirm(`"${x.naam}" verwijderen?`))return;
   slaOp(`"${x.naam}" verwijderd`);kl=kl.filter(x=>x.id!==id);renderK();
   await window.fbDelete(id);
 }
 window.openSheet=function(id){
   sId=id;const x=kl.find(x=>x.id===id);
+  if(!x){renderK();return;} // al verwijderd op ander apparaat
   document.getElementById('s-sub').textContent=x.naam;
   document.getElementById('s-datum-gedaan').value=vnd();document.getElementById('s-datum-gedaan').max=vnd();
   document.getElementById('s-datum-volgende').value=vD(x.laatste,x.freq).toISOString().split('T')[0];
@@ -3206,14 +3327,22 @@ window.bevestig=async function(){
 }
 
 let _bezig = false;
+let _klUnsub = null;
 
 function startListener(){
-  onSnapshot(klantenCol,(snap)=>{
+  if(_klUnsub){_klUnsub();_klUnsub=null;}
+  _klUnsub=onSnapshot(klantenCol,(snap)=>{
     if(_bezig)return;
     const nieuw=snap.docs.map(d=>({id:Number(d.id),...d.data(),prijs:d.data().prijs||0,historie:d.data().historie||[]}));
     if(JSON.stringify(nieuw)!==JSON.stringify(kl)){kl=nieuw;window.render();}
     window.syncS('ok');
-  },(err)=>{console.error(err);window.syncS('fout');});
+  },(err)=>{
+    console.error('klantenListener fout:',err);
+    window.syncS('fout');
+    _klUnsub=null;
+    // Automatisch herverbinden na 5 seconden
+    setTimeout(startListener,5000);
+  });
 }
 
 // init block moved to bottom — see end of module script
@@ -3405,6 +3534,8 @@ const _DFL={weekly:"Wekelijks",biweekly:"2-wekelijks",monthly:"Maandelijks",quar
 const _DDAYS=["Maandag","Dinsdag","Woensdag","Donderdag","Vrijdag","Zaterdag","Zondag"];
 
 let _dPage='dashboard',_dCustSel=null,_dPlanWk=1,_dMCust=1,_dMTask=null,_dMStatus={};
+let _dMonthData=Array.from({length:12},()=>({wit:0,zwart:0}));
+let _dMonthEdit=null;
 
 function _dISOWeek(date){
   const d=new Date(date);d.setHours(0,0,0,0);
@@ -3480,10 +3611,101 @@ function _dRenderEmployees(){
 }
 
 function _dRenderAnalytics(){
+  const JAAR=new Date().getFullYear();
+  const MN=['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+  const ML=['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
+  const NU=new Date().getMonth();
+
+  // ── Jaartegelberekeningen ──
+  const totWit=_dMonthData.reduce((s,m)=>s+(m.wit||0),0);
+  const totZwart=_dMonthData.reduce((s,m)=>s+(m.zwart||0),0);
+  const totaal=totWit+totZwart;
+  const maxVal=Math.max(..._dMonthData.map(m=>(m.wit||0)+(m.zwart||0)),1);
+  const CHART_H=76;
+
+  // ── Staafgrafiek ──
+  const bars=_dMonthData.map((m,i)=>{
+    const w=m.wit||0,z=m.zwart||0,tot=w+z;
+    const hTot=Math.round(tot/maxVal*CHART_H);
+    const hZ=tot>0?Math.round(z/tot*hTot):0;
+    const hW=hTot-hZ;
+    const isSel=i===_dMonthEdit,isNu=i===NU;
+    const zwartBar=hZ>0?`<div class="dm-bar dm-bar-zwart${isSel?' dm-bar-sel-z':''}" style="height:${hZ}px"></div>`:'';
+    const witBar=hW>0?`<div class="dm-bar dm-bar-wit${isSel?' dm-bar-sel-w':''}" style="height:${hW}px"></div>`:'';
+    const leeg=hTot===0?`<div style="height:3px;width:100%;background:var(--surface3);border-radius:2px;margin-bottom:1px"></div>`:'';
+    return`<div class="dm-bar-col${isSel?' dm-sel':''}${isNu?' dm-nu':''}" onclick="dEditMaand(${i})">
+      <div class="dm-bar-area">${zwartBar}${witBar}${leeg}</div>
+      <div class="dm-bar-lbl">${MN[i]}</div>
+    </div>`;
+  }).join('');
+
+  // ── Inline bewerkformulier ──
+  const editForm=_dMonthEdit!==null?`<div class="d-card" style="margin-bottom:14px;border:1.5px solid var(--border2)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="font-weight:800;font-size:15px">${ML[_dMonthEdit]} ${JAAR}</div>
+      <button onclick="dMaandSluiten()" style="background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--text3);padding:2px 6px;line-height:1">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6EE7B7;margin-bottom:5px">💰 Wit (exc. BTW) — €</div>
+        <input id="dm-wit-inp" type="number" inputmode="decimal" value="${_dMonthData[_dMonthEdit].wit||''}" placeholder="0"
+          style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-family:inherit;font-size:1.05rem;font-weight:700;color:var(--text);outline:none;-webkit-appearance:none;box-sizing:border-box">
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#C4B5FD;margin-bottom:5px">🖤 Zwart (contant) — €</div>
+        <input id="dm-zwart-inp" type="number" inputmode="decimal" value="${_dMonthData[_dMonthEdit].zwart||''}" placeholder="0"
+          style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-family:inherit;font-size:1.05rem;font-weight:700;color:var(--text);outline:none;-webkit-appearance:none;box-sizing:border-box">
+      </div>
+      <button onclick="dMaandOpslaan()" style="background:var(--accent);color:#fff;border:none;border-radius:9px;padding:12px;font-family:inherit;font-size:0.88rem;font-weight:700;cursor:pointer;width:100%">Opslaan ✓</button>
+    </div>
+  </div>`:'' ;
+
+  // ── Klantprestaties ──
   const sorted=[..._DC].sort((a,b)=>_dCalcRev(b)-_dCalcRev(a));
-  const totalRev=_DC.reduce((s,c)=>s+_dCalcRev(c),0);const totalHrs=_DC.reduce((s,c)=>s+_dCalcHrs(c),0);
-  const rows=sorted.map((c,i)=>{const rev=_dCalcRev(c);const hrs=_dCalcHrs(c);const rph=hrs>0?Math.round(rev/hrs):0;const pct=Math.round(rev/totalRev*100);return `<div class="d-card" style="border-left:3px solid ${c.color};padding:12px 14px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:7px"><div style="display:flex;align-items:center;gap:7px"><span style="font-size:11px;font-weight:700;color:var(--text3)">#${i+1}</span><span style="font-weight:700;font-size:14px">${c.name}</span></div><span style="font-weight:800;color:${c.color};font-size:15px">€${rev.toLocaleString('nl')}</span></div><div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px">${_dBadge(hrs+'u/mnd','#475569')} ${_dBadge('€'+rph+'/uur',rph>=35?'#6EE7B7':'#FCA5A5')} ${_dBadge(pct+'%',c.color)}</div><div class="d-bar-wrap"><div class="d-bar-fill" style="width:${pct}%;background:${c.color}"></div></div></div>`;}).join('');
-  return `<div class="d-hdr"><h1 class="d-hdr-title" style="margin:0">Analyse</h1></div><div class="d-grid-2" style="margin-bottom:14px">${_dCard(`<div class="d-kpi-lbl2">Jaaromzet</div><div style="font-size:18px;font-weight:800;color:#6EE7B7">€${(totalRev*12).toLocaleString('nl')}</div>`)} ${_dCard(`<div class="d-kpi-lbl2">Omzet/uur</div><div style="font-size:18px;font-weight:800;color:#93C5FD">€${Math.round(totalRev/totalHrs)}</div>`)}</div>${_dST('Klantprestaties')}${rows}`;
+  const totalRev=_DC.reduce((s,c)=>s+_dCalcRev(c),0);
+  const totalHrs=_DC.reduce((s,c)=>s+_dCalcHrs(c),0);
+  const custRows=sorted.map((c,i)=>{
+    const rev=_dCalcRev(c),hrs=_dCalcHrs(c),rph=hrs>0?Math.round(rev/hrs):0,pct=Math.round(rev/totalRev*100);
+    return`<div class="d-card" style="border-left:3px solid ${c.color};padding:12px 14px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:7px">
+        <div style="display:flex;align-items:center;gap:7px"><span style="font-size:11px;font-weight:700;color:var(--text3)">#${i+1}</span><span style="font-weight:700;font-size:14px">${c.name}</span></div>
+        <span style="font-weight:800;color:${c.color};font-size:15px">€${rev.toLocaleString('nl')}/mnd</span>
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px">${_dBadge(hrs+'u/mnd','#475569')} ${_dBadge('€'+rph+'/uur',rph>=35?'#6EE7B7':'#FCA5A5')} ${_dBadge(pct+'%',c.color)}</div>
+      <div class="d-bar-wrap"><div class="d-bar-fill" style="width:${pct}%;background:${c.color}"></div></div>
+    </div>`;
+  }).join('');
+
+  return`<div class="d-hdr"><h1 class="d-hdr-title" style="margin:0">Analyse ${JAAR}</h1></div>
+
+  <!-- Tegels jaar totalen -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+    ${_dCard(`<div class="d-kpi-lbl2" style="color:#6EE7B7">Wit</div><div style="font-size:17px;font-weight:800;color:#6EE7B7">€${totWit.toLocaleString('nl')}</div>`)}
+    ${_dCard(`<div class="d-kpi-lbl2" style="color:#C4B5FD">Zwart</div><div style="font-size:17px;font-weight:800;color:#C4B5FD">€${totZwart.toLocaleString('nl')}</div>`)}
+    ${_dCard(`<div class="d-kpi-lbl2">Totaal exc.</div><div style="font-size:17px;font-weight:800;color:var(--text)">€${totaal.toLocaleString('nl')}</div>`)}
+  </div>
+
+  <!-- Grafiek kaart -->
+  ${_dCard(`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div>
+        <div class="d-st" style="margin-bottom:2px">Maandinkomsten ${JAAR}</div>
+        <div style="font-size:10px;color:var(--text3)">Tik op een maand om in te vullen</div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3)"><span style="width:8px;height:8px;border-radius:2px;background:#6EE7B7;display:inline-block"></span>Wit</span>
+        <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3)"><span style="width:8px;height:8px;border-radius:2px;background:#C4B5FD;display:inline-block"></span>Zwart</span>
+      </div>
+    </div>
+    <div class="dm-chart">${bars}</div>
+  `,'margin-bottom:14px')}
+
+  <!-- Inline bewerkformulier -->
+  ${editForm}
+
+  <!-- Klantprestaties (verwacht) -->
+  ${_dST('Klantprestaties (verwacht/mnd)')}
+  ${custRows}`;
 }
 
 function _dRenderMaintenance(){
@@ -3512,7 +3734,7 @@ let _dDashUnsub=null;
 
 async function _dSaveData(){
   try{
-    await setDoc(_dDashDoc,{customers:_DC,employees:_DE,tasks:_DM,updatedAt:Date.now()});
+    await setDoc(_dDashDoc,{customers:_DC,employees:_DE,tasks:_DM,status:_dMStatus,maanden:_dMonthData,updatedAt:Date.now()});
   }catch(e){console.error('dash save:',e);}
 }
 
@@ -3528,6 +3750,8 @@ function _dStartDashListener(){
     if(d.customers&&d.customers.length)_DC=d.customers;
     if(d.employees&&d.employees.length)_DE=d.employees;
     if(d.tasks)_DM=d.tasks;
+    if(d.status)_dMStatus=d.status;
+    if(d.maanden&&d.maanden.length===12)_dMonthData=d.maanden;
     _dRenderAll();
   },err=>console.error('dash listener:',err));
 }
@@ -3603,7 +3827,7 @@ window.dBSaveCust=function(id){
   if(!addrs.length)addrs.push('Adres onbekend');
   const notes=(document.getElementById('df-notes').value||'').trim();
   const schedule=_dReadSched();if(!schedule.length)schedule.push({day:null,frequency:'monthly',hours:null});
-  if(id===null){_DC.push({id:Date.now(),name:naam,addresses:addrs,schedule,rate,monthlyRevenue,notes,color});}
+  if(id===null){_DC.push({id:Date.now()*100+Math.floor(Math.random()*100),name:naam,addresses:addrs,schedule,rate,monthlyRevenue,notes,color});}
   else{const idx=_DC.findIndex(c=>c.id===id);if(idx>=0)_DC[idx]={..._DC[idx],name:naam,addresses:addrs,schedule,rate,monthlyRevenue,notes,color};}
   _dSaveData();_dBeheerEdit=null;_dBeheerIsNew=false;_dRenderAll();
 };
@@ -3611,7 +3835,7 @@ window.dBSaveEmp=function(id){
   const naam=document.getElementById('df-naam')?.value.trim();if(!naam){alert('Naam is verplicht');return;}
   const color=document.getElementById('df-color').value;
   const isOwner=document.getElementById('df-role').value==='1';
-  if(id===null){_DE.push({id:Date.now(),name:naam,color,isOwner});}
+  if(id===null){_DE.push({id:Date.now()*100+Math.floor(Math.random()*100),name:naam,color,isOwner});}
   else{const idx=_DE.findIndex(e=>e.id===id);if(idx>=0)_DE[idx]={..._DE[idx],name:naam,color,isOwner};}
   _dSaveData();_dBeheerEdit=null;_dBeheerIsNew=false;_dRenderAll();
 };
@@ -3620,7 +3844,7 @@ window.dBSaveTask=function(id){
   const color=document.getElementById('df-color').value;
   const custId=parseInt(document.getElementById('df-cust').value);
   const frequency=document.getElementById('df-freq').value;
-  if(id===null){_DM.push({id:Date.now(),custId,title:naam,frequency,color});}
+  if(id===null){_DM.push({id:Date.now()*100+Math.floor(Math.random()*100),custId,title:naam,frequency,color});}
   else{const idx=_DM.findIndex(t=>t.id===id);if(idx>=0)_DM[idx]={..._DM[idx],title:naam,custId,frequency,color};}
   _dSaveData();_dBeheerEdit=null;_dBeheerIsNew=false;_dRenderAll();
 };
@@ -3657,7 +3881,17 @@ window.dPlanPrev=function(){_dPlanWk=Math.max(1,_dPlanWk-1);_dRenderAll();};
 window.dPlanNext=function(){_dPlanWk=Math.min(52,_dPlanWk+1);_dRenderAll();};
 window.dMaintCust=function(id){_dMCust=id;_dMTask=null;_dRenderAll();};
 window.dMaintTask=function(id){_dMTask=id;_dRenderAll();};
-window.dToggle=function(tid,w){const k=`${tid}-${w}`;_dMStatus[k]=_dMStatus[k]==='completed'?'planned':'completed';_dRenderAll();};
+window.dToggle=function(tid,w){const k=`${tid}-${w}`;_dMStatus[k]=_dMStatus[k]==='completed'?'planned':'completed';_dSaveData();_dRenderAll();};
+window.dEditMaand=function(i){_dMonthEdit=(_dMonthEdit===i)?null:i;_dRenderAll();setTimeout(()=>{if(_dMonthEdit!==null){const el=document.getElementById('dm-wit-inp');if(el)el.focus();}},80);};
+window.dMaandSluiten=function(){_dMonthEdit=null;_dRenderAll();};
+window.dMaandOpslaan=function(){
+  const w=parseFloat(document.getElementById('dm-wit-inp')?.value)||0;
+  const z=parseFloat(document.getElementById('dm-zwart-inp')?.value)||0;
+  if(_dMonthEdit!==null)_dMonthData[_dMonthEdit]={wit:Math.round(w),zwart:Math.round(z)};
+  _dMonthEdit=null;
+  _dSaveData();
+  _dRenderAll();
+};
 
 // ════════════════════════════════
 // NOTITIES MODULE
@@ -3923,6 +4157,221 @@ window.nDelete = async function(id) {
     console.error('note delete:', e);
     window.syncS('fout');
   }
+};
+
+// ════════════════════════════════
+// WEER MODULE
+// ════════════════════════════════
+
+const _W_LAT  = 52.70;   // Bovenkarspel, Noord-Holland
+const _W_LON  = 5.15;
+const _W_STAD = 'Bovenkarspel';
+const _W_CACHE = 30 * 60 * 1000; // 30 min cache voor Open-Meteo
+const _W_BR_CACHE = 5 * 60 * 1000; // 5 min cache voor Buienradar
+
+let _wData = null;       // Open-Meteo data
+let _wBrData = null;     // Buienradar data (array van {val, time})
+let _wFetchedAt = 0;
+let _wBrFetchedAt = 0;
+
+const _wCodes = {
+  0:['☀️','Helder'],1:['🌤️','Overwegend helder'],2:['⛅','Gedeeltelijk bewolkt'],3:['☁️','Bewolkt'],
+  45:['🌫️','Mist'],48:['🌫️','IJsmist'],
+  51:['🌦️','Lichte motregen'],53:['🌦️','Motregen'],55:['🌧️','Zware motregen'],
+  61:['🌦️','Lichte regen'],63:['🌧️','Regen'],65:['🌧️','Zware regen'],
+  71:['🌨️','Lichte sneeuw'],73:['🌨️','Sneeuw'],75:['❄️','Zware sneeuw'],
+  80:['🌧️','Lichte buien'],81:['🌧️','Buien'],82:['⛈️','Zware buien'],
+  85:['🌨️','Sneeuwbuien'],86:['❄️','Zware sneeuwbuien'],
+  95:['⛈️','Onweer'],96:['⛈️','Onweer met hagel'],99:['⛈️','Zwaar onweer']
+};
+
+function _wCode(c){return _wCodes[c]||['🌡️','Onbekend'];}
+
+function _wWerkbaar(rain,maxT,code){
+  const slecht=[55,63,65,73,75,80,81,82,85,86,95,96,99];
+  if(slecht.includes(code)||rain>60||maxT<0)
+    return['❌','Niet werkbaar','rgba(220,38,38,0.25)'];
+  if(rain>30||maxT<5)
+    return['⚠️','Mogelijk werkbaar','rgba(217,119,6,0.25)'];
+  return['✅','Goed werkbaar','rgba(255,255,255,0.18)'];
+}
+
+// ── Buienradar: komende 2 uur radardata (5-min intervallen) ──
+async function _wFetchBuienradar(){
+  try{
+    const res=await fetch(`https://gpsgadget.buienradar.nl/data/raintext?lat=${_W_LAT}&lon=${_W_LON}`);
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const txt=await res.text();
+    _wBrData=txt.trim().split('\n').map(line=>{
+      const [v,t]=line.split('|');
+      return{val:parseInt(v)||0,time:t||''};
+    });
+    _wBrFetchedAt=Date.now();
+  }catch(e){
+    console.warn('Buienradar niet beschikbaar:',e.message);
+    _wBrData=null; // stil falen — fallback naar Open-Meteo uurlijks
+  }
+}
+
+// ── Open-Meteo: weer + uurlijkse data + 7-daagse ──
+async function _wFetch(){
+  const el=document.getElementById('tab-weer');
+  if(!el)return;
+  el.innerHTML='<div class="weer-loading"><div class="weer-spin"></div><div>Weer ophalen voor Bovenkarspel...</div></div>';
+  try{
+    // Haal Open-Meteo en Buienradar tegelijk op
+    const omUrl=`https://api.open-meteo.com/v1/forecast?latitude=${_W_LAT}&longitude=${_W_LON}`
+      +`&hourly=precipitation_probability,weathercode,temperature_2m`
+      +`&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode,windspeed_10m_max`
+      +`&current_weather=true&timezone=Europe%2FAmsterdam&forecast_days=7`;
+    const [omRes] = await Promise.all([fetch(omUrl), _wFetchBuienradar()]);
+    if(!omRes.ok)throw new Error('HTTP '+omRes.status);
+    _wData=await omRes.json();
+    _wFetchedAt=Date.now();
+    _wRender();
+  }catch(e){
+    console.error('Weer fout:',e);
+    const el2=document.getElementById('tab-weer');
+    if(el2)el2.innerHTML=`<div class="weer-error">
+      <div style="font-size:2.4rem;margin-bottom:10px">⚠️</div>
+      <div style="font-weight:700;font-size:0.92rem;margin-bottom:5px">Geen weerdata beschikbaar</div>
+      <div style="font-size:0.76rem;color:var(--text3);margin-bottom:16px">Controleer de internetverbinding</div>
+      <button onclick="window.renderWeer(true)" style="background:var(--accent);color:#fff;border:none;border-radius:9px;padding:9px 22px;font-family:inherit;font-size:0.84rem;font-weight:700;cursor:pointer">Opnieuw proberen</button>
+    </div>`;
+  }
+}
+
+// ── Buienradar staafgrafiek HTML ──
+function _wBrBar(){
+  if(!_wBrData||!_wBrData.length)return'';
+  const max=Math.max(..._wBrData.map(x=>x.val),1);
+  const hasRain=_wBrData.some(x=>x.val>0);
+  const samenvatting=hasRain
+    ?`🌧 Regen verwacht — tik op een staaf voor de tijd`
+    :`✅ Droog de komende 2 uur`;
+  const bars=_wBrData.map((x,i)=>{
+    const pct=Math.round(x.val/255*100);
+    const h=Math.max(x.val>0?6:2,Math.round(x.val/255*44));
+    const col=x.val===0?'var(--border2)':x.val<77?'#38bdf8':x.val<154?'#2563eb':'#7c3aed';
+    const lbl=(i%6===0)?`<div class="br-lbl">${x.time}</div>`:'<div class="br-lbl"></div>';
+    return`<div class="br-col" title="${x.time} · ${pct}% intensiteit">
+      <div class="br-bar" style="height:${h}px;background:${col}"></div>
+      ${lbl}
+    </div>`;
+  }).join('');
+  return`<div class="weer-strip-wrap" style="margin-bottom:14px">
+    <div class="weer-strip-lbl" style="display:flex;justify-content:space-between;align-items:center">
+      <span>Radar · komende 2 uur <span style="font-weight:400;color:var(--text3)">(Buienradar)</span></span>
+    </div>
+    <div class="br-sam">${samenvatting}</div>
+    <div class="br-chart">${bars}</div>
+  </div>`;
+}
+
+// ── Open-Meteo uurlijkse strip (vandaag, komende 12 uur) ──
+function _wUurStrip(){
+  if(!_wData||!_wData.hourly)return'';
+  const nu=new Date();
+  const nuH=nu.getHours();
+  const items=[];
+  const times=_wData.hourly.time;
+  for(let i=0;i<times.length&&items.length<13;i++){
+    const t=new Date(times[i]);
+    // Alleen vandaag en morgen vroeg, vanaf nu
+    if(t<nu)continue;
+    const h=t.getHours();
+    const rain=_wData.hourly.precipitation_probability[i];
+    const temp=Math.round(_wData.hourly.temperature_2m[i]);
+    const [ic]=_wCode(_wData.hourly.weathercode[i]);
+    const rc=rain>60?'#dc2626':rain>30?'#d97706':'#16a34a';
+    const isNu=items.length===0;
+    const lbl=isNu?'Nu':`${String(h).padStart(2,'0')}:00`;
+    items.push(`<div class="uur-dag${isNu?' nu':''}">
+      <div class="uur-naam">${lbl}</div>
+      <div class="uur-ic">${ic}</div>
+      <div class="uur-temp">${temp}°</div>
+      <div class="uur-rain" style="color:${rc}">${rain}%</div>
+    </div>`);
+  }
+  return`<div class="weer-strip-wrap" style="margin-bottom:14px">
+    <div class="weer-strip-lbl">Vandaag per uur <span style="font-weight:400;color:var(--text3)">(Open-Meteo)</span></div>
+    <div class="weer-strip">${items.join('')}</div>
+  </div>`;
+}
+
+function _wRender(){
+  const el=document.getElementById('tab-weer');
+  if(!el||!_wData)return;
+  const cur=_wData.current_weather;
+  const d=_wData.daily;
+  const [curIc,curDesc]=_wCode(cur.weathercode);
+  const curT=Math.round(cur.temperature);
+  const curW=Math.round(cur.windspeed);
+  const todayRain=d.precipitation_probability_max[0];
+  const todayMax=Math.round(d.temperature_2m_max[0]);
+  const todayMin=Math.round(d.temperature_2m_min[0]);
+  const [wkIc,wkLabel,wkBg]=_wWerkbaar(todayRain,todayMax,d.weathercode[0]);
+  const dn=['zo','ma','di','wo','do','vr','za'];
+  const strip7=d.time.map((dt,i)=>{
+    const dag=new Date(dt);
+    const naam=i===0?'Vandaag':dn[dag.getDay()];
+    const max=Math.round(d.temperature_2m_max[i]);
+    const min=Math.round(d.temperature_2m_min[i]);
+    const rain=d.precipitation_probability_max[i];
+    const [ic]=_wCode(d.weathercode[i]);
+    const rc=rain>60?'#dc2626':rain>30?'#d97706':'#16a34a';
+    return`<div class="weer-dag${i===0?' vandaag':''}">
+      <div class="weer-dag-naam">${naam}</div>
+      <div class="weer-dag-ic">${ic}</div>
+      <div class="weer-dag-max">${max}°</div>
+      <div class="weer-dag-min">${min}°</div>
+      <div class="weer-dag-rain" style="color:${rc}">${rain}%</div>
+    </div>`;
+  }).join('');
+  const upd=new Date(_wFetchedAt).toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'});
+  el.innerHTML=`<div class="weer-wrap">
+    <!-- Huidig weer -->
+    <div class="weer-kaart">
+      <div class="weer-kaart-top">
+        <div>
+          <div class="weer-stad">${_W_STAD} · Noord-Holland</div>
+          <div class="weer-cond">${curDesc}</div>
+        </div>
+        <div class="weer-ic-big">${curIc}</div>
+      </div>
+      <div class="weer-temp-row">
+        <div class="weer-temp-big">${curT}°</div>
+        <div class="weer-temp-detail">
+          <div>↑ ${todayMax}° &nbsp;↓ ${todayMin}°</div>
+          <div style="margin-top:2px">💨 ${curW} km/u</div>
+        </div>
+      </div>
+      <div class="werkbaar-badge" style="background:${wkBg}">${wkIc} ${wkLabel} vandaag · ${todayRain}% kans op regen</div>
+    </div>
+
+    <!-- Buienradar: komende 2 uur -->
+    ${_wBrBar()}
+
+    <!-- Uurlijkse verwachting vandaag -->
+    ${_wUurStrip()}
+
+    <!-- 7-daagse verwachting -->
+    <div class="weer-strip-wrap">
+      <div class="weer-strip-lbl">7-daagse verwachting <span style="font-weight:400;color:var(--text3)">(Open-Meteo)</span></div>
+      <div class="weer-strip">${strip7}</div>
+    </div>
+
+    <div class="weer-update">Bijgewerkt om ${upd}</div>
+    <button class="weer-refresh" onclick="window.renderWeer(true)">↻ Vernieuwen</button>
+  </div>`;
+}
+
+window.renderWeer=function(force){
+  const omOk=_wData&&(Date.now()-_wFetchedAt<_W_CACHE);
+  const brOk=_wBrData&&(Date.now()-_wBrFetchedAt<_W_BR_CACHE);
+  if(omOk&&brOk&&!force){_wRender();}
+  else if(omOk&&!force){_wFetchBuienradar().then(_wRender);}
+  else{_wFetch();}
 };
 
 // Scroll-reveal observer — marks .reveal elements visible when they enter viewport
