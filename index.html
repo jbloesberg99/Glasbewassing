@@ -161,6 +161,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 .mc-winst{background:linear-gradient(145deg,#fbbf24 0%,#f59e0b 40%,#d97706 100%);}
 .mc-uren{background:linear-gradient(145deg,#a78bfa 0%,#7c3aed 45%,#5b21b6 100%);}
 .mc-extra{background:linear-gradient(145deg,#fb923c 0%,#ea580c 45%,#c2410c 100%);}
+.mc-notes{background:linear-gradient(145deg,#22d3ee 0%,#06b6d4 40%,#0891b2 100%);}
 
 /* Icon */
 .mc-icon-wrap{
@@ -1838,6 +1839,80 @@ header{
 /* ── Module 4 — Dashboard ── */
 #app-extra{display:none;}
 #app-extra.on{display:block;}
+
+/* ── Module 5 — Notities ── */
+#app-notes{display:none;}
+#app-notes.on{display:block;}
+.n-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:10px;}
+.n-search-wrap{position:relative;flex:1;}
+.n-search{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:9px 12px 9px 34px;font-family:inherit;font-size:0.84rem;color:var(--text);outline:none;transition:border-color 0.15s;box-shadow:var(--shadow);}
+.n-search:focus{border-color:#06b6d4;}
+.n-search::placeholder{color:var(--text3);}
+.n-search-ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--text3);}
+.n-filter-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.n-chip{padding:5px 12px;border-radius:20px;font-size:0.72rem;font-weight:700;cursor:pointer;border:1px solid var(--border2);background:var(--surface);color:var(--text3);transition:all 0.15s;white-space:nowrap;}
+.n-chip.on{background:#0891b2;border-color:#0891b2;color:#fff;}
+.n-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:80px;}
+.n-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:transform 0.18s cubic-bezier(0.32,0.72,0,1),box-shadow 0.18s;animation:entryUp 0.32s cubic-bezier(0.32,0.72,0,1) both;}
+.n-card:active{transform:scale(0.96);}
+.n-card-strip{height:4px;background:var(--ncol,#06b6d4);}
+.n-card-body{padding:11px 12px 12px;}
+.n-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:4px;margin-bottom:5px;}
+.n-card-title{font-size:0.82rem;font-weight:700;line-height:1.3;letter-spacing:-0.1px;word-break:break-word;}
+.n-pin-ic{font-size:0.7rem;flex-shrink:0;margin-top:1px;opacity:0.7;}
+.n-card-preview{font-size:0.72rem;color:var(--text2);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;margin-bottom:7px;white-space:pre-wrap;}
+.n-card-dt{font-size:0.6rem;color:var(--text3);font-weight:500;}
+.n-empty{text-align:center;padding:60px 20px 40px;}
+.n-empty-ic{font-size:2.6rem;margin-bottom:12px;line-height:1;}
+.n-empty-t{font-size:0.92rem;font-weight:700;color:var(--text);margin-bottom:5px;}
+.n-empty-s{font-size:0.76rem;color:var(--text3);}
+/* FAB */
+.n-fab{
+  position:fixed;bottom:24px;right:20px;
+  width:54px;height:54px;border-radius:50%;
+  background:linear-gradient(145deg,#22d3ee,#0891b2);
+  border:none;color:#fff;font-size:1.6rem;line-height:1;
+  cursor:pointer;
+  box-shadow:0 6px 24px rgba(8,145,178,0.45),0 2px 8px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.3);
+  transition:transform 0.22s cubic-bezier(0.34,1.4,0.64,1),box-shadow 0.22s,opacity 0.2s;
+  z-index:15;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+}
+.n-fab.visible{opacity:1;pointer-events:auto;}
+.n-fab:active{transform:scale(0.88);}
+/* Notes overlay/modal */
+.n-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  z-index:200;align-items:flex-end;justify-content:center;
+}
+.n-overlay.open{display:flex;animation:fadeIn 0.2s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.n-modal{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:24px 24px 0 0;
+  padding:0 0 max(20px,env(safe-area-inset-bottom));
+  width:100%;max-width:500px;
+  animation:sheetUp 0.3s cubic-bezier(0.34,1.4,0.64,1);
+  max-height:92dvh;overflow-y:auto;
+  display:flex;flex-direction:column;
+}
+.n-modal-handle{width:32px;height:4px;background:var(--border2);border-radius:99px;margin:12px auto 0;flex-shrink:0;}
+.n-modal-topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 4px;flex-shrink:0;}
+.n-modal-back{background:var(--surface2);border:1px solid var(--border);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);flex-shrink:0;}
+.n-modal-acts{display:flex;gap:8px;}
+.n-modal-act{background:var(--surface2);border:1px solid var(--border);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);transition:background 0.15s,color 0.15s,border-color 0.15s;}
+.n-modal-act.on{background:#0891b2;border-color:#0891b2;color:#fff;}
+.n-modal-title-in{width:100%;background:none;border:none;outline:none;padding:14px 16px 4px;font-family:inherit;font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-0.4px;flex-shrink:0;}
+.n-modal-title-in::placeholder{color:var(--text3);}
+.n-modal-content-in{width:100%;background:none;border:none;outline:none;padding:8px 16px 16px;font-family:inherit;font-size:0.88rem;color:var(--text);line-height:1.65;resize:none;min-height:180px;flex:1;}
+.n-modal-content-in::placeholder{color:var(--text3);}
+.n-modal-footer{padding:10px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.n-color-dots{display:flex;gap:7px;flex:1;}
+.n-cdot{width:22px;height:22px;border-radius:50%;cursor:pointer;transition:transform 0.15s cubic-bezier(0.34,1.4,0.64,1),box-shadow 0.15s;box-shadow:0 1px 4px rgba(0,0,0,0.15);}
+.n-cdot.sel{transform:scale(1.3);box-shadow:0 3px 10px rgba(0,0,0,0.25);}
+.n-modal-save{background:linear-gradient(135deg,#22d3ee,#0891b2);color:#fff;border:none;border-radius:10px;padding:9px 20px;font-family:inherit;font-size:0.84rem;font-weight:700;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;box-shadow:0 3px 12px rgba(8,145,178,0.4);white-space:nowrap;flex-shrink:0;}
+.n-modal-save:active{transform:scale(0.95);}
 .d-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;}
 .d-st{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;}
 .d-badge{border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap;border:1px solid;}
@@ -2034,7 +2109,7 @@ header{
       </div>
     </div>
 
-    <!-- Module 4 (placeholder) -->
+    <!-- Dashboard -->
     <div class="module-card mc-extra" onclick="openModule('extra')">
       <div class="mc-icon-wrap">
         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -2048,6 +2123,24 @@ header{
         <div class="mc-name">Dashboard</div>
         <div class="mc-desc">Overzicht · Statistieken</div>
       </div>
+    </div>
+
+    <!-- Notities — full-width banner card -->
+    <div class="module-card mc-notes" onclick="openModule('notes')" style="grid-column:1/-1;aspect-ratio:auto;padding:16px 22px;flex-direction:row;text-align:left;gap:16px;justify-content:flex-start;">
+      <div class="mc-icon-wrap" style="margin-bottom:0;flex-shrink:0;width:46px;height:46px;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <line x1="10" y1="9" x2="8" y2="9"/>
+        </svg>
+      </div>
+      <div class="mc-text" style="align-items:flex-start;">
+        <div class="mc-name" style="font-size:0.92rem;">Notities</div>
+        <div class="mc-desc" style="font-size:0.65rem;">Gedeeld met collega's · Realtime sync</div>
+      </div>
+      <svg style="margin-left:auto;opacity:0.5;flex-shrink:0;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
     </div>
 
   </div>
@@ -2105,6 +2198,13 @@ header{
   <div class="nav-item" id="ne-analytics" onclick="dNav('analytics')">Analyse</div>
   <div class="nav-item" id="ne-maintenance" onclick="dNav('maintenance')">Onderhoud</div>
   <div class="nav-item" id="ne-beheer" onclick="dNav('beheer')">⚙ Beheer</div>
+</div>
+
+<!-- Nav notities -->
+<div class="nav" id="nav-notes" style="display:none;">
+  <div class="nav-item" onclick="naarStart()" style="color:var(--text3);">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> Menu
+  </div>
 </div>
 
 <div class="page" id="main-page" style="display:none;">
@@ -2377,8 +2477,20 @@ header{
     <div id="extra-list"></div>
   </div>
 
+  <!-- NOTITIES -->
+  <div id="app-notes">
+    <div id="notes-list"></div>
+  </div>
+
 </div>
 
+<!-- Notes FAB -->
+<button class="n-fab" id="n-fab" onclick="nOpen(null)" aria-label="Nieuwe notitie">+</button>
+
+<!-- Notes modal overlay -->
+<div class="n-overlay" id="n-overlay" onclick="nOverlayKlik(event)">
+  <div class="n-modal" id="n-modal"></div>
+</div>
 
 <!-- Success toast -->
 <div class="s-toast" id="s-toast">
@@ -2453,18 +2565,20 @@ let actModule = null;
 function openModule(mod) {
   actModule = mod;
   sessionStorage.setItem('purgato_module', mod);
+  history.pushState({ purgato: 'module', mod }, '');
   document.getElementById('startscherm').classList.remove('open');
   document.getElementById('main-header').style.display = 'flex';
   document.getElementById('main-page').style.display = 'block';
   // Entrance animation
-  const appIds = { glas:'app-glas', winst:'app-winst', uren:'app-uren', extra:'app-extra' };
+  const appIds = { glas:'app-glas', winst:'app-winst', uren:'app-uren', extra:'app-extra', notes:'app-notes' };
   const appEl = document.getElementById(appIds[mod] || 'app-glas');
   appEl.classList.add('app-entering');
   setTimeout(() => appEl.classList.remove('app-entering'), 700);
 
   // Reset all
-  ['app-glas','app-winst','app-uren','app-extra'].forEach(id => document.getElementById(id).classList.remove('on'));
-  ['nav-glas','nav-winst','nav-uren','nav-extra'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
+  ['app-glas','app-winst','app-uren','app-extra','app-notes'].forEach(id => document.getElementById(id).classList.remove('on'));
+  ['nav-glas','nav-winst','nav-uren','nav-extra','nav-notes'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
+  document.getElementById('n-fab').classList.remove('visible');
   document.getElementById('h-totaal').style.display = 'none';
   document.getElementById('sync-dot').style.display = 'none';
   document.getElementById('h-share').style.display = 'none';
@@ -2493,6 +2607,13 @@ function openModule(mod) {
     document.getElementById('nav-extra').style.display = 'flex';
     document.getElementById('app-extra').classList.add('on');
     if (window.startExtraModule) window.startExtraModule();
+  } else if (mod === 'notes') {
+    document.getElementById('h-title').textContent = 'Notities';
+    document.getElementById('sync-dot').style.display = '';
+    document.getElementById('nav-notes').style.display = 'flex';
+    document.getElementById('app-notes').classList.add('on');
+    document.getElementById('n-fab').classList.add('visible');
+    if (window.startNotesModule) window.startNotesModule();
   }
 }
 
@@ -2530,6 +2651,7 @@ function _smTypewriter() {
 }
 
 function naarStart() {
+  actModule = null;
   sessionStorage.removeItem('purgato_module');
   document.getElementById('startscherm').classList.add('open');
   document.getElementById('main-header').style.display = 'none';
@@ -2538,6 +2660,9 @@ function naarStart() {
   document.getElementById('nav-winst').style.display = 'none';
   document.getElementById('nav-uren').style.display = 'none';
   document.getElementById('nav-extra').style.display = 'none';
+  document.getElementById('nav-notes').style.display = 'none';
+  document.getElementById('n-fab').classList.remove('visible');
+  document.getElementById('n-overlay').classList.remove('open');
   setTimeout(_smTypewriter, 80);
 }
 
@@ -2744,6 +2869,37 @@ window.toggleTheme = function() {
   updateTheme();
 }
 updateTheme();
+
+// ── Android hardware back button ──
+// Set base history state so the first back-press lands somewhere we control
+history.replaceState({ purgato: 'start' }, '');
+
+window.addEventListener('popstate', function() {
+  // Priority 1: notes modal open → close it, stay in module
+  const nOv = document.getElementById('n-overlay');
+  if (nOv && nOv.classList.contains('open')) {
+    if (window.nClose) window.nClose();
+    if (actModule) history.pushState({ purgato: 'module', mod: actModule }, '');
+    return;
+  }
+
+  // Priority 2: glasbewassing bottom sheet open → close it, stay in module
+  const ov = document.getElementById('overlay');
+  if (ov && ov.classList.contains('open')) {
+    if (window.sluitSheet) window.sluitSheet();
+    if (actModule) history.pushState({ purgato: 'module', mod: actModule }, '');
+    return;
+  }
+
+  // Priority 3: inside a module → go back to start screen
+  if (actModule) {
+    naarStart();
+    return;
+  }
+
+  // Priority 4: already at start → let the OS close the app (do nothing)
+});
+
 </script>
 
 <!-- Firebase SDK -->
@@ -2764,6 +2920,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const klantenCol = collection(db, 'klanten');
 const urenCol = collection(db, 'uren');
+const notesCol = collection(db, 'notes');
 const _dDashDoc = doc(db, 'config', 'dashboard');
 
 let kl = [], vK = null, actF = 'all', actN = null, sId = null, actST = 'gedaan', uT = null, si = 0, wo = 0, navTab = 'klanten', selectedWDag = null;
@@ -3501,6 +3658,272 @@ window.dPlanNext=function(){_dPlanWk=Math.min(52,_dPlanWk+1);_dRenderAll();};
 window.dMaintCust=function(id){_dMCust=id;_dMTask=null;_dRenderAll();};
 window.dMaintTask=function(id){_dMTask=id;_dRenderAll();};
 window.dToggle=function(tid,w){const k=`${tid}-${w}`;_dMStatus[k]=_dMStatus[k]==='completed'?'planned':'completed';_dRenderAll();};
+
+// ════════════════════════════════
+// NOTITIES MODULE
+// ════════════════════════════════
+
+let _nNotes = [];
+let _nFilter = 'alle';
+let _nSearch = '';
+let _nUnsub = null;
+let _nEditPinned = false;
+let _nEditColor = 'teal';
+
+const _nCols = {
+  teal:   '#0891b2',
+  groen:  '#16a34a',
+  paars:  '#7c3aed',
+  oranje: '#ea580c',
+  roze:   '#db2777',
+  geel:   '#d97706'
+};
+
+function _nEsc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+}
+
+function _nRelTime(ts) {
+  const d = Date.now() - ts;
+  if (d < 60000)      return 'Zojuist';
+  if (d < 3600000)    return Math.floor(d/60000) + ' min geleden';
+  if (d < 86400000)   return Math.floor(d/3600000) + ' uur geleden';
+  if (d < 604800000)  return Math.floor(d/86400000) + ' d geleden';
+  return new Date(ts).toLocaleDateString('nl-NL',{day:'numeric',month:'short'});
+}
+
+function _nRender() {
+  const el = document.getElementById('notes-list');
+  if (!el) return;
+
+  let notes = [..._nNotes];
+
+  if (_nFilter === 'pinned') notes = notes.filter(n => n.pinned);
+
+  if (_nSearch.trim()) {
+    const q = _nSearch.toLowerCase();
+    notes = notes.filter(n =>
+      (n.title||'').toLowerCase().includes(q) ||
+      (n.content||'').toLowerCase().includes(q)
+    );
+  }
+
+  notes.sort((a,b) => {
+    if (a.pinned && !b.pinned) return -1;
+    if (!a.pinned && b.pinned) return 1;
+    return (b.updatedAt||0) - (a.updatedAt||0);
+  });
+
+  const pinnedCount = _nNotes.filter(n => n.pinned).length;
+
+  let html = `
+    <div class="n-toolbar">
+      <div class="n-search-wrap">
+        <span class="n-search-ic">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </span>
+        <input class="n-search" id="n-search-in"
+          placeholder="Zoek notities..."
+          value="${_nSearch.replace(/"/g,'&quot;')}"
+          oninput="nSearch(this.value)">
+      </div>
+    </div>
+    <div class="n-filter-row">
+      <div class="n-chip ${_nFilter==='alle'?'on':''}" onclick="nNav('alle')">Alle (${_nNotes.length})</div>
+      ${pinnedCount ? `<div class="n-chip ${_nFilter==='pinned'?'on':''}" onclick="nNav('pinned')">📌 Gepind (${pinnedCount})</div>` : ''}
+    </div>`;
+
+  if (!notes.length) {
+    html += `<div class="n-empty">
+      <div class="n-empty-ic">${_nSearch ? '🔍' : '📝'}</div>
+      <div class="n-empty-t">${_nSearch ? 'Geen resultaten' : _nFilter==='pinned' ? 'Geen gepinde notities' : 'Nog geen notities'}</div>
+      <div class="n-empty-s">${_nSearch ? 'Probeer een andere zoekterm' : 'Tik op + om je eerste notitie aan te maken'}</div>
+    </div>`;
+  } else {
+    html += `<div class="n-grid">`;
+    notes.forEach((n, i) => {
+      const col = _nCols[n.color] || _nCols.teal;
+      const preview = (n.content||'').replace(/</g,'&lt;').substring(0, 120);
+      const dt = _nRelTime(n.updatedAt || n.createdAt || Date.now());
+      html += `<div class="n-card" onclick="nOpen('${n.id}')" style="--ncol:${col};animation-delay:${i*0.04}s">
+        <div class="n-card-strip"></div>
+        <div class="n-card-body">
+          <div class="n-card-top">
+            <div class="n-card-title">${_nEsc(n.title||'Zonder titel')}</div>
+            ${n.pinned ? '<div class="n-pin-ic">📌</div>' : ''}
+          </div>
+          ${preview ? `<div class="n-card-preview">${_nEsc(preview)}</div>` : ''}
+          <div class="n-card-dt">${dt}</div>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+function _nBuildColorDots(sel) {
+  return Object.entries(_nCols).map(([k,v]) =>
+    `<div class="n-cdot ${k===sel?'sel':''}" data-col="${k}" onclick="nPickColor('${k}')" style="background:${v}"></div>`
+  ).join('');
+}
+
+function _nStartListener() {
+  if (_nUnsub) return;
+  _nUnsub = onSnapshot(notesCol, snap => {
+    _nNotes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    _nRender();
+  }, err => console.error('notes listener:', err));
+}
+
+window.startNotesModule = function() {
+  _nFilter = 'alle';
+  _nSearch = '';
+  _nStartListener();
+  _nRender();
+};
+
+window.nNav = function(filter) {
+  _nFilter = filter;
+  _nRender();
+};
+
+window.nSearch = function(val) {
+  _nSearch = val;
+  _nRender();
+};
+
+window.nOpen = function(rawId) {
+  const isNew = rawId === null || rawId === 'null';
+  const n = isNew
+    ? { id: null, title: '', content: '', color: 'teal', pinned: false }
+    : _nNotes.find(x => x.id === String(rawId));
+  if (!n) return;
+
+  _nEditPinned = !!n.pinned;
+  _nEditColor  = n.color || 'teal';
+
+  const modal = document.getElementById('n-modal');
+  const overlay = document.getElementById('n-overlay');
+
+  const safeTitle   = (n.title  ||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  const safeContent = (n.content||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+  modal.innerHTML = `
+    <div class="n-modal-handle"></div>
+    <div class="n-modal-topbar">
+      <button class="n-modal-back" onclick="nClose()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <div class="n-modal-acts">
+        ${!isNew ? `<button class="n-modal-act" title="Verwijderen" onclick="nDelete('${n.id}')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+          </svg>
+        </button>` : ''}
+        <button class="n-modal-act ${n.pinned?'on':''}" id="n-pin-btn" title="${n.pinned?'Losmaken':'Pinnen'}" onclick="nTogglePin()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="${n.pinned?'currentColor':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <input type="text" class="n-modal-title-in" id="n-m-title"
+      placeholder="Titel..."
+      value="${safeTitle}">
+    <textarea class="n-modal-content-in" id="n-m-content"
+      placeholder="Schrijf hier je notitie...">${safeContent}</textarea>
+    <div class="n-modal-footer">
+      <div class="n-color-dots" id="n-cdots">${_nBuildColorDots(_nEditColor)}</div>
+      <button class="n-modal-save" onclick="nSave('${isNew ? 'null' : n.id}')">Opslaan</button>
+    </div>`;
+
+  overlay.classList.add('open');
+  // Auto-resize textarea to comfortable height
+  requestAnimationFrame(() => {
+    const ta = document.getElementById('n-m-content');
+    if (ta) ta.style.minHeight = Math.max(180, window.innerHeight * 0.35) + 'px';
+    const ti = document.getElementById('n-m-title');
+    if (ti && !ti.value) ti.focus();
+    else if (ta) ta.focus();
+  });
+};
+
+window.nClose = function() {
+  document.getElementById('n-overlay').classList.remove('open');
+};
+
+window.nOverlayKlik = function(e) {
+  if (e.target === document.getElementById('n-overlay')) window.nClose();
+};
+
+window.nTogglePin = function() {
+  _nEditPinned = !_nEditPinned;
+  const btn = document.getElementById('n-pin-btn');
+  if (!btn) return;
+  btn.classList.toggle('on', _nEditPinned);
+  btn.title = _nEditPinned ? 'Losmaken' : 'Pinnen';
+  btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="${_nEditPinned?'currentColor':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`;
+};
+
+window.nPickColor = function(col) {
+  _nEditColor = col;
+  document.querySelectorAll('#n-cdots .n-cdot').forEach(el => el.classList.toggle('sel', el.dataset.col === col));
+};
+
+window.nSave = async function(rawId) {
+  const isNew = rawId === 'null' || rawId === null;
+  const title   = (document.getElementById('n-m-title').value   || '').trim();
+  const content = (document.getElementById('n-m-content').value || '').trim();
+  if (!title && !content) { window.nClose(); return; }
+
+  const now = Date.now();
+  let data;
+  if (isNew) {
+    data = { title, content, color: _nEditColor, pinned: _nEditPinned, createdAt: now, updatedAt: now };
+  } else {
+    const existing = _nNotes.find(n => n.id === String(rawId));
+    data = {
+      title, content, color: _nEditColor, pinned: _nEditPinned,
+      createdAt: existing ? (existing.createdAt || now) : now,
+      updatedAt: now
+    };
+  }
+
+  try {
+    window.syncS('bezig');
+    const ref = isNew ? doc(notesCol) : doc(notesCol, String(rawId));
+    await setDoc(ref, data);
+    window.syncS('ok');
+    window.nClose();
+  } catch(e) {
+    console.error('note save:', e);
+    window.syncS('fout');
+  }
+};
+
+window.nDelete = async function(id) {
+  if (!id || id === 'null') { window.nClose(); return; }
+  try {
+    window.syncS('bezig');
+    await deleteDoc(doc(notesCol, String(id)));
+    window.syncS('ok');
+    window.nClose();
+  } catch(e) {
+    console.error('note delete:', e);
+    window.syncS('fout');
+  }
+};
 
 // Scroll-reveal observer — marks .reveal elements visible when they enter viewport
 const _revealObs = new IntersectionObserver((entries) => {
