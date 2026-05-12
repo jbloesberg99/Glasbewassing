@@ -39,15 +39,39 @@
   --glass-bg:rgba(255,255,255,0.8);
 }
 [data-theme="dark"] {
-  --bg:#090e18;--surface:#111827;--surface2:#192236;--surface3:#1e2a3f;
-  --border:rgba(255,255,255,0.055);--border2:rgba(255,255,255,0.09);
-  --text:#e8edf5;--text2:#8896b3;--text3:#3d5070;
-  --accent:var(--green);--accent2:var(--green2);--accent-glow:rgba(42,102,54,0.18);
-  --shadow:0 1px 2px rgba(0,0,0,0.5),0 4px 16px rgba(0,0,0,0.4);
-  --shadow-md:0 4px 24px rgba(0,0,0,0.5),0 1px 4px rgba(0,0,0,0.3);
-  --shadow2:0 12px 48px rgba(0,0,0,0.7),0 2px 8px rgba(0,0,0,0.4);
-  --inset:inset 0 1px 0 rgba(255,255,255,0.05);
-  --glass-bg:rgba(17,24,39,0.85);
+  --bg:#04070e;--surface:#0c1220;--surface2:#111a2e;--surface3:#172038;
+  --border:rgba(255,255,255,0.05);--border2:rgba(255,255,255,0.09);
+  --text:#dde4f0;--text2:#7a8eaa;--text3:#334860;
+  --accent:var(--green);--accent2:var(--green2);--accent-glow:rgba(42,102,54,0.25);
+  --shadow:0 1px 2px rgba(0,0,0,0.7),0 4px 20px rgba(0,0,0,0.55);
+  --shadow-md:0 4px 28px rgba(0,0,0,0.65),0 1px 4px rgba(0,0,0,0.4);
+  --shadow2:0 16px 56px rgba(0,0,0,0.85),0 2px 8px rgba(0,0,0,0.5);
+  --inset:inset 0 1px 0 rgba(255,255,255,0.04);
+  --glass-bg:rgba(8,12,22,0.88);
+}
+
+/* ── Dark mode surface & accent refinements ── */
+[data-theme="dark"] .kkaart{border-color:rgba(255,255,255,0.06);}
+[data-theme="dark"] .kkaart.urgent{border-color:rgba(220,38,38,0.22);}
+[data-theme="dark"] .kkaart.soon{border-color:rgba(217,119,6,0.22);}
+[data-theme="dark"] header{border-bottom-color:rgba(255,255,255,0.05);box-shadow:0 1px 0 rgba(255,255,255,0.03),0 4px 24px rgba(0,0,0,0.6);}
+[data-theme="dark"] .nav{border-bottom-color:rgba(255,255,255,0.04);}
+[data-theme="dark"] .nav-item.on{text-shadow:0 0 12px rgba(42,102,54,0.5);}
+
+/* ── Card hover lift (desktop only) ── */
+@media (hover:hover) {
+  .kkaart:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);transition:transform 0.22s var(--ease-spring),box-shadow 0.22s var(--ease-out);}
+  .add-card:hover{box-shadow:var(--shadow-md);}
+  .stat-card:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
+}
+
+/* ── Performance: respect reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after{
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+  }
 }
 
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -153,15 +177,15 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
     inset 1px 0 0 rgba(255,255,255,0.1),
     inset -1px 0 0 rgba(0,0,0,0.05);
 }
-.module-card:hover{transform:translateY(-5px) scale(1.02);box-shadow:0 20px 48px rgba(0,0,0,0.55);}
+.module-card:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 14px 36px rgba(0,0,0,0.45);}
 .module-card:active{transform:scale(0.94);box-shadow:0 4px 16px rgba(0,0,0,0.4);}
 
 /* Identity gradients */
-.mc-glas{background:linear-gradient(145deg,#4db8f0 0%,#1a8fd1 45%,#0a5f96 100%);}
-.mc-winst{background:linear-gradient(145deg,#fbbf24 0%,#f59e0b 40%,#d97706 100%);}
-.mc-uren{background:linear-gradient(145deg,#a78bfa 0%,#7c3aed 45%,#5b21b6 100%);}
-.mc-extra{background:linear-gradient(145deg,#fb923c 0%,#ea580c 45%,#c2410c 100%);}
-.mc-notes{background:linear-gradient(145deg,#22d3ee 0%,#06b6d4 40%,#0891b2 100%);}
+.mc-glas{background:linear-gradient(145deg,#3a9fc8 0%,#1470aa 45%,#094d82 100%);}
+.mc-winst{background:linear-gradient(145deg,#e8aa18 0%,#c98800 40%,#a06600 100%);}
+.mc-uren{background:linear-gradient(145deg,#9575e8 0%,#6930c8 45%,#491aa0 100%);}
+.mc-extra{background:linear-gradient(145deg,#e8722e 0%,#cc4a00 45%,#a33800 100%);}
+.mc-notes{background:linear-gradient(145deg,#14c0d8 0%,#0098b4 40%,#007490 100%);}
 
 /* Icon */
 .mc-icon-wrap{
@@ -390,6 +414,12 @@ header{
 .ki{flex:1;min-width:0;}
 .kn{font-size:0.88rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.2px;}
 .kp{font-size:0.67rem;color:var(--text3);margin-top:2px;font-weight:500;}
+.k-avatar{
+  width:34px;height:34px;border-radius:9px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.68rem;font-weight:800;letter-spacing:-0.3px;color:#fff;
+  opacity:0.9;
+}
 .dtag{
   border-radius:9px;padding:5px 9px;font-size:0.71rem;font-weight:700;
   text-align:right;flex-shrink:0;cursor:pointer;
@@ -701,7 +731,7 @@ header{
 /* ── Weer tab ── */
 .weer-wrap{padding:2px 0;}
 .weer-kaart{
-  background:linear-gradient(145deg,#38bdf8 0%,#0284c7 50%,#075985 100%);
+  background:linear-gradient(145deg,#2a8ab5 0%,#13629a 50%,#0a4370 100%);
   border-radius:20px;padding:20px;margin-bottom:14px;
   box-shadow:0 8px 32px rgba(2,132,199,0.3),inset 0 1px 0 rgba(255,255,255,0.2);
   position:relative;overflow:hidden;
@@ -719,11 +749,9 @@ header{
 .weer-temp-row{display:flex;align-items:flex-end;gap:14px;margin-bottom:14px;}
 .weer-temp-big{font-size:3.8rem;font-weight:900;color:#fff;line-height:1;letter-spacing:-3px;}
 .weer-temp-detail{color:rgba(255,255,255,0.75);font-size:0.8rem;font-weight:600;padding-bottom:7px;line-height:1.6;}
-.werkbaar-badge{
-  border-radius:10px;padding:9px 13px;font-size:0.78rem;font-weight:700;
-  background:rgba(0,0,0,0.18);color:#fff;letter-spacing:0.01em;
-  border:1px solid rgba(255,255,255,0.15);
-}
+.glas-score{border-radius:12px;padding:11px 14px;border:1px solid rgba(255,255,255,0.15);}
+.glas-score-titel{font-size:0.86rem;font-weight:800;color:#fff;margin-bottom:7px;}
+.glas-score-rijen{display:flex;flex-direction:column;gap:4px;font-size:0.72rem;color:rgba(255,255,255,0.82);font-weight:600;}
 .weer-strip-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 12px 10px;margin-bottom:10px;box-shadow:var(--shadow);}
 .weer-strip-lbl{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:10px;}
 .weer-strip{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
@@ -1203,8 +1231,11 @@ header{
   background-attachment: fixed;
 }
 [data-theme="dark"] body {
-  background-image: radial-gradient(circle, rgba(255,255,255,0.028) 1px, transparent 1px);
-  background-size: 22px 22px;
+  background-image:
+    radial-gradient(ellipse 65% 28% at 12% 4%, rgba(42,102,54,0.13) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 20% at 85% 90%, rgba(42,102,54,0.07) 0%, transparent 60%),
+    radial-gradient(circle, rgba(255,255,255,0.022) 1px, transparent 1px);
+  background-size: auto, auto, 22px 22px;
   background-attachment: fixed;
 }
 
@@ -4187,13 +4218,22 @@ const _wCodes = {
 
 function _wCode(c){return _wCodes[c]||['🌡️','Onbekend'];}
 
-function _wWerkbaar(rain,maxT,code){
-  const slecht=[55,63,65,73,75,80,81,82,85,86,95,96,99];
-  if(slecht.includes(code)||rain>60||maxT<0)
-    return['❌','Niet werkbaar','rgba(220,38,38,0.25)'];
-  if(rain>30||maxT<5)
-    return['⚠️','Mogelijk werkbaar','rgba(217,119,6,0.25)'];
-  return['✅','Goed werkbaar','rgba(255,255,255,0.18)'];
+function _wGlasScore(rain,maxT,code,wind,gusts,uv){
+  const badCode=[55,63,65,73,75,80,81,82,85,86,95,96,99];
+  const mehCode=[51,53,61,71,80,81];
+  const w=gusts||wind;
+  // Ladder veiligheid
+  const ladderIc=w<25?'🪜':w<42?'⚠️':'🚫';
+  const ladderTxt=w<25?'Ladder veilig':w<42?'Ladder — met voorzichtigheid':'Ladder gevaarlijk';
+  // UV
+  const uvTxt=uv!=null?(uv<3?`UV ${uv} — geen bescherming nodig`:uv<6?`UV ${uv} — zonnebrand mee`:uv<8?`UV ${uv} — bescherming verplicht`:`UV ${uv} — vermijd middagzon`):null;
+  // Algehele score
+  let ic,label,bg;
+  if(badCode.includes(code)||rain>65||maxT<-1||w>55){ic='🔴';label='Afzeggen';bg='rgba(220,38,38,0.22)';}
+  else if(mehCode.includes(code)||rain>40||maxT<4||w>38){ic='🟠';label='Niet ideaal';bg='rgba(234,88,12,0.22)';}
+  else if(rain>20||maxT<8||w>25){ic='🟡';label='Redelijk werkbaar';bg='rgba(202,138,4,0.18)';}
+  else{ic='🟢';label='Uitstekende werkdag';bg='rgba(255,255,255,0.13)';}
+  return{ic,label,bg,ladderIc,ladderTxt,uvTxt,w};
 }
 
 // ── Buienradar: komende 2 uur radardata (5-min intervallen) ──
@@ -4222,7 +4262,7 @@ async function _wFetch(){
     // Haal Open-Meteo en Buienradar tegelijk op
     const omUrl=`https://api.open-meteo.com/v1/forecast?latitude=${_W_LAT}&longitude=${_W_LON}`
       +`&hourly=precipitation_probability,weathercode,temperature_2m`
-      +`&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode,windspeed_10m_max`
+      +`&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode,windspeed_10m_max,windgusts_10m_max,uv_index_max`
       +`&current_weather=true&timezone=Europe%2FAmsterdam&forecast_days=7`;
     const [omRes] = await Promise.all([fetch(omUrl), _wFetchBuienradar()]);
     if(!omRes.ok)throw new Error('HTTP '+omRes.status);
@@ -4310,7 +4350,10 @@ function _wRender(){
   const todayRain=d.precipitation_probability_max[0];
   const todayMax=Math.round(d.temperature_2m_max[0]);
   const todayMin=Math.round(d.temperature_2m_min[0]);
-  const [wkIc,wkLabel,wkBg]=_wWerkbaar(todayRain,todayMax,d.weathercode[0]);
+  const todayWind=Math.round(d.windspeed_10m_max?.[0]||curW);
+  const todayGusts=d.windgusts_10m_max?Math.round(d.windgusts_10m_max[0]):null;
+  const todayUV=d.uv_index_max?Math.round(d.uv_index_max[0]*10)/10:null;
+  const wk=_wGlasScore(todayRain,todayMax,d.weathercode[0],todayWind,todayGusts,todayUV);
   const dn=['zo','ma','di','wo','do','vr','za'];
   const strip7=d.time.map((dt,i)=>{
     const dag=new Date(dt);
@@ -4346,7 +4389,15 @@ function _wRender(){
           <div style="margin-top:2px">💨 ${curW} km/u</div>
         </div>
       </div>
-      <div class="werkbaar-badge" style="background:${wkBg}">${wkIc} ${wkLabel} vandaag · ${todayRain}% kans op regen</div>
+      <div class="glas-score" style="background:${wk.bg}">
+        <div class="glas-score-titel">${wk.ic} ${wk.label} vandaag</div>
+        <div class="glas-score-rijen">
+          <span>${wk.ladderIc} ${wk.ladderTxt}</span>
+          <span>💨 Wind ${todayWind} km/u${todayGusts?` · windstoten ${todayGusts} km/u`:''}</span>
+          <span>🌧 ${todayRain}% kans op regen</span>
+          ${wk.uvTxt?`<span>☀️ ${wk.uvTxt}</span>`:''}
+        </div>
+      </div>
     </div>
 
     <!-- Buienradar: komende 2 uur -->
