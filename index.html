@@ -86,7 +86,9 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
   background:linear-gradient(160deg,#0e2318 0%,#163824 30%,#1c4a2c 60%,#112a1c 100%);
   flex-direction:column;align-items:center;justify-content:center;
   padding:24px 20px 32px;
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
 }
+#startscherm *{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
 /* Diagonal line pattern */
 #startscherm::before{
   content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
@@ -1397,6 +1399,20 @@ header{
 #mb-wit.on .wc-mode-ic { background: rgba(255,255,255,0.12) !important; color: #fff !important; }
 #mb-wit.on .wc-mode-name, #mb-wit.on .wc-mode-desc { color: #fff !important; }
 #mb-wit.on .wc-mode-desc { color: rgba(255,255,255,0.5) !important; }
+#mb-zzp.on {
+  background: linear-gradient(145deg, #6b21a8, #a855f7) !important;
+  border: none !important;
+  box-shadow: 0 6px 24px rgba(168,85,247,0.4) !important;
+}
+#mb-zzp.on .wc-mode-ic { background: rgba(255,255,255,0.12) !important; color: #fff !important; }
+#mb-zzp.on .wc-mode-name, #mb-zzp.on .wc-mode-desc { color: #fff !important; }
+#mb-zzp.on .wc-mode-desc { color: rgba(255,255,255,0.55) !important; }
+/* 3-kolom layout — tiles iets compacter */
+.wc-mode-toggle.wc-mode-3 { grid-template-columns: 1fr 1fr 1fr !important; gap: 6px !important; }
+.wc-mode-toggle.wc-mode-3 .wc-mode-btn { padding: 12px 10px !important; gap: 8px !important; }
+.wc-mode-toggle.wc-mode-3 .wc-mode-ic { width: 34px !important; height: 34px !important; border-radius: 10px !important; }
+.wc-mode-toggle.wc-mode-3 .wc-mode-name { font-size: 0.78rem !important; }
+.wc-mode-toggle.wc-mode-3 .wc-mode-desc { font-size: 0.56rem !important; }
 
 /* 10. Winstcalculator result groot card: vivid */
 .wc-res-card.groen.groot {
@@ -2151,6 +2167,32 @@ header{
 }
 .ur-opgeslagen.show{opacity:1;}
 
+/* ── Personeel sectie ── */
+.urp-hdr{display:flex;align-items:center;gap:10px;margin:4px 0 14px;}
+.urp-hdr-titel{font-size:1.05rem;font-weight:800;letter-spacing:-0.3px;flex:1;}
+.urp-add{background:linear-gradient(145deg,#a78bfa,#7c3aed);color:#fff;border:none;border-radius:11px;padding:9px 14px;font-family:inherit;font-size:0.78rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 3px 14px rgba(124,58,237,0.35);transition:transform 0.18s var(--ease-spring);}
+.urp-add:active{transform:scale(0.95);}
+.urp-leeg{text-align:center;padding:50px 20px;color:var(--text3);}
+.urp-leeg-ic{font-size:2.4rem;margin-bottom:12px;opacity:0.4;}
+.urp-leeg-t{font-size:0.92rem;font-weight:700;color:var(--text);margin-bottom:5px;}
+.urp-leeg-s{font-size:0.76rem;color:var(--text3);}
+.urp-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:13px;cursor:pointer;box-shadow:var(--shadow);transition:transform 0.18s var(--ease-spring),box-shadow 0.18s;border-left:3px solid #7c3aed;}
+.urp-card:active{transform:scale(0.98);}
+.urp-card-avatar{width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,#a78bfa,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.05rem;flex-shrink:0;}
+.urp-card-info{flex:1;min-width:0;}
+.urp-card-naam{font-size:0.92rem;font-weight:800;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.urp-card-sub{font-size:0.66rem;color:var(--text3);margin-top:2px;font-weight:500;}
+.urp-card-chev{color:var(--text3);flex-shrink:0;}
+.urp-detail-top{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.urp-back{background:var(--surface2);border:1px solid var(--border);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);flex-shrink:0;}
+.urp-back:active{transform:scale(0.9);}
+.urp-detail-naam-wrap{flex:1;min-width:0;}
+.urp-detail-naam-in{width:100%;background:transparent;border:none;outline:none;font-family:inherit;font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-0.3px;padding:4px 0;border-bottom:1px dashed transparent;transition:border-color 0.15s;}
+.urp-detail-naam-in:focus{border-bottom-color:var(--accent);}
+.urp-detail-sub{font-size:0.66rem;color:var(--text3);font-weight:600;margin-top:1px;}
+.urp-del{background:var(--urgent-s);border:1px solid var(--urgent-b);color:var(--urgent);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.urp-del:active{transform:scale(0.9);}
+
 /* ── Touch active feedback (werkt op Android & iOS) ── */
 .kkaart:active       { transform: scale(0.97) !important; transition: transform 0.1s ease !important; }
 .witem:active        { transform: scale(0.98) !important; transition: transform 0.1s ease !important; }
@@ -2310,6 +2352,12 @@ header{
   <div class="nav-item" onclick="naarStart()" style="color:var(--text3);">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> Menu
   </div>
+  <div class="nav-item on" id="nav-ur-eigen" onclick="urGaNaar('eigen')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg> Mij
+  </div>
+  <div class="nav-item" id="nav-ur-personeel" onclick="urGaNaar('personeel')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg> Personeel
+  </div>
 </div>
 
 <!-- Nav dashboard -->
@@ -2455,8 +2503,8 @@ header{
         <div class="wc-hero-mode" id="wc-hero-mode">Vul de gegevens in</div>
       </div>
 
-      <!-- Mode toggle: twee grote tiles -->
-      <div class="wc-mode-toggle">
+      <!-- Mode toggle: drie tiles -->
+      <div class="wc-mode-toggle wc-mode-3">
         <div class="wc-mode-btn on" id="mb-zwart" onclick="wcSetMode('zwart')">
           <div class="wc-mode-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg></div>
           <div><div class="wc-mode-name">Zwart</div><div class="wc-mode-desc">Cash in hand</div></div>
@@ -2464,6 +2512,10 @@ header{
         <div class="wc-mode-btn" id="mb-wit" onclick="wcSetMode('wit')">
           <div class="wc-mode-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div>
           <div><div class="wc-mode-name">Officieel</div><div class="wc-mode-desc">Via loonstrook</div></div>
+        </div>
+        <div class="wc-mode-btn" id="mb-zzp" onclick="wcSetMode('zzp')">
+          <div class="wc-mode-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-4V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM10 5h4v2h-4V5z"/></svg></div>
+          <div><div class="wc-mode-name">ZZP'er</div><div class="wc-mode-desc">Via factuur</div></div>
         </div>
       </div>
 
@@ -2603,6 +2655,7 @@ header{
   <!-- UREN REGISTRATIE -->
   <div id="app-uren">
     <div id="ur-list"></div>
+    <div id="ur-personeel" style="display:none;"></div>
   </div>
 
   <div id="app-extra">
@@ -2808,7 +2861,11 @@ function wcSetMode(m) {
   wcMode = m;
   document.getElementById('mb-zwart').classList.toggle('on', m === 'zwart');
   document.getElementById('mb-wit').classList.toggle('on', m === 'wit');
-  document.getElementById('wc-loon-label').textContent = m === 'zwart' ? 'Uurloon werknemer (zwart)' : 'CAO-uurloon werknemer (bruto)';
+  document.getElementById('mb-zzp').classList.toggle('on', m === 'zzp');
+  const lbl = m === 'zwart' ? 'Uurloon werknemer (zwart)'
+            : m === 'wit'   ? 'CAO-uurloon werknemer (bruto)'
+            :                 "ZZP'er uurtarief (factuur)";
+  document.getElementById('wc-loon-label').textContent = lbl;
   wcBereken();
 }
 
@@ -2877,6 +2934,13 @@ function wcBereken() {
     winstWerknemer = (klantprijs * urenWerk * factor) - loonkosten;
     winstExtra = klantprijs * urenExtra * factor;
     totaal = winstWerknemer + winstExtra;
+  } else if(wcMode === 'zzp'){
+    // ZZP: factuur aftrekbaar (geen werkgeverslasten, geen 1.44)
+    loonkostenRaw = loon * urenWerk;
+    loonkosten = loonkostenRaw;
+    winstWerknemer = ((klantprijs * urenWerk) - loonkosten) * factor;
+    winstExtra = klantprijs * urenExtra * factor;
+    totaal = winstWerknemer + winstExtra;
   } else {
     loonkostenRaw = loon * urenWerk;
     loonkosten = loonkostenRaw * 1.44;
@@ -2898,7 +2962,8 @@ function wcBereken() {
     animHero(heroAmount, totaalPerUur, urenKlant);
     heroAmount.className = 'wc-hero-amount ' + heroKleur;
     if(heroBanner) heroBanner.className = 'wc-hero-banner ' + heroKleur;
-    if(heroMode) heroMode.textContent = (wcMode==='zwart'?'Zwart':'Officieel') + ' · ' + belasting + '% belasting · ' + urenKlant + ' uur';
+    const modeLbl = wcMode==='zwart'?'Zwart':wcMode==='zzp'?"ZZP'er":'Officieel';
+    if(heroMode) heroMode.textContent = modeLbl + ' · ' + belasting + '% belasting · ' + urenKlant + ' uur';
   }
 
   document.getElementById('wc-result-grid').innerHTML = `
@@ -2924,6 +2989,13 @@ function wcBereken() {
   if(wcMode === 'zwart'){
     rows += `<div class="wc-br-row"><span class="lbl">Loon werknemer (${urenWerk} uur × €${loon.toFixed(2)})</span><span class="val neg">−${fEur(loonkosten, false)}</span></div>`;
     rows += `<div class="wc-br-row"><span class="lbl">= Netto na belasting ${belasting}% over omzet</span><span class="val neu">${fEur(omzet * factor, false)}</span></div>`;
+    if(urenExtra > 0){
+      rows += `<div class="wc-br-row"><span class="lbl">↑ waarvan ${urenExtra} extra uur (alleen IB)</span><span class="val pos">${fEur(winstExtra, false)}</span></div>`;
+    }
+  } else if(wcMode === 'zzp'){
+    rows += `<div class="wc-br-row"><span class="lbl">ZZP-factuur (${urenWerk} uur × €${loon.toFixed(2)})</span><span class="val neg">−${fEur(loonkosten, false)}</span></div>`;
+    rows += `<div class="wc-br-row"><span class="lbl">= Belastbare winst</span><span class="val neu">${fEur(omzet - loonkosten, false)}</span></div>`;
+    rows += `<div class="wc-br-row"><span class="lbl">Belasting ${belasting}%</span><span class="val neg">−${fEur((omzet - loonkosten) * belasting/100, false)}</span></div>`;
     if(urenExtra > 0){
       rows += `<div class="wc-br-row"><span class="lbl">↑ waarvan ${urenExtra} extra uur (alleen IB)</span><span class="val pos">${fEur(winstExtra, false)}</span></div>`;
     }
@@ -3032,6 +3104,13 @@ window.addEventListener('popstate', function(e) {
     return;
   }
 
+  // Priority 2b: uren-personeel detail view → terug naar staff-lijst
+  if (actModule === 'uren' && window._urpInDetail && window._urpInDetail()) {
+    if (window.urpTerug) window.urpTerug();
+    if (actModule) history.pushState({ purgato: 'module', mod: actModule }, '');
+    return;
+  }
+
   // Priority 3: inside a module → go back to start screen
   if (actModule) {
     naarStart();
@@ -3062,6 +3141,8 @@ const db = getFirestore(app);
 const klantenCol = collection(db, 'klanten');
 const urenCol = collection(db, 'uren');
 const notesCol = collection(db, 'notes');
+const personeelCol = collection(db, 'personeel');
+const urenPCol = collection(db, 'uren_personeel');
 const _dDashDoc = doc(db, 'config', 'dashboard');
 
 let kl = [], vK = null, actF = 'all', actN = null, sId = null, actST = 'gedaan', uT = null, si = 0, wo = 0, navTab = 'klanten', selectedWDag = null;
@@ -3450,6 +3531,18 @@ let _urData = {};  // { 'YYYY-MM-DD': { id, notitie } }
 let _urUnsub = null;
 
 window.startUrenListener = function() {
+  // Reset naar eigen-view bij elke opening van de module
+  _urView = 'eigen';
+  _urStaffSel = null;
+  const navE = document.getElementById('nav-ur-eigen');
+  const navP = document.getElementById('nav-ur-personeel');
+  if(navE) navE.classList.add('on');
+  if(navP) navP.classList.remove('on');
+  const eigenEl = document.getElementById('ur-list');
+  const persoEl = document.getElementById('ur-personeel');
+  if(eigenEl) eigenEl.style.display = '';
+  if(persoEl) persoEl.style.display = 'none';
+
   renderUren(); // toon meteen de lege structuur zonder te wachten op Firebase
   if (_urUnsub) return;
   _urUnsub = onSnapshot(urenCol, snap => {
@@ -3564,6 +3657,253 @@ window.urOpslaan = async function(iso, silent = false) {
   } catch(e) {
     console.error('urOpslaan:', e);
   }
+};
+
+// ════════════════════════════════
+// UREN — PERSONEEL
+// ════════════════════════════════
+let _urView = 'eigen';          // 'eigen' | 'lijst' | 'detail'
+let _urStaff = [];              // [{id, naam}]
+let _urStaffSel = null;         // huidige staff id in detail-view
+let _urPData = {};              // { staffId: { date: notitie } }
+let _urStaffUnsub = null;
+let _urPUnsub = null;
+const _urPTimers = {};
+
+function _urpInit(){
+  if(!_urStaffUnsub){
+    _urStaffUnsub = onSnapshot(personeelCol, snap => {
+      _urStaff = snap.docs.map(d => ({ id: d.id, naam: d.data().naam || 'Naamloos' }));
+      _urStaff.sort((a,b)=>a.naam.localeCompare(b.naam,'nl'));
+      if(_urView === 'lijst') _renderPersoneelLijst();
+      if(_urView === 'detail') _renderPersoneelDetail();
+    }, err => console.error('personeel:', err));
+  }
+  if(!_urPUnsub){
+    _urPUnsub = onSnapshot(urenPCol, snap => {
+      _urPData = {};
+      snap.docs.forEach(d => {
+        const [sid, date] = d.id.split('__');
+        if(!sid || !date) return;
+        if(!_urPData[sid]) _urPData[sid] = {};
+        _urPData[sid][date] = d.data().notitie || '';
+      });
+      if(_urView === 'detail' && _urStaffSel){
+        // Live update textareas (zonder de actieve te overschrijven)
+        const dagen = _urDagen(30);
+        dagen.forEach(iso => {
+          const ta = document.getElementById('urp-' + iso);
+          if(ta && document.activeElement !== ta){
+            ta.value = (_urPData[_urStaffSel] || {})[iso] || '';
+            _urpResize(iso);
+          }
+        });
+      }
+    }, err => console.error('uren_personeel:', err));
+  }
+}
+
+window.urGaNaar = function(view){
+  _urView = view;
+  document.getElementById('nav-ur-eigen').classList.toggle('on', view === 'eigen');
+  document.getElementById('nav-ur-personeel').classList.toggle('on', view !== 'eigen');
+  const eigenEl = document.getElementById('ur-list');
+  const persoEl = document.getElementById('ur-personeel');
+  if(view === 'eigen'){
+    eigenEl.style.display = '';
+    persoEl.style.display = 'none';
+    _urStaffSel = null;
+  } else {
+    eigenEl.style.display = 'none';
+    persoEl.style.display = '';
+    _urpInit();
+    if(_urStaffSel) _renderPersoneelDetail();
+    else _renderPersoneelLijst();
+  }
+};
+
+function _renderPersoneelLijst(){
+  _urView = 'lijst';
+  _urStaffSel = null;
+  const el = document.getElementById('ur-personeel');
+  if(!el) return;
+
+  const cards = _urStaff.map(s => {
+    const init = s.naam.trim().split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase() || '?';
+    const aantal = Object.keys(_urPData[s.id] || {}).filter(d => (_urPData[s.id][d]||'').trim()).length;
+    return `<div class="urp-card" onclick="urpOpen('${s.id}')">
+      <div class="urp-card-avatar">${init}</div>
+      <div class="urp-card-info">
+        <div class="urp-card-naam">${_urEsc(s.naam)}</div>
+        <div class="urp-card-sub">${aantal} ${aantal===1?'dag':'dagen'} geregistreerd</div>
+      </div>
+      <svg class="urp-card-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="urp-hdr">
+      <div class="urp-hdr-titel">Personeel</div>
+      <button class="urp-add" onclick="urpToevoegen()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Toevoegen
+      </button>
+    </div>
+    ${_urStaff.length ? cards : `<div class="urp-leeg">
+      <div class="urp-leeg-ic">👥</div>
+      <div class="urp-leeg-t">Nog geen personeel</div>
+      <div class="urp-leeg-s">Tik op "Toevoegen" om iemand toe te voegen</div>
+    </div>`}
+  `;
+}
+
+function _renderPersoneelDetail(){
+  _urView = 'detail';
+  const staff = _urStaff.find(s => s.id === _urStaffSel);
+  if(!staff){ _renderPersoneelLijst(); return; }
+
+  const el = document.getElementById('ur-personeel');
+  if(!el) return;
+
+  const today = new Date().toISOString().slice(0,10);
+  const dagen = _urDagen(30);
+  const weekLabel = iso => {
+    const diff = Math.round((new Date(today) - new Date(iso)) / 86400000);
+    if(diff <= 0)  return 'Vandaag';
+    if(diff <= 6)  return 'Deze week';
+    if(diff <= 13) return 'Vorige week';
+    if(diff <= 20) return '2 weken geleden';
+    return '3 weken geleden';
+  };
+
+  const data = _urPData[_urStaffSel] || {};
+  let lastLabel = null;
+  const lijst = dagen.map(iso => {
+    const isToday = iso === today;
+    const { dow, dagNaam, dag, maand } = _urFmtDate(iso);
+    const val = data[iso] || '';
+    const heeftNotitie = val.trim().length > 0;
+    const wl = weekLabel(iso);
+    let sep = '';
+    if(wl !== lastLabel){
+      sep = `<div class="ur-week-sep"><span class="ur-week-sep-lbl">${wl}</span><span class="ur-week-sep-line"></span></div>`;
+      lastLabel = wl;
+    }
+    return `${sep}<div class="ur-dag${isToday?' today':''}${heeftNotitie?' heeft-notitie':''}">
+      <div class="ur-dag-hdr">
+        <div class="ur-dag-nr">${dag}</div>
+        <div class="ur-dag-info">
+          <div class="ur-dag-naam">${isToday ? 'Vandaag' : dagNaam}</div>
+          <div class="ur-dag-sub">${maand}${isToday ? ' · ' + dow : ''}</div>
+        </div>
+        <span class="ur-dag-pill">Nu</span>
+      </div>
+      <textarea class="ur-notitie" id="urp-${iso}" placeholder="Wat heeft ${_urEsc(staff.naam.split(' ')[0])} gedaan?" oninput="urpAutoSave('${iso}')">${_urEsc(val)}</textarea>
+      <div class="ur-status-row">
+        <span class="ur-opgeslagen" id="urp-ok-${iso}">✓ opgeslagen</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="urp-detail-top">
+      <button class="urp-back" onclick="urpTerug()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="urp-detail-naam-wrap">
+        <input type="text" class="urp-detail-naam-in" id="urp-naam-in" value="${(staff.naam||'').replace(/"/g,'&quot;')}" oninput="urpNaamWijzig()" placeholder="Naam">
+        <div class="urp-detail-sub">Tik op de naam om te bewerken</div>
+      </div>
+      <button class="urp-del" onclick="urpVerwijderen('${staff.id}')" title="Verwijderen">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      </button>
+    </div>
+    ${lijst}
+  `;
+  dagen.forEach(iso => _urpResize(iso));
+}
+
+function _urpResize(iso){
+  const ta = document.getElementById('urp-' + iso);
+  if(!ta) return;
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+}
+
+window.urpOpen = function(id){
+  _urStaffSel = id;
+  _renderPersoneelDetail();
+};
+
+window.urpTerug = function(){
+  _urStaffSel = null;
+  _renderPersoneelLijst();
+};
+
+window._urpInDetail = function(){ return _urView === 'detail'; };
+
+window.urpToevoegen = async function(){
+  const naam = prompt('Naam van het nieuwe personeelslid:');
+  if(!naam || !naam.trim()) return;
+  const id = String(Date.now()*100 + Math.floor(Math.random()*100));
+  try{
+    await setDoc(doc(personeelCol, id), { naam: naam.trim(), createdAt: Date.now() });
+    haptic(15);
+    showToast(naam.trim() + ' toegevoegd');
+    _urStaffSel = id;
+    setTimeout(_renderPersoneelDetail, 250);
+  }catch(e){ console.error('personeel add:', e); }
+};
+
+let _urpNaamTimer = null;
+window.urpNaamWijzig = function(){
+  const ta = document.getElementById('urp-naam-in');
+  if(!ta || !_urStaffSel) return;
+  clearTimeout(_urpNaamTimer);
+  _urpNaamTimer = setTimeout(async () => {
+    const naam = ta.value.trim();
+    if(!naam) return;
+    try{
+      await setDoc(doc(personeelCol, _urStaffSel), { naam, updatedAt: Date.now() }, { merge: true });
+    }catch(e){ console.error('personeel naam:', e); }
+  }, 800);
+};
+
+window.urpVerwijderen = async function(id){
+  const staff = _urStaff.find(s => s.id === id);
+  if(!staff) return;
+  if(!confirm(`"${staff.naam}" verwijderen?\n\nAlle uren-notities van dit personeelslid worden ook verwijderd.`)) return;
+  try{
+    // Verwijder staff doc
+    await deleteDoc(doc(personeelCol, id));
+    // Verwijder alle uren-notities van deze persoon
+    const eigen = _urPData[id] || {};
+    await Promise.all(Object.keys(eigen).map(date =>
+      deleteDoc(doc(urenPCol, `${id}__${date}`)).catch(()=>{})
+    ));
+    haptic(20);
+    showToast(staff.naam + ' verwijderd');
+    _urStaffSel = null;
+    _renderPersoneelLijst();
+  }catch(e){ console.error('personeel del:', e); }
+};
+
+window.urpAutoSave = function(iso){
+  _urpResize(iso);
+  clearTimeout(_urPTimers[iso]);
+  _urPTimers[iso] = setTimeout(() => urpOpslaan(iso, true), 1500);
+};
+
+window.urpOpslaan = async function(iso, silent = false){
+  const ta = document.getElementById('urp-' + iso);
+  if(!ta || !_urStaffSel) return;
+  const notitie = ta.value;
+  try{
+    await setDoc(doc(urenPCol, `${_urStaffSel}__${iso}`), { notitie, staffId: _urStaffSel, date: iso });
+    if(!silent) haptic(15);
+    const ok = document.getElementById('urp-ok-' + iso);
+    if(ok){ ok.classList.add('show'); setTimeout(() => ok.classList.remove('show'), 1800); }
+  }catch(e){ console.error('urpOpslaan:', e); }
 };
 
 // ════════════════════════════════
@@ -4487,4 +4827,3 @@ startListener();
 </script>
 </body>
 </html>
-
