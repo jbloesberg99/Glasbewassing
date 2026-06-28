@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="nl" data-theme="light">
 <head>
 <meta charset="UTF-8">
@@ -3529,11 +3529,19 @@ function showToast(msg) {
 // ════════════════════════════════
 let _urData = {};  // { 'YYYY-MM-DD': { id, notitie } }
 let _urUnsub = null;
+let _urYear = new Date().getFullYear();
+let _urMonth = new Date().getMonth(); // 0-11
+let _urpYear = new Date().getFullYear();
+let _urpMonth = new Date().getMonth();
 
 window.startUrenListener = function() {
-  // Reset naar eigen-view bij elke opening van de module
+  // Reset naar eigen-view + huidige maand bij elke opening van de module
   _urView = 'eigen';
   _urStaffSel = null;
+  _urYear = new Date().getFullYear();
+  _urMonth = new Date().getMonth();
+  _urpYear = new Date().getFullYear();
+  _urpMonth = new Date().getMonth();
   const navE = document.getElementById('nav-ur-eigen');
   const navP = document.getElementById('nav-ur-personeel');
   if(navE) navE.classList.add('on');
@@ -3543,13 +3551,13 @@ window.startUrenListener = function() {
   if(eigenEl) eigenEl.style.display = '';
   if(persoEl) persoEl.style.display = 'none';
 
-  renderUren(); // toon meteen de lege structuur zonder te wachten op Firebase
+  renderUren();
   if (_urUnsub) return;
   _urUnsub = onSnapshot(urenCol, snap => {
     _urData = {};
     snap.docs.forEach(d => { _urData[d.id] = { id: d.id, notitie: d.data().notitie || '' }; });
     // Vul alleen textareas in die niet actief bewerkt worden
-    const dagen = _urDagen(30);
+    const dagen = _urDagenInMaand(_urYear, _urMonth);
     dagen.forEach(iso => {
       const ta = document.getElementById('ur-' + iso);
       if (ta && document.activeElement !== ta) {
@@ -3561,14 +3569,47 @@ window.startUrenListener = function() {
   }, err => console.error('uren:', err));
 };
 
-function _urDagen(n) {
+// Geeft alle dagen van een maand terug (ISO-strings, aflopend)
+// Voor de huidige maand: alleen tot vandaag
+function _urDagenInMaand(year, month){
   const days = [];
-  for (let i = 0; i < n; i++) {
-    const d = new Date(); d.setDate(d.getDate() - i);
-    days.push(d.toISOString().slice(0, 10));
+  const nu = new Date();
+  const isCurrent = year === nu.getFullYear() && month === nu.getMonth();
+  const last = isCurrent ? nu.getDate() : new Date(year, month + 1, 0).getDate();
+  for(let d = last; d >= 1; d--){
+    const iso = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    days.push(iso);
   }
   return days;
 }
+
+const _UR_MND_LBL = ['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
+
+function _urMonthNavHtml(y, m, prevFn, nextFn){
+  const nu = new Date();
+  const isCurrent = y === nu.getFullYear() && m === nu.getMonth();
+  return `<div class="wk-nav" style="margin-bottom:14px">
+    <button class="wk-arrow" onclick="${prevFn}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="wk-period">
+      <div class="wk-period-lbl">${_UR_MND_LBL[m]}</div>
+      <div class="wk-period-range">${y}${isCurrent?' · deze maand':''}</div>
+    </div>
+    <button class="wk-arrow" onclick="${nextFn}" ${isCurrent?'disabled style="opacity:0.3;pointer-events:none"':''}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+  </div>`;
+}
+
+window.urMaandPrev = function(){
+  _urMonth--;
+  if(_urMonth < 0){ _urMonth = 11; _urYear--; }
+  renderUren();
+};
+window.urMaandNext = function(){
+  const nu = new Date();
+  if(_urYear === nu.getFullYear() && _urMonth === nu.getMonth()) return;
+  _urMonth++;
+  if(_urMonth > 11){ _urMonth = 0; _urYear++; }
+  renderUren();
+};
 
 function _urFmtDate(iso) {
   const [y, m, d] = iso.split('-');
@@ -3584,28 +3625,15 @@ function renderUren() {
   const list = document.getElementById('ur-list');
   if (!list) return;
   const today = new Date().toISOString().slice(0, 10);
-  const dagen = _urDagen(30);
+  const dagen = _urDagenInMaand(_urYear, _urMonth);
 
-  const weekLabel = iso => {
-    const diff = Math.round((new Date(today) - new Date(iso)) / 86400000);
-    if (diff <= 0) return 'Vandaag';
-    if (diff <= 6) return 'Deze week';
-    if (diff <= 13) return 'Vorige week';
-    if (diff <= 20) return '2 weken geleden';
-    return '3 weken geleden';
-  };
+  const navHtml = _urMonthNavHtml(_urYear, _urMonth, 'urMaandPrev()', 'urMaandNext()');
 
-  let html = '';
-  let lastLabel = null;
+  let html = navHtml;
   dagen.forEach(iso => {
     const isToday = iso === today;
-    const { dow, dagNaam, label, dag, maand } = _urFmtDate(iso);
+    const { dow, dagNaam, dag, maand } = _urFmtDate(iso);
     const val = (_urData[iso] || {}).notitie || '';
-    const wl = weekLabel(iso);
-    if (wl !== lastLabel) {
-      html += `<div class="ur-week-sep"><span class="ur-week-sep-lbl">${wl}</span><span class="ur-week-sep-line"></span></div>`;
-      lastLabel = wl;
-    }
     const heeftNotitie = val.trim().length > 0;
     html += `<div class="ur-dag${isToday ? ' today' : ''}${heeftNotitie ? ' heeft-notitie' : ''}">
       <div class="ur-dag-hdr">
@@ -3690,7 +3718,7 @@ function _urpInit(){
       });
       if(_urView === 'detail' && _urStaffSel){
         // Live update textareas (zonder de actieve te overschrijven)
-        const dagen = _urDagen(30);
+        const dagen = _urDagenInMaand(_urpYear, _urpMonth);
         dagen.forEach(iso => {
           const ta = document.getElementById('urp-' + iso);
           if(ta && document.activeElement !== ta){
@@ -3699,6 +3727,7 @@ function _urpInit(){
           }
         });
       }
+      if(_urView === 'lijst') _renderPersoneelLijst();
     }, err => console.error('uren_personeel:', err));
   }
 }
@@ -3766,30 +3795,15 @@ function _renderPersoneelDetail(){
   if(!el) return;
 
   const today = new Date().toISOString().slice(0,10);
-  const dagen = _urDagen(30);
-  const weekLabel = iso => {
-    const diff = Math.round((new Date(today) - new Date(iso)) / 86400000);
-    if(diff <= 0)  return 'Vandaag';
-    if(diff <= 6)  return 'Deze week';
-    if(diff <= 13) return 'Vorige week';
-    if(diff <= 20) return '2 weken geleden';
-    return '3 weken geleden';
-  };
-
+  const dagen = _urDagenInMaand(_urpYear, _urpMonth);
   const data = _urPData[_urStaffSel] || {};
-  let lastLabel = null;
+
   const lijst = dagen.map(iso => {
     const isToday = iso === today;
     const { dow, dagNaam, dag, maand } = _urFmtDate(iso);
     const val = data[iso] || '';
     const heeftNotitie = val.trim().length > 0;
-    const wl = weekLabel(iso);
-    let sep = '';
-    if(wl !== lastLabel){
-      sep = `<div class="ur-week-sep"><span class="ur-week-sep-lbl">${wl}</span><span class="ur-week-sep-line"></span></div>`;
-      lastLabel = wl;
-    }
-    return `${sep}<div class="ur-dag${isToday?' today':''}${heeftNotitie?' heeft-notitie':''}">
+    return `<div class="ur-dag${isToday?' today':''}${heeftNotitie?' heeft-notitie':''}">
       <div class="ur-dag-hdr">
         <div class="ur-dag-nr">${dag}</div>
         <div class="ur-dag-info">
@@ -3805,6 +3819,8 @@ function _renderPersoneelDetail(){
     </div>`;
   }).join('');
 
+  const navHtml = _urMonthNavHtml(_urpYear, _urpMonth, 'urpMaandPrev()', 'urpMaandNext()');
+
   el.innerHTML = `
     <div class="urp-detail-top">
       <button class="urp-back" onclick="urpTerug()">
@@ -3818,10 +3834,24 @@ function _renderPersoneelDetail(){
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
       </button>
     </div>
+    ${navHtml}
     ${lijst}
   `;
   dagen.forEach(iso => _urpResize(iso));
 }
+
+window.urpMaandPrev = function(){
+  _urpMonth--;
+  if(_urpMonth < 0){ _urpMonth = 11; _urpYear--; }
+  _renderPersoneelDetail();
+};
+window.urpMaandNext = function(){
+  const nu = new Date();
+  if(_urpYear === nu.getFullYear() && _urpMonth === nu.getMonth()) return;
+  _urpMonth++;
+  if(_urpMonth > 11){ _urpMonth = 0; _urpYear++; }
+  _renderPersoneelDetail();
+};
 
 function _urpResize(iso){
   const ta = document.getElementById('urp-' + iso);
