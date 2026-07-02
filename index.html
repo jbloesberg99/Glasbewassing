@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="nl" data-theme="light">
 <head>
 <meta charset="UTF-8">
@@ -2193,6 +2193,52 @@ header{
 .urp-del{background:var(--urgent-s);border:1px solid var(--urgent-b);color:var(--urgent);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
 .urp-del:active{transform:scale(0.9);}
 
+/* ── Uren klus-rijen ── */
+.ur-rijen{padding:4px 14px 0;display:flex;flex-direction:column;gap:6px;}
+.ur-rij{display:flex;gap:6px;align-items:center;}
+.ur-rij-klus{flex:1.6;min-width:0;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;padding:8px 8px;font-family:inherit;font-size:0.76rem;font-weight:600;color:var(--text);outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
+.ur-rij-sub{flex:1.2;min-width:0;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;padding:8px 8px;font-family:inherit;font-size:0.74rem;font-weight:500;color:var(--text);outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
+.ur-rij-klus:focus,.ur-rij-sub:focus{border-color:#7c3aed;}
+.ur-rij-klus.leeg,.ur-rij-sub.leeg{color:var(--text3);font-weight:500;}
+.ur-rij-uren{width:62px;flex-shrink:0;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;padding:8px 6px;font-family:inherit;font-size:0.8rem;font-weight:700;color:var(--text);text-align:center;outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
+.ur-rij-uren:focus{border-color:#7c3aed;}
+.ur-rij-uren::placeholder{color:var(--text3);font-weight:500;}
+.ur-rij-label{flex:1;min-width:0;background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.18);border-radius:9px;padding:8px 10px;font-size:0.78rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:background 0.15s;}
+.ur-rij-label:active{background:rgba(124,58,237,0.14);}
+.ur-rij-label .sub{color:var(--text2);font-weight:600;}
+.ur-rij-add{margin:2px auto 0;display:flex;align-items:center;justify-content:center;gap:5px;background:none;border:1px dashed var(--border2);border-radius:9px;padding:6px 16px;font-family:inherit;font-size:0.68rem;font-weight:700;color:var(--text3);cursor:pointer;transition:all 0.15s;}
+.ur-rij-add:active{background:var(--surface2);transform:scale(0.96);}
+.ur-dag-tot{display:flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:800;color:#7c3aed;flex-shrink:0;}
+.ur-dag-tot.nul{color:var(--text3);font-weight:600;}
+.ur-mtot{background:linear-gradient(145deg,rgba(124,58,237,0.1),rgba(124,58,237,0.04));border:1px solid rgba(124,58,237,0.22);border-radius:14px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
+.ur-mtot-lbl{font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);}
+.ur-mtot-val{font-size:1.3rem;font-weight:900;color:#7c3aed;letter-spacing:-0.5px;}
+.ur-notitie-klein{margin:6px 14px 0;width:calc(100% - 28px);background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:8px 10px;font-family:inherit;font-size:0.76rem;color:var(--text2);line-height:1.5;outline:none;resize:none;min-height:34px;box-sizing:border-box;overflow:hidden;transition:border-color 0.15s;}
+.ur-notitie-klein:focus{border-color:var(--accent);}
+.ur-notitie-klein::placeholder{color:var(--text3);}
+
+/* ── Klussen beheer ── */
+.klus-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);border-left:3px solid #7c3aed;}
+.klus-card-top{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+.klus-naam-in{flex:1;min-width:0;background:transparent;border:none;outline:none;font-family:inherit;font-size:0.94rem;font-weight:800;color:var(--text);letter-spacing:-0.2px;padding:3px 0;border-bottom:1px dashed transparent;transition:border-color 0.15s;}
+.klus-naam-in:focus{border-bottom-color:#7c3aed;}
+.klus-del{background:var(--urgent-s);border:1px solid var(--urgent-b);color:var(--urgent);border-radius:9px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.klus-del:active{transform:scale(0.9);}
+.klus-subs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center;}
+.klus-sub-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:99px;padding:4px 6px 4px 11px;font-size:0.7rem;font-weight:600;color:var(--text2);}
+.klus-sub-x{width:16px;height:16px;border-radius:50%;background:rgba(124,58,237,0.12);border:none;color:#7c3aed;font-size:0.65rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+.klus-sub-add{background:none;border:1px dashed var(--border2);border-radius:99px;padding:4px 12px;font-family:inherit;font-size:0.68rem;font-weight:700;color:var(--text3);cursor:pointer;transition:all 0.15s;}
+.klus-sub-add:active{background:var(--surface2);}
+.klus-sub-in{flex:1;min-width:110px;background:var(--surface2);border:1px solid var(--border2);border-radius:99px;padding:5px 12px;font-family:inherit;font-size:0.72rem;font-weight:600;color:var(--text);outline:none;}
+.klus-sub-in:focus{border-color:#7c3aed;}
+.ur-add-row{display:none;gap:8px;margin:0 0 12px;}
+.ur-add-row.open{display:flex;}
+.ur-add-row input{flex:1;min-width:0;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:10px 12px;font-family:inherit;font-size:0.84rem;font-weight:600;color:var(--text);outline:none;box-shadow:var(--shadow);}
+.ur-add-row input:focus{border-color:#7c3aed;}
+.ur-add-row button{background:linear-gradient(145deg,#a78bfa,#7c3aed);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-family:inherit;font-size:0.8rem;font-weight:700;cursor:pointer;flex-shrink:0;box-shadow:0 3px 12px rgba(124,58,237,0.3);}
+.ur-add-row button:active{transform:scale(0.95);}
+.klus-hint{font-size:0.64rem;color:var(--text3);margin-top:6px;font-weight:500;}
+
 /* ── Touch active feedback (werkt op Android & iOS) ── */
 .kkaart:active       { transform: scale(0.97) !important; transition: transform 0.1s ease !important; }
 .witem:active        { transform: scale(0.98) !important; transition: transform 0.1s ease !important; }
@@ -2357,6 +2403,9 @@ header{
   </div>
   <div class="nav-item" id="nav-ur-personeel" onclick="urGaNaar('personeel')">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg> Personeel
+  </div>
+  <div class="nav-item" id="nav-ur-klussen" onclick="urGaNaar('klussen')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-2 .89-2 2v11c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg> Klussen
   </div>
 </div>
 
@@ -2553,11 +2602,17 @@ header{
           </div>
           <div class="wc-field full">
             <label id="wc-loon-label">Uurloon werknemer (zwart)</label>
-            <div class="wc-field-wrap">
+            <div class="wc-field-wrap" id="wc-loon-vrij">
               <span class="wc-field-prefix">€</span>
               <input type="number" id="wc-loon" value="16" min="0" step="0.1" oninput="wcBereken()">
               <span class="wc-field-suffix">/uur</span>
             </div>
+            <select id="wc-loon-cao" style="display:none" onchange="wcBereken()">
+              <option value="15.52">Dienstjaar 1 — € 15,52/uur</option>
+              <option value="16.08">Dienstjaar 2 — € 16,08/uur</option>
+              <option value="16.55">Dienstjaar 3 — € 16,55/uur</option>
+              <option value="17.05">Dienstjaar 4 — € 17,05/uur</option>
+            </select>
           </div>
         </div>
       </div>
@@ -2598,14 +2653,15 @@ header{
       <div class="wc-info-card">
         <div class="wc-info-hdr">
           <div class="wc-info-ic" style="background:linear-gradient(145deg,#4ade80,#2a6636)"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></div>
-          <div><div class="wc-info-title">CAO Schoonmaak 2026</div><div class="wc-info-sub">Loongroep 1 — glazenwasser</div></div>
+          <div><div class="wc-info-title" id="cao-info-title">CAO Schoonmaak 2026</div><div class="wc-info-sub">Loongroep 1 — glazenwasser</div></div>
         </div>
-        <div class="wc-info-rows">
+        <div class="wc-info-rows" id="cao-info-rows">
           <div class="wc-info-row"><span>Dienstjaar 1</span><span class="wc-info-val">€ 15,52/uur</span></div>
           <div class="wc-info-row"><span>Dienstjaar 2</span><span class="wc-info-val">€ 16,08/uur</span></div>
           <div class="wc-info-row"><span>Dienstjaar 3</span><span class="wc-info-val">€ 16,55/uur</span></div>
           <div class="wc-info-row last"><span>Dienstjaar 4</span><span class="wc-info-val">€ 17,05/uur</span></div>
         </div>
+        <div class="wc-info-note">Nieuwe cao 2026-2028: lonen stijgen automatisch in de app — +3,1% per 1-1-2027 en +3% per 1-1-2028.</div>
       </div>
 
       <div class="wc-info-card">
@@ -2656,6 +2712,7 @@ header{
   <div id="app-uren">
     <div id="ur-list"></div>
     <div id="ur-personeel" style="display:none;"></div>
+    <div id="ur-klussen" style="display:none;"></div>
   </div>
 
   <div id="app-extra">
@@ -2857,6 +2914,48 @@ function naarStart() {
 let wcMode = 'zwart';
 let wcTarief = 35;
 
+// ── CAO-lonen Loongroep 1 (glazenwasser), automatisch op datum ──
+// Nieuwe CAO 2026-2028: +3,1% per 1-1-2027 en +3% per 1-1-2028.
+// 2027/2028 zijn berekend o.b.v. die percentages — pas aan zodra de
+// officiële RAS-loontabellen gepubliceerd zijn (afronding kan afwijken).
+const CAO_LONEN = [
+  { vanaf: '2028-01-01', label: 'CAO 2028 (+3%)',   lonen: [16.48, 17.08, 17.57, 18.11] },
+  { vanaf: '2027-01-01', label: 'CAO 2027 (+3,1%)', lonen: [16.00, 16.58, 17.06, 17.58] },
+  { vanaf: '2026-01-01', label: 'CAO 2026',          lonen: [15.52, 16.08, 16.55, 17.05] },
+];
+
+function caoActueel(){
+  const nu = new Date().toISOString().slice(0,10);
+  return CAO_LONEN.find(c => nu >= c.vanaf) || CAO_LONEN[CAO_LONEN.length-1];
+}
+
+function wcVulCao(){
+  const cao = caoActueel();
+  const eur = v => '€ ' + v.toFixed(2).replace('.', ',');
+  // Dropdown in de calculator
+  const sel = document.getElementById('wc-loon-cao');
+  if(sel){
+    const huidige = sel.value;
+    sel.innerHTML = cao.lonen.map((v,i) =>
+      `<option value="${v}">Dienstjaar ${i+1} — ${eur(v)}/uur</option>`
+    ).join('');
+    // Behoud selectie-index als die er was
+    if(huidige){
+      const idx = [...sel.options].findIndex(o => o.value === huidige);
+      if(idx >= 0) sel.selectedIndex = idx;
+    }
+  }
+  // Toelichting-kaart
+  const titel = document.getElementById('cao-info-title');
+  if(titel) titel.textContent = 'CAO Schoonmaak — ' + cao.label.replace(/ \(.*\)/,'');
+  const rows = document.getElementById('cao-info-rows');
+  if(rows){
+    rows.innerHTML = cao.lonen.map((v,i) =>
+      `<div class="wc-info-row${i===cao.lonen.length-1?' last':''}"><span>Dienstjaar ${i+1}</span><span class="wc-info-val">${eur(v)}/uur</span></div>`
+    ).join('');
+  }
+}
+
 function wcSetMode(m) {
   wcMode = m;
   document.getElementById('mb-zwart').classList.toggle('on', m === 'zwart');
@@ -2866,6 +2965,13 @@ function wcSetMode(m) {
             : m === 'wit'   ? 'CAO-uurloon werknemer (bruto)'
             :                 "ZZP'er uurtarief (factuur)";
   document.getElementById('wc-loon-label').textContent = lbl;
+  // Officieel: alleen CAO-lonen kiesbaar via dropdown; anders vrij invulveld
+  const vrij = document.getElementById('wc-loon-vrij');
+  const cao  = document.getElementById('wc-loon-cao');
+  if(vrij && cao){
+    vrij.style.display = m === 'wit' ? 'none' : '';
+    cao.style.display  = m === 'wit' ? '' : 'none';
+  }
   wcBereken();
 }
 
@@ -2921,7 +3027,9 @@ function wcBereken() {
   const belasting  = parseFloat(document.getElementById('wc-belasting').value)||0;
   const urenKlant  = parseFloat(document.getElementById('wc-uren-klant').value)||0;
   const urenWerk   = parseFloat(document.getElementById('wc-uren-werk').value)||0;
-  const loon       = parseFloat(document.getElementById('wc-loon').value)||0;
+  const loon       = wcMode === 'wit'
+    ? parseFloat(document.getElementById('wc-loon-cao').value)||0
+    : parseFloat(document.getElementById('wc-loon').value)||0;
   const factor     = 1 - belasting/100;
   const urenExtra  = Math.max(0, urenKlant - urenWerk);
   const omzet      = klantprijs * urenKlant;
@@ -3040,7 +3148,8 @@ function renderTabel(tarief) {
   html += '</tbody>';
   document.getElementById('tbl-zwart').innerHTML = html;
 
-  const witLonen = [{l:'DJ1 €15,52', v:15.52},{l:'DJ2 €16,08', v:16.08},{l:'DJ3 €16,55', v:16.55},{l:'DJ4 €17,05', v:17.05}];
+  const _cao = caoActueel();
+  const witLonen = _cao.lonen.map((v,i) => ({ l: `DJ${i+1} €${v.toFixed(2).replace('.',',')}`, v }));
   html = '<thead><tr><th>Dienstjaar ↓ / Klant →</th>';
   klanten.forEach(k => html += `<th>€${k}</th>`);
   html += '</tr></thead><tbody>';
@@ -3073,6 +3182,7 @@ window.toggleTheme = function() {
   updateTheme();
 }
 updateTheme();
+wcVulCao(); // CAO-lonen op basis van huidige datum in dropdown + toelichting
 
 // ── Android hardware back button ──
 // Set base history state so the first back-press lands somewhere we control
@@ -3143,6 +3253,7 @@ const urenCol = collection(db, 'uren');
 const notesCol = collection(db, 'notes');
 const personeelCol = collection(db, 'personeel');
 const urenPCol = collection(db, 'uren_personeel');
+const klussenCol = collection(db, 'klussen');
 const _dDashDoc = doc(db, 'config', 'dashboard');
 
 let kl = [], vK = null, actF = 'all', actN = null, sId = null, actST = 'gedaan', uT = null, si = 0, wo = 0, navTab = 'klanten', selectedWDag = null;
@@ -3527,12 +3638,20 @@ function showToast(msg) {
 // ════════════════════════════════
 // UREN REGISTRATIE
 // ════════════════════════════════
-let _urData = {};  // { 'YYYY-MM-DD': { id, notitie } }
+let _urData = {};  // { 'YYYY-MM-DD': { notitie, rijen:[{k,s,u}] } }
 let _urUnsub = null;
 let _urYear = new Date().getFullYear();
 let _urMonth = new Date().getMonth(); // 0-11
 let _urpYear = new Date().getFullYear();
 let _urpMonth = new Date().getMonth();
+let _urKlussen = [];        // [{id, naam, subs:[]}] — gedeelde klussenlijst
+let _urKlussenUnsub = null;
+let _urRows = {};           // '${prefix}|${iso}' -> [{k,s,u}] live bewerkstaat
+
+function _urActiveInside(id){
+  const c = document.getElementById(id);
+  return !!(c && c.contains(document.activeElement));
+}
 
 window.startUrenListener = function() {
   // Reset naar eigen-view + huidige maand bij elke opening van de module
@@ -3544,28 +3663,38 @@ window.startUrenListener = function() {
   _urpMonth = new Date().getMonth();
   const navE = document.getElementById('nav-ur-eigen');
   const navP = document.getElementById('nav-ur-personeel');
+  const navK = document.getElementById('nav-ur-klussen');
   if(navE) navE.classList.add('on');
   if(navP) navP.classList.remove('on');
+  if(navK) navK.classList.remove('on');
   const eigenEl = document.getElementById('ur-list');
   const persoEl = document.getElementById('ur-personeel');
+  const klusEl  = document.getElementById('ur-klussen');
   if(eigenEl) eigenEl.style.display = '';
   if(persoEl) persoEl.style.display = 'none';
+  if(klusEl)  klusEl.style.display = 'none';
+
+  // Klussenlijst listener (gedeeld voor eigen + personeel)
+  if(!_urKlussenUnsub){
+    _urKlussenUnsub = onSnapshot(klussenCol, snap => {
+      _urKlussen = snap.docs.map(d => ({ id: d.id, naam: d.data().naam || 'Naamloos', subs: Array.isArray(d.data().subs) ? d.data().subs : [] }));
+      _urKlussen.sort((a,b) => a.naam.localeCompare(b.naam,'nl'));
+      if(_urView === 'klussen'){ if(!_urActiveInside('ur-klussen')) _renderKlussen(); }
+      else if(_urView === 'eigen'){ if(!_urActiveInside('ur-list')) renderUren(); }
+      else if(_urView === 'detail'){ if(!_urActiveInside('ur-personeel')) _renderPersoneelDetail(); }
+    }, err => console.error('klussen:', err));
+  }
 
   renderUren();
   if (_urUnsub) return;
   _urUnsub = onSnapshot(urenCol, snap => {
     _urData = {};
-    snap.docs.forEach(d => { _urData[d.id] = { id: d.id, notitie: d.data().notitie || '' }; });
-    // Vul alleen textareas in die niet actief bewerkt worden
-    const dagen = _urDagenInMaand(_urYear, _urMonth);
-    dagen.forEach(iso => {
-      const ta = document.getElementById('ur-' + iso);
-      if (ta && document.activeElement !== ta) {
-        const val = (_urData[iso] || {}).notitie || '';
-        ta.value = val;
-        urResize(iso);
-      }
+    snap.docs.forEach(d => {
+      const x = d.data();
+      _urData[d.id] = { notitie: x.notitie || '', rijen: Array.isArray(x.rijen) ? x.rijen : [] };
     });
+    // Alleen her-renderen als er nergens actief getypt wordt
+    if(_urView === 'eigen' && !_urActiveInside('ur-list')) renderUren();
   }, err => console.error('uren:', err));
 };
 
@@ -3621,71 +3750,220 @@ function _urFmtDate(iso) {
   return { dow: daysShort[idx], dagNaam: daysFull[idx], dag: parseInt(d), maand: `${months[parseInt(m)-1]} ${y}`, label: `${parseInt(d)} ${months[parseInt(m)-1]} ${y}` };
 }
 
-function renderUren() {
-  const list = document.getElementById('ur-list');
-  if (!list) return;
-  const today = new Date().toISOString().slice(0, 10);
-  const dagen = _urDagenInMaand(_urYear, _urMonth);
-
-  const navHtml = _urMonthNavHtml(_urYear, _urMonth, 'urMaandPrev()', 'urMaandNext()');
-
-  let html = navHtml;
-  dagen.forEach(iso => {
-    const isToday = iso === today;
-    const { dow, dagNaam, dag, maand } = _urFmtDate(iso);
-    const val = (_urData[iso] || {}).notitie || '';
-    const heeftNotitie = val.trim().length > 0;
-    html += `<div class="ur-dag${isToday ? ' today' : ''}${heeftNotitie ? ' heeft-notitie' : ''}">
-      <div class="ur-dag-hdr">
-        <div class="ur-dag-nr">${dag}</div>
-        <div class="ur-dag-info">
-          <div class="ur-dag-naam">${isToday ? 'Vandaag' : dagNaam}</div>
-          <div class="ur-dag-sub">${maand}${isToday ? ' · ' + dow : ''}</div>
-        </div>
-        <span class="ur-dag-pill">Nu</span>
-      </div>
-      <textarea class="ur-notitie" id="ur-${iso}" placeholder="Wat heb je gedaan?" oninput="urAutoSave('${iso}')">${_urEsc(val)}</textarea>
-      <div class="ur-status-row">
-        <span class="ur-opgeslagen" id="ur-ok-${iso}">✓ opgeslagen</span>
-      </div>
-    </div>`;
-  });
-  list.innerHTML = html;
-  dagen.forEach(iso => urResize(iso));
-}
-
 function _urEsc(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-function urResize(iso) {
-  const ta = document.getElementById('ur-' + iso);
-  if (!ta) return;
+// ════ Gedeelde dag-kaart engine (eigen 'ur' + personeel 'urp') ════
+const _UR_DEFAULT_RIJEN = 5;
+
+function _urKey(prefix, iso){ return prefix + '|' + iso; }
+
+function _urFmtUren(n){
+  const v = Math.round(n * 100) / 100;
+  return (v % 1 === 0 ? v : String(v).replace('.', ',')) + 'u';
+}
+
+function _urInitRows(prefix, iso, saved){
+  const rows = (saved || []).map(r => ({ k: r.k || '', s: r.s || '', u: (r.u === 0 || r.u) ? r.u : '' }));
+  while(rows.length < _UR_DEFAULT_RIJEN) rows.push({ k:'', s:'', u:'' });
+  _urRows[_urKey(prefix, iso)] = rows;
+  return rows;
+}
+
+function _urKlusOpties(sel){
+  let html = `<option value="">— klus —</option>`;
+  let found = false;
+  _urKlussen.forEach(k => {
+    if(k.id === sel) found = true;
+    html += `<option value="${k.id}" ${k.id===sel?'selected':''}>${_urEsc(k.naam)}</option>`;
+  });
+  if(sel && !found) html += `<option value="${_urEsc(sel)}" selected>(verwijderde klus)</option>`;
+  return html;
+}
+
+function _urRijHtml(prefix, iso, idx, row){
+  const klus = _urKlussen.find(k => k.id === row.k);
+  const subs = klus ? klus.subs : [];
+  const urenInput = `<input type="number" inputmode="decimal" class="ur-rij-uren" placeholder="uur" step="0.5" min="0" value="${row.u !== '' && row.u != null ? row.u : ''}" oninput="urUrenIn('${prefix}','${iso}',${idx},this.value)">`;
+
+  // Ingevulde rij: toon als "Werkgever / Locatie" (of alleen "Werkgever" bij Geen) — tik om te wijzigen
+  const compleet = row.k && klus && (!subs.length || row.s);
+  if(compleet && !row._edit){
+    const label = _urEsc(klus.naam) + (row.s && row.s !== '-' ? ` <span class="sub">/ ${_urEsc(row.s)}</span>` : '');
+    return `<div class="ur-rij">
+      <div class="ur-rij-label" onclick="urRijBewerk('${prefix}','${iso}',${idx})" title="Tik om te wijzigen">${label}</div>
+      ${urenInput}
+    </div>`;
+  }
+
+  let subHtml = '';
+  if(row.k && subs.length){
+    let opts = `<option value="">— locatie —</option>`;
+    opts += `<option value="-" ${row.s==='-'?'selected':''}>Geen (alleen werkgever)</option>`;
+    let found = row.s === '-';
+    subs.forEach(s => {
+      if(s === row.s) found = true;
+      opts += `<option value="${_urEsc(s)}" ${s===row.s?'selected':''}>${_urEsc(s)}</option>`;
+    });
+    if(row.s && !found) opts += `<option value="${_urEsc(row.s)}" selected>${_urEsc(row.s)}</option>`;
+    subHtml = `<select class="ur-rij-sub ${row.s?'':'leeg'}" onchange="urSubSel('${prefix}','${iso}',${idx},this.value)">${opts}</select>`;
+  }
+  return `<div class="ur-rij">
+    <select class="ur-rij-klus ${row.k?'':'leeg'}" onchange="urKlusSel('${prefix}','${iso}',${idx},this.value)">${_urKlusOpties(row.k)}</select>
+    ${subHtml}
+    ${urenInput}
+  </div>`;
+}
+
+function _urRijenHtml(prefix, iso){
+  const rows = _urRows[_urKey(prefix, iso)] || [];
+  return rows.map((r,i) => _urRijHtml(prefix, iso, i, r)).join('');
+}
+
+function _urDagCardHtml(prefix, iso, dagData, placeholder){
+  const today = new Date().toISOString().slice(0,10);
+  const isToday = iso === today;
+  const { dow, dagNaam, dag, maand } = _urFmtDate(iso);
+  const notitie = dagData.notitie || '';
+  const rows = _urInitRows(prefix, iso, dagData.rijen);
+  const tot = rows.reduce((s,r) => s + (parseFloat(r.u) || 0), 0);
+  const heeftInhoud = tot > 0 || notitie.trim().length > 0 || rows.some(r => r.k);
+  return `<div class="ur-dag${isToday?' today':''}${heeftInhoud?' heeft-notitie':''}">
+    <div class="ur-dag-hdr">
+      <div class="ur-dag-nr">${dag}</div>
+      <div class="ur-dag-info">
+        <div class="ur-dag-naam">${isToday ? 'Vandaag' : dagNaam}</div>
+        <div class="ur-dag-sub">${maand}${isToday ? ' · ' + dow : ''}</div>
+      </div>
+      <div class="ur-dag-tot${tot>0?'':' nul'}" id="${prefix}-tot-${iso}">${_urFmtUren(tot)}</div>
+      <span class="ur-dag-pill">Nu</span>
+    </div>
+    <div class="ur-rijen" id="${prefix}-rijen-${iso}">${_urRijenHtml(prefix, iso)}</div>
+    <button class="ur-rij-add" onclick="urRijToevoegen('${prefix}','${iso}')">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      extra rij
+    </button>
+    <textarea class="ur-notitie-klein" id="${prefix}-not-${iso}" placeholder="${placeholder}" oninput="urNotitieIn('${prefix}','${iso}')">${_urEsc(notitie)}</textarea>
+    <div class="ur-status-row">
+      <span class="ur-opgeslagen" id="${prefix}-ok-${iso}">✓ opgeslagen</span>
+    </div>
+  </div>`;
+}
+
+function _urDagenVoor(prefix){
+  return prefix === 'ur' ? _urDagenInMaand(_urYear, _urMonth) : _urDagenInMaand(_urpYear, _urpMonth);
+}
+
+function _urUpdateTotalen(prefix){
+  const dagen = _urDagenVoor(prefix);
+  let mtot = 0;
+  dagen.forEach(iso => {
+    const rows = _urRows[_urKey(prefix, iso)] || [];
+    const tot = rows.reduce((s,r) => s + (parseFloat(r.u) || 0), 0);
+    mtot += tot;
+    const el = document.getElementById(`${prefix}-tot-${iso}`);
+    if(el){ el.textContent = _urFmtUren(tot); el.classList.toggle('nul', !(tot > 0)); }
+  });
+  const m = document.getElementById(`${prefix}-mtot`);
+  if(m) m.textContent = _urFmtUren(mtot);
+}
+
+function _urResizeNot(prefix, iso){
+  const ta = document.getElementById(`${prefix}-not-${iso}`);
+  if(!ta) return;
   ta.style.height = 'auto';
   ta.style.height = ta.scrollHeight + 'px';
 }
 
-const _urTimers = {};
-window.urAutoSave = function(iso) {
-  urResize(iso);
-  clearTimeout(_urTimers[iso]);
-  _urTimers[iso] = setTimeout(() => urOpslaan(iso, true), 1500);
+const _urSaveTimers = {};
+function _urSaveDag(prefix, iso, delay){
+  const key = _urKey(prefix, iso);
+  const staffSnapshot = _urStaffSel; // vastleggen vóór de debounce
+  clearTimeout(_urSaveTimers[key]);
+  _urSaveTimers[key] = setTimeout(async () => {
+    const rows = (_urRows[key] || []).filter(r => r.k || parseFloat(r.u) > 0);
+    const rijen = rows.map(r => ({ k: r.k || '', s: r.s || '', u: parseFloat(r.u) || 0 }));
+    const ta = document.getElementById(`${prefix}-not-${iso}`);
+    const notitie = ta ? ta.value : ((prefix==='ur'?_urData[iso]:(_urPData[staffSnapshot]||{})[iso])||{}).notitie || '';
+    try{
+      if(prefix === 'ur'){
+        await setDoc(doc(db, 'uren', iso), { notitie, rijen });
+      } else {
+        if(!staffSnapshot) return;
+        await setDoc(doc(urenPCol, `${staffSnapshot}__${iso}`), { notitie, rijen, staffId: staffSnapshot, date: iso });
+      }
+      const ok = document.getElementById(`${prefix}-ok-${iso}`);
+      if(ok){ ok.classList.add('show'); setTimeout(() => ok.classList.remove('show'), 1600); }
+    }catch(e){ console.error('urSaveDag:', e); }
+  }, delay || 0);
+}
+
+// ── Rij-interacties ──
+window.urKlusSel = function(prefix, iso, idx, val){
+  const rows = _urRows[_urKey(prefix, iso)];
+  if(!rows || !rows[idx]) return;
+  rows[idx].k = val;
+  rows[idx].s = '';
+  const klus = _urKlussen.find(k => k.id === val);
+  // Heeft deze werkgever locaties? Dan in bewerkstand blijven voor de locatie-keuze
+  rows[idx]._edit = !!(klus && klus.subs.length);
+  const cont = document.getElementById(`${prefix}-rijen-${iso}`);
+  if(cont) cont.innerHTML = _urRijenHtml(prefix, iso);
+  _urSaveDag(prefix, iso, 0);
 };
 
-window.urOpslaan = async function(iso, silent = false) {
-  const ta = document.getElementById('ur-' + iso);
-  if (!ta) return;
-  const notitie = ta.value;
-  try {
-    await setDoc(doc(db, 'uren', iso), { notitie });
-    if (!silent) haptic(15);
-    const ok = document.getElementById('ur-ok-' + iso);
-    if (ok) { ok.classList.add('show'); setTimeout(() => ok.classList.remove('show'), 1800); }
-    if (!silent) showToast('Notitie opgeslagen');
-  } catch(e) {
-    console.error('urOpslaan:', e);
-  }
+window.urSubSel = function(prefix, iso, idx, val){
+  const rows = _urRows[_urKey(prefix, iso)];
+  if(!rows || !rows[idx]) return;
+  rows[idx].s = val;
+  if(val) rows[idx]._edit = false; // compleet → samenklappen naar "Werkgever / Locatie"
+  const cont = document.getElementById(`${prefix}-rijen-${iso}`);
+  if(cont) cont.innerHTML = _urRijenHtml(prefix, iso);
+  _urSaveDag(prefix, iso, 0);
 };
+
+window.urRijBewerk = function(prefix, iso, idx){
+  const rows = _urRows[_urKey(prefix, iso)];
+  if(!rows || !rows[idx]) return;
+  rows[idx]._edit = true;
+  const cont = document.getElementById(`${prefix}-rijen-${iso}`);
+  if(cont) cont.innerHTML = _urRijenHtml(prefix, iso);
+};
+
+window.urUrenIn = function(prefix, iso, idx, val){
+  const rows = _urRows[_urKey(prefix, iso)];
+  if(!rows || !rows[idx]) return;
+  rows[idx].u = val;
+  _urUpdateTotalen(prefix);
+  _urSaveDag(prefix, iso, 900);
+};
+
+window.urRijToevoegen = function(prefix, iso){
+  const rows = _urRows[_urKey(prefix, iso)];
+  if(!rows) return;
+  rows.push({ k:'', s:'', u:'' });
+  const cont = document.getElementById(`${prefix}-rijen-${iso}`);
+  if(cont) cont.innerHTML = _urRijenHtml(prefix, iso);
+  haptic(8);
+};
+
+window.urNotitieIn = function(prefix, iso){
+  _urResizeNot(prefix, iso);
+  _urSaveDag(prefix, iso, 1200);
+};
+
+function renderUren() {
+  const list = document.getElementById('ur-list');
+  if (!list) return;
+  const dagen = _urDagenInMaand(_urYear, _urMonth);
+  let html = _urMonthNavHtml(_urYear, _urMonth, 'urMaandPrev()', 'urMaandNext()');
+  html += `<div class="ur-mtot"><span class="ur-mtot-lbl">Totaal ${_UR_MND_LBL[_urMonth]} ${_urYear}</span><span class="ur-mtot-val" id="ur-mtot">0u</span></div>`;
+  dagen.forEach(iso => { html += _urDagCardHtml('ur', iso, _urData[iso] || {}, 'Notitie (optioneel)...'); });
+  list.innerHTML = html;
+  dagen.forEach(iso => _urResizeNot('ur', iso));
+  _urUpdateTotalen('ur');
+}
 
 // ════════════════════════════════
 // UREN — PERSONEEL
@@ -3714,19 +3992,11 @@ function _urpInit(){
         const [sid, date] = d.id.split('__');
         if(!sid || !date) return;
         if(!_urPData[sid]) _urPData[sid] = {};
-        _urPData[sid][date] = d.data().notitie || '';
+        const x = d.data();
+        _urPData[sid][date] = { notitie: x.notitie || '', rijen: Array.isArray(x.rijen) ? x.rijen : [] };
       });
-      if(_urView === 'detail' && _urStaffSel){
-        // Live update textareas (zonder de actieve te overschrijven)
-        const dagen = _urDagenInMaand(_urpYear, _urpMonth);
-        dagen.forEach(iso => {
-          const ta = document.getElementById('urp-' + iso);
-          if(ta && document.activeElement !== ta){
-            ta.value = (_urPData[_urStaffSel] || {})[iso] || '';
-            _urpResize(iso);
-          }
-        });
-      }
+      // Alleen her-renderen als er nergens actief getypt wordt
+      if(_urView === 'detail' && _urStaffSel && !_urActiveInside('ur-personeel')) _renderPersoneelDetail();
       if(_urView === 'lijst') _renderPersoneelLijst();
     }, err => console.error('uren_personeel:', err));
   }
@@ -3735,20 +4005,161 @@ function _urpInit(){
 window.urGaNaar = function(view){
   _urView = view;
   document.getElementById('nav-ur-eigen').classList.toggle('on', view === 'eigen');
-  document.getElementById('nav-ur-personeel').classList.toggle('on', view !== 'eigen');
+  document.getElementById('nav-ur-personeel').classList.toggle('on', view === 'personeel');
+  document.getElementById('nav-ur-klussen').classList.toggle('on', view === 'klussen');
   const eigenEl = document.getElementById('ur-list');
   const persoEl = document.getElementById('ur-personeel');
+  const klusEl  = document.getElementById('ur-klussen');
+  eigenEl.style.display = view === 'eigen' ? '' : 'none';
+  persoEl.style.display = view === 'personeel' ? '' : 'none';
+  klusEl.style.display  = view === 'klussen' ? '' : 'none';
   if(view === 'eigen'){
-    eigenEl.style.display = '';
-    persoEl.style.display = 'none';
     _urStaffSel = null;
+    renderUren();
+  } else if(view === 'klussen'){
+    _renderKlussen();
   } else {
-    eigenEl.style.display = 'none';
-    persoEl.style.display = '';
     _urpInit();
     if(_urStaffSel) _renderPersoneelDetail();
     else _renderPersoneelLijst();
   }
+};
+
+// ════ Klussen beheer ════
+function _renderKlussen(){
+  _urView = 'klussen';
+  const el = document.getElementById('ur-klussen');
+  if(!el) return;
+
+  const cards = _urKlussen.map(k => {
+    const chips = k.subs.map((s,i) =>
+      `<span class="klus-sub-chip">${_urEsc(s)}<button class="klus-sub-x" onclick="klusSubVerwijderen('${k.id}',${i})" title="Locatie verwijderen">✕</button></span>`
+    ).join('');
+    return `<div class="klus-card">
+      <div class="klus-card-top">
+        <input type="text" class="klus-naam-in" value="${(k.naam||'').replace(/"/g,'&quot;')}" oninput="klusNaamWijzig('${k.id}', this.value)" placeholder="Naam werkgever">
+        <button class="klus-del" onclick="klusVerwijderen('${k.id}')" title="Verwijderen">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+      </div>
+      <div class="klus-subs">
+        ${chips}
+        <input type="text" class="klus-sub-in" id="klus-sub-in-${k.id}" style="display:none" placeholder="Locatienaam..." onkeydown="if(event.key==='Enter'){event.preventDefault();klusSubOk('${k.id}')}">
+        <button class="klus-sub-add" id="klus-sub-btn-${k.id}" onclick="klusSubKlik('${k.id}')">+ locatie</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="urp-hdr">
+      <div class="urp-hdr-titel">Klussen</div>
+      <button class="urp-add" onclick="klusToevoegen()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Toevoegen
+      </button>
+    </div>
+    <div class="ur-add-row" id="klus-add-row">
+      <input type="text" id="klus-add-in" placeholder="Naam werkgever / klus..." onkeydown="if(event.key==='Enter'){event.preventDefault();klusToevoegenOk()}">
+      <button onclick="klusToevoegenOk()">Opslaan</button>
+    </div>
+    <div class="klus-hint" style="margin:-6px 2px 14px">Deze klussen verschijnen in het keuzemenu bij de uren — voor jou én je personeel. Voeg per werkgever eventueel locaties toe.</div>
+    ${_urKlussen.length ? cards : `<div class="urp-leeg">
+      <div class="urp-leeg-ic">🧰</div>
+      <div class="urp-leeg-t">Nog geen klussen</div>
+      <div class="urp-leeg-s">Tik op "Toevoegen" om je eerste werkgever aan te maken</div>
+    </div>`}
+  `;
+}
+
+window.klusToevoegen = function(){
+  const row = document.getElementById('klus-add-row');
+  if(!row) return;
+  row.classList.add('open');
+  const inp = document.getElementById('klus-add-in');
+  if(inp) inp.focus();
+};
+
+window.klusToevoegenOk = async function(){
+  const inp = document.getElementById('klus-add-in');
+  const naam = (inp ? inp.value : '').trim();
+  if(!naam){
+    const row = document.getElementById('klus-add-row');
+    if(row) row.classList.remove('open');
+    return;
+  }
+  const id = String(Date.now()*100 + Math.floor(Math.random()*100));
+  // Lokaal direct toevoegen zodat de UI meteen bijwerkt
+  _urKlussen.push({ id, naam, subs: [] });
+  _urKlussen.sort((a,b) => a.naam.localeCompare(b.naam,'nl'));
+  _renderKlussen();
+  haptic(15);
+  showToast(naam + ' toegevoegd');
+  try{
+    await setDoc(doc(klussenCol, id), { naam, subs: [], createdAt: Date.now() });
+  }catch(e){ console.error('klus add:', e); }
+};
+
+const _klusNaamTimers = {};
+window.klusNaamWijzig = function(id, val){
+  clearTimeout(_klusNaamTimers[id]);
+  _klusNaamTimers[id] = setTimeout(async () => {
+    const naam = (val||'').trim();
+    if(!naam) return;
+    const k = _urKlussen.find(x => x.id === id);
+    if(k) k.naam = naam;
+    try{
+      await setDoc(doc(klussenCol, id), { naam }, { merge: true });
+    }catch(e){ console.error('klus naam:', e); }
+  }, 800);
+};
+
+window.klusVerwijderen = async function(id){
+  const k = _urKlussen.find(x => x.id === id);
+  if(!k) return;
+  if(!confirm(`"${k.naam}" verwijderen uit de klussenlijst?\n\nReeds ingevulde uren blijven gewoon staan.`)) return;
+  try{
+    await deleteDoc(doc(klussenCol, id));
+    haptic(20);
+    showToast(k.naam + ' verwijderd');
+  }catch(e){ console.error('klus del:', e); }
+};
+
+window.klusSubKlik = function(id){
+  const inp = document.getElementById('klus-sub-in-' + id);
+  const btn = document.getElementById('klus-sub-btn-' + id);
+  if(!inp || !btn) return;
+  if(inp.style.display === 'none'){
+    // Eerste tik: veld openen
+    inp.style.display = '';
+    btn.textContent = '✓ opslaan';
+    inp.focus();
+  } else {
+    // Tweede tik: opslaan
+    klusSubOk(id);
+  }
+};
+
+window.klusSubOk = async function(id){
+  const k = _urKlussen.find(x => x.id === id);
+  const inp = document.getElementById('klus-sub-in-' + id);
+  const naam = (inp ? inp.value : '').trim();
+  if(!k || !naam){ _renderKlussen(); return; }
+  k.subs = [...k.subs, naam]; // lokaal direct bijwerken
+  _renderKlussen();
+  haptic(10);
+  try{
+    await setDoc(doc(klussenCol, id), { subs: k.subs }, { merge: true });
+  }catch(e){ console.error('klus sub add:', e); }
+};
+
+window.klusSubVerwijderen = async function(id, idx){
+  const k = _urKlussen.find(x => x.id === id);
+  if(!k) return;
+  const subs = k.subs.filter((_,i) => i !== idx);
+  try{
+    await setDoc(doc(klussenCol, id), { subs }, { merge: true });
+    haptic(10);
+  }catch(e){ console.error('klus sub del:', e); }
 };
 
 function _renderPersoneelLijst(){
@@ -3759,7 +4170,10 @@ function _renderPersoneelLijst(){
 
   const cards = _urStaff.map(s => {
     const init = s.naam.trim().split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase() || '?';
-    const aantal = Object.keys(_urPData[s.id] || {}).filter(d => (_urPData[s.id][d]||'').trim()).length;
+    const aantal = Object.keys(_urPData[s.id] || {}).filter(d => {
+      const x = _urPData[s.id][d] || {};
+      return (x.notitie||'').trim() || (x.rijen||[]).length;
+    }).length;
     return `<div class="urp-card" onclick="urpOpen('${s.id}')">
       <div class="urp-card-avatar">${init}</div>
       <div class="urp-card-info">
@@ -3778,6 +4192,10 @@ function _renderPersoneelLijst(){
         Toevoegen
       </button>
     </div>
+    <div class="ur-add-row" id="urp-add-row">
+      <input type="text" id="urp-add-in" placeholder="Naam personeelslid..." onkeydown="if(event.key==='Enter'){event.preventDefault();urpToevoegenOk()}">
+      <button onclick="urpToevoegenOk()">Opslaan</button>
+    </div>
     ${_urStaff.length ? cards : `<div class="urp-leeg">
       <div class="urp-leeg-ic">👥</div>
       <div class="urp-leeg-t">Nog geen personeel</div>
@@ -3794,30 +4212,13 @@ function _renderPersoneelDetail(){
   const el = document.getElementById('ur-personeel');
   if(!el) return;
 
-  const today = new Date().toISOString().slice(0,10);
   const dagen = _urDagenInMaand(_urpYear, _urpMonth);
   const data = _urPData[_urStaffSel] || {};
+  const voornaam = _urEsc(staff.naam.split(' ')[0]);
 
-  const lijst = dagen.map(iso => {
-    const isToday = iso === today;
-    const { dow, dagNaam, dag, maand } = _urFmtDate(iso);
-    const val = data[iso] || '';
-    const heeftNotitie = val.trim().length > 0;
-    return `<div class="ur-dag${isToday?' today':''}${heeftNotitie?' heeft-notitie':''}">
-      <div class="ur-dag-hdr">
-        <div class="ur-dag-nr">${dag}</div>
-        <div class="ur-dag-info">
-          <div class="ur-dag-naam">${isToday ? 'Vandaag' : dagNaam}</div>
-          <div class="ur-dag-sub">${maand}${isToday ? ' · ' + dow : ''}</div>
-        </div>
-        <span class="ur-dag-pill">Nu</span>
-      </div>
-      <textarea class="ur-notitie" id="urp-${iso}" placeholder="Wat heeft ${_urEsc(staff.naam.split(' ')[0])} gedaan?" oninput="urpAutoSave('${iso}')">${_urEsc(val)}</textarea>
-      <div class="ur-status-row">
-        <span class="ur-opgeslagen" id="urp-ok-${iso}">✓ opgeslagen</span>
-      </div>
-    </div>`;
-  }).join('');
+  const lijst = dagen.map(iso =>
+    _urDagCardHtml('urp', iso, data[iso] || {}, `Notitie over ${voornaam} (optioneel)...`)
+  ).join('');
 
   const navHtml = _urMonthNavHtml(_urpYear, _urpMonth, 'urpMaandPrev()', 'urpMaandNext()');
 
@@ -3835,9 +4236,11 @@ function _renderPersoneelDetail(){
       </button>
     </div>
     ${navHtml}
+    <div class="ur-mtot"><span class="ur-mtot-lbl">Totaal ${voornaam} · ${_UR_MND_LBL[_urpMonth]} ${_urpYear}</span><span class="ur-mtot-val" id="urp-mtot">0u</span></div>
     ${lijst}
   `;
-  dagen.forEach(iso => _urpResize(iso));
+  dagen.forEach(iso => _urResizeNot('urp', iso));
+  _urUpdateTotalen('urp');
 }
 
 window.urpMaandPrev = function(){
@@ -3853,13 +4256,6 @@ window.urpMaandNext = function(){
   _renderPersoneelDetail();
 };
 
-function _urpResize(iso){
-  const ta = document.getElementById('urp-' + iso);
-  if(!ta) return;
-  ta.style.height = 'auto';
-  ta.style.height = ta.scrollHeight + 'px';
-}
-
 window.urpOpen = function(id){
   _urStaffSel = id;
   _renderPersoneelDetail();
@@ -3872,16 +4268,32 @@ window.urpTerug = function(){
 
 window._urpInDetail = function(){ return _urView === 'detail'; };
 
-window.urpToevoegen = async function(){
-  const naam = prompt('Naam van het nieuwe personeelslid:');
-  if(!naam || !naam.trim()) return;
+window.urpToevoegen = function(){
+  const row = document.getElementById('urp-add-row');
+  if(!row) return;
+  row.classList.add('open');
+  const inp = document.getElementById('urp-add-in');
+  if(inp) inp.focus();
+};
+
+window.urpToevoegenOk = async function(){
+  const inp = document.getElementById('urp-add-in');
+  const naam = (inp ? inp.value : '').trim();
+  if(!naam){
+    const row = document.getElementById('urp-add-row');
+    if(row) row.classList.remove('open');
+    return;
+  }
   const id = String(Date.now()*100 + Math.floor(Math.random()*100));
+  // Lokaal direct toevoegen zodat de UI meteen bijwerkt
+  _urStaff.push({ id, naam });
+  _urStaff.sort((a,b) => a.naam.localeCompare(b.naam,'nl'));
+  haptic(15);
+  showToast(naam + ' toegevoegd');
+  _urStaffSel = id;
+  _renderPersoneelDetail();
   try{
-    await setDoc(doc(personeelCol, id), { naam: naam.trim(), createdAt: Date.now() });
-    haptic(15);
-    showToast(naam.trim() + ' toegevoegd');
-    _urStaffSel = id;
-    setTimeout(_renderPersoneelDetail, 250);
+    await setDoc(doc(personeelCol, id), { naam, createdAt: Date.now() });
   }catch(e){ console.error('personeel add:', e); }
 };
 
@@ -3916,24 +4328,6 @@ window.urpVerwijderen = async function(id){
     _urStaffSel = null;
     _renderPersoneelLijst();
   }catch(e){ console.error('personeel del:', e); }
-};
-
-window.urpAutoSave = function(iso){
-  _urpResize(iso);
-  clearTimeout(_urPTimers[iso]);
-  _urPTimers[iso] = setTimeout(() => urpOpslaan(iso, true), 1500);
-};
-
-window.urpOpslaan = async function(iso, silent = false){
-  const ta = document.getElementById('urp-' + iso);
-  if(!ta || !_urStaffSel) return;
-  const notitie = ta.value;
-  try{
-    await setDoc(doc(urenPCol, `${_urStaffSel}__${iso}`), { notitie, staffId: _urStaffSel, date: iso });
-    if(!silent) haptic(15);
-    const ok = document.getElementById('urp-ok-' + iso);
-    if(ok){ ok.classList.add('show'); setTimeout(() => ok.classList.remove('show'), 1800); }
-  }catch(e){ console.error('urpOpslaan:', e); }
 };
 
 // ════════════════════════════════
