@@ -2210,6 +2210,15 @@ header{
 .ur-rij-add:active{background:var(--surface2);transform:scale(0.96);}
 .ur-dag-tot{display:flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:800;color:#7c3aed;flex-shrink:0;}
 .ur-dag-tot.nul{color:var(--text3);font-weight:600;}
+.ur-km-row{display:flex;align-items:center;gap:8px;padding:2px 14px 0;margin-top:6px;}
+.ur-km-lbl{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);display:flex;align-items:center;gap:5px;}
+.ur-km-in{width:72px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:6px 8px;font-family:inherit;font-size:0.78rem;font-weight:700;color:var(--text);text-align:right;outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
+.ur-km-in:focus{border-color:#0891b2;}
+.ur-km-in::placeholder{color:var(--text3);font-weight:500;}
+.ur-km-suf{font-size:0.7rem;font-weight:600;color:var(--text3);}
+.ur-pdf-btn{width:100%;background:linear-gradient(145deg,#0f172a,#1e293b);color:#fff;border:none;border-radius:14px;padding:14px 16px;margin-bottom:14px;font-family:inherit;font-size:0.86rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 18px rgba(15,23,42,0.35),inset 0 1px 0 rgba(255,255,255,0.1);transition:transform 0.15s;}
+.ur-pdf-btn:active{transform:scale(0.98);}
+.ur-pdf-btn svg{flex-shrink:0;}
 .ur-mtot{background:linear-gradient(145deg,rgba(124,58,237,0.1),rgba(124,58,237,0.04));border:1px solid rgba(124,58,237,0.22);border-radius:14px;padding:12px 16px;margin-bottom:12px;cursor:pointer;transition:transform 0.15s;user-select:none;}
 .ur-mtot:active{transform:scale(0.985);}
 .ur-mtot-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
@@ -3750,7 +3759,7 @@ window.startUrenListener = function() {
     _urData = {};
     snap.docs.forEach(d => {
       const x = d.data();
-      _urData[d.id] = { notitie: x.notitie || '', rijen: Array.isArray(x.rijen) ? x.rijen : [] };
+      _urData[d.id] = { notitie: x.notitie || '', rijen: Array.isArray(x.rijen) ? x.rijen : [], km: x.km || 0 };
     });
     // Alleen her-renderen als er nergens actief getypt wordt
     if(_urView === 'eigen' && !_urActiveInside('ur-list')) renderUren();
@@ -3887,9 +3896,10 @@ function _urDagCardHtml(prefix, iso, dagData, placeholder){
   const isToday = iso === today;
   const { dow, dagNaam, dag, maand } = _urFmtDate(iso);
   const notitie = dagData.notitie || '';
+  const km = dagData.km || '';
   const rows = _urInitRows(prefix, iso, dagData.rijen);
   const tot = rows.reduce((s,r) => s + (parseFloat(r.u) || 0), 0);
-  const heeftInhoud = tot > 0 || notitie.trim().length > 0 || rows.some(r => r.k);
+  const heeftInhoud = tot > 0 || notitie.trim().length > 0 || rows.some(r => r.k) || km !== '';
   return `<div class="ur-dag${isToday?' today':''}${heeftInhoud?' heeft-notitie':''}" id="dag-${prefix}-${iso}">
     <div class="ur-dag-hdr">
       <div class="ur-dag-nr">${dag}</div>
@@ -3905,6 +3915,11 @@ function _urDagCardHtml(prefix, iso, dagData, placeholder){
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       extra rij
     </button>
+    <div class="ur-km-row">
+      <span class="ur-km-lbl"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg> Km rijden</span>
+      <input type="number" inputmode="decimal" class="ur-km-in" id="${prefix}-km-${iso}" placeholder="0" min="0" step="1" value="${km}" oninput="urKmIn('${prefix}','${iso}',this.value)">
+      <span class="ur-km-suf">km</span>
+    </div>
     <textarea class="ur-notitie-klein" id="${prefix}-not-${iso}" placeholder="${placeholder}" oninput="urNotitieIn('${prefix}','${iso}')">${_urEsc(notitie)}</textarea>
     <div class="ur-status-row">
       <span class="ur-opgeslagen" id="${prefix}-ok-${iso}">✓ opgeslagen</span>
@@ -3928,6 +3943,7 @@ window.urMtotToggle = function(prefix){
 function _urUpdateTotalen(prefix){
   const dagen = _urDagenVoor(prefix);
   let mtot = 0;
+  let mkm = 0;
   const perKlus = {}; // { klusId: uren }
   dagen.forEach(iso => {
     const rows = _urRows[_urKey(prefix, iso)] || [];
@@ -3940,11 +3956,20 @@ function _urUpdateTotalen(prefix){
       perKlus[key] = (perKlus[key] || 0) + u;
     });
     mtot += dagtot;
+    // Km live uitlezen uit input, of anders uit opgeslagen data
+    const kmEl = document.getElementById(`${prefix}-km-${iso}`);
+    let km = 0;
+    if(kmEl && kmEl.value !== ''){ km = parseFloat(kmEl.value) || 0; }
+    else {
+      const bron = prefix === 'ur' ? _urData[iso] : ((_urPData[_urStaffSel]||{})[iso]);
+      km = (bron && bron.km) ? parseFloat(bron.km) || 0 : 0;
+    }
+    mkm += km;
     const el = document.getElementById(`${prefix}-tot-${iso}`);
     if(el){ el.textContent = _urFmtUren(dagtot); el.classList.toggle('nul', !(dagtot > 0)); }
   });
   const m = document.getElementById(`${prefix}-mtot`);
-  if(m) m.textContent = _urFmtUren(mtot);
+  if(m) m.textContent = _urFmtUren(mtot) + (mkm > 0 ? ` · ${Math.round(mkm)}km` : '');
 
   // Details per hoofdklus (aflopend op uren)
   const details = document.getElementById(`${prefix}-mtot-details`);
@@ -3988,18 +4013,26 @@ function _urSaveDag(prefix, iso, delay){
     const rijen = rows.map(r => ({ k: r.k || '', s: r.s || '', u: parseFloat(r.u) || 0 }));
     const ta = document.getElementById(`${prefix}-not-${iso}`);
     const notitie = ta ? ta.value : ((prefix==='ur'?_urData[iso]:(_urPData[staffSnapshot]||{})[iso])||{}).notitie || '';
+    const kmEl = document.getElementById(`${prefix}-km-${iso}`);
+    const kmRaw = kmEl ? kmEl.value : ((prefix==='ur'?_urData[iso]:(_urPData[staffSnapshot]||{})[iso])||{}).km || '';
+    const km = kmRaw === '' || kmRaw == null ? 0 : parseFloat(kmRaw) || 0;
     try{
       if(prefix === 'ur'){
-        await setDoc(doc(db, 'uren', iso), { notitie, rijen });
+        await setDoc(doc(db, 'uren', iso), { notitie, rijen, km });
       } else {
         if(!staffSnapshot) return;
-        await setDoc(doc(urenPCol, `${staffSnapshot}__${iso}`), { notitie, rijen, staffId: staffSnapshot, date: iso });
+        await setDoc(doc(urenPCol, `${staffSnapshot}__${iso}`), { notitie, rijen, km, staffId: staffSnapshot, date: iso });
       }
       const ok = document.getElementById(`${prefix}-ok-${iso}`);
       if(ok){ ok.classList.add('show'); setTimeout(() => ok.classList.remove('show'), 1600); }
     }catch(e){ console.error('urSaveDag:', e); }
   }, delay || 0);
 }
+
+window.urKmIn = function(prefix, iso, val){
+  _urSaveDag(prefix, iso, 900);
+  _urUpdateTotalen(prefix);
+};
 
 // ── Rij-interacties ──
 window.urKlusSel = function(prefix, iso, idx, val){
@@ -4102,7 +4135,7 @@ function _urpInit(){
         if(!sid || !date) return;
         if(!_urPData[sid]) _urPData[sid] = {};
         const x = d.data();
-        _urPData[sid][date] = { notitie: x.notitie || '', rijen: Array.isArray(x.rijen) ? x.rijen : [] };
+        _urPData[sid][date] = { notitie: x.notitie || '', rijen: Array.isArray(x.rijen) ? x.rijen : [], km: x.km || 0 };
       });
       // Alleen her-renderen als er nergens actief getypt wordt
       if(_urView === 'detail' && _urStaffSel && !_urActiveInside('ur-personeel')) _renderPersoneelDetail();
@@ -4429,6 +4462,190 @@ window.urKlusToggle = function(){
   haptic(8);
 };
 
+// ════ PDF-overzicht generator ════
+function _pdfDagen(year, month){
+  const days = [];
+  const last = new Date(year, month + 1, 0).getDate();
+  for(let d = 1; d <= last; d++){
+    days.push(`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`);
+  }
+  return days;
+}
+
+function _pdfPersoonSectie(naam, data, year, month, klussenById){
+  const dagen = _pdfDagen(year, month);
+  const dagNamen = ['Zo','Ma','Di','Wo','Do','Vr','Za'];
+  let totU = 0, totKm = 0;
+  const perKlus = {};
+  const rijen = [];
+
+  dagen.forEach(iso => {
+    const dag = data[iso] || {};
+    const rijenDag = (dag.rijen || []).filter(r => (parseFloat(r.u)||0) > 0 || r.k);
+    const dagU = rijenDag.reduce((s,r) => s + (parseFloat(r.u)||0), 0);
+    const dagKm = parseFloat(dag.km) || 0;
+    totU += dagU;
+    totKm += dagKm;
+    rijenDag.forEach(r => {
+      const u = parseFloat(r.u) || 0;
+      if(u > 0){
+        const key = r.k || '__leeg';
+        perKlus[key] = (perKlus[key] || 0) + u;
+      }
+    });
+    if(dagU > 0 || dagKm > 0 || (dag.notitie||'').trim() || rijenDag.length){
+      const [y,m,d] = iso.split('-').map(Number);
+      const dt = new Date(y, m-1, d);
+      const klussenTxt = rijenDag.length
+        ? rijenDag.map(r => {
+            const k = klussenById[r.k];
+            const naam = k ? k.naam : (r.k === '' ? '—' : '(verwijderd)');
+            const loc = r.s && r.s !== '-' ? ` / ${r.s}` : '';
+            const u = parseFloat(r.u)||0;
+            return `${naam}${loc}${u>0?` — ${u}u`:''}`;
+          }).join('<br>')
+        : '—';
+      rijen.push({
+        datum: `${dagNamen[dt.getDay()]} ${d}`,
+        klussen: klussenTxt,
+        uren: dagU > 0 ? dagU.toFixed(2).replace('.', ',').replace(/,00$/,'') + 'u' : '—',
+        km: dagKm > 0 ? Math.round(dagKm) + ' km' : '—',
+        notitie: dag.notitie || ''
+      });
+    }
+  });
+
+  const perKlusRijen = Object.entries(perKlus).sort((a,b) => b[1] - a[1]).map(([kid, u]) => {
+    const k = klussenById[kid];
+    const naam = k ? k.naam : (kid === '__leeg' ? 'Zonder werkgever' : '(verwijderd)');
+    return `<tr><td>${naam}</td><td class="r">${u.toFixed(2).replace('.', ',').replace(/,00$/,'')}u</td></tr>`;
+  }).join('');
+
+  const dagRijen = rijen.length
+    ? rijen.map(r => `<tr>
+        <td class="datum">${r.datum}</td>
+        <td>${r.klussen}</td>
+        <td class="r">${r.uren}</td>
+        <td class="r">${r.km}</td>
+        <td class="notitie">${r.notitie ? r.notitie.replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="5" class="leeg">Geen uren geregistreerd deze maand</td></tr>';
+
+  return `
+    <section class="persoon">
+      <div class="phdr">
+        <h2>${naam}</h2>
+        <div class="ptot">
+          <span><strong>${totU.toFixed(2).replace('.', ',').replace(/,00$/,'')}u</strong> totaal</span>
+          ${totKm > 0 ? `<span><strong>${Math.round(totKm)} km</strong> gereden</span>` : ''}
+        </div>
+      </div>
+      ${perKlusRijen ? `
+      <table class="klus-tbl">
+        <thead><tr><th>Per werkgever</th><th class="r">Uren</th></tr></thead>
+        <tbody>${perKlusRijen}</tbody>
+      </table>` : ''}
+      <table class="dag-tbl">
+        <thead>
+          <tr><th>Dag</th><th>Klussen</th><th class="r">Uren</th><th class="r">Km</th><th>Notitie</th></tr>
+        </thead>
+        <tbody>${dagRijen}</tbody>
+      </table>
+    </section>
+  `;
+}
+
+window.urPdfExport = function(){
+  const year = _urpYear;
+  const month = _urpMonth;
+  const mnd = _UR_MND_LBL[month];
+  const nu = new Date();
+  const gegen = nu.toLocaleDateString('nl-NL', { day:'numeric', month:'long', year:'numeric' }) + ' om ' + nu.toLocaleTimeString('nl-NL', {hour:'2-digit',minute:'2-digit'});
+
+  // Klussen-lookup
+  const klussenById = {};
+  _urKlussen.forEach(k => { klussenById[k.id] = k; });
+
+  // Verzamel data voor jezelf + alle personeel
+  const personen = [{ naam:'Mij (eigenaar)', data: _urData }];
+  _urStaff.forEach(s => { personen.push({ naam: s.naam, data: _urPData[s.id] || {} }); });
+
+  // Grand totals
+  let grandU = 0, grandKm = 0;
+  personen.forEach(p => {
+    _pdfDagen(year, month).forEach(iso => {
+      const dag = p.data[iso] || {};
+      (dag.rijen || []).forEach(r => { grandU += parseFloat(r.u) || 0; });
+      grandKm += parseFloat(dag.km) || 0;
+    });
+  });
+
+  const secties = personen.map(p => _pdfPersoonSectie(p.naam, p.data, year, month, klussenById)).join('');
+
+  const html = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Uren overzicht — ${mnd} ${year}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#111827;background:#fff;padding:24px;font-size:11pt;line-height:1.5;}
+  header.doc{border-bottom:2px solid #2d6b3a;padding-bottom:16px;margin-bottom:24px;}
+  header.doc h1{font-size:22pt;font-weight:800;letter-spacing:-0.5px;color:#111827;}
+  header.doc .sub{color:#6b7280;font-size:10pt;margin-top:4px;}
+  header.doc .grand{margin-top:12px;display:flex;gap:24px;flex-wrap:wrap;}
+  header.doc .grand span{background:#f3f4f6;border-radius:8px;padding:6px 12px;font-size:10pt;color:#374151;}
+  header.doc .grand strong{color:#111827;font-weight:700;}
+  .persoon{margin-bottom:36px;page-break-inside:auto;}
+  .phdr{background:#2d6b3a;color:#fff;padding:10px 14px;border-radius:8px 8px 0 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+  .phdr h2{font-size:13pt;font-weight:700;}
+  .phdr .ptot{display:flex;gap:14px;font-size:9.5pt;}
+  .phdr .ptot strong{font-weight:700;}
+  table{width:100%;border-collapse:collapse;font-size:9.5pt;}
+  table.klus-tbl{margin-bottom:12px;background:#f9fafb;border:1px solid #e5e7eb;border-top:none;}
+  table.klus-tbl th{background:#f3f4f6;padding:6px 10px;text-align:left;font-size:8pt;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;}
+  table.klus-tbl td{padding:6px 10px;border-top:1px solid #e5e7eb;}
+  table.dag-tbl{border:1px solid #e5e7eb;}
+  table.dag-tbl th{background:#f3f4f6;padding:7px 8px;text-align:left;font-size:8pt;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid #e5e7eb;}
+  table.dag-tbl td{padding:7px 8px;border-bottom:1px solid #f3f4f6;vertical-align:top;}
+  table.dag-tbl tr:last-child td{border-bottom:none;}
+  .r{text-align:right;}
+  .datum{font-weight:700;color:#111827;white-space:nowrap;width:60px;}
+  .notitie{color:#6b7280;font-style:italic;font-size:9pt;}
+  .leeg{text-align:center;color:#9ca3af;font-style:italic;padding:20px;}
+  .footer{margin-top:32px;padding-top:12px;border-top:1px solid #e5e7eb;font-size:8pt;color:#9ca3af;text-align:center;}
+  @page{size:A4;margin:15mm;}
+  @media print{body{padding:0;}.persoon{page-break-inside:auto;}.phdr{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+</style>
+</head>
+<body>
+  <header class="doc">
+    <h1>Uren overzicht — ${mnd} ${year}</h1>
+    <div class="sub">Purgato Cleaning · Gegenereerd op ${gegen}</div>
+    <div class="grand">
+      <span><strong>${grandU.toFixed(2).replace('.', ',').replace(/,00$/,'')}u</strong> totaal gewerkt</span>
+      ${grandKm > 0 ? `<span><strong>${Math.round(grandKm)} km</strong> gereden</span>` : ''}
+      <span><strong>${personen.length}</strong> ${personen.length===1?'persoon':'personen'}</span>
+    </div>
+  </header>
+  ${secties}
+  <div class="footer">Purgato Cleaning — automatisch gegenereerd uit de app</div>
+</body>
+</html>`;
+
+  // Open in nieuw venster + auto-print
+  const win = window.open('', '_blank');
+  if(!win){
+    alert('Kon geen nieuw venster openen — check of pop-ups toegestaan zijn voor deze site.');
+    return;
+  }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  // Wacht tot styles geladen zijn en trigger print
+  setTimeout(() => { try{ win.focus(); win.print(); }catch(e){} }, 400);
+};
+
 window.urAllesToggle = function(){
   _urAllesOpen = !_urAllesOpen;
   const box = document.getElementById('ur-alles-box');
@@ -4556,6 +4773,10 @@ function _renderPersoneelLijst(){
       </div>
       <div class="ur-alles-details">${klusDetailsHtml}</div>
     </div>
+    <button class="ur-pdf-btn" onclick="urPdfExport()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      PDF-overzicht van ${_UR_MND_LBL[_urpMonth]}
+    </button>
     ${_urStaff.length ? cards : `<div class="urp-leeg">
       <div class="urp-leeg-ic">👥</div>
       <div class="urp-leeg-t">Nog geen personeel</div>
