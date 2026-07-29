@@ -2210,9 +2210,42 @@ header{
 .ur-rij-add:active{background:var(--surface2);transform:scale(0.96);}
 .ur-dag-tot{display:flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:800;color:#7c3aed;flex-shrink:0;}
 .ur-dag-tot.nul{color:var(--text3);font-weight:600;}
-.ur-mtot{background:linear-gradient(145deg,rgba(124,58,237,0.1),rgba(124,58,237,0.04));border:1px solid rgba(124,58,237,0.22);border-radius:14px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
-.ur-mtot-lbl{font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);}
+.ur-mtot{background:linear-gradient(145deg,rgba(124,58,237,0.1),rgba(124,58,237,0.04));border:1px solid rgba(124,58,237,0.22);border-radius:14px;padding:12px 16px;margin-bottom:12px;cursor:pointer;transition:transform 0.15s;user-select:none;}
+.ur-mtot:active{transform:scale(0.985);}
+.ur-mtot-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.ur-mtot-lbl{font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);flex:1;min-width:0;}
 .ur-mtot-val{font-size:1.3rem;font-weight:900;color:#7c3aed;letter-spacing:-0.5px;}
+.ur-mtot-chev{color:#7c3aed;opacity:0.55;transition:transform 0.25s cubic-bezier(0.34,1.4,0.64,1);flex-shrink:0;}
+.ur-mtot.open .ur-mtot-chev{transform:rotate(180deg);}
+.ur-mtot-details{display:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(124,58,237,0.15);flex-direction:column;gap:2px;}
+.ur-mtot.open .ur-mtot-details{display:flex;animation:fds 0.22s ease;}
+.ur-mtot-rij{display:flex;align-items:center;gap:8px;padding:7px 2px;border-bottom:1px dashed rgba(124,58,237,0.1);}
+.ur-mtot-rij:last-child{border-bottom:none;}
+.ur-mtot-rij-naam{flex:1;min-width:0;font-size:0.8rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ur-mtot-rij-bar{width:60px;height:5px;background:rgba(124,58,237,0.12);border-radius:99px;overflow:hidden;flex-shrink:0;}
+.ur-mtot-rij-fill{height:100%;background:linear-gradient(90deg,#a78bfa,#7c3aed);border-radius:99px;transition:width 0.4s cubic-bezier(0.32,0.72,0,1);}
+.ur-mtot-rij-uren{font-size:0.78rem;font-weight:800;color:#7c3aed;flex-shrink:0;min-width:50px;text-align:right;}
+.ur-mtot-leeg{font-size:0.72rem;color:var(--text3);text-align:center;padding:8px 0;font-weight:500;font-style:italic;}
+/* Iedereen-samen balk (personeel-lijst) */
+.ur-alles{background:linear-gradient(145deg,#7c3aed,#5b21b6);border:none;color:#fff;border-radius:16px;padding:16px 18px;margin-bottom:14px;cursor:pointer;user-select:none;box-shadow:0 6px 24px rgba(124,58,237,0.35);transition:transform 0.15s;}
+.ur-alles:active{transform:scale(0.985);}
+.ur-alles-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.ur-alles-lbl{font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.13em;color:rgba(255,255,255,0.7);flex:1;min-width:0;}
+.ur-alles-val{font-size:1.7rem;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;}
+.ur-alles-chev{color:rgba(255,255,255,0.7);transition:transform 0.25s cubic-bezier(0.34,1.4,0.64,1);flex-shrink:0;}
+.ur-alles.open .ur-alles-chev{transform:rotate(180deg);}
+.ur-alles-sub{font-size:0.65rem;color:rgba(255,255,255,0.55);font-weight:500;margin-top:2px;}
+.ur-alles-details{display:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.18);flex-direction:column;gap:1px;}
+.ur-alles.open .ur-alles-details{display:flex;animation:fds 0.22s ease;}
+.ur-alles-rij{display:flex;align-items:center;gap:9px;padding:8px 2px;border-bottom:1px dashed rgba(255,255,255,0.12);}
+.ur-alles-rij:last-child{border-bottom:none;}
+.ur-alles-rij-av{width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,0.18);color:#fff;font-size:0.65rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:-0.5px;}
+.ur-alles-rij-naam{flex:1;min-width:0;font-size:0.8rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ur-alles-rij-bar{width:55px;height:5px;background:rgba(255,255,255,0.15);border-radius:99px;overflow:hidden;flex-shrink:0;}
+.ur-alles-rij-fill{height:100%;background:#fff;border-radius:99px;transition:width 0.4s cubic-bezier(0.32,0.72,0,1);}
+.ur-alles-rij-uren{font-size:0.8rem;font-weight:800;color:#fff;flex-shrink:0;min-width:50px;text-align:right;}
+/* Klussen-varian: iets andere kleurtint (cyaan-blauw) */
+.ur-alles.klus{background:linear-gradient(145deg,#0891b2,#075985);box-shadow:0 6px 24px rgba(8,145,178,0.35);}
 .ur-notitie-klein{margin:6px 14px 0;width:calc(100% - 28px);background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:8px 10px;font-family:inherit;font-size:0.76rem;color:var(--text2);line-height:1.5;outline:none;resize:none;min-height:34px;box-sizing:border-box;overflow:hidden;transition:border-color 0.15s;}
 .ur-notitie-klein:focus{border-color:var(--accent);}
 .ur-notitie-klein::placeholder{color:var(--text3);}
@@ -2238,6 +2271,30 @@ header{
 .ur-add-row button{background:linear-gradient(145deg,#a78bfa,#7c3aed);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-family:inherit;font-size:0.8rem;font-weight:700;cursor:pointer;flex-shrink:0;box-shadow:0 3px 12px rgba(124,58,237,0.3);}
 .ur-add-row button:active{transform:scale(0.95);}
 .klus-hint{font-size:0.64rem;color:var(--text3);margin-top:6px;font-weight:500;}
+/* Klussen zoekbalk */
+.klus-zoek{position:relative;margin:2px 0 12px;}
+.klus-zoek-in{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:10px 34px 10px 36px;font-family:inherit;font-size:0.84rem;color:var(--text);outline:none;box-shadow:var(--shadow);transition:border-color 0.15s;}
+.klus-zoek-in:focus{border-color:#7c3aed;}
+.klus-zoek-in::placeholder{color:var(--text3);}
+.klus-zoek-ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--text3);}
+.klus-zoek-x{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text3);background:var(--surface3);border:none;width:22px;height:22px;border-radius:50%;cursor:pointer;display:none;align-items:center;justify-content:center;padding:0;}
+.klus-zoek-x.on{display:flex;}
+/* Geschiedenis-toggle knop op klus-card */
+.klus-hist-btn{background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);color:#7c3aed;border-radius:9px;padding:7px 12px;font-family:inherit;font-size:0.7rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;margin-top:10px;transition:transform 0.15s;}
+.klus-hist-btn:active{transform:scale(0.96);}
+.klus-hist-btn svg{transition:transform 0.22s;}
+.klus-hist-btn.open svg{transform:rotate(180deg);}
+.klus-hist-list{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border2);flex-direction:column;gap:1px;}
+.klus-hist-list.open{display:flex;animation:fds 0.22s ease;}
+.klus-hist-entry{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px dashed var(--border);cursor:pointer;border-radius:8px;transition:background 0.15s;}
+.klus-hist-entry:last-child{border-bottom:none;}
+.klus-hist-entry:active{background:var(--surface2);}
+.klus-hist-datum{font-size:0.74rem;font-weight:800;color:var(--text);flex-shrink:0;min-width:66px;}
+.klus-hist-mid{flex:1;min-width:0;}
+.klus-hist-persoon{font-size:0.72rem;font-weight:700;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.klus-hist-persoon .locatie{color:var(--text3);font-weight:500;}
+.klus-hist-uren{font-size:0.78rem;font-weight:800;color:#7c3aed;flex-shrink:0;min-width:44px;text-align:right;}
+.klus-hist-leeg{font-size:0.72rem;color:var(--text3);text-align:center;padding:10px 0;font-style:italic;font-weight:500;}
 
 /* ── Touch active feedback (werkt op Android & iOS) ── */
 .kkaart:active       { transform: scale(0.97) !important; transition: transform 0.1s ease !important; }
@@ -2465,6 +2522,7 @@ header{
             <div class="f"><label>Frequentie</label>
               <select id="n-freq">
                 <option value="2">Elke 2 weken</option><option value="4.3">Elke maand</option>
+                <option value="6">Elke 6 weken</option>
                 <option value="8.7" selected>Elke 2 maanden</option><option value="10.8">Elke 2,5 maand</option>
                 <option value="13">Elke 3 maanden</option><option value="17.4">Elke 4 maanden</option>
                 <option value="26">Elke 6 maanden</option>
@@ -2770,6 +2828,7 @@ header{
       <span class="s-lbl">Frequentie</span>
       <select class="s-input" id="s-freq">
         <option value="2">Elke 2 weken</option><option value="4.3">Elke maand</option>
+        <option value="6">Elke 6 weken</option>
         <option value="8.7">Elke 2 maanden</option><option value="10.8">Elke 2,5 maand</option>
         <option value="13">Elke 3 maanden</option><option value="17.4">Elke 4 maanden</option>
         <option value="26">Elke 6 maanden</option>
@@ -3258,7 +3317,7 @@ const _dDashDoc = doc(db, 'config', 'dashboard');
 
 let kl = [], vK = null, actF = 'all', actN = null, sId = null, actST = 'gedaan', uT = null, si = 0, wo = 0, navTab = 'klanten', selectedWDag = null;
 
-const FL={2:"2 wkn",4.3:"1 mnd",8.7:"2 mnd",10.8:"2,5 mnd",13:"3 mnd",17.4:"4 mnd",26:"6 mnd"};
+const FL={2:"2 wkn",4.3:"1 mnd",6:"6 wkn",8.7:"2 mnd",10.8:"2,5 mnd",13:"3 mnd",17.4:"4 mnd",26:"6 mnd"};
 const SO=['datum','plaats','naam'];const SL={datum:'Datum',plaats:'Plaats',naam:'Naam'};
 
 window.syncS = function syncS(s){
@@ -3695,6 +3754,8 @@ window.startUrenListener = function() {
     });
     // Alleen her-renderen als er nergens actief getypt wordt
     if(_urView === 'eigen' && !_urActiveInside('ur-list')) renderUren();
+    // Lijst-view toont ook eigen uren → her-renderen voor "Iedereen samen"-balk
+    if(_urView === 'lijst' && !_urActiveInside('ur-personeel')) _renderPersoneelLijst();
   }, err => console.error('uren:', err));
 };
 
@@ -3829,7 +3890,7 @@ function _urDagCardHtml(prefix, iso, dagData, placeholder){
   const rows = _urInitRows(prefix, iso, dagData.rijen);
   const tot = rows.reduce((s,r) => s + (parseFloat(r.u) || 0), 0);
   const heeftInhoud = tot > 0 || notitie.trim().length > 0 || rows.some(r => r.k);
-  return `<div class="ur-dag${isToday?' today':''}${heeftInhoud?' heeft-notitie':''}">
+  return `<div class="ur-dag${isToday?' today':''}${heeftInhoud?' heeft-notitie':''}" id="dag-${prefix}-${iso}">
     <div class="ur-dag-hdr">
       <div class="ur-dag-nr">${dag}</div>
       <div class="ur-dag-info">
@@ -3855,18 +3916,59 @@ function _urDagenVoor(prefix){
   return prefix === 'ur' ? _urDagenInMaand(_urYear, _urMonth) : _urDagenInMaand(_urpYear, _urpMonth);
 }
 
+const _urMtotOpen = { ur: false, urp: false };
+
+window.urMtotToggle = function(prefix){
+  _urMtotOpen[prefix] = !_urMtotOpen[prefix];
+  const box = document.getElementById(`${prefix}-mtot-box`);
+  if(box) box.classList.toggle('open', _urMtotOpen[prefix]);
+  haptic(8);
+};
+
 function _urUpdateTotalen(prefix){
   const dagen = _urDagenVoor(prefix);
   let mtot = 0;
+  const perKlus = {}; // { klusId: uren }
   dagen.forEach(iso => {
     const rows = _urRows[_urKey(prefix, iso)] || [];
-    const tot = rows.reduce((s,r) => s + (parseFloat(r.u) || 0), 0);
-    mtot += tot;
+    let dagtot = 0;
+    rows.forEach(r => {
+      const u = parseFloat(r.u) || 0;
+      if(u <= 0) return;
+      dagtot += u;
+      const key = r.k || '__leeg';
+      perKlus[key] = (perKlus[key] || 0) + u;
+    });
+    mtot += dagtot;
     const el = document.getElementById(`${prefix}-tot-${iso}`);
-    if(el){ el.textContent = _urFmtUren(tot); el.classList.toggle('nul', !(tot > 0)); }
+    if(el){ el.textContent = _urFmtUren(dagtot); el.classList.toggle('nul', !(dagtot > 0)); }
   });
   const m = document.getElementById(`${prefix}-mtot`);
   if(m) m.textContent = _urFmtUren(mtot);
+
+  // Details per hoofdklus (aflopend op uren)
+  const details = document.getElementById(`${prefix}-mtot-details`);
+  if(details){
+    const rijen = Object.entries(perKlus).sort((a,b) => b[1] - a[1]);
+    if(!rijen.length){
+      details.innerHTML = '<div class="ur-mtot-leeg">Nog geen uren deze maand</div>';
+    } else {
+      const max = rijen[0][1];
+      details.innerHTML = rijen.map(([kid, uren]) => {
+        const klus = _urKlussen.find(k => k.id === kid);
+        const naam = klus ? klus.naam : (kid === '__leeg' ? 'Zonder werkgever' : '(verwijderd)');
+        const pct = max > 0 ? Math.round(uren / max * 100) : 0;
+        return `<div class="ur-mtot-rij">
+          <span class="ur-mtot-rij-naam">${_urEsc(naam)}</span>
+          <span class="ur-mtot-rij-bar"><span class="ur-mtot-rij-fill" style="width:${pct}%"></span></span>
+          <span class="ur-mtot-rij-uren">${_urFmtUren(uren)}</span>
+        </div>`;
+      }).join('');
+    }
+  }
+  // Herstel open-state na re-render
+  const box = document.getElementById(`${prefix}-mtot-box`);
+  if(box) box.classList.toggle('open', !!_urMtotOpen[prefix]);
 }
 
 function _urResizeNot(prefix, iso){
@@ -3958,7 +4060,14 @@ function renderUren() {
   if (!list) return;
   const dagen = _urDagenInMaand(_urYear, _urMonth);
   let html = _urMonthNavHtml(_urYear, _urMonth, 'urMaandPrev()', 'urMaandNext()');
-  html += `<div class="ur-mtot"><span class="ur-mtot-lbl">Totaal ${_UR_MND_LBL[_urMonth]} ${_urYear}</span><span class="ur-mtot-val" id="ur-mtot">0u</span></div>`;
+  html += `<div class="ur-mtot" id="ur-mtot-box" onclick="urMtotToggle('ur')">
+    <div class="ur-mtot-top">
+      <span class="ur-mtot-lbl">Totaal ${_UR_MND_LBL[_urMonth]} ${_urYear}</span>
+      <span class="ur-mtot-val" id="ur-mtot">0u</span>
+      <svg class="ur-mtot-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="ur-mtot-details" id="ur-mtot-details"></div>
+  </div>`;
   dagen.forEach(iso => { html += _urDagCardHtml('ur', iso, _urData[iso] || {}, 'Notitie (optioneel)...'); });
   list.innerHTML = html;
   dagen.forEach(iso => _urResizeNot('ur', iso));
@@ -4025,16 +4134,77 @@ window.urGaNaar = function(view){
   }
 };
 
-// ════ Klussen beheer ════
+// ════ Klussen beheer + zoeken/geschiedenis ════
+let _klusFilter = '';
+let _klusHistOpen = {}; // { klusId: true }
+
+// Verzamelt alle uur-entries voor een specifieke klus (van jou + alle personeel)
+function _urEntriesVoorKlus(klusId){
+  const entries = []; // {iso, source:'ur'|staffId, locatie, uren}
+  Object.entries(_urData).forEach(([iso, dag]) => {
+    (dag.rijen || []).forEach(r => {
+      if(r.k !== klusId) return;
+      const u = parseFloat(r.u) || 0;
+      if(u <= 0 && !r.s) return;
+      entries.push({ iso, source:'ur', locatie: r.s || '', uren: u });
+    });
+  });
+  Object.entries(_urPData).forEach(([staffId, days]) => {
+    Object.entries(days).forEach(([iso, dag]) => {
+      (dag.rijen || []).forEach(r => {
+        if(r.k !== klusId) return;
+        const u = parseFloat(r.u) || 0;
+        if(u <= 0 && !r.s) return;
+        entries.push({ iso, source: staffId, locatie: r.s || '', uren: u });
+      });
+    });
+  });
+  entries.sort((a,b) => b.iso.localeCompare(a.iso)); // nieuwste eerst
+  return entries;
+}
+
+function _fmtDatumKort(iso){
+  const [y, m, d] = iso.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  const dagen = ['zo','ma','di','wo','do','vr','za'];
+  const mnd = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+  return `${dagen[dt.getDay()]} ${d} ${mnd[m-1]}`;
+}
+
 function _renderKlussen(){
   _urView = 'klussen';
   const el = document.getElementById('ur-klussen');
   if(!el) return;
 
-  const cards = _urKlussen.map(k => {
+  const q = _klusFilter.trim().toLowerCase();
+  const zichtbaar = q
+    ? _urKlussen.filter(k =>
+        k.naam.toLowerCase().includes(q) ||
+        (k.subs || []).some(s => s.toLowerCase().includes(q))
+      )
+    : _urKlussen;
+
+  const cards = zichtbaar.map(k => {
     const chips = k.subs.map((s,i) =>
       `<span class="klus-sub-chip">${_urEsc(s)}<button class="klus-sub-x" onclick="klusSubVerwijderen('${k.id}',${i})" title="Locatie verwijderen">✕</button></span>`
     ).join('');
+    const entries = _urEntriesVoorKlus(k.id);
+    const totKlus = entries.reduce((s,e) => s + e.uren, 0);
+    const isOpen = !!_klusHistOpen[k.id] || (!!q && zichtbaar.length <= 3);
+    const histBtnTxt = entries.length
+      ? (isOpen ? 'Verberg uren' : `Toon ${entries.length} ${entries.length===1?'invulling':'invullingen'} · ${_urFmtUren(totKlus)}`)
+      : 'Nog geen uren ingevuld';
+    const histLijst = entries.length
+      ? entries.slice(0, 100).map(e => {
+          const naam = e.source === 'ur' ? 'Mij' : ((_urStaff.find(s => s.id === e.source) || {}).naam || 'Onbekend');
+          const loc = e.locatie && e.locatie !== '-' ? ` <span class="locatie">· ${_urEsc(e.locatie)}</span>` : '';
+          return `<div class="klus-hist-entry" onclick="klusNaarEntry('${e.iso}','${e.source}')">
+            <span class="klus-hist-datum">${_fmtDatumKort(e.iso)}</span>
+            <div class="klus-hist-mid"><div class="klus-hist-persoon">${_urEsc(naam)}${loc}</div></div>
+            <span class="klus-hist-uren">${_urFmtUren(e.uren)}</span>
+          </div>`;
+        }).join('')
+      : '<div class="klus-hist-leeg">Deze klus is nog niet ingevuld</div>';
     return `<div class="klus-card">
       <div class="klus-card-top">
         <input type="text" class="klus-naam-in" value="${(k.naam||'').replace(/"/g,'&quot;')}" oninput="klusNaamWijzig('${k.id}', this.value)" placeholder="Naam werkgever">
@@ -4047,8 +4217,17 @@ function _renderKlussen(){
         <input type="text" class="klus-sub-in" id="klus-sub-in-${k.id}" style="display:none" placeholder="Locatienaam..." onkeydown="if(event.key==='Enter'){event.preventDefault();klusSubOk('${k.id}')}">
         <button class="klus-sub-add" id="klus-sub-btn-${k.id}" onclick="klusSubKlik('${k.id}')">+ locatie</button>
       </div>
+      <button class="klus-hist-btn ${isOpen?'open':''}" onclick="klusHistToggle('${k.id}')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        ${histBtnTxt}
+      </button>
+      <div class="klus-hist-list ${isOpen?'open':''}">${histLijst}</div>
     </div>`;
   }).join('');
+
+  const geenResultaat = q && !zichtbaar.length
+    ? `<div class="urp-leeg"><div class="urp-leeg-ic">🔎</div><div class="urp-leeg-t">Geen resultaten voor "${_urEsc(q)}"</div><div class="urp-leeg-s">Probeer een andere zoekterm</div></div>`
+    : '';
 
   el.innerHTML = `
     <div class="urp-hdr">
@@ -4062,14 +4241,61 @@ function _renderKlussen(){
       <input type="text" id="klus-add-in" placeholder="Naam werkgever / klus..." onkeydown="if(event.key==='Enter'){event.preventDefault();klusToevoegenOk()}">
       <button onclick="klusToevoegenOk()">Opslaan</button>
     </div>
-    <div class="klus-hint" style="margin:-6px 2px 14px">Deze klussen verschijnen in het keuzemenu bij de uren — voor jou én je personeel. Voeg per werkgever eventueel locaties toe.</div>
-    ${_urKlussen.length ? cards : `<div class="urp-leeg">
+    ${_urKlussen.length ? `<div class="klus-zoek">
+      <span class="klus-zoek-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <input type="text" class="klus-zoek-in" id="klus-zoek-in" placeholder="Zoek klus of locatie..." value="${_klusFilter.replace(/"/g,'&quot;')}" oninput="klusZoek(this.value)">
+      <button class="klus-zoek-x ${_klusFilter?'on':''}" onclick="klusZoek('')" aria-label="Wissen">✕</button>
+    </div>` : ''}
+    <div class="klus-hint" style="margin:-6px 2px 14px">Deze klussen verschijnen in het keuzemenu bij de uren. Tik "Toon uren" om te zien wanneer en door wie een klus is gedaan — tap een regel om er direct heen te springen.</div>
+    ${_urKlussen.length ? (zichtbaar.length ? cards : geenResultaat) : `<div class="urp-leeg">
       <div class="urp-leeg-ic">🧰</div>
       <div class="urp-leeg-t">Nog geen klussen</div>
       <div class="urp-leeg-s">Tik op "Toevoegen" om je eerste werkgever aan te maken</div>
     </div>`}
   `;
+
+  // Focus terugzetten in zoekveld als het net gebruikt werd
+  if(_klusFilter){
+    const inp = document.getElementById('klus-zoek-in');
+    if(inp && document.activeElement !== inp){
+      inp.focus();
+      const v = inp.value; inp.value = ''; inp.value = v; // cursor achteraan
+    }
+  }
 }
+
+window.klusZoek = function(val){
+  _klusFilter = val || '';
+  _renderKlussen();
+};
+
+window.klusHistToggle = function(id){
+  _klusHistOpen[id] = !_klusHistOpen[id];
+  _renderKlussen();
+  haptic(6);
+};
+
+// Vanuit een klus-geschiedenis-regel naar de betreffende dag springen
+window.klusNaarEntry = function(iso, source){
+  const [y, m] = iso.split('-').map(Number);
+  haptic(10);
+  if(source === 'ur'){
+    _urYear = y; _urMonth = m - 1;
+    urGaNaar('eigen');
+    setTimeout(() => {
+      const el = document.getElementById(`dag-ur-${iso}`);
+      if(el){ el.scrollIntoView({behavior:'smooth', block:'center'}); el.style.transition='background 1s'; el.style.background='rgba(124,58,237,0.08)'; setTimeout(() => el.style.background = '', 1500); }
+    }, 80);
+  } else {
+    _urStaffSel = source;
+    _urpYear = y; _urpMonth = m - 1;
+    urGaNaar('personeel');
+    setTimeout(() => {
+      const el = document.getElementById(`dag-urp-${iso}`);
+      if(el){ el.scrollIntoView({behavior:'smooth', block:'center'}); el.style.transition='background 1s'; el.style.background='rgba(124,58,237,0.08)'; setTimeout(() => el.style.background = '', 1500); }
+    }, 80);
+  }
+};
 
 window.klusToevoegen = function(){
   const row = document.getElementById('klus-add-row');
@@ -4162,27 +4388,138 @@ window.klusSubVerwijderen = async function(id, idx){
   }catch(e){ console.error('klus sub del:', e); }
 };
 
+let _urAllesOpen = false;
+let _urKlusOpen = false;
+
+// Bereken uren van een dataset (eigen of één personeelslid) voor de huidige lijst-maand
+function _urUrenInMaand(datasetPerDag, year, month){
+  const nu = new Date();
+  const isCurrent = year === nu.getFullYear() && month === nu.getMonth();
+  const last = isCurrent ? nu.getDate() : new Date(year, month + 1, 0).getDate();
+  let tot = 0;
+  for(let d = 1; d <= last; d++){
+    const iso = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const rijen = (datasetPerDag[iso] || {}).rijen || [];
+    rijen.forEach(r => { tot += parseFloat(r.u) || 0; });
+  }
+  return tot;
+}
+
+// Voegt de uren van een dataset toe aan een verzamelde per-klus optelling
+function _urVerzamelPerKlus(datasetPerDag, year, month, perKlus){
+  const nu = new Date();
+  const isCurrent = year === nu.getFullYear() && month === nu.getMonth();
+  const last = isCurrent ? nu.getDate() : new Date(year, month + 1, 0).getDate();
+  for(let d = 1; d <= last; d++){
+    const iso = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const rijen = (datasetPerDag[iso] || {}).rijen || [];
+    rijen.forEach(r => {
+      const u = parseFloat(r.u) || 0;
+      if(u <= 0) return;
+      const key = r.k || '__leeg';
+      perKlus[key] = (perKlus[key] || 0) + u;
+    });
+  }
+}
+
+window.urKlusToggle = function(){
+  _urKlusOpen = !_urKlusOpen;
+  const box = document.getElementById('ur-klus-box');
+  if(box) box.classList.toggle('open', _urKlusOpen);
+  haptic(8);
+};
+
+window.urAllesToggle = function(){
+  _urAllesOpen = !_urAllesOpen;
+  const box = document.getElementById('ur-alles-box');
+  if(box) box.classList.toggle('open', _urAllesOpen);
+  haptic(8);
+};
+
+window.urlMaandPrev = function(){
+  _urpMonth--;
+  if(_urpMonth < 0){ _urpMonth = 11; _urpYear--; }
+  _renderPersoneelLijst();
+};
+window.urlMaandNext = function(){
+  const nu = new Date();
+  if(_urpYear === nu.getFullYear() && _urpMonth === nu.getMonth()) return;
+  _urpMonth++;
+  if(_urpMonth > 11){ _urpMonth = 0; _urpYear++; }
+  _renderPersoneelLijst();
+};
+
 function _renderPersoneelLijst(){
   _urView = 'lijst';
   _urStaffSel = null;
   const el = document.getElementById('ur-personeel');
   if(!el) return;
 
+  // Bereken deze-maand uren voor jou + iedereen
+  const eigenUren = _urUrenInMaand(_urData, _urpYear, _urpMonth);
+  const staffTotalen = _urStaff.map(s => ({
+    s,
+    uren: _urUrenInMaand(_urPData[s.id] || {}, _urpYear, _urpMonth)
+  }));
+  const totaal = eigenUren + staffTotalen.reduce((a,b) => a + b.uren, 0);
+
+  // Per klus verzamelen: jouw uren + alle personeel-uren opgeteld per werkgever
+  const perKlus = {};
+  _urVerzamelPerKlus(_urData, _urpYear, _urpMonth, perKlus);
+  _urStaff.forEach(s => _urVerzamelPerKlus(_urPData[s.id] || {}, _urpYear, _urpMonth, perKlus));
+  const klusRijen = Object.entries(perKlus).sort((a,b) => b[1] - a[1]);
+  const maxKlus = klusRijen.length ? klusRijen[0][1] : 0.001;
+  const klusDetailsHtml = klusRijen.length
+    ? klusRijen.map(([kid, uren]) => {
+        const klus = _urKlussen.find(k => k.id === kid);
+        const naam = klus ? klus.naam : (kid === '__leeg' ? 'Zonder werkgever' : '(verwijderd)');
+        const pct = Math.round(uren / maxKlus * 100);
+        return `<div class="ur-alles-rij">
+          <span class="ur-alles-rij-naam" style="padding-left:2px">${_urEsc(naam)}</span>
+          <span class="ur-alles-rij-bar"><span class="ur-alles-rij-fill" style="width:${pct}%"></span></span>
+          <span class="ur-alles-rij-uren">${_urFmtUren(uren)}</span>
+        </div>`;
+      }).join('')
+    : '<div class="ur-mtot-leeg" style="color:rgba(255,255,255,0.55)">Nog geen uren deze maand</div>';
+
+  // Details-rijen (aflopend op uren) — jij bovenaan als "Mij"
+  const alleRijen = [{ id:'__mij', naam:'Mij', init:'MIJ', uren:eigenUren }].concat(
+    staffTotalen.map(({s, uren}) => ({
+      id: s.id,
+      naam: s.naam,
+      init: (s.naam.trim().split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase() || '?'),
+      uren
+    }))
+  );
+  const max = Math.max(...alleRijen.map(r => r.uren), 0.001);
+  alleRijen.sort((a,b) => b.uren - a.uren);
+  const detailsHtml = totaal > 0
+    ? alleRijen.map(r => {
+        const pct = Math.round(r.uren / max * 100);
+        return `<div class="ur-alles-rij">
+          <div class="ur-alles-rij-av">${_urEsc(r.init)}</div>
+          <span class="ur-alles-rij-naam">${_urEsc(r.naam)}</span>
+          <span class="ur-alles-rij-bar"><span class="ur-alles-rij-fill" style="width:${pct}%"></span></span>
+          <span class="ur-alles-rij-uren">${_urFmtUren(r.uren)}</span>
+        </div>`;
+      }).join('')
+    : '<div class="ur-mtot-leeg" style="color:rgba(255,255,255,0.55)">Nog geen uren deze maand</div>';
+
   const cards = _urStaff.map(s => {
     const init = s.naam.trim().split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase() || '?';
-    const aantal = Object.keys(_urPData[s.id] || {}).filter(d => {
-      const x = _urPData[s.id][d] || {};
-      return (x.notitie||'').trim() || (x.rijen||[]).length;
-    }).length;
+    const st = staffTotalen.find(x => x.s.id === s.id);
+    const uren = st ? st.uren : 0;
     return `<div class="urp-card" onclick="urpOpen('${s.id}')">
       <div class="urp-card-avatar">${init}</div>
       <div class="urp-card-info">
         <div class="urp-card-naam">${_urEsc(s.naam)}</div>
-        <div class="urp-card-sub">${aantal} ${aantal===1?'dag':'dagen'} geregistreerd</div>
+        <div class="urp-card-sub">${_urFmtUren(uren)} · ${_UR_MND_LBL[_urpMonth].toLowerCase()}</div>
       </div>
       <svg class="urp-card-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
     </div>`;
   }).join('');
+
+  const navHtml = _urMonthNavHtml(_urpYear, _urpMonth, 'urlMaandPrev()', 'urlMaandNext()');
 
   el.innerHTML = `
     <div class="urp-hdr">
@@ -4195,6 +4532,29 @@ function _renderPersoneelLijst(){
     <div class="ur-add-row" id="urp-add-row">
       <input type="text" id="urp-add-in" placeholder="Naam personeelslid..." onkeydown="if(event.key==='Enter'){event.preventDefault();urpToevoegenOk()}">
       <button onclick="urpToevoegenOk()">Opslaan</button>
+    </div>
+    ${navHtml}
+    <div class="ur-alles ${_urAllesOpen?'open':''}" id="ur-alles-box" onclick="urAllesToggle()">
+      <div class="ur-alles-top">
+        <div>
+          <div class="ur-alles-lbl">Iedereen samen</div>
+          <div class="ur-alles-val">${_urFmtUren(totaal)}</div>
+          <div class="ur-alles-sub">${_UR_MND_LBL[_urpMonth]} ${_urpYear} · ${1 + _urStaff.length} ${_urStaff.length===0?'persoon':'personen'}</div>
+        </div>
+        <svg class="ur-alles-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="ur-alles-details">${detailsHtml}</div>
+    </div>
+    <div class="ur-alles klus ${_urKlusOpen?'open':''}" id="ur-klus-box" onclick="urKlusToggle()">
+      <div class="ur-alles-top">
+        <div>
+          <div class="ur-alles-lbl">Per werkgever · iedereen</div>
+          <div class="ur-alles-val">${klusRijen.length} ${klusRijen.length===1?'klus':'klussen'}</div>
+          <div class="ur-alles-sub">${_UR_MND_LBL[_urpMonth]} ${_urpYear} · uren gebundeld per klus</div>
+        </div>
+        <svg class="ur-alles-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="ur-alles-details">${klusDetailsHtml}</div>
     </div>
     ${_urStaff.length ? cards : `<div class="urp-leeg">
       <div class="urp-leeg-ic">👥</div>
@@ -4236,7 +4596,14 @@ function _renderPersoneelDetail(){
       </button>
     </div>
     ${navHtml}
-    <div class="ur-mtot"><span class="ur-mtot-lbl">Totaal ${voornaam} · ${_UR_MND_LBL[_urpMonth]} ${_urpYear}</span><span class="ur-mtot-val" id="urp-mtot">0u</span></div>
+    <div class="ur-mtot" id="urp-mtot-box" onclick="urMtotToggle('urp')">
+      <div class="ur-mtot-top">
+        <span class="ur-mtot-lbl">Totaal ${voornaam} · ${_UR_MND_LBL[_urpMonth]} ${_urpYear}</span>
+        <span class="ur-mtot-val" id="urp-mtot">0u</span>
+        <svg class="ur-mtot-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="ur-mtot-details" id="urp-mtot-details"></div>
+    </div>
     ${lijst}
   `;
   dagen.forEach(iso => _urResizeNot('urp', iso));
