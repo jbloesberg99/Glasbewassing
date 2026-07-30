@@ -394,6 +394,23 @@ header{
 .chip.on{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 10px var(--accent-glow);}
 .chip.sort{background:var(--surface2);color:var(--text);border-color:var(--border2);box-shadow:none;}
 .sep{width:1px;height:16px;background:var(--border2);flex-shrink:0;margin:0 2px;}
+/* ── Uitgebreide filterpanel voor klantenkaarten ── */
+.filter-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow);display:none;}
+.filter-card.open{display:block;animation:fds 0.18s ease;}
+.filter-panel{padding:12px 14px;display:flex;flex-direction:column;gap:12px;}
+.filter-group{display:flex;flex-direction:column;gap:6px;}
+.filter-lbl{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);}
+.filter-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.filter-chip{padding:4px 10px;border-radius:99px;background:var(--surface2);border:1px solid var(--border2);font-family:inherit;font-size:0.68rem;font-weight:700;color:var(--text2);cursor:pointer;transition:all 0.15s;user-select:none;}
+.filter-chip.on{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 8px var(--accent-glow);}
+.filter-prijs{display:flex;gap:8px;align-items:center;}
+.filter-prijs input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:7px 10px;font-family:inherit;font-size:0.82rem;font-weight:600;color:var(--text);outline:none;min-width:0;-webkit-appearance:none;}
+.filter-prijs input:focus{border-color:var(--accent);}
+.filter-prijs span{font-size:0.72rem;color:var(--text3);font-weight:600;flex-shrink:0;}
+.filter-wis{background:var(--urgent-s);color:var(--urgent);border:1px solid var(--urgent-b);border-radius:8px;padding:7px 12px;font-family:inherit;font-size:0.72rem;font-weight:700;cursor:pointer;align-self:flex-start;transition:transform 0.15s;}
+.filter-wis:active{transform:scale(0.95);}
+.filter-badge{background:var(--urgent);color:#fff;border-radius:99px;padding:1px 6px;font-size:0.55rem;font-weight:800;margin-left:4px;display:none;}
+.filter-badge.on{display:inline-block;}
 
 /* ── Customer cards ── */
 .list{display:flex;flex-direction:column;gap:7px;}
@@ -2140,7 +2157,13 @@ header{
   background:rgba(124,58,237,0.1);color:#7c3aed;
   display:none;
 }
-.ur-dag.today .ur-dag-pill{display:inline-block;}
+.ur-dag.today .ur-dag-pill{display:inline-block;background:rgba(124,58,237,0.1);color:#7c3aed;}
+/* Toekomstige dagen — subtiel cyaan label */
+.ur-dag.toekomst .ur-dag-pill{display:inline-block;background:rgba(8,145,178,0.12);color:#0e7490;}
+.ur-dag.toekomst .ur-dag-nr{color:#0e7490 !important;opacity:0.85;}
+.ur-dag.toekomst .ur-dag-naam{color:#0e7490 !important;}
+.ur-dag.toekomst{border-left:3px dashed rgba(8,145,178,0.35);background:linear-gradient(135deg,rgba(8,145,178,0.03) 0%,var(--surface) 55%);}
+.ur-dag.toekomst.heeft-notitie{border-left:3px solid #0891b2;background:linear-gradient(135deg,rgba(8,145,178,0.06) 0%,var(--surface) 55%);}
 .ur-notitie{
   margin:0 14px 4px;border:none;border-top:1px solid var(--border);
   background:transparent;
@@ -2216,6 +2239,10 @@ header{
 .ur-km-in:focus{border-color:#0891b2;}
 .ur-km-in::placeholder{color:var(--text3);font-weight:500;}
 .ur-km-suf{font-size:0.7rem;font-weight:600;color:var(--text3);}
+/* Validatie-waarschuwing: amber outline + subtiele shake bij extreme waarden */
+.ur-rij-uren.warn,.ur-km-in.warn{border-color:#d97706 !important;box-shadow:0 0 0 3px rgba(217,119,6,0.15) !important;background:rgba(217,119,6,0.06) !important;color:#d97706 !important;}
+.ur-dag-tot.warn{color:#d97706 !important;background:rgba(217,119,6,0.1);padding:2px 8px;border-radius:99px;border:1px solid rgba(217,119,6,0.25);}
+.ur-warn-tip{display:inline-flex;align-items:center;gap:3px;font-size:0.58rem;font-weight:700;color:#d97706;background:rgba(217,119,6,0.1);border:1px solid rgba(217,119,6,0.2);border-radius:6px;padding:2px 6px;margin-left:6px;}
 .ur-pdf-btn{width:100%;background:linear-gradient(145deg,#0f172a,#1e293b);color:#fff;border:none;border-radius:14px;padding:14px 16px;margin-bottom:14px;font-family:inherit;font-size:0.86rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 18px rgba(15,23,42,0.35),inset 0 1px 0 rgba(255,255,255,0.1);transition:transform 0.15s;}
 .ur-pdf-btn:active{transform:scale(0.98);}
 .ur-pdf-btn svg{flex-shrink:0;}
@@ -2253,6 +2280,21 @@ header{
 .ur-alles-rij-bar{width:55px;height:5px;background:rgba(255,255,255,0.15);border-radius:99px;overflow:hidden;flex-shrink:0;}
 .ur-alles-rij-fill{height:100%;background:#fff;border-radius:99px;transition:width 0.4s cubic-bezier(0.32,0.72,0,1);}
 .ur-alles-rij-uren{font-size:0.8rem;font-weight:800;color:#fff;flex-shrink:0;min-width:50px;text-align:right;}
+/* Klapbare klus-rij binnen "Per werkgever · iedereen" */
+.ur-klus-rij{cursor:pointer;border-radius:8px;transition:background 0.15s;padding-left:4px !important;padding-right:4px !important;margin:0 -4px;}
+.ur-klus-rij:active{background:rgba(255,255,255,0.08);}
+.ur-klus-rij-chev{color:rgba(255,255,255,0.5);flex-shrink:0;transition:transform 0.22s cubic-bezier(0.34,1.4,0.64,1);margin-left:2px;}
+.ur-klus-rij.open .ur-klus-rij-chev{transform:rotate(180deg);color:#fff;}
+.ur-klus-entries{display:none;margin:2px 0 8px;padding:6px 0 0 12px;border-left:2px solid rgba(255,255,255,0.25);}
+.ur-klus-entries.open{display:flex;flex-direction:column;gap:1px;animation:fds 0.22s ease;}
+.ur-klus-entry{display:flex;align-items:center;gap:8px;padding:7px 4px;border-bottom:1px dashed rgba(255,255,255,0.12);cursor:pointer;border-radius:6px;transition:background 0.15s;}
+.ur-klus-entry:last-child{border-bottom:none;}
+.ur-klus-entry:active{background:rgba(255,255,255,0.1);}
+.ur-klus-entry-datum{font-size:0.7rem;font-weight:800;color:#fff;flex-shrink:0;min-width:56px;}
+.ur-klus-entry-mid{flex:1;min-width:0;}
+.ur-klus-entry-persoon{font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ur-klus-entry-persoon .loc{color:rgba(255,255,255,0.55);font-weight:500;}
+.ur-klus-entry-uren{font-size:0.75rem;font-weight:800;color:#fff;flex-shrink:0;min-width:44px;text-align:right;}
 /* Klussen-varian: iets andere kleurtint (cyaan-blauw) */
 .ur-alles.klus{background:linear-gradient(145deg,#0891b2,#075985);box-shadow:0 6px 24px rgba(8,145,178,0.35);}
 .ur-notitie-klein{margin:6px 14px 0;width:calc(100% - 28px);background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:8px 10px;font-family:inherit;font-size:0.76rem;color:var(--text2);line-height:1.5;outline:none;resize:none;min-height:34px;box-sizing:border-box;overflow:hidden;transition:border-color 0.15s;}
@@ -2328,6 +2370,506 @@ header{
   .tpop.wc-mode-btn { transform: scale(1.04) !important; transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1) !important; }
   .tpop.nav-item    { transform: scale(1.05) !important; transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1) !important; }
 }
+
+/* ═══════════════════════════════════════════════════════
+   UREN REGISTRATIE — ONE UI POLISH
+   Alleen visueel — functionaliteit blijft intact
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Nav uren ── vollediger, tab-pill stijl ── */
+#nav-uren { padding: 6px 10px !important; gap: 4px !important; border-bottom: 1px solid var(--border) !important; }
+#nav-uren .nav-item {
+  padding: 8px 14px !important;
+  border-radius: 12px !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: var(--text3) !important;
+  transition: all 0.22s var(--ease-out) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+#nav-uren .nav-item.on {
+  background: linear-gradient(145deg, rgba(124,58,237,0.16), rgba(124,58,237,0.08)) !important;
+  color: #7c3aed !important;
+  border: 1px solid rgba(124,58,237,0.22) !important;
+  box-shadow: 0 2px 8px rgba(124,58,237,0.12) !important;
+}
+#nav-uren .nav-item.on::after { display: none !important; }
+#nav-uren .nav-item:first-child { color: var(--text3) !important; }
+
+/* ── Maand-navigatie ── premium, groter ── */
+#app-uren .wk-nav, #ur-personeel .wk-nav {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 20px !important;
+  padding: 12px 14px !important;
+  margin-bottom: 14px !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03) !important;
+}
+#app-uren .wk-period-lbl, #ur-personeel .wk-period-lbl {
+  font-size: 1.25rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.5px !important;
+}
+#app-uren .wk-period-range, #ur-personeel .wk-period-range {
+  font-size: 0.7rem !important;
+  color: var(--text3) !important;
+  font-weight: 600 !important;
+  margin-top: 3px !important;
+  letter-spacing: 0.02em !important;
+}
+#app-uren .wk-arrow, #ur-personeel .wk-arrow {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 14px !important;
+  background: var(--surface2) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text2) !important;
+}
+
+/* ── Maandtotaal balk (paars) — meer premium ── */
+.ur-mtot {
+  background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%) !important;
+  border: none !important;
+  border-radius: 22px !important;
+  padding: 18px 22px !important;
+  margin-bottom: 14px !important;
+  box-shadow: 0 10px 32px rgba(124,58,237,0.32), inset 0 1px 0 rgba(255,255,255,0.15) !important;
+  color: #fff !important;
+}
+.ur-mtot-top { gap: 12px !important; }
+.ur-mtot-lbl {
+  color: rgba(255,255,255,0.65) !important;
+  font-size: 0.6rem !important;
+  letter-spacing: 0.14em !important;
+  font-weight: 800 !important;
+}
+.ur-mtot-val {
+  color: #fff !important;
+  font-size: 1.8rem !important;
+  letter-spacing: -1px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  margin-top: 4px !important;
+}
+.ur-mtot-chev {
+  color: rgba(255,255,255,0.7) !important;
+  opacity: 1 !important;
+}
+.ur-mtot-details {
+  border-top-color: rgba(255,255,255,0.2) !important;
+  margin-top: 14px !important;
+  padding-top: 14px !important;
+}
+.ur-mtot-rij {
+  border-bottom-color: rgba(255,255,255,0.12) !important;
+  padding: 9px 4px !important;
+}
+.ur-mtot-rij-naam { color: #fff !important; font-weight: 700 !important; }
+.ur-mtot-rij-uren { color: #fff !important; font-weight: 800 !important; }
+.ur-mtot-rij-bar { background: rgba(255,255,255,0.15) !important; height: 6px !important; }
+.ur-mtot-rij-fill { background: #fff !important; }
+
+/* ── Dagkaart redesign ── veel meer premium ── */
+.ur-dag {
+  border-radius: 22px !important;
+  padding: 0 !important;
+  margin-bottom: 12px !important;
+  border: 1px solid var(--border) !important;
+  background: var(--surface) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04) !important;
+  border-left-width: 4px !important;
+  overflow: hidden !important;
+  transition: transform 0.18s var(--ease-spring), box-shadow 0.22s ease !important;
+}
+.ur-dag.today {
+  background: linear-gradient(135deg, rgba(124,58,237,0.05) 0%, var(--surface) 55%) !important;
+  border-left-color: #7c3aed !important;
+  box-shadow: 0 4px 20px rgba(124,58,237,0.1) !important;
+}
+.ur-dag.heeft-notitie {
+  border-left-color: #a78bfa !important;
+}
+.ur-dag.today.heeft-notitie { border-left-color: #7c3aed !important; }
+
+.ur-dag-hdr {
+  padding: 16px 18px 10px !important;
+  gap: 14px !important;
+  align-items: flex-start !important;
+}
+.ur-dag-nr {
+  font-size: 2rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -1.5px !important;
+  color: var(--border2) !important;
+  line-height: 1 !important;
+  min-width: 42px !important;
+  padding-top: 2px !important;
+}
+.ur-dag.heeft-notitie .ur-dag-nr { color: var(--text) !important; }
+.ur-dag.today .ur-dag-nr { color: #7c3aed !important; }
+.ur-dag-info { padding-top: 3px !important; }
+.ur-dag-naam {
+  font-size: 0.92rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.3px !important;
+  color: var(--text) !important;
+}
+.ur-dag-sub {
+  font-size: 0.66rem !important;
+  color: var(--text3) !important;
+  font-weight: 600 !important;
+  margin-top: 3px !important;
+  letter-spacing: 0.01em !important;
+}
+.ur-dag-tot {
+  font-size: 0.85rem !important;
+  font-weight: 900 !important;
+  color: #7c3aed !important;
+  padding: 6px 12px !important;
+  background: rgba(124,58,237,0.09) !important;
+  border-radius: 99px !important;
+  border: 1px solid rgba(124,58,237,0.16) !important;
+  letter-spacing: -0.3px !important;
+}
+.ur-dag-tot.nul {
+  color: var(--text3) !important;
+  background: var(--surface2) !important;
+  border-color: var(--border) !important;
+  font-weight: 700 !important;
+  font-size: 0.72rem !important;
+}
+.ur-dag-pill {
+  font-size: 0.55rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.13em !important;
+  padding: 3px 9px !important;
+  border-radius: 99px !important;
+  margin-top: 2px !important;
+}
+
+/* ── Rijen — modernere selects ── */
+.ur-rijen { padding: 6px 18px 4px !important; gap: 8px !important; }
+.ur-rij { gap: 8px !important; }
+.ur-rij-klus, .ur-rij-sub {
+  border-radius: 13px !important;
+  padding: 10px 12px !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  background: var(--surface2) !important;
+  border: 1px solid var(--border) !important;
+  transition: border-color 0.15s, box-shadow 0.15s !important;
+}
+.ur-rij-klus:focus, .ur-rij-sub:focus {
+  border-color: #7c3aed !important;
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.14) !important;
+}
+.ur-rij-uren {
+  border-radius: 13px !important;
+  width: 72px !important;
+  padding: 10px 8px !important;
+  font-size: 0.86rem !important;
+  font-weight: 800 !important;
+  background: var(--surface2) !important;
+  border: 1px solid var(--border) !important;
+}
+.ur-rij-uren:focus {
+  border-color: #7c3aed !important;
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.14) !important;
+}
+.ur-rij-label {
+  border-radius: 13px !important;
+  padding: 10px 14px !important;
+  font-size: 0.82rem !important;
+  background: linear-gradient(135deg, rgba(124,58,237,0.09), rgba(124,58,237,0.04)) !important;
+  border: 1px solid rgba(124,58,237,0.18) !important;
+  font-weight: 800 !important;
+}
+
+/* ── Extra rij knop ── verfijnd ── */
+.ur-rij-add {
+  margin: 8px auto 4px !important;
+  padding: 7px 20px !important;
+  border-radius: 12px !important;
+  font-size: 0.65rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  color: var(--text3) !important;
+  background: var(--surface2) !important;
+  border: 1px dashed var(--border2) !important;
+}
+.ur-rij-add:active { background: var(--surface3) !important; }
+
+/* ── Km-veld ── geïntegreerd in dagkaart ── */
+.ur-km-row {
+  padding: 12px 18px 4px !important;
+  margin-top: 10px !important;
+  border-top: 1px solid var(--border) !important;
+  gap: 10px !important;
+}
+.ur-km-lbl {
+  font-size: 0.62rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.11em !important;
+  color: var(--text3) !important;
+}
+.ur-km-in {
+  border-radius: 11px !important;
+  padding: 8px 10px !important;
+  font-size: 0.82rem !important;
+  font-weight: 800 !important;
+  background: var(--surface2) !important;
+  border: 1px solid var(--border) !important;
+}
+.ur-km-in:focus {
+  border-color: #0891b2 !important;
+  box-shadow: 0 0 0 3px rgba(8,145,178,0.14) !important;
+}
+
+/* ── Notitie-veld ── consistent met de rest ── */
+.ur-notitie-klein {
+  margin: 8px 18px 6px !important;
+  width: calc(100% - 36px) !important;
+  border-radius: 11px !important;
+  padding: 10px 12px !important;
+  font-size: 0.8rem !important;
+  background: var(--surface2) !important;
+  border: 1px solid var(--border) !important;
+  line-height: 1.6 !important;
+}
+.ur-notitie-klein:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px var(--accent-glow) !important;
+}
+.ur-status-row {
+  padding: 4px 18px 12px !important;
+}
+
+/* ── Week-scheidingsregel (Vandaag / Deze week / etc.) ── */
+.ur-week-sep {
+  padding: 24px 6px 10px !important;
+}
+.ur-week-sep-lbl {
+  font-size: 0.65rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.13em !important;
+  color: var(--text2) !important;
+}
+
+/* ── Iedereen samen balk (paars) ── premium One UI ── */
+.ur-alles {
+  border-radius: 22px !important;
+  padding: 20px 22px !important;
+  margin-bottom: 12px !important;
+  box-shadow: 0 10px 32px rgba(124,58,237,0.35), inset 0 1px 0 rgba(255,255,255,0.15) !important;
+}
+.ur-alles-lbl {
+  font-size: 0.6rem !important;
+  letter-spacing: 0.14em !important;
+  color: rgba(255,255,255,0.7) !important;
+}
+.ur-alles-val {
+  font-size: 2rem !important;
+  letter-spacing: -1.5px !important;
+  margin-top: 4px !important;
+}
+.ur-alles-sub {
+  font-size: 0.66rem !important;
+  color: rgba(255,255,255,0.6) !important;
+  font-weight: 600 !important;
+  margin-top: 3px !important;
+}
+/* Per werkgever variant (cyaan/blauw) */
+.ur-alles.klus {
+  background: linear-gradient(135deg, #22d3ee 0%, #0369a1 100%) !important;
+  box-shadow: 0 10px 32px rgba(8,145,178,0.35), inset 0 1px 0 rgba(255,255,255,0.15) !important;
+}
+
+/* ── Personeel-lijst kaart ── luchtiger ── */
+.urp-hdr {
+  margin: 6px 4px 16px !important;
+}
+.urp-hdr-titel {
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.5px !important;
+}
+.urp-add {
+  border-radius: 14px !important;
+  padding: 10px 16px !important;
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 16px rgba(124,58,237,0.35) !important;
+}
+.urp-card {
+  border-radius: 20px !important;
+  padding: 16px 18px !important;
+  gap: 14px !important;
+  border-left-width: 4px !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04) !important;
+}
+.urp-card-avatar {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 14px !important;
+  font-size: 1.1rem !important;
+  box-shadow: 0 4px 12px rgba(124,58,237,0.3) !important;
+}
+.urp-card-naam {
+  font-size: 0.96rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.2px !important;
+}
+.urp-card-sub {
+  font-size: 0.7rem !important;
+  color: var(--text3) !important;
+  font-weight: 600 !important;
+  margin-top: 3px !important;
+}
+
+/* ── Personeel-detail top ── modern ── */
+.urp-detail-top {
+  padding: 4px 2px 4px !important;
+  gap: 12px !important;
+  margin-bottom: 16px !important;
+}
+.urp-back, .urp-del {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 14px !important;
+}
+.urp-detail-naam-in {
+  font-size: 1.2rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.5px !important;
+}
+.urp-detail-sub {
+  font-size: 0.62rem !important;
+  color: var(--text3) !important;
+  font-weight: 600 !important;
+  margin-top: 3px !important;
+  letter-spacing: 0.04em !important;
+}
+
+/* ── PDF-knop ── premium dark button ── */
+.ur-pdf-btn {
+  background: linear-gradient(135deg, #1a2440, #0f172a) !important;
+  border-radius: 20px !important;
+  padding: 16px 20px !important;
+  font-size: 0.88rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.2px !important;
+  gap: 12px !important;
+  box-shadow: 0 8px 28px rgba(15,23,42,0.4), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+  margin-bottom: 16px !important;
+}
+.ur-pdf-btn:active {
+  box-shadow: 0 2px 8px rgba(15,23,42,0.3) !important;
+}
+
+/* ── Klussen tab ── moderner ── */
+.klus-zoek-in {
+  border-radius: 14px !important;
+  padding: 12px 40px 12px 40px !important;
+  font-size: 0.86rem !important;
+  font-weight: 600 !important;
+}
+.klus-zoek-in:focus {
+  border-color: #7c3aed !important;
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.14) !important;
+}
+.klus-card {
+  border-radius: 20px !important;
+  padding: 16px 18px !important;
+  margin-bottom: 12px !important;
+  border-left-width: 4px !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04) !important;
+}
+.klus-naam-in {
+  font-size: 1rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.3px !important;
+}
+.klus-sub-chip {
+  border-radius: 99px !important;
+  padding: 5px 8px 5px 12px !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  background: rgba(124,58,237,0.1) !important;
+  border: 1px solid rgba(124,58,237,0.22) !important;
+  color: #7c3aed !important;
+}
+.klus-sub-add {
+  border-radius: 99px !important;
+  padding: 5px 14px !important;
+  font-size: 0.7rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.03em !important;
+}
+.klus-hist-btn {
+  border-radius: 12px !important;
+  padding: 9px 14px !important;
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.01em !important;
+}
+.klus-hist-datum {
+  font-size: 0.76rem !important;
+  font-weight: 800 !important;
+}
+.klus-hist-persoon {
+  font-size: 0.74rem !important;
+  font-weight: 700 !important;
+}
+.klus-hist-uren {
+  font-size: 0.8rem !important;
+  font-weight: 900 !important;
+}
+.klus-del {
+  border-radius: 11px !important;
+  width: 34px !important;
+  height: 34px !important;
+}
+
+/* ── ur-add-row: naamveld voor toevoegen ── */
+.ur-add-row input {
+  border-radius: 14px !important;
+  padding: 12px 14px !important;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+}
+.ur-add-row button {
+  border-radius: 14px !important;
+  padding: 12px 20px !important;
+  font-size: 0.84rem !important;
+  font-weight: 800 !important;
+}
+
+/* ── Klap-details in "Per werkgever" balk ── consistent ── */
+.ur-klus-rij { border-radius: 10px !important; padding: 6px 6px !important; margin: 0 -6px !important; }
+.ur-klus-entry { border-radius: 8px !important; padding: 8px 6px !important; }
+.ur-klus-entry-datum { font-size: 0.72rem !important; font-weight: 800 !important; }
+.ur-klus-entry-persoon { font-size: 0.74rem !important; font-weight: 700 !important; }
+.ur-klus-entry-uren { font-size: 0.78rem !important; font-weight: 900 !important; }
+
+/* ── Toekomstige-dagen indicator subtieler ── */
+.ur-dag.toekomst {
+  background: linear-gradient(135deg, rgba(8,145,178,0.04) 0%, var(--surface) 60%) !important;
+  border-left: 4px dashed rgba(8,145,178,0.4) !important;
+}
+.ur-dag.toekomst.heeft-notitie {
+  background: linear-gradient(135deg, rgba(8,145,178,0.08) 0%, var(--surface) 60%) !important;
+  border-left: 4px solid #0891b2 !important;
+}
+
+/* ── Subtiele card-entrance animatie (bestaat al maar wat langzamer) ── */
+@keyframes urCardIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.ur-dag { animation: urCardIn 0.28s cubic-bezier(0.32,0.72,0,1) both !important; }
 </style>
 </head>
 <body>
@@ -2470,6 +3012,9 @@ header{
   <div class="nav-item" id="nav-ur-personeel" onclick="urGaNaar('personeel')">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg> Personeel
   </div>
+  <div class="nav-item" id="nav-ur-overzicht" onclick="urGaNaar('overzicht')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg> Overzicht
+  </div>
   <div class="nav-item" id="nav-ur-klussen" onclick="urGaNaar('klussen')">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-2 .89-2 2v11c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg> Klussen
   </div>
@@ -2553,6 +3098,10 @@ header{
         <div class="chip chip-ok" id="f-ok" onclick="setF('ok')"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Schema</div>
         <div class="sep"></div>
         <div class="chip sort" id="sort-btn" onclick="cycleSorteer()"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="9" y2="18"/></svg> Datum</div>
+        <div class="chip sort" id="filter-btn" onclick="toggleFilter()"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg> Filter<span class="filter-badge" id="filter-badge">0</span></div>
+      </div>
+      <div class="filter-card" id="filter-card">
+        <div class="filter-panel" id="filter-panel"></div>
       </div>
       <div class="list" id="list"></div>
     </div>
@@ -2779,6 +3328,7 @@ header{
   <div id="app-uren">
     <div id="ur-list"></div>
     <div id="ur-personeel" style="display:none;"></div>
+    <div id="ur-overzicht" style="display:none;"></div>
     <div id="ur-klussen" style="display:none;"></div>
   </div>
 
@@ -2993,7 +3543,9 @@ const CAO_LONEN = [
 ];
 
 function caoActueel(){
-  const nu = new Date().toISOString().slice(0,10);
+  // Lokale datum gebruiken; toISOString() geeft UTC en zou 's nachts de verkeerde CAO-tier kunnen selecteren
+  const d = new Date();
+  const nu = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   return CAO_LONEN.find(c => nu >= c.vanaf) || CAO_LONEN[CAO_LONEN.length-1];
 }
 
@@ -3325,6 +3877,12 @@ const klussenCol = collection(db, 'klussen');
 const _dDashDoc = doc(db, 'config', 'dashboard');
 
 let kl = [], vK = null, actF = 'all', actN = null, sId = null, actST = 'gedaan', uT = null, si = 0, wo = 0, navTab = 'klanten', selectedWDag = null;
+// Uitgebreide klantenfilter state
+let filterOpen = false;
+let filterPlaatsen = new Set();
+let filterFreqs = new Set();
+let filterPrijsMin = '';
+let filterPrijsMax = '';
 
 const FL={2:"2 wkn",4.3:"1 mnd",6:"6 wkn",8.7:"2 mnd",10.8:"2,5 mnd",13:"3 mnd",17.4:"4 mnd",26:"6 mnd"};
 const SO=['datum','plaats','naam'];const SL={datum:'Datum',plaats:'Plaats',naam:'Naam'};
@@ -3365,7 +3923,10 @@ function fD(due){const t=new Date();t.setHours(0,0,0,0);const d=new Date(due);d.
 function fDt(d){return new Date(d).toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'});}
 function fL(d){return new Date(d).toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'});}
 function fE(n){return'€ '+Number(n||0).toFixed(2).replace('.',',');}
-function vnd(){return new Date().toISOString().split('T')[0];}
+// Lokale ISO-datum helpers — NOOIT toISOString() gebruiken want dat geeft UTC
+// en zou 's nachts (00:00-02:00 NL) de datum een dag terug zetten
+function _lokaalISO(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function vnd(){return _lokaalISO(new Date());}
 function natSort(a,b){return a.localeCompare(b,"nl",{numeric:true,sensitivity:"base"});}
 
 window.slaOp = function slaOp(txt){vK=JSON.parse(JSON.stringify(kl));document.getElementById('undo-t').textContent=txt;document.getElementById('undo').classList.add('show');if(uT)clearTimeout(uT);uT=setTimeout(()=>{document.getElementById('undo').classList.remove('show');vK=null;},6000);}
@@ -3395,6 +3956,14 @@ window.renderK = function renderK(){
   let v=kl.map(x=>({...x,d:dT(x.laatste,x.freq),due:vD(x.laatste,x.freq)}));
   if(actF!=='all')v=v.filter(x=>st(x.d)===actF);
   if(z)v=v.filter(x=>x.naam.toLowerCase().includes(z)||x.plaats.toLowerCase().includes(z));
+  // Uitgebreide filters
+  if(filterPlaatsen.size) v=v.filter(x=>filterPlaatsen.has(x.plaats||'Overig'));
+  if(filterFreqs.size) v=v.filter(x=>filterFreqs.has(String(x.freq)));
+  const pMin = parseFloat(String(filterPrijsMin).replace(',','.'));
+  const pMax = parseFloat(String(filterPrijsMax).replace(',','.'));
+  if(isFinite(pMin)) v=v.filter(x=>(Number(x.prijs)||0) >= pMin);
+  if(isFinite(pMax)) v=v.filter(x=>(Number(x.prijs)||0) <= pMax);
+  renderFilterPanel();
   const s=SO[si];
   if(s==='datum')v.sort((a,b)=>a.d-b.d||natSort(a.naam,b.naam));else if(s==='plaats')v.sort((a,b)=>natSort(a.plaats,b.plaats)||a.d-b.d||natSort(a.naam,b.naam));else v.sort((a,b)=>natSort(a.naam,b.naam));
   const alle=kl.map(x=>({...x,d:dT(x.laatste,x.freq)}));
@@ -3454,11 +4023,11 @@ window.renderWeek = function renderWeek(){
   const wd=Array.from({length:7},(_,i)=>{const d=new Date(ma);d.setDate(ma.getDate()+i);return d;});
   document.getElementById('week-sub').textContent=wd[0].toLocaleDateString('nl-NL',{day:'numeric',month:'short'})+' – '+wd[6].toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'});
   document.getElementById('week-t').textContent=wo===0?'Deze week':wo===1?'Volgende week':wo===-1?'Vorige week':(wo>0?`+${wo}`:`${wo}`)+' weken';
-  const kpd={};kl.forEach(x=>{const d=vD(x.laatste,x.freq);d.setHours(0,0,0,0);const k=d.toISOString().split('T')[0];if(!kpd[k])kpd[k]=[];kpd[k].push(x);});
-  if(selectedWDag && !wd.find(d=>d.toISOString().split('T')[0]===selectedWDag)) selectedWDag=null;
+  const kpd={};kl.forEach(x=>{const d=vD(x.laatste,x.freq);d.setHours(0,0,0,0);const k=_lokaalISO(d);if(!kpd[k])kpd[k]=[];kpd[k].push(x);});
+  if(selectedWDag && !wd.find(d=>_lokaalISO(d)===selectedWDag)) selectedWDag=null;
   // Day grid
   document.getElementById('week-grid').innerHTML=wd.map((d,i)=>{
-    const k=d.toISOString().split('T')[0];
+    const k=_lokaalISO(d);
     const c=kpd[k]?.length||0;
     const isToday=d.getTime()===vd.getTime();
     const isSel=selectedWDag===k;
@@ -3469,7 +4038,7 @@ window.renderWeek = function renderWeek(){
     return`<div class="${cls}" onclick="wdagKlik('${k}')"><div class="wk-day-name">${dn[i]}</div><div class="wk-day-num">${d.getDate()}</div><div class="wk-day-dot"></div></div>`;
   }).join('');
   // Client list grouped by day
-  const wkAll=[];wd.forEach(d=>{const k=d.toISOString().split('T')[0];(kpd[k]||[]).forEach(x=>wkAll.push({...x,dueDate:d,dateKey:k}));});
+  const wkAll=[];wd.forEach(d=>{const k=_lokaalISO(d);(kpd[k]||[]).forEach(x=>wkAll.push({...x,dueDate:d,dateKey:k}));});
   const gefilterd=selectedWDag?wkAll.filter(x=>x.dateKey===selectedWDag):wkAll;
   const el=document.getElementById('week-list');
   if(!gefilterd.length){el.innerHTML=`<div class="week-leeg">${selectedWDag?'Geen klanten op deze dag':'Geen klanten gepland deze week'}</div>`;return;}
@@ -3532,6 +4101,73 @@ window.slaOmzetOp=async function(){
 window.setF=function(f){actF=f;renderK();}
 window.toggleF=function(f){actF=actF===f?'all':f;renderK();}
 window.cycleSorteer=function(){si=(si+1)%SO.length;renderK();}
+
+// ═══ Uitgebreide filters voor klantenkaarten ═══
+window.toggleFilter=function(){
+  filterOpen = !filterOpen;
+  const card = document.getElementById('filter-card');
+  if(card) card.classList.toggle('open', filterOpen);
+  if(filterOpen) renderFilterPanel();
+};
+window.togglePlaats=function(p){
+  if(filterPlaatsen.has(p)) filterPlaatsen.delete(p); else filterPlaatsen.add(p);
+  renderK();
+};
+window.toggleFreq=function(f){
+  const s = String(f);
+  if(filterFreqs.has(s)) filterFreqs.delete(s); else filterFreqs.add(s);
+  renderK();
+};
+window.setFilterPrijsMin=function(v){filterPrijsMin=v;renderK();};
+window.setFilterPrijsMax=function(v){filterPrijsMax=v;renderK();};
+window.wisFilters=function(){
+  filterPlaatsen.clear();
+  filterFreqs.clear();
+  filterPrijsMin='';
+  filterPrijsMax='';
+  renderK();
+};
+
+function renderFilterPanel(){
+  const panel = document.getElementById('filter-panel');
+  if(!panel) return;
+  const badge = document.getElementById('filter-badge');
+  const aantalActief = filterPlaatsen.size + filterFreqs.size + (filterPrijsMin?1:0) + (filterPrijsMax?1:0);
+  if(badge){ badge.textContent = String(aantalActief); badge.classList.toggle('on', aantalActief > 0); }
+  if(!filterOpen) return;
+
+  const uniekPlaatsen = [...new Set(kl.map(x => x.plaats || 'Overig'))].sort((a,b)=>natSort(a,b));
+  const uniekFreqs = [...new Set(kl.map(x => x.freq))].sort((a,b) => a - b);
+  const FL_LOKAAL = {2:"2 wkn",4.3:"1 mnd",6:"6 wkn",8.7:"2 mnd",10.8:"2,5 mnd",13:"3 mnd",17.4:"4 mnd",26:"6 mnd"};
+
+  const plaatsChips = uniekPlaatsen.map(p =>
+    `<div class="filter-chip ${filterPlaatsen.has(p)?'on':''}" onclick="togglePlaats('${p.replace(/'/g,"\\'")}')">${_hEsc(p)}</div>`
+  ).join('');
+  const freqChips = uniekFreqs.map(f =>
+    `<div class="filter-chip ${filterFreqs.has(String(f))?'on':''}" onclick="toggleFreq(${f})">${FL_LOKAAL[f]||f+' wkn'}</div>`
+  ).join('');
+
+  const heeftActief = aantalActief > 0;
+  panel.innerHTML = `
+    ${uniekPlaatsen.length > 1 ? `<div class="filter-group">
+      <div class="filter-lbl">Plaats</div>
+      <div class="filter-chips">${plaatsChips}</div>
+    </div>` : ''}
+    ${uniekFreqs.length > 1 ? `<div class="filter-group">
+      <div class="filter-lbl">Frequentie</div>
+      <div class="filter-chips">${freqChips}</div>
+    </div>` : ''}
+    <div class="filter-group">
+      <div class="filter-lbl">Prijsbereik (€)</div>
+      <div class="filter-prijs">
+        <input type="text" inputmode="decimal" placeholder="min" value="${filterPrijsMin}" oninput="setFilterPrijsMin(this.value)">
+        <span>tot</span>
+        <input type="text" inputmode="decimal" placeholder="max" value="${filterPrijsMax}" oninput="setFilterPrijsMax(this.value)">
+      </div>
+    </div>
+    ${heeftActief ? '<button class="filter-wis" onclick="wisFilters()">✕ Wis alle filters</button>' : ''}
+  `;
+}
 window.zoekWis=function(){document.getElementById('zoek-in').value='';document.getElementById('zoek-x').style.display='none';renderK();}
 window.toggleAdd=function(){const b=document.getElementById('add-body'),i=document.getElementById('add-ic');b.classList.toggle('open');i.classList.toggle('open');}
 
@@ -3540,8 +4176,15 @@ window.voegToe=async function(){
   const freq=parseFloat(document.getElementById('n-freq').value);
   const vd=document.getElementById('n-datum').value;
   const plaats=document.getElementById('n-plaats').value.trim();
-  const prijs=parseFloat(document.getElementById('n-prijs').value)||0;
+  const prijs=parseFloat(String(document.getElementById('n-prijs').value).replace(',','.'))||0;
   if(!naam||!vd){alert('Vul naam en volgende beurt in.');return;}
+  // Validatie: verdachte klantprijs → soft confirm zodat gebruiker typo's opmerkt
+  if(prijs > 0 && (prijs < 5 || prijs > 200)){
+    const msg = prijs < 5
+      ? `Prijs is heel laag: €${prijs.toFixed(2).replace('.',',')}. Klopt dit? (typfout mogelijk)`
+      : `Prijs is heel hoog: €${prijs.toFixed(2).replace('.',',')}. Klopt dit? (typfout mogelijk)`;
+    if(!confirm(msg)) return;
+  }
   const nieuw={id:Date.now()*100+Math.floor(Math.random()*100),naam,plaats,freq,laatste:lVV(vd,freq),notitie:'',prijs,historie:[]};
   slaOp(`"${naam}" toegevoegd`);kl.push(nieuw);
   document.getElementById('n-naam').value='';document.getElementById('n-datum').value='';
@@ -3573,7 +4216,7 @@ window.openSheet=function(id){
   if(!x){renderK();return;} // al verwijderd op ander apparaat
   document.getElementById('s-sub').textContent=x.naam;
   document.getElementById('s-datum-gedaan').value=vnd();document.getElementById('s-datum-gedaan').max=vnd();
-  document.getElementById('s-datum-volgende').value=vD(x.laatste,x.freq).toISOString().split('T')[0];
+  document.getElementById('s-datum-volgende').value=_lokaalISO(vD(x.laatste,x.freq));
   document.getElementById('s-freq').value=x.freq;document.getElementById('s-naam').value=x.naam;document.getElementById('s-plaats').value=x.plaats||'';
   sTab('gedaan');updateRes();document.getElementById('overlay').classList.add('open');
 }
@@ -3731,15 +4374,19 @@ window.startUrenListener = function() {
   _urpMonth = new Date().getMonth();
   const navE = document.getElementById('nav-ur-eigen');
   const navP = document.getElementById('nav-ur-personeel');
+  const navO = document.getElementById('nav-ur-overzicht');
   const navK = document.getElementById('nav-ur-klussen');
   if(navE) navE.classList.add('on');
   if(navP) navP.classList.remove('on');
+  if(navO) navO.classList.remove('on');
   if(navK) navK.classList.remove('on');
   const eigenEl = document.getElementById('ur-list');
   const persoEl = document.getElementById('ur-personeel');
+  const ovzEl   = document.getElementById('ur-overzicht');
   const klusEl  = document.getElementById('ur-klussen');
   if(eigenEl) eigenEl.style.display = '';
   if(persoEl) persoEl.style.display = 'none';
+  if(ovzEl)   ovzEl.style.display = 'none';
   if(klusEl)  klusEl.style.display = 'none';
 
   // Klussenlijst listener (gedeeld voor eigen + personeel)
@@ -3750,6 +4397,7 @@ window.startUrenListener = function() {
       if(_urView === 'klussen'){ if(!_urActiveInside('ur-klussen')) _renderKlussen(); }
       else if(_urView === 'eigen'){ if(!_urActiveInside('ur-list')) renderUren(); }
       else if(_urView === 'detail'){ if(!_urActiveInside('ur-personeel')) _renderPersoneelDetail(); }
+      else if(_urView === 'overzicht'){ if(!_urActiveInside('ur-overzicht')) _renderOverzicht(); }
     }, err => console.error('klussen:', err));
   }
 
@@ -3763,18 +4411,16 @@ window.startUrenListener = function() {
     });
     // Alleen her-renderen als er nergens actief getypt wordt
     if(_urView === 'eigen' && !_urActiveInside('ur-list')) renderUren();
-    // Lijst-view toont ook eigen uren → her-renderen voor "Iedereen samen"-balk
-    if(_urView === 'lijst' && !_urActiveInside('ur-personeel')) _renderPersoneelLijst();
+    // Overzicht-view toont eigen + personeel uren
+    if(_urView === 'overzicht' && !_urActiveInside('ur-overzicht')) _renderOverzicht();
   }, err => console.error('uren:', err));
 };
 
-// Geeft alle dagen van een maand terug (ISO-strings, aflopend)
-// Voor de huidige maand: alleen tot vandaag
+// Geeft alle dagen van een maand terug (ISO-strings, aflopend) — inclusief toekomstige dagen
+// zodat je vooruit kan plannen. Totalen tellen alles mee — user kan zelf onderscheid maken.
 function _urDagenInMaand(year, month){
   const days = [];
-  const nu = new Date();
-  const isCurrent = year === nu.getFullYear() && month === nu.getMonth();
-  const last = isCurrent ? nu.getDate() : new Date(year, month + 1, 0).getDate();
+  const last = new Date(year, month + 1, 0).getDate();
   for(let d = last; d >= 1; d--){
     const iso = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     days.push(iso);
@@ -3787,13 +4433,15 @@ const _UR_MND_LBL = ['Januari','Februari','Maart','April','Mei','Juni','Juli','A
 function _urMonthNavHtml(y, m, prevFn, nextFn){
   const nu = new Date();
   const isCurrent = y === nu.getFullYear() && m === nu.getMonth();
+  const isFuture = (y > nu.getFullYear()) || (y === nu.getFullYear() && m > nu.getMonth());
+  const label = isCurrent ? ' · deze maand' : (isFuture ? ' · toekomst' : '');
   return `<div class="wk-nav" style="margin-bottom:14px">
     <button class="wk-arrow" onclick="${prevFn}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="wk-period">
       <div class="wk-period-lbl">${_UR_MND_LBL[m]}</div>
-      <div class="wk-period-range">${y}${isCurrent?' · deze maand':''}</div>
+      <div class="wk-period-range">${y}${label}</div>
     </div>
-    <button class="wk-arrow" onclick="${nextFn}" ${isCurrent?'disabled style="opacity:0.3;pointer-events:none"':''}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+    <button class="wk-arrow" onclick="${nextFn}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
   </div>`;
 }
 
@@ -3803,8 +4451,6 @@ window.urMaandPrev = function(){
   renderUren();
 };
 window.urMaandNext = function(){
-  const nu = new Date();
-  if(_urYear === nu.getFullYear() && _urMonth === nu.getMonth()) return;
   _urMonth++;
   if(_urMonth > 11){ _urMonth = 0; _urYear++; }
   renderUren();
@@ -3824,14 +4470,40 @@ function _urEsc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+// ════ Robuust numeriek parsen (accepteert "4,5" én "4.5") ════
+// Kritiek voor administratie: NL-locale toetsenborden geven soms komma i.p.v. punt.
+function _parseNum(v){
+  if(v == null || v === '' || v === false) return 0;
+  const s = String(v).trim().replace(',', '.').replace(/[^\d.\-]/g,'');
+  if(!s || s === '-' || s === '.') return 0;
+  const n = parseFloat(s);
+  return isFinite(n) ? n : 0;
+}
+// ════ Rond op 2 decimalen — voorkomt float-drift ════
+function _urRound2(n){ return Math.round(n * 100) / 100; }
+// ════ Vandaag in lokale tijd (NL) — NOOIT toISOString() gebruiken want dat geeft UTC
+// Bug: tussen 00:00 en 02:00 zou UTC 'gisteren' teruggeven → uren op verkeerde dag
+function _todayISO(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
 // ════ Gedeelde dag-kaart engine (eigen 'ur' + personeel 'urp') ════
 const _UR_DEFAULT_RIJEN = 5;
 
 function _urKey(prefix, iso){ return prefix + '|' + iso; }
 
 function _urFmtUren(n){
-  const v = Math.round(n * 100) / 100;
-  return (v % 1 === 0 ? v : String(v).replace('.', ',')) + 'u';
+  // Rond af op 2 decimalen, strip trailing zeros, gebruik NL-komma
+  const v = _urRound2(_parseNum(n));
+  const s = v.toFixed(2).replace(/0+$/,'').replace(/\.$/,'').replace('.', ',');
+  return (s || '0') + 'u';
+}
+function _urFmtKm(n){
+  const v = _urRound2(_parseNum(n));
+  if(v <= 0) return '';
+  const s = v.toFixed(2).replace(/0+$/,'').replace(/\.$/,'').replace('.', ',');
+  return s + ' km';
 }
 
 function _urInitRows(prefix, iso, saved){
@@ -3855,7 +4527,7 @@ function _urKlusOpties(sel){
 function _urRijHtml(prefix, iso, idx, row){
   const klus = _urKlussen.find(k => k.id === row.k);
   const subs = klus ? klus.subs : [];
-  const urenInput = `<input type="number" inputmode="decimal" class="ur-rij-uren" placeholder="uur" step="0.5" min="0" value="${row.u !== '' && row.u != null ? row.u : ''}" oninput="urUrenIn('${prefix}','${iso}',${idx},this.value)">`;
+  const urenInput = `<input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-rij-uren" placeholder="uur" value="${row.u !== '' && row.u != null ? String(row.u).replace('.',',') : ''}" oninput="urUrenIn('${prefix}','${iso}',${idx},this.value)">`;
 
   // Ingevulde rij: toon als "Werkgever / Locatie" (of alleen "Werkgever" bij Geen) — tik om te wijzigen
   const compleet = row.k && klus && (!subs.length || row.s);
@@ -3892,15 +4564,16 @@ function _urRijenHtml(prefix, iso){
 }
 
 function _urDagCardHtml(prefix, iso, dagData, placeholder){
-  const today = new Date().toISOString().slice(0,10);
+  const today = _todayISO();
   const isToday = iso === today;
+  const isFuture = iso > today; // ISO YYYY-MM-DD is lexicografisch sorteerbaar
   const { dow, dagNaam, dag, maand } = _urFmtDate(iso);
   const notitie = dagData.notitie || '';
   const km = dagData.km || '';
   const rows = _urInitRows(prefix, iso, dagData.rijen);
-  const tot = rows.reduce((s,r) => s + (parseFloat(r.u) || 0), 0);
+  const tot = _urRound2(rows.reduce((s,r) => _urRound2(s + _parseNum(r.u)), 0));
   const heeftInhoud = tot > 0 || notitie.trim().length > 0 || rows.some(r => r.k) || km !== '';
-  return `<div class="ur-dag${isToday?' today':''}${heeftInhoud?' heeft-notitie':''}" id="dag-${prefix}-${iso}">
+  return `<div class="ur-dag${isToday?' today':''}${heeftInhoud?' heeft-notitie':''}${isFuture?' toekomst':''}" id="dag-${prefix}-${iso}">
     <div class="ur-dag-hdr">
       <div class="ur-dag-nr">${dag}</div>
       <div class="ur-dag-info">
@@ -3908,7 +4581,7 @@ function _urDagCardHtml(prefix, iso, dagData, placeholder){
         <div class="ur-dag-sub">${maand}${isToday ? ' · ' + dow : ''}</div>
       </div>
       <div class="ur-dag-tot${tot>0?'':' nul'}" id="${prefix}-tot-${iso}">${_urFmtUren(tot)}</div>
-      <span class="ur-dag-pill">Nu</span>
+      <span class="ur-dag-pill">${isToday ? 'Nu' : (isFuture ? 'Gepland' : '')}</span>
     </div>
     <div class="ur-rijen" id="${prefix}-rijen-${iso}">${_urRijenHtml(prefix, iso)}</div>
     <button class="ur-rij-add" onclick="urRijToevoegen('${prefix}','${iso}')">
@@ -3917,7 +4590,7 @@ function _urDagCardHtml(prefix, iso, dagData, placeholder){
     </button>
     <div class="ur-km-row">
       <span class="ur-km-lbl"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg> Km rijden</span>
-      <input type="number" inputmode="decimal" class="ur-km-in" id="${prefix}-km-${iso}" placeholder="0" min="0" step="1" value="${km}" oninput="urKmIn('${prefix}','${iso}',this.value)">
+      <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-km-in" id="${prefix}-km-${iso}" placeholder="0" value="${km !== '' && km != null ? String(km).replace('.',',') : ''}" oninput="urKmIn('${prefix}','${iso}',this.value)">
       <span class="ur-km-suf">km</span>
     </div>
     <textarea class="ur-notitie-klein" id="${prefix}-not-${iso}" placeholder="${placeholder}" oninput="urNotitieIn('${prefix}','${iso}')">${_urEsc(notitie)}</textarea>
@@ -3949,27 +4622,32 @@ function _urUpdateTotalen(prefix){
     const rows = _urRows[_urKey(prefix, iso)] || [];
     let dagtot = 0;
     rows.forEach(r => {
-      const u = parseFloat(r.u) || 0;
+      const u = _parseNum(r.u);
       if(u <= 0) return;
-      dagtot += u;
+      dagtot = _urRound2(dagtot + u);
       const key = r.k || '__leeg';
-      perKlus[key] = (perKlus[key] || 0) + u;
+      perKlus[key] = _urRound2((perKlus[key] || 0) + u);
     });
-    mtot += dagtot;
+    mtot = _urRound2(mtot + dagtot);
     // Km live uitlezen uit input, of anders uit opgeslagen data
     const kmEl = document.getElementById(`${prefix}-km-${iso}`);
     let km = 0;
-    if(kmEl && kmEl.value !== ''){ km = parseFloat(kmEl.value) || 0; }
+    if(kmEl && kmEl.value !== ''){ km = _parseNum(kmEl.value); }
     else {
       const bron = prefix === 'ur' ? _urData[iso] : ((_urPData[_urStaffSel]||{})[iso]);
-      km = (bron && bron.km) ? parseFloat(bron.km) || 0 : 0;
+      km = bron ? _parseNum(bron.km) : 0;
     }
-    mkm += km;
+    mkm = _urRound2(mkm + km);
     const el = document.getElementById(`${prefix}-tot-${iso}`);
-    if(el){ el.textContent = _urFmtUren(dagtot); el.classList.toggle('nul', !(dagtot > 0)); }
+    if(el){
+      el.textContent = _urFmtUren(dagtot);
+      el.classList.toggle('nul', !(dagtot > 0));
+      // Validatie: > 16u op één dag is verdacht (mens werkt niet meer dan 16u)
+      el.classList.toggle('warn', dagtot > 16);
+    }
   });
   const m = document.getElementById(`${prefix}-mtot`);
-  if(m) m.textContent = _urFmtUren(mtot) + (mkm > 0 ? ` · ${Math.round(mkm)}km` : '');
+  if(m) m.textContent = _urFmtUren(mtot) + (mkm > 0 ? ` · ${_urFmtKm(mkm)}` : '');
 
   // Details per hoofdklus (aflopend op uren)
   const details = document.getElementById(`${prefix}-mtot-details`);
@@ -4003,35 +4681,80 @@ function _urResizeNot(prefix, iso){
   ta.style.height = ta.scrollHeight + 'px';
 }
 
+// ════ Debounced save met flush-support ════
+// _urSaveTimers is nu een dict van { id, prefix, iso, staffSnapshot } zodat we
+// pending saves synchroon kunnen forceren (bij navigatie, PDF-export, page unload).
 const _urSaveTimers = {};
+
+async function _urDoSave(prefix, iso, staffSnapshot){
+  const key = _urKey(prefix, iso);
+  const rows = (_urRows[key] || []).filter(r => r.k || _parseNum(r.u) > 0);
+  const rijen = rows.map(r => ({ k: r.k || '', s: r.s || '', u: _urRound2(_parseNum(r.u)) }));
+  const ta = document.getElementById(`${prefix}-not-${iso}`);
+  const notitie = ta ? ta.value : ((prefix==='ur'?_urData[iso]:(_urPData[staffSnapshot]||{})[iso])||{}).notitie || '';
+  const kmEl = document.getElementById(`${prefix}-km-${iso}`);
+  const kmRaw = kmEl ? kmEl.value : ((prefix==='ur'?_urData[iso]:(_urPData[staffSnapshot]||{})[iso])||{}).km;
+  const km = _urRound2(_parseNum(kmRaw));
+  try{
+    if(prefix === 'ur'){
+      await setDoc(doc(db, 'uren', iso), { notitie, rijen, km });
+    } else {
+      if(!staffSnapshot) return;
+      await setDoc(doc(urenPCol, `${staffSnapshot}__${iso}`), { notitie, rijen, km, staffId: staffSnapshot, date: iso });
+    }
+    const ok = document.getElementById(`${prefix}-ok-${iso}`);
+    if(ok){ ok.classList.add('show'); setTimeout(() => ok.classList.remove('show'), 1600); }
+  }catch(e){ console.error('urSaveDag:', e); }
+}
+
 function _urSaveDag(prefix, iso, delay){
   const key = _urKey(prefix, iso);
-  const staffSnapshot = _urStaffSel; // vastleggen vóór de debounce
-  clearTimeout(_urSaveTimers[key]);
-  _urSaveTimers[key] = setTimeout(async () => {
-    const rows = (_urRows[key] || []).filter(r => r.k || parseFloat(r.u) > 0);
-    const rijen = rows.map(r => ({ k: r.k || '', s: r.s || '', u: parseFloat(r.u) || 0 }));
-    const ta = document.getElementById(`${prefix}-not-${iso}`);
-    const notitie = ta ? ta.value : ((prefix==='ur'?_urData[iso]:(_urPData[staffSnapshot]||{})[iso])||{}).notitie || '';
-    const kmEl = document.getElementById(`${prefix}-km-${iso}`);
-    const kmRaw = kmEl ? kmEl.value : ((prefix==='ur'?_urData[iso]:(_urPData[staffSnapshot]||{})[iso])||{}).km || '';
-    const km = kmRaw === '' || kmRaw == null ? 0 : parseFloat(kmRaw) || 0;
-    try{
-      if(prefix === 'ur'){
-        await setDoc(doc(db, 'uren', iso), { notitie, rijen, km });
-      } else {
-        if(!staffSnapshot) return;
-        await setDoc(doc(urenPCol, `${staffSnapshot}__${iso}`), { notitie, rijen, km, staffId: staffSnapshot, date: iso });
-      }
-      const ok = document.getElementById(`${prefix}-ok-${iso}`);
-      if(ok){ ok.classList.add('show'); setTimeout(() => ok.classList.remove('show'), 1600); }
-    }catch(e){ console.error('urSaveDag:', e); }
-  }, delay || 0);
+  const staffSnapshot = _urStaffSel;
+  if(_urSaveTimers[key]) clearTimeout(_urSaveTimers[key].id);
+  _urSaveTimers[key] = {
+    prefix, iso, staffSnapshot,
+    id: setTimeout(async () => {
+      await _urDoSave(prefix, iso, staffSnapshot);
+      delete _urSaveTimers[key];
+    }, delay || 0)
+  };
 }
+
+// Forceer alle openstaande debounced saves direct — kritiek vóór navigatie / PDF-export / unload
+async function _urFlushSaves(){
+  const pending = Object.values(_urSaveTimers).slice();
+  pending.forEach(p => {
+    clearTimeout(p.id);
+    delete _urSaveTimers[_urKey(p.prefix, p.iso)];
+  });
+  if(!pending.length) return;
+  await Promise.all(pending.map(p => _urDoSave(p.prefix, p.iso, p.staffSnapshot)));
+}
+
+// ═══ Vangnet: bij app-naar-achtergrond, tab-switch of unload alles direct opslaan ═══
+// Zonder dit kan een gebruiker snel de app sluiten voordat de 900ms debounce afgaat.
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'hidden') _urFlushSaves();
+});
+window.addEventListener('pagehide', () => { _urFlushSaves(); });
+window.addEventListener('beforeunload', (e) => {
+  // Als er nog pending saves zijn: sync flush (fire-and-forget) + waarschuw gebruiker
+  const nog = Object.keys(_urSaveTimers).length;
+  if(nog > 0){
+    _urFlushSaves();
+    e.preventDefault();
+    e.returnValue = 'Er worden nog uren opgeslagen. Even wachten voor je sluit.';
+    return e.returnValue;
+  }
+});
 
 window.urKmIn = function(prefix, iso, val){
   _urSaveDag(prefix, iso, 900);
   _urUpdateTotalen(prefix);
+  // Validatie: km > 500 op één dag is verdacht
+  const n = _parseNum(val);
+  const inp = document.getElementById(`${prefix}-km-${iso}`);
+  if(inp) inp.classList.toggle('warn', n > 500);
 };
 
 // ── Rij-interacties ──
@@ -4071,6 +4794,11 @@ window.urUrenIn = function(prefix, iso, idx, val){
   if(!rows || !rows[idx]) return;
   rows[idx].u = val;
   _urUpdateTotalen(prefix);
+  // Validatie: uren > 12u/rij is verdacht (mogelijke typfout)
+  const n = _parseNum(val);
+  const inputs = document.querySelectorAll(`#${prefix}-rijen-${iso} .ur-rij-uren`);
+  const inp = inputs[idx];
+  if(inp) inp.classList.toggle('warn', n > 12);
   _urSaveDag(prefix, iso, 900);
 };
 
@@ -4125,6 +4853,7 @@ function _urpInit(){
       _urStaff.sort((a,b)=>a.naam.localeCompare(b.naam,'nl'));
       if(_urView === 'lijst') _renderPersoneelLijst();
       if(_urView === 'detail') _renderPersoneelDetail();
+      if(_urView === 'overzicht') _renderOverzicht();
     }, err => console.error('personeel:', err));
   }
   if(!_urPUnsub){
@@ -4140,26 +4869,36 @@ function _urpInit(){
       // Alleen her-renderen als er nergens actief getypt wordt
       if(_urView === 'detail' && _urStaffSel && !_urActiveInside('ur-personeel')) _renderPersoneelDetail();
       if(_urView === 'lijst') _renderPersoneelLijst();
+      if(_urView === 'overzicht' && !_urActiveInside('ur-overzicht')) _renderOverzicht();
     }, err => console.error('uren_personeel:', err));
   }
 }
 
-window.urGaNaar = function(view){
+window.urGaNaar = async function(view){
+  // Bij elke tab-wissel eerst pending saves wegschrijven — voorkomt dat totalen
+  // in de nieuwe view nog met oude Firebase-cache werken.
+  try { await _urFlushSaves(); } catch(e){ console.error('flush voor nav:', e); }
   _urView = view;
   document.getElementById('nav-ur-eigen').classList.toggle('on', view === 'eigen');
-  document.getElementById('nav-ur-personeel').classList.toggle('on', view === 'personeel');
+  document.getElementById('nav-ur-personeel').classList.toggle('on', view === 'personeel' || view === 'lijst' || view === 'detail');
+  document.getElementById('nav-ur-overzicht').classList.toggle('on', view === 'overzicht');
   document.getElementById('nav-ur-klussen').classList.toggle('on', view === 'klussen');
   const eigenEl = document.getElementById('ur-list');
   const persoEl = document.getElementById('ur-personeel');
+  const ovzEl   = document.getElementById('ur-overzicht');
   const klusEl  = document.getElementById('ur-klussen');
   eigenEl.style.display = view === 'eigen' ? '' : 'none';
-  persoEl.style.display = view === 'personeel' ? '' : 'none';
+  persoEl.style.display = (view === 'personeel' || view === 'lijst' || view === 'detail') ? '' : 'none';
+  ovzEl.style.display   = view === 'overzicht' ? '' : 'none';
   klusEl.style.display  = view === 'klussen' ? '' : 'none';
   if(view === 'eigen'){
     _urStaffSel = null;
     renderUren();
   } else if(view === 'klussen'){
     _renderKlussen();
+  } else if(view === 'overzicht'){
+    _urpInit(); // ook nodig voor personeel-uren-data
+    _renderOverzicht();
   } else {
     _urpInit();
     if(_urStaffSel) _renderPersoneelDetail();
@@ -4177,7 +4916,7 @@ function _urEntriesVoorKlus(klusId){
   Object.entries(_urData).forEach(([iso, dag]) => {
     (dag.rijen || []).forEach(r => {
       if(r.k !== klusId) return;
-      const u = parseFloat(r.u) || 0;
+      const u = _urRound2(_parseNum(r.u));
       if(u <= 0 && !r.s) return;
       entries.push({ iso, source:'ur', locatie: r.s || '', uren: u });
     });
@@ -4423,34 +5162,31 @@ window.klusSubVerwijderen = async function(id, idx){
 
 let _urAllesOpen = false;
 let _urKlusOpen = false;
+let _urKlusRijOpen = {}; // { klusId: true/false } — welke werkgevers zijn uitgeklapt
 
 // Bereken uren van een dataset (eigen of één personeelslid) voor de huidige lijst-maand
 function _urUrenInMaand(datasetPerDag, year, month){
-  const nu = new Date();
-  const isCurrent = year === nu.getFullYear() && month === nu.getMonth();
-  const last = isCurrent ? nu.getDate() : new Date(year, month + 1, 0).getDate();
+  const last = new Date(year, month + 1, 0).getDate();
   let tot = 0;
   for(let d = 1; d <= last; d++){
     const iso = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const rijen = (datasetPerDag[iso] || {}).rijen || [];
-    rijen.forEach(r => { tot += parseFloat(r.u) || 0; });
+    rijen.forEach(r => { tot = _urRound2(tot + _parseNum(r.u)); });
   }
   return tot;
 }
 
 // Voegt de uren van een dataset toe aan een verzamelde per-klus optelling
 function _urVerzamelPerKlus(datasetPerDag, year, month, perKlus){
-  const nu = new Date();
-  const isCurrent = year === nu.getFullYear() && month === nu.getMonth();
-  const last = isCurrent ? nu.getDate() : new Date(year, month + 1, 0).getDate();
+  const last = new Date(year, month + 1, 0).getDate();
   for(let d = 1; d <= last; d++){
     const iso = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const rijen = (datasetPerDag[iso] || {}).rijen || [];
     rijen.forEach(r => {
-      const u = parseFloat(r.u) || 0;
+      const u = _parseNum(r.u);
       if(u <= 0) return;
       const key = r.k || '__leeg';
-      perKlus[key] = (perKlus[key] || 0) + u;
+      perKlus[key] = _urRound2((perKlus[key] || 0) + u);
     });
   }
 }
@@ -4460,6 +5196,14 @@ window.urKlusToggle = function(){
   const box = document.getElementById('ur-klus-box');
   if(box) box.classList.toggle('open', _urKlusOpen);
   haptic(8);
+};
+
+// Klapt binnen "Per werkgever · iedereen" een specifieke werkgever open/dicht
+window.urKlusRijToggle = function(kid){
+  _urKlusRijOpen[kid] = !_urKlusRijOpen[kid];
+  _urKlusOpen = true; // zorg dat de omhullende balk open blijft
+  _renderPersoneelLijst();
+  haptic(6);
 };
 
 // ════ PDF-overzicht generator ════
@@ -4481,16 +5225,17 @@ function _pdfPersoonSectie(naam, data, year, month, klussenById){
 
   dagen.forEach(iso => {
     const dag = data[iso] || {};
-    const rijenDag = (dag.rijen || []).filter(r => (parseFloat(r.u)||0) > 0 || r.k);
-    const dagU = rijenDag.reduce((s,r) => s + (parseFloat(r.u)||0), 0);
-    const dagKm = parseFloat(dag.km) || 0;
-    totU += dagU;
-    totKm += dagKm;
+    const rijenDag = (dag.rijen || []).filter(r => _parseNum(r.u) > 0 || r.k);
+    let dagU = 0;
+    rijenDag.forEach(r => { dagU = _urRound2(dagU + _parseNum(r.u)); });
+    const dagKm = _urRound2(_parseNum(dag.km));
+    totU = _urRound2(totU + dagU);
+    totKm = _urRound2(totKm + dagKm);
     rijenDag.forEach(r => {
-      const u = parseFloat(r.u) || 0;
+      const u = _parseNum(r.u);
       if(u > 0){
         const key = r.k || '__leeg';
-        perKlus[key] = (perKlus[key] || 0) + u;
+        perKlus[key] = _urRound2((perKlus[key] || 0) + u);
       }
     });
     if(dagU > 0 || dagKm > 0 || (dag.notitie||'').trim() || rijenDag.length){
@@ -4499,17 +5244,18 @@ function _pdfPersoonSectie(naam, data, year, month, klussenById){
       const klussenTxt = rijenDag.length
         ? rijenDag.map(r => {
             const k = klussenById[r.k];
-            const naam = k ? k.naam : (r.k === '' ? '—' : '(verwijderd)');
+            const knm = k ? k.naam : (r.k === '' ? '—' : '(verwijderd)');
             const loc = r.s && r.s !== '-' ? ` / ${r.s}` : '';
-            const u = parseFloat(r.u)||0;
-            return `${naam}${loc}${u>0?` — ${u}u`:''}`;
+            const u = _parseNum(r.u);
+            const uTxt = u > 0 ? ` — ${_urFmtUren(u)}` : '';
+            return `${knm}${loc}${uTxt}`;
           }).join('<br>')
         : '—';
       rijen.push({
         datum: `${dagNamen[dt.getDay()]} ${d}`,
         klussen: klussenTxt,
-        uren: dagU > 0 ? dagU.toFixed(2).replace('.', ',').replace(/,00$/,'') + 'u' : '—',
-        km: dagKm > 0 ? Math.round(dagKm) + ' km' : '—',
+        uren: dagU > 0 ? _urFmtUren(dagU) : '—',
+        km: dagKm > 0 ? _urFmtKm(dagKm) : '—',
         notitie: dag.notitie || ''
       });
     }
@@ -4518,7 +5264,7 @@ function _pdfPersoonSectie(naam, data, year, month, klussenById){
   const perKlusRijen = Object.entries(perKlus).sort((a,b) => b[1] - a[1]).map(([kid, u]) => {
     const k = klussenById[kid];
     const naam = k ? k.naam : (kid === '__leeg' ? 'Zonder werkgever' : '(verwijderd)');
-    return `<tr><td>${naam}</td><td class="r">${u.toFixed(2).replace('.', ',').replace(/,00$/,'')}u</td></tr>`;
+    return `<tr><td>${naam}</td><td class="r">${_urFmtUren(u)}</td></tr>`;
   }).join('');
 
   const dagRijen = rijen.length
@@ -4536,8 +5282,8 @@ function _pdfPersoonSectie(naam, data, year, month, klussenById){
       <div class="phdr">
         <h2>${naam}</h2>
         <div class="ptot">
-          <span><strong>${totU.toFixed(2).replace('.', ',').replace(/,00$/,'')}u</strong> totaal</span>
-          ${totKm > 0 ? `<span><strong>${Math.round(totKm)} km</strong> gereden</span>` : ''}
+          <span><strong>${_urFmtUren(totU)}</strong> totaal</span>
+          ${totKm > 0 ? `<span><strong>${_urFmtKm(totKm)}</strong> gereden</span>` : ''}
         </div>
       </div>
       ${perKlusRijen ? `
@@ -4555,7 +5301,15 @@ function _pdfPersoonSectie(naam, data, year, month, klussenById){
   `;
 }
 
-window.urPdfExport = function(){
+window.urPdfExport = async function(){
+  // ═══ Kritiek: forceer alle openstaande saves eerst weg naar Firebase ═══
+  // Zonder deze flush kan een debounced save nog niet uitgevoerd zijn
+  // waardoor de PDF met verouderde data zou werken. Belangrijk voor administratie.
+  showToast('PDF voorbereiden — data controleren…');
+  try { await _urFlushSaves(); } catch(e){ console.error('flush voor PDF:', e); }
+  // Kleine pauze zodat de listener de zojuist opgeslagen data in _urData/_urPData bijwerkt
+  await new Promise(r => setTimeout(r, 250));
+
   const year = _urpYear;
   const month = _urpMonth;
   const mnd = _UR_MND_LBL[month];
@@ -4570,15 +5324,48 @@ window.urPdfExport = function(){
   const personen = [{ naam:'Mij (eigenaar)', data: _urData }];
   _urStaff.forEach(s => { personen.push({ naam: s.naam, data: _urPData[s.id] || {} }); });
 
-  // Grand totals
+  // Grand totals + iedereen-samen per klus
   let grandU = 0, grandKm = 0;
+  const grandPerKlus = {}; // klusId -> uren (iedereen samen)
   personen.forEach(p => {
     _pdfDagen(year, month).forEach(iso => {
       const dag = p.data[iso] || {};
-      (dag.rijen || []).forEach(r => { grandU += parseFloat(r.u) || 0; });
-      grandKm += parseFloat(dag.km) || 0;
+      (dag.rijen || []).forEach(r => {
+        const u = _parseNum(r.u);
+        grandU = _urRound2(grandU + u);
+        if(u > 0){
+          const key = r.k || '__leeg';
+          grandPerKlus[key] = _urRound2((grandPerKlus[key] || 0) + u);
+        }
+      });
+      grandKm = _urRound2(grandKm + _parseNum(dag.km));
     });
   });
+
+  const grandKlusRijen = Object.entries(grandPerKlus).sort((a,b) => b[1] - a[1]);
+  const grandKlusHtml = grandKlusRijen.length ? `
+    <section class="grand-klus">
+      <div class="phdr" style="background:#1e40af">
+        <h2>Totaal per werkgever — iedereen samen</h2>
+        <div class="ptot"><span><strong>${grandKlusRijen.length}</strong> ${grandKlusRijen.length===1?'werkgever':'werkgevers'}</span></div>
+      </div>
+      <table class="dag-tbl">
+        <thead><tr><th>Werkgever</th><th class="r">Uren totaal</th><th class="r">Aandeel</th></tr></thead>
+        <tbody>
+          ${grandKlusRijen.map(([kid, u]) => {
+            const k = klussenById[kid];
+            const naam = k ? k.naam : (kid === '__leeg' ? 'Zonder werkgever' : '(verwijderd)');
+            const pct = grandU > 0 ? Math.round(u / grandU * 100) : 0;
+            return `<tr>
+              <td><strong>${naam}</strong></td>
+              <td class="r"><strong>${_urFmtUren(u)}</strong></td>
+              <td class="r">${pct}%</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </section>
+  ` : '';
 
   const secties = personen.map(p => _pdfPersoonSectie(p.naam, p.data, year, month, klussenById)).join('');
 
@@ -4623,11 +5410,12 @@ window.urPdfExport = function(){
     <h1>Uren overzicht — ${mnd} ${year}</h1>
     <div class="sub">Purgato Cleaning · Gegenereerd op ${gegen}</div>
     <div class="grand">
-      <span><strong>${grandU.toFixed(2).replace('.', ',').replace(/,00$/,'')}u</strong> totaal gewerkt</span>
-      ${grandKm > 0 ? `<span><strong>${Math.round(grandKm)} km</strong> gereden</span>` : ''}
+      <span><strong>${_urFmtUren(grandU)}</strong> totaal gewerkt</span>
+      ${grandKm > 0 ? `<span><strong>${_urFmtKm(grandKm)}</strong> gereden</span>` : ''}
       <span><strong>${personen.length}</strong> ${personen.length===1?'persoon':'personen'}</span>
     </div>
   </header>
+  ${grandKlusHtml}
   ${secties}
   <div class="footer">Purgato Cleaning — automatisch gegenereerd uit de app</div>
 </body>
@@ -4656,14 +5444,14 @@ window.urAllesToggle = function(){
 window.urlMaandPrev = function(){
   _urpMonth--;
   if(_urpMonth < 0){ _urpMonth = 11; _urpYear--; }
-  _renderPersoneelLijst();
+  if(_urView === 'overzicht') _renderOverzicht();
+  else _renderPersoneelLijst();
 };
 window.urlMaandNext = function(){
-  const nu = new Date();
-  if(_urpYear === nu.getFullYear() && _urpMonth === nu.getMonth()) return;
   _urpMonth++;
   if(_urpMonth > 11){ _urpMonth = 0; _urpYear++; }
-  _renderPersoneelLijst();
+  if(_urView === 'overzicht') _renderOverzicht();
+  else _renderPersoneelLijst();
 };
 
 function _renderPersoneelLijst(){
@@ -4672,55 +5460,11 @@ function _renderPersoneelLijst(){
   const el = document.getElementById('ur-personeel');
   if(!el) return;
 
-  // Bereken deze-maand uren voor jou + iedereen
-  const eigenUren = _urUrenInMaand(_urData, _urpYear, _urpMonth);
+  // Per personeelslid deze-maand uren (voor context onder de naam)
   const staffTotalen = _urStaff.map(s => ({
     s,
     uren: _urUrenInMaand(_urPData[s.id] || {}, _urpYear, _urpMonth)
   }));
-  const totaal = eigenUren + staffTotalen.reduce((a,b) => a + b.uren, 0);
-
-  // Per klus verzamelen: jouw uren + alle personeel-uren opgeteld per werkgever
-  const perKlus = {};
-  _urVerzamelPerKlus(_urData, _urpYear, _urpMonth, perKlus);
-  _urStaff.forEach(s => _urVerzamelPerKlus(_urPData[s.id] || {}, _urpYear, _urpMonth, perKlus));
-  const klusRijen = Object.entries(perKlus).sort((a,b) => b[1] - a[1]);
-  const maxKlus = klusRijen.length ? klusRijen[0][1] : 0.001;
-  const klusDetailsHtml = klusRijen.length
-    ? klusRijen.map(([kid, uren]) => {
-        const klus = _urKlussen.find(k => k.id === kid);
-        const naam = klus ? klus.naam : (kid === '__leeg' ? 'Zonder werkgever' : '(verwijderd)');
-        const pct = Math.round(uren / maxKlus * 100);
-        return `<div class="ur-alles-rij">
-          <span class="ur-alles-rij-naam" style="padding-left:2px">${_urEsc(naam)}</span>
-          <span class="ur-alles-rij-bar"><span class="ur-alles-rij-fill" style="width:${pct}%"></span></span>
-          <span class="ur-alles-rij-uren">${_urFmtUren(uren)}</span>
-        </div>`;
-      }).join('')
-    : '<div class="ur-mtot-leeg" style="color:rgba(255,255,255,0.55)">Nog geen uren deze maand</div>';
-
-  // Details-rijen (aflopend op uren) — jij bovenaan als "Mij"
-  const alleRijen = [{ id:'__mij', naam:'Mij', init:'MIJ', uren:eigenUren }].concat(
-    staffTotalen.map(({s, uren}) => ({
-      id: s.id,
-      naam: s.naam,
-      init: (s.naam.trim().split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase() || '?'),
-      uren
-    }))
-  );
-  const max = Math.max(...alleRijen.map(r => r.uren), 0.001);
-  alleRijen.sort((a,b) => b.uren - a.uren);
-  const detailsHtml = totaal > 0
-    ? alleRijen.map(r => {
-        const pct = Math.round(r.uren / max * 100);
-        return `<div class="ur-alles-rij">
-          <div class="ur-alles-rij-av">${_urEsc(r.init)}</div>
-          <span class="ur-alles-rij-naam">${_urEsc(r.naam)}</span>
-          <span class="ur-alles-rij-bar"><span class="ur-alles-rij-fill" style="width:${pct}%"></span></span>
-          <span class="ur-alles-rij-uren">${_urFmtUren(r.uren)}</span>
-        </div>`;
-      }).join('')
-    : '<div class="ur-mtot-leeg" style="color:rgba(255,255,255,0.55)">Nog geen uren deze maand</div>';
 
   const cards = _urStaff.map(s => {
     const init = s.naam.trim().split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase() || '?';
@@ -4751,6 +5495,124 @@ function _renderPersoneelLijst(){
       <button onclick="urpToevoegenOk()">Opslaan</button>
     </div>
     ${navHtml}
+    ${_urStaff.length ? cards : `<div class="urp-leeg">
+      <div class="urp-leeg-ic">👥</div>
+      <div class="urp-leeg-t">Nog geen personeel</div>
+      <div class="urp-leeg-s">Tik op "Toevoegen" om iemand toe te voegen</div>
+    </div>`}
+  `;
+}
+
+// ═══ Overzicht-view: alle totalen + PDF-export ═══
+function _renderOverzicht(){
+  _urView = 'overzicht';
+  _urStaffSel = null;
+  const el = document.getElementById('ur-overzicht');
+  if(!el) return;
+
+  // Bereken deze-maand uren voor jou + iedereen
+  const eigenUren = _urUrenInMaand(_urData, _urpYear, _urpMonth);
+  const staffTotalen = _urStaff.map(s => ({
+    s,
+    uren: _urUrenInMaand(_urPData[s.id] || {}, _urpYear, _urpMonth)
+  }));
+  const totaal = eigenUren + staffTotalen.reduce((a,b) => a + b.uren, 0);
+
+  // Per klus verzamelen: jouw uren + alle personeel-uren opgeteld per werkgever
+  const perKlus = {};
+  _urVerzamelPerKlus(_urData, _urpYear, _urpMonth, perKlus);
+  _urStaff.forEach(s => _urVerzamelPerKlus(_urPData[s.id] || {}, _urpYear, _urpMonth, perKlus));
+  const klusRijen = Object.entries(perKlus).sort((a,b) => b[1] - a[1]);
+  const maxKlus = klusRijen.length ? klusRijen[0][1] : 0.001;
+
+  // Alle entries per klus verzamelen voor de klap-open detail
+  const mnd = String(_urpMonth + 1).padStart(2,'0');
+  const monthPrefix = `${_urpYear}-${mnd}-`;
+  function entriesVoorKlus(kid){
+    const entries = [];
+    Object.entries(_urData).forEach(([iso, dag]) => {
+      if(!iso.startsWith(monthPrefix)) return;
+      (dag.rijen || []).forEach(r => {
+        const targetKey = kid === '__leeg' ? '' : kid;
+        if((r.k || '') !== targetKey) return;
+        const u = _urRound2(_parseNum(r.u));
+        if(u <= 0) return;
+        entries.push({ iso, source:'ur', locatie: r.s || '', uren: u });
+      });
+    });
+    Object.entries(_urPData).forEach(([staffId, days]) => {
+      Object.entries(days).forEach(([iso, dag]) => {
+        if(!iso.startsWith(monthPrefix)) return;
+        (dag.rijen || []).forEach(r => {
+          const targetKey = kid === '__leeg' ? '' : kid;
+          if((r.k || '') !== targetKey) return;
+          const u = _urRound2(_parseNum(r.u));
+          if(u <= 0) return;
+          entries.push({ iso, source: staffId, locatie: r.s || '', uren: u });
+        });
+      });
+    });
+    entries.sort((a,b) => b.iso.localeCompare(a.iso));
+    return entries;
+  }
+
+  const klusDetailsHtml = klusRijen.length
+    ? klusRijen.map(([kid, uren]) => {
+        const klus = _urKlussen.find(k => k.id === kid);
+        const naam = klus ? klus.naam : (kid === '__leeg' ? 'Zonder werkgever' : '(verwijderd)');
+        const pct = Math.round(uren / maxKlus * 100);
+        const isOpen = !!_urKlusRijOpen[kid];
+        const entries = isOpen ? entriesVoorKlus(kid) : [];
+        const entriesHtml = entries.map(e => {
+          const persoonNaam = e.source === 'ur' ? 'Mij' : ((_urStaff.find(s => s.id === e.source) || {}).naam || 'Onbekend');
+          const loc = e.locatie && e.locatie !== '-' ? ` <span class="loc">· ${_urEsc(e.locatie)}</span>` : '';
+          return `<div class="ur-klus-entry" onclick="event.stopPropagation();klusNaarEntry('${e.iso}','${e.source}')">
+            <span class="ur-klus-entry-datum">${_fmtDatumKort(e.iso)}</span>
+            <div class="ur-klus-entry-mid"><div class="ur-klus-entry-persoon">${_urEsc(persoonNaam)}${loc}</div></div>
+            <span class="ur-klus-entry-uren">${_urFmtUren(e.uren)}</span>
+          </div>`;
+        }).join('');
+        const safeKid = kid.replace(/'/g,"\\'");
+        return `<div class="ur-alles-rij ur-klus-rij ${isOpen?'open':''}" onclick="urKlusRijToggle('${safeKid}')">
+          <span class="ur-alles-rij-naam" style="padding-left:2px">${_urEsc(naam)}</span>
+          <span class="ur-alles-rij-bar"><span class="ur-alles-rij-fill" style="width:${pct}%"></span></span>
+          <span class="ur-alles-rij-uren">${_urFmtUren(uren)}</span>
+          <svg class="ur-klus-rij-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ur-klus-entries ${isOpen?'open':''}">${entriesHtml}</div>`;
+      }).join('')
+    : '<div class="ur-mtot-leeg" style="color:rgba(255,255,255,0.55)">Nog geen uren deze maand</div>';
+
+  // Details-rijen (aflopend op uren) — jij bovenaan als "Mij"
+  const alleRijen = [{ id:'__mij', naam:'Mij', init:'MIJ', uren:eigenUren }].concat(
+    staffTotalen.map(({s, uren}) => ({
+      id: s.id,
+      naam: s.naam,
+      init: (s.naam.trim().split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase() || '?'),
+      uren
+    }))
+  );
+  const max = Math.max(...alleRijen.map(r => r.uren), 0.001);
+  alleRijen.sort((a,b) => b.uren - a.uren);
+  const detailsHtml = totaal > 0
+    ? alleRijen.map(r => {
+        const pct = Math.round(r.uren / max * 100);
+        return `<div class="ur-alles-rij">
+          <div class="ur-alles-rij-av">${_urEsc(r.init)}</div>
+          <span class="ur-alles-rij-naam">${_urEsc(r.naam)}</span>
+          <span class="ur-alles-rij-bar"><span class="ur-alles-rij-fill" style="width:${pct}%"></span></span>
+          <span class="ur-alles-rij-uren">${_urFmtUren(r.uren)}</span>
+        </div>`;
+      }).join('')
+    : '<div class="ur-mtot-leeg" style="color:rgba(255,255,255,0.55)">Nog geen uren deze maand</div>';
+
+  const navHtml = _urMonthNavHtml(_urpYear, _urpMonth, 'urlMaandPrev()', 'urlMaandNext()');
+
+  el.innerHTML = `
+    <div class="urp-hdr">
+      <div class="urp-hdr-titel">Overzicht</div>
+    </div>
+    ${navHtml}
     <div class="ur-alles ${_urAllesOpen?'open':''}" id="ur-alles-box" onclick="urAllesToggle()">
       <div class="ur-alles-top">
         <div>
@@ -4777,11 +5639,6 @@ function _renderPersoneelLijst(){
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       PDF-overzicht van ${_UR_MND_LBL[_urpMonth]}
     </button>
-    ${_urStaff.length ? cards : `<div class="urp-leeg">
-      <div class="urp-leeg-ic">👥</div>
-      <div class="urp-leeg-t">Nog geen personeel</div>
-      <div class="urp-leeg-s">Tik op "Toevoegen" om iemand toe te voegen</div>
-    </div>`}
   `;
 }
 
@@ -4837,8 +5694,6 @@ window.urpMaandPrev = function(){
   _renderPersoneelDetail();
 };
 window.urpMaandNext = function(){
-  const nu = new Date();
-  if(_urpYear === nu.getFullYear() && _urpMonth === nu.getMonth()) return;
   _urpMonth++;
   if(_urpMonth > 11){ _urpMonth = 0; _urpYear++; }
   _renderPersoneelDetail();
