@@ -5573,31 +5573,12 @@ function renderUren() {
     </div>
     <div class="ur-mtot-details" id="ur-mtot-details"></div>
   </div>`;
-  // Alleen collapse-toggle als er wat te collapsen valt
-  if(dagen.length > 1) html += _urCollapseToggleHtml('ur');
   if(term && !dagen.length){
     html += `<div class="urp-leeg"><div class="urp-leeg-ic">🔎</div><div class="urp-leeg-t">Geen resultaten voor "${_urEsc(term)}"</div><div class="urp-leeg-s">Probeer een andere zoekterm</div></div>`;
   }
-  // Bij actieve zoekterm: alle matches automatisch uitklappen
-  const forceExpand = !!term;
-  const today = _todayISO();
-  let sepDone = false;
+  // Alle dagen altijd open — geen mini-kaartjes
   dagen.forEach(iso => {
-    const isOpen = forceExpand || _urExpanded.ur.has(iso);
-    // Scheidingslijn precies waar toekomst overgaat in vandaag/verleden
-    if(!sepDone && iso <= today && !forceExpand){
-      // Zijn er wel toekomstige dagen boven? Alleen sep tonen als er iets boven staat
-      const heeftToekomst = dagen.some(d => d > today);
-      if(heeftToekomst){
-        html += `<div class="ur-sep">
-          <span class="ur-sep-ic"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
-          Vandaag &amp; verleden
-        </div>`;
-      }
-      sepDone = true;
-    }
-    if(isOpen) html += _urDagCardHtml('ur', iso, _urData[iso] || {}, 'Notitie (optioneel)...');
-    else html += _urDagMiniHtml('ur', iso, _urData[iso] || {});
+    html += _urDagCardHtml('ur', iso, _urData[iso] || {}, 'Notitie (optioneel)...');
   });
   list.innerHTML = html;
   dagen.forEach(iso => _urResizeNot('ur', iso));
@@ -6431,24 +6412,10 @@ function _renderPersoneelDetail(){
   dagenAll.forEach(iso => { _urInitRows('urp', iso, (data[iso] || {}).rijen); });
   const dagen = term ? dagenAll.filter(iso => _urDagMatch('urp', iso, term)) : dagenAll;
 
-  const forceExpand = !!term;
-  const today = _todayISO();
-  let sepDone = false;
-  const heeftToekomst = dagen.some(d => d > today);
-  const lijst = dagen.map(iso => {
-    let prefix = '';
-    if(!sepDone && iso <= today && !forceExpand && heeftToekomst){
-      prefix = `<div class="ur-sep">
-        <span class="ur-sep-ic"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
-        Vandaag &amp; verleden
-      </div>`;
-      sepDone = true;
-    }
-    const isOpen = forceExpand || _urExpanded.urp.has(iso);
-    return prefix + (isOpen
-      ? _urDagCardHtml('urp', iso, data[iso] || {}, `Notitie over ${voornaam} (optioneel)...`)
-      : _urDagMiniHtml('urp', iso, data[iso] || {}));
-  }).join('');
+  // Alle dagen altijd open — geen mini-kaartjes
+  const lijst = dagen.map(iso =>
+    _urDagCardHtml('urp', iso, data[iso] || {}, `Notitie over ${voornaam} (optioneel)...`)
+  ).join('');
 
   const zoek = _urZoekBar('urp');
 
@@ -6476,7 +6443,6 @@ function _renderPersoneelDetail(){
       </div>
       <div class="ur-mtot-details" id="urp-mtot-details"></div>
     </div>
-    ${dagen.length > 1 ? _urCollapseToggleHtml('urp') : ''}
     ${term && !dagen.length ? `<div class="urp-leeg"><div class="urp-leeg-ic">🔎</div><div class="urp-leeg-t">Geen resultaten voor "${_urEsc(term)}"</div><div class="urp-leeg-s">Probeer een andere zoekterm</div></div>` : ''}
     ${lijst}
   `;
