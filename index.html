@@ -3352,7 +3352,38 @@ header{
 .ur-mini-sub span[style*="color:#0e7490"] {
   color: var(--u-planned) !important;
 }
-</style>
+
+/* ── Scheidingslijn tussen "Nog te plannen" en "Vandaag & verleden" ── */
+.ur-sep {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 4px 12px;
+  font-size: 0.6rem; font-weight: 800;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text3);
+}
+.ur-sep::before, .ur-sep::after {
+  content: ''; flex: 1; height: 1px;
+  background: var(--border);
+}
+.ur-sep-ic {
+  display: flex; align-items: center; justify-content: center;
+  color: var(--u-planned); flex-shrink: 0;
+}
+/* Eerste keer sep: geen top-padding */
+.ur-sep:first-child { padding-top: 2px; }
+
+/* Kleine polish van mini-cards zelf */
+.ur-dag-mini {
+  transition: transform 0.15s var(--ease-spring), border-color 0.15s, background 0.15s !important;
+}
+.ur-dag-mini:hover {
+  border-color: var(--u-primary-border-2) !important;
+}
+.ur-dag-mini.toekomst .ur-mini-tot {
+  background: var(--u-planned-tint) !important;
+  color: var(--u-planned) !important;
+  border-color: var(--u-planned-border) !important;
+}
 
 /* Toolbar-strip bovenaan Mij + Personeel detail — cleaner */
 .ur-topbar {
@@ -4967,12 +4998,13 @@ function _urMonthNavHtml(y, m, prevFn, nextFn){
 }
 
 function _urResetExpanded(prefix, year, month){
-  // Bij maand-wissel: alles ingeklapt behalve vandaag (als vandaag in die maand valt)
+  // Bij maand-wissel: verleden + vandaag open, toekomst ingeklapt
   _urExpanded[prefix].clear();
-  const t = new Date();
-  if(t.getFullYear() === year && t.getMonth() === month){
-    _urExpanded[prefix].add(_todayISO());
-  }
+  const dagen = _urDagenInMaand(year, month);
+  const today = _todayISO();
+  dagen.forEach(iso => {
+    if(iso <= today) _urExpanded[prefix].add(iso);
+  });
 }
 window.urMaandPrev = function(){
   _urMonth--;
@@ -5358,8 +5390,14 @@ let _urExpandedInit = { ur: false, urp: false };
 
 function _urInitExpanded(prefix){
   if(_urExpandedInit[prefix]) return;
+  const dagen = prefix === 'ur' ? _urDagenInMaand(_urYear, _urMonth) : _urDagenInMaand(_urpYear, _urpMonth);
+  const today = _todayISO();
   _urExpanded[prefix].clear();
-  _urExpanded[prefix].add(_todayISO());
+  // Verleden + vandaag automatisch open (zoals voorheen)
+  // Alleen toekomstige dagen ingeklapt (mini-card) — kunnen individueel opengeklapt worden
+  dagen.forEach(iso => {
+    if(iso <= today) _urExpanded[prefix].add(iso);
+  });
   _urExpandedInit[prefix] = true;
 }
 
@@ -5542,12 +5580,24 @@ function renderUren() {
   }
   // Bij actieve zoekterm: alle matches automatisch uitklappen
   const forceExpand = !!term;
+  const today = _todayISO();
+  let sepDone = false;
   dagen.forEach(iso => {
-    if(forceExpand || _urExpanded.ur.has(iso)){
-      html += _urDagCardHtml('ur', iso, _urData[iso] || {}, 'Notitie (optioneel)...');
-    } else {
-      html += _urDagMiniHtml('ur', iso, _urData[iso] || {});
+    const isOpen = forceExpand || _urExpanded.ur.has(iso);
+    // Scheidingslijn precies waar toekomst overgaat in vandaag/verleden
+    if(!sepDone && iso <= today && !forceExpand){
+      // Zijn er wel toekomstige dagen boven? Alleen sep tonen als er iets boven staat
+      const heeftToekomst = dagen.some(d => d > today);
+      if(heeftToekomst){
+        html += `<div class="ur-sep">
+          <span class="ur-sep-ic"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+          Vandaag &amp; verleden
+        </div>`;
+      }
+      sepDone = true;
     }
+    if(isOpen) html += _urDagCardHtml('ur', iso, _urData[iso] || {}, 'Notitie (optioneel)...');
+    else html += _urDagMiniHtml('ur', iso, _urData[iso] || {});
   });
   list.innerHTML = html;
   dagen.forEach(iso => _urResizeNot('ur', iso));
@@ -6382,11 +6432,22 @@ function _renderPersoneelDetail(){
   const dagen = term ? dagenAll.filter(iso => _urDagMatch('urp', iso, term)) : dagenAll;
 
   const forceExpand = !!term;
+  const today = _todayISO();
+  let sepDone = false;
+  const heeftToekomst = dagen.some(d => d > today);
   const lijst = dagen.map(iso => {
-    if(forceExpand || _urExpanded.urp.has(iso)){
-      return _urDagCardHtml('urp', iso, data[iso] || {}, `Notitie over ${voornaam} (optioneel)...`);
+    let prefix = '';
+    if(!sepDone && iso <= today && !forceExpand && heeftToekomst){
+      prefix = `<div class="ur-sep">
+        <span class="ur-sep-ic"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+        Vandaag &amp; verleden
+      </div>`;
+      sepDone = true;
     }
-    return _urDagMiniHtml('urp', iso, data[iso] || {});
+    const isOpen = forceExpand || _urExpanded.urp.has(iso);
+    return prefix + (isOpen
+      ? _urDagCardHtml('urp', iso, data[iso] || {}, `Notitie over ${voornaam} (optioneel)...`)
+      : _urDagMiniHtml('urp', iso, data[iso] || {}));
   }).join('');
 
   const zoek = _urZoekBar('urp');
