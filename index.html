@@ -2870,6 +2870,8 @@ header{
   to { opacity: 1; transform: none; }
 }
 .ur-dag { animation: urCardIn 0.28s cubic-bezier(0.32,0.72,0,1) both !important; }
+/* Geen animatie herhalen als display van/naar none verandert (zoek-filter) */
+.ur-dag[style*="display"] { animation: none !important; }
 
 /* ── Zoekbalk voor Mij + Personeel detail ── */
 .ur-zoek-wrap { position: relative; margin: -6px 0 14px; display: none; }
@@ -5579,15 +5581,21 @@ function _urZoekApply(prefix){
   }
 }
 
+// Debounce — voorkomt dat DOM-updates het mobiele toetsenbord destabiliseren
+const _urZoekTimers = {};
 window.urZoekIn = function(prefix, val){
   _urZoek[prefix] = val || '';
   _urZoekOpen[prefix] = true;
-  // Alleen DOM-updates, geen full re-render → toetsenbord blijft open
-  _urZoekApply(prefix);
+  clearTimeout(_urZoekTimers[prefix]);
+  _urZoekTimers[prefix] = setTimeout(() => {
+    // Batch DOM-updates in één frame voor extra stabiliteit
+    requestAnimationFrame(() => _urZoekApply(prefix));
+  }, 220);
 };
 
 window.urZoekWis = function(prefix){
   _urZoek[prefix] = '';
+  clearTimeout(_urZoekTimers[prefix]);
   const inp = document.getElementById(`${prefix}-zoek-in`);
   if(inp){ inp.value = ''; inp.focus(); }
   _urZoekApply(prefix);
