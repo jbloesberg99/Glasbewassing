@@ -5528,25 +5528,69 @@ window.urZoekBtn = function(prefix){
   }
 };
 
+// Past het filter toe op de zichtbare dagkaarten ZONDER de zoekbalk opnieuw te renderen
+// (voorheen: renderUren() zou het input-veld vernietigen en het toetsenbord zou sluiten)
+function _urZoekApply(prefix){
+  const term = (_urZoek[prefix] || '').trim().toLowerCase();
+  const dagenAll = prefix === 'ur' ? _urDagenInMaand(_urYear, _urMonth) : _urDagenInMaand(_urpYear, _urpMonth);
+  let matchCount = 0;
+  dagenAll.forEach(iso => {
+    const el = document.getElementById(`dag-${prefix}-${iso}`);
+    if(!el) return;
+    const match = !term || _urDagMatch(prefix, iso, term);
+    el.style.display = match ? '' : 'none';
+    if(match) matchCount++;
+  });
+  // X-knop bij het zoekveld
+  const x = document.getElementById(`${prefix}-zoek-x`);
+  if(x) x.classList.toggle('on', !!term);
+  // Live resultaat-badge
+  let badge = document.getElementById(`${prefix}-zoek-count-live`);
+  if(!term){
+    if(badge) badge.remove();
+  } else {
+    if(!badge){
+      badge = document.createElement('div');
+      badge.className = 'ur-zoek-count';
+      badge.id = `${prefix}-zoek-count-live`;
+      const wrap = document.getElementById(`${prefix}-zoek-wrap`);
+      if(wrap && wrap.parentNode) wrap.parentNode.insertBefore(badge, wrap.nextSibling);
+    }
+    badge.textContent = `${matchCount} van ${dagenAll.length} ${dagenAll.length===1?'dag':'dagen'}`;
+  }
+  // "Geen resultaten"-melding
+  const listId = prefix === 'ur' ? 'ur-list' : 'ur-personeel';
+  const list = document.getElementById(listId);
+  let leeg = document.getElementById(`${prefix}-zoek-leeg`);
+  if(term && matchCount === 0){
+    if(!leeg && list){
+      leeg = document.createElement('div');
+      leeg.className = 'urp-leeg';
+      leeg.id = `${prefix}-zoek-leeg`;
+      leeg.innerHTML = `<div class="urp-leeg-ic">🔎</div><div class="urp-leeg-t">Geen resultaten voor "${_urEsc(term)}"</div><div class="urp-leeg-s">Probeer een andere zoekterm</div>`;
+      const firstDag = list.querySelector('.ur-dag');
+      if(firstDag) list.insertBefore(leeg, firstDag);
+      else list.appendChild(leeg);
+    } else if(leeg){
+      leeg.querySelector('.urp-leeg-t').textContent = `Geen resultaten voor "${term}"`;
+    }
+  } else if(leeg){
+    leeg.remove();
+  }
+}
+
 window.urZoekIn = function(prefix, val){
   _urZoek[prefix] = val || '';
   _urZoekOpen[prefix] = true;
-  if(prefix === 'ur') renderUren();
-  else _renderPersoneelDetail();
-  // Focus behouden na re-render
-  setTimeout(() => {
-    const inp = document.getElementById(`${prefix}-zoek-in`);
-    if(inp && document.activeElement !== inp){
-      inp.focus();
-      const v = inp.value; inp.value = ''; inp.value = v; // cursor achteraan
-    }
-  }, 0);
+  // Alleen DOM-updates, geen full re-render → toetsenbord blijft open
+  _urZoekApply(prefix);
 };
 
 window.urZoekWis = function(prefix){
   _urZoek[prefix] = '';
-  if(prefix === 'ur') renderUren();
-  else _renderPersoneelDetail();
+  const inp = document.getElementById(`${prefix}-zoek-in`);
+  if(inp){ inp.value = ''; inp.focus(); }
+  _urZoekApply(prefix);
 };
 
 function renderUren() {
