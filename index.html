@@ -2870,6 +2870,524 @@ header{
   to { opacity: 1; transform: none; }
 }
 .ur-dag { animation: urCardIn 0.28s cubic-bezier(0.32,0.72,0,1) both !important; }
+
+/* ── Zoekbalk voor Mij + Personeel detail ── */
+.ur-zoek-wrap { position: relative; margin: -6px 0 14px; display: none; }
+.ur-zoek-wrap.open { display: block; animation: fds 0.22s ease; }
+.ur-zoek-in {
+  width: 100%; background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 14px; padding: 12px 42px 12px 42px;
+  font-family: inherit; font-size: 0.86rem; font-weight: 600; color: var(--text);
+  outline: none; box-shadow: var(--shadow);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ur-zoek-in::placeholder { color: var(--text3); font-weight: 500; }
+.ur-zoek-in:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.14); }
+.ur-zoek-ic {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--text3); pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
+}
+.ur-zoek-x {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  background: var(--surface3); border: none; width: 26px; height: 26px;
+  border-radius: 50%; color: var(--text3); cursor: pointer;
+  display: none; align-items: center; justify-content: center;
+  font-size: 0.85rem; line-height: 1;
+}
+.ur-zoek-x.on { display: flex; }
+.ur-zoek-x:active { transform: translateY(-50%) scale(0.9); }
+/* Vergrootglas knop in de maand-nav */
+.ur-zoek-btn {
+  width: 40px; height: 40px; border-radius: 14px;
+  background: var(--surface2); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text2); flex-shrink: 0;
+  transition: all 0.15s var(--ease-spring); position: relative;
+}
+.ur-zoek-btn:active { transform: scale(0.92); }
+.ur-zoek-btn.on {
+  background: linear-gradient(145deg, #a78bfa, #7c3aed);
+  color: #fff; border-color: #7c3aed;
+  box-shadow: 0 3px 12px rgba(124,58,237,0.35);
+}
+/* Nav met search — pak wk-nav aan zodat de knop rechts past */
+.ur-nav-met-zoek { display: flex; gap: 10px; align-items: stretch; margin-bottom: 14px; }
+.ur-nav-met-zoek > .wk-nav { flex: 1; margin-bottom: 0 !important; }
+/* Resultaat-badge onder de zoek */
+.ur-zoek-count {
+  font-size: 0.66rem; font-weight: 800; letter-spacing: 0.04em;
+  padding: 5px 10px; border-radius: 99px; margin-bottom: 10px;
+  background: rgba(124,58,237,0.08); color: #7c3aed;
+  border: 1px solid rgba(124,58,237,0.18);
+  display: inline-block;
+}
+/* Highlight matches in de dagkaart */
+.ur-match { background: rgba(124,58,237,0.22); border-radius: 3px; padding: 0 2px; }
+
+/* ═══════════════════════════════════════════════════════
+   COLLAPSED-BY-DEFAULT DAY CARDS — cleaner UX
+   Elke dag: compacte samenvatting, tik voor de volle bewerking.
+   Alleen vandaag staat automatisch open.
+   ═══════════════════════════════════════════════════════ */
+
+.ur-dag-mini {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--border);
+  border-radius: 18px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: transform 0.15s var(--ease-spring), box-shadow 0.2s, border-color 0.15s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+  animation: urCardIn 0.24s cubic-bezier(0.32,0.72,0,1) both;
+}
+.ur-dag-mini:active { transform: scale(0.98); }
+.ur-dag-mini.heeft-notitie {
+  border-left-color: #a78bfa;
+  background: linear-gradient(90deg, rgba(124,58,237,0.03) 0%, var(--surface) 30%);
+}
+.ur-dag-mini.today {
+  border-left-color: #7c3aed;
+}
+.ur-dag-mini.toekomst {
+  border-left: 4px dashed rgba(8,145,178,0.35);
+  opacity: 0.85;
+}
+.ur-dag-mini.toekomst.heeft-notitie {
+  border-left: 4px solid #0891b2;
+  opacity: 1;
+}
+
+.ur-mini-datum {
+  display: flex; flex-direction: column; align-items: center;
+  min-width: 40px; flex-shrink: 0;
+}
+.ur-mini-nr {
+  font-size: 1.5rem; font-weight: 900; line-height: 1;
+  letter-spacing: -1px;
+  color: var(--border2);
+}
+.ur-dag-mini.heeft-notitie .ur-mini-nr { color: var(--text); }
+.ur-dag-mini.today .ur-mini-nr { color: #7c3aed; }
+.ur-dag-mini.toekomst .ur-mini-nr { color: #0e7490 !important; opacity: 0.85; }
+.ur-mini-lbl {
+  font-size: 0.56rem; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text3); margin-top: 4px;
+}
+.ur-dag-mini.today .ur-mini-lbl { color: #7c3aed; }
+
+.ur-mini-info {
+  flex: 1; min-width: 0;
+}
+.ur-mini-klussen {
+  font-size: 0.82rem; font-weight: 700;
+  color: var(--text); letter-spacing: -0.2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  line-height: 1.3;
+}
+.ur-mini-klussen.leeg {
+  color: var(--text3); font-weight: 500; font-style: italic;
+}
+.ur-mini-sub {
+  font-size: 0.68rem; color: var(--text3); font-weight: 600;
+  margin-top: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  display: flex; align-items: center; gap: 6px;
+}
+.ur-mini-sub .sep { color: var(--text3); opacity: 0.5; }
+.ur-mini-sub .heeft-not-ic { color: #a78bfa; }
+
+.ur-mini-tot {
+  font-size: 0.86rem; font-weight: 900;
+  padding: 6px 12px; border-radius: 99px;
+  background: rgba(124,58,237,0.09);
+  color: #7c3aed;
+  border: 1px solid rgba(124,58,237,0.16);
+  letter-spacing: -0.3px; flex-shrink: 0;
+}
+.ur-mini-tot.nul {
+  background: transparent; color: var(--text3);
+  border-color: var(--border); font-weight: 700;
+  font-size: 0.72rem;
+}
+.ur-mini-chev {
+  color: var(--text3); flex-shrink: 0;
+  opacity: 0.55;
+}
+
+/* Verzachte balken — minder overweldigend maar nog steeds premium */
+.ur-mtot {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%) !important;
+  box-shadow: 0 8px 24px rgba(124,58,237,0.22), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+}
+.ur-alles {
+  box-shadow: 0 8px 24px rgba(124,58,237,0.22), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+}
+.ur-alles.klus {
+  background: linear-gradient(135deg, #0891b2 0%, #075985 100%) !important;
+  box-shadow: 0 8px 24px rgba(8,145,178,0.22), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   REFINED INDIGO PALETTE — Linear/Notion-stijl
+   Rustiger, volwassener, betere hiërarchie
+   ═══════════════════════════════════════════════════════ */
+
+/* Kleurpalet als CSS-vars zodat we het overal kunnen tweaken */
+:root {
+  --u-primary: #4338ca;         /* indigo-700 hoofdaccent */
+  --u-primary-2: #4f46e5;       /* indigo-600 */
+  --u-primary-3: #6366f1;       /* indigo-500 lichter */
+  --u-primary-tint: rgba(79,70,229,0.06);
+  --u-primary-tint-2: rgba(79,70,229,0.1);
+  --u-primary-border: rgba(79,70,229,0.18);
+  --u-primary-border-2: rgba(79,70,229,0.28);
+  --u-planned: #64748b;         /* slate-500 voor toekomst — kleurloos, subtiel */
+  --u-planned-tint: rgba(100,116,139,0.08);
+  --u-planned-border: rgba(100,116,139,0.28);
+}
+[data-theme="dark"] {
+  --u-primary-tint: rgba(129,140,248,0.08);
+  --u-primary-tint-2: rgba(129,140,248,0.14);
+  --u-primary-border: rgba(129,140,248,0.22);
+  --u-primary-border-2: rgba(129,140,248,0.35);
+  --u-planned-tint: rgba(148,163,184,0.08);
+  --u-planned-border: rgba(148,163,184,0.28);
+}
+
+/* Nav — subtieler actief (indigo i.p.v. felle paars) */
+#nav-uren .nav-item.on {
+  background: var(--u-primary-tint-2) !important;
+  color: var(--u-primary) !important;
+  border: 1px solid var(--u-primary-border) !important;
+  box-shadow: none !important;
+}
+[data-theme="dark"] #nav-uren .nav-item.on {
+  color: var(--u-primary-3) !important;
+}
+
+/* Maand-nav & topbar — cleaner border, minder shadow */
+#app-uren .wk-nav, #ur-personeel .wk-nav {
+  box-shadow: none !important;
+}
+.ur-topbar .ur-topbar-btn.on,
+.ur-zoek-btn.on {
+  background: var(--u-primary) !important;
+  border-color: var(--u-primary) !important;
+  box-shadow: 0 2px 8px rgba(67,56,202,0.28) !important;
+}
+
+/* Maandtotaal balk — donker indigo i.p.v. felle paars */
+.ur-mtot {
+  background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%) !important;
+  box-shadow: 0 6px 20px rgba(67,56,202,0.28), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  border-radius: 20px !important;
+  padding: 18px 22px !important;
+}
+.ur-mtot-lbl {
+  color: rgba(255,255,255,0.55) !important;
+  letter-spacing: 0.16em !important;
+  font-size: 0.58rem !important;
+}
+.ur-mtot-val {
+  color: #fff !important;
+  font-variant-numeric: tabular-nums !important;
+  font-feature-settings: 'tnum' 1 !important;
+}
+
+/* Overzicht balken (Iedereen samen + Per werkgever) — verfijnd indigo/slate */
+.ur-alles {
+  background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%) !important;
+  box-shadow: 0 6px 20px rgba(67,56,202,0.28), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  border-radius: 20px !important;
+}
+.ur-alles.klus {
+  background: linear-gradient(135deg, #334155 0%, #1e293b 100%) !important;
+  box-shadow: 0 6px 20px rgba(30,41,59,0.35), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+.ur-alles-lbl { color: rgba(255,255,255,0.55) !important; letter-spacing: 0.16em !important; }
+.ur-alles-val {
+  font-variant-numeric: tabular-nums !important;
+  font-feature-settings: 'tnum' 1 !important;
+}
+
+/* Dagkaart-mini — verfijnder */
+.ur-dag-mini {
+  border-radius: 16px !important;
+  padding: 14px 18px !important;
+  border: 1px solid var(--border) !important;
+  border-left: 3px solid transparent !important;
+  background: var(--surface) !important;
+  box-shadow: none !important;
+  margin-bottom: 6px !important;
+}
+.ur-dag-mini.heeft-notitie {
+  border-left-color: var(--u-primary-3) !important;
+  background: var(--surface) !important;
+}
+.ur-dag-mini.today {
+  border-left-color: var(--u-primary) !important;
+  background: linear-gradient(90deg, var(--u-primary-tint) 0%, var(--surface) 40%) !important;
+  border-color: var(--u-primary-border) !important;
+}
+.ur-dag-mini.toekomst {
+  border-left: 3px dashed var(--u-planned-border) !important;
+  opacity: 0.7 !important;
+}
+.ur-dag-mini.toekomst.heeft-notitie {
+  border-left: 3px solid var(--u-planned) !important;
+  opacity: 1 !important;
+  background: linear-gradient(90deg, var(--u-planned-tint) 0%, var(--surface) 40%) !important;
+}
+.ur-dag-mini:active { transform: scale(0.985) !important; }
+
+.ur-mini-nr {
+  font-size: 1.5rem !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+  color: var(--border2) !important;
+  letter-spacing: -0.5px !important;
+}
+.ur-dag-mini.heeft-notitie .ur-mini-nr { color: var(--text) !important; }
+.ur-dag-mini.today .ur-mini-nr { color: var(--u-primary) !important; }
+.ur-dag-mini.toekomst .ur-mini-nr { color: var(--u-planned) !important; opacity: 0.75 !important; }
+.ur-mini-lbl {
+  font-size: 0.52rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.14em !important;
+  color: var(--text3) !important;
+  margin-top: 4px !important;
+}
+.ur-dag-mini.today .ur-mini-lbl { color: var(--u-primary) !important; opacity: 0.85 !important; }
+
+.ur-mini-klussen {
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  letter-spacing: -0.15px !important;
+}
+.ur-mini-klussen.leeg {
+  font-weight: 500 !important;
+  font-style: normal !important;
+  color: var(--text3) !important;
+  opacity: 0.7 !important;
+}
+.ur-mini-sub {
+  font-size: 0.66rem !important;
+  color: var(--text3) !important;
+  margin-top: 4px !important;
+  letter-spacing: 0.01em !important;
+}
+
+.ur-mini-tot {
+  font-size: 0.78rem !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+  padding: 6px 11px !important;
+  background: var(--u-primary-tint-2) !important;
+  color: var(--u-primary) !important;
+  border: 1px solid var(--u-primary-border) !important;
+  border-radius: 10px !important;
+  letter-spacing: -0.2px !important;
+}
+[data-theme="dark"] .ur-mini-tot { color: var(--u-primary-3) !important; }
+.ur-mini-tot.nul {
+  background: transparent !important;
+  color: var(--text3) !important;
+  border-color: var(--border) !important;
+  font-weight: 600 !important;
+  font-size: 0.68rem !important;
+}
+.ur-mini-chev {
+  color: var(--text3) !important;
+  opacity: 0.35 !important;
+}
+
+/* Uitgeklapte volle dagkaart — zelfde palette, verfijnder */
+.ur-dag {
+  border-radius: 18px !important;
+  border: 1px solid var(--border) !important;
+  border-left: 3px solid var(--border) !important;
+  background: var(--surface) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03) !important;
+}
+.ur-dag.today {
+  border-left-color: var(--u-primary) !important;
+  background: linear-gradient(135deg, var(--u-primary-tint) 0%, var(--surface) 50%) !important;
+  box-shadow: 0 4px 16px rgba(67,56,202,0.08) !important;
+}
+.ur-dag.heeft-notitie {
+  border-left-color: var(--u-primary-3) !important;
+}
+.ur-dag.today.heeft-notitie { border-left-color: var(--u-primary) !important; }
+.ur-dag.toekomst {
+  border-left: 3px dashed var(--u-planned-border) !important;
+  background: var(--surface) !important;
+}
+.ur-dag.toekomst.heeft-notitie {
+  border-left: 3px solid var(--u-planned) !important;
+  background: linear-gradient(135deg, var(--u-planned-tint) 0%, var(--surface) 55%) !important;
+}
+.ur-dag-nr {
+  font-variant-numeric: tabular-nums !important;
+}
+.ur-dag.today .ur-dag-nr { color: var(--u-primary) !important; }
+.ur-dag.today .ur-dag-naam { color: var(--u-primary) !important; }
+.ur-dag.toekomst .ur-dag-nr { color: var(--u-planned) !important; opacity: 0.85 !important; }
+.ur-dag.toekomst .ur-dag-naam { color: var(--u-planned) !important; }
+.ur-dag-tot {
+  background: var(--u-primary-tint-2) !important;
+  color: var(--u-primary) !important;
+  border-color: var(--u-primary-border) !important;
+  font-variant-numeric: tabular-nums !important;
+}
+[data-theme="dark"] .ur-dag-tot { color: var(--u-primary-3) !important; }
+.ur-dag-pill {
+  background: var(--u-primary-tint-2) !important;
+  color: var(--u-primary) !important;
+  padding: 3px 8px !important;
+  font-weight: 700 !important;
+}
+[data-theme="dark"] .ur-dag-pill { color: var(--u-primary-3) !important; }
+.ur-dag.today .ur-dag-pill { background: var(--u-primary) !important; color: #fff !important; }
+.ur-dag.toekomst .ur-dag-pill {
+  background: var(--u-planned-tint) !important;
+  color: var(--u-planned) !important;
+}
+
+/* Rijen focus — indigo i.p.v. paars */
+.ur-rij-klus:focus, .ur-rij-sub:focus, .ur-rij-uren:focus, .ur-km-in:focus, .ur-notitie-klein:focus, .klus-zoek-in:focus, .ur-zoek-in:focus {
+  border-color: var(--u-primary) !important;
+  box-shadow: 0 0 0 3px var(--u-primary-tint-2) !important;
+}
+.ur-rij-label {
+  background: var(--u-primary-tint) !important;
+  border-color: var(--u-primary-border) !important;
+  color: var(--text) !important;
+}
+.ur-rij-label .sub { color: var(--text3) !important; }
+
+/* Km-veld — subtieler, geen aparte cyan meer */
+.ur-km-in:focus {
+  border-color: var(--u-primary) !important;
+  box-shadow: 0 0 0 3px var(--u-primary-tint-2) !important;
+}
+
+/* Maandtotaal pill: tabular numbers overal */
+.ur-dag-tot, .ur-mini-tot, .ur-mtot-val, .ur-alles-val, .ur-mtot-rij-uren, .ur-alles-rij-uren, .ur-klus-entry-uren, .ur-klus-entry-datum, .ur-mini-nr, .ur-dag-nr, .klus-hist-datum, .klus-hist-uren, .ur-rij-uren, .ur-km-in {
+  font-variant-numeric: tabular-nums !important;
+  font-feature-settings: 'tnum' 1 !important;
+}
+
+/* Zoek badge — indigo */
+.ur-zoek-count {
+  background: var(--u-primary-tint-2) !important;
+  color: var(--u-primary) !important;
+  border-color: var(--u-primary-border) !important;
+}
+[data-theme="dark"] .ur-zoek-count { color: var(--u-primary-3) !important; }
+
+/* Klussen-kaart accent — indigo */
+.klus-card {
+  border-left-color: var(--u-primary) !important;
+}
+.klus-sub-chip {
+  background: var(--u-primary-tint) !important;
+  border-color: var(--u-primary-border) !important;
+  color: var(--u-primary) !important;
+}
+[data-theme="dark"] .klus-sub-chip { color: var(--u-primary-3) !important; }
+.klus-hist-btn {
+  background: var(--u-primary-tint) !important;
+  border-color: var(--u-primary-border) !important;
+  color: var(--u-primary) !important;
+}
+[data-theme="dark"] .klus-hist-btn { color: var(--u-primary-3) !important; }
+.klus-hist-uren { color: var(--u-primary) !important; }
+[data-theme="dark"] .klus-hist-uren { color: var(--u-primary-3) !important; }
+
+/* Personeel-avatar — indigo */
+.urp-card-avatar {
+  background: linear-gradient(145deg, #6366f1, #4338ca) !important;
+  box-shadow: 0 3px 10px rgba(67,56,202,0.28) !important;
+}
+.urp-card {
+  border-left-color: var(--u-primary) !important;
+}
+.urp-add {
+  background: linear-gradient(145deg, #6366f1, #4338ca) !important;
+  box-shadow: 0 3px 12px rgba(67,56,202,0.32) !important;
+}
+
+/* Personeel-detail naam-invoer focus indigo */
+.urp-detail-naam-in:focus { border-bottom-color: var(--u-primary) !important; }
+
+/* PDF-knop — donker slate */
+.ur-pdf-btn {
+  background: linear-gradient(135deg, #0f172a, #020617) !important;
+  box-shadow: 0 6px 22px rgba(2,6,23,0.42), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+  border-radius: 18px !important;
+}
+
+/* Collapse-toggle knop — subtieler */
+.ur-collapse-toggle button {
+  color: var(--text2) !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* Klap-details in "Per werkgever" balk — slate ipv cyaan */
+.ur-klus-rij:active { background: rgba(255,255,255,0.05) !important; }
+
+/* Iedereen-samen avatar chip — subtieler */
+.ur-alles-rij-av {
+  background: rgba(255,255,255,0.14) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+}
+
+/* Toekomst-pill in mini card — slate */
+.ur-mini-sub span[style*="color:#0e7490"] {
+  color: var(--u-planned) !important;
+}
+</style>
+
+/* Toolbar-strip bovenaan Mij + Personeel detail — cleaner */
+.ur-topbar {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 14px;
+}
+.ur-topbar .wk-nav { flex: 1; margin-bottom: 0 !important; }
+.ur-topbar .ur-topbar-btn {
+  width: 44px; height: 44px; border-radius: 14px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text2); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  transition: all 0.15s var(--ease-spring);
+}
+.ur-topbar .ur-topbar-btn:active { transform: scale(0.9); }
+.ur-topbar .ur-topbar-btn.on {
+  background: linear-gradient(145deg, #a78bfa, #7c3aed);
+  color: #fff; border-color: #7c3aed;
+  box-shadow: 0 3px 12px rgba(124,58,237,0.32);
+}
+
+/* "Alles open/dicht" knop rechts van de balken */
+.ur-collapse-toggle {
+  display: flex; justify-content: flex-end; margin: -4px 4px 8px;
+}
+.ur-collapse-toggle button {
+  background: none; border: none;
+  font-family: inherit;
+  font-size: 0.68rem; font-weight: 700;
+  color: var(--text3); cursor: pointer;
+  padding: 6px 10px; border-radius: 8px;
+  display: flex; align-items: center; gap: 4px;
+  transition: background 0.15s;
+}
+.ur-collapse-toggle button:active { background: var(--surface2); }
 </style>
 </head>
 <body>
@@ -4372,6 +4890,9 @@ window.startUrenListener = function() {
   _urMonth = new Date().getMonth();
   _urpYear = new Date().getFullYear();
   _urpMonth = new Date().getMonth();
+  // Collapse-state resetten zodat vandaag automatisch open staat bij openen module
+  _urExpandedInit.ur = false; _urExpandedInit.urp = false;
+  _urExpanded.ur.clear(); _urExpanded.urp.clear();
   const navE = document.getElementById('nav-ur-eigen');
   const navP = document.getElementById('nav-ur-personeel');
   const navO = document.getElementById('nav-ur-overzicht');
@@ -4445,14 +4966,24 @@ function _urMonthNavHtml(y, m, prevFn, nextFn){
   </div>`;
 }
 
+function _urResetExpanded(prefix, year, month){
+  // Bij maand-wissel: alles ingeklapt behalve vandaag (als vandaag in die maand valt)
+  _urExpanded[prefix].clear();
+  const t = new Date();
+  if(t.getFullYear() === year && t.getMonth() === month){
+    _urExpanded[prefix].add(_todayISO());
+  }
+}
 window.urMaandPrev = function(){
   _urMonth--;
   if(_urMonth < 0){ _urMonth = 11; _urYear--; }
+  _urResetExpanded('ur', _urYear, _urMonth);
   renderUren();
 };
 window.urMaandNext = function(){
   _urMonth++;
   if(_urMonth > 11){ _urMonth = 0; _urYear++; }
+  _urResetExpanded('ur', _urYear, _urMonth);
   renderUren();
 };
 
@@ -4816,11 +5347,186 @@ window.urNotitieIn = function(prefix, iso){
   _urSaveDag(prefix, iso, 1200);
 };
 
+// ═══ Zoek-state (Mij + Personeel-detail) ═══
+const _urZoek = { ur: '', urp: '' };
+const _urZoekOpen = { ur: false, urp: false };
+
+// ═══ Collapsed-by-default state: welke dagen zijn uitgeklapt ═══
+// Alleen vandaag automatisch open. Rest ingeklapt = compacte samenvatting.
+const _urExpanded = { ur: new Set(), urp: new Set() };
+let _urExpandedInit = { ur: false, urp: false };
+
+function _urInitExpanded(prefix){
+  if(_urExpandedInit[prefix]) return;
+  _urExpanded[prefix].clear();
+  _urExpanded[prefix].add(_todayISO());
+  _urExpandedInit[prefix] = true;
+}
+
+window.urDagToggle = function(prefix, iso){
+  if(_urExpanded[prefix].has(iso)) _urExpanded[prefix].delete(iso);
+  else _urExpanded[prefix].add(iso);
+  if(prefix === 'ur') renderUren();
+  else _renderPersoneelDetail();
+  // Naar de gekozen dag scrollen zodat je hem meteen ziet
+  setTimeout(() => {
+    const el = document.getElementById(`dag-${prefix}-${iso}`);
+    if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+  }, 30);
+  haptic(6);
+};
+
+window.urAllesOpenDicht = function(prefix, alles){
+  const dagen = prefix === 'ur' ? _urDagenInMaand(_urYear, _urMonth) : _urDagenInMaand(_urpYear, _urpMonth);
+  _urExpanded[prefix].clear();
+  if(alles) dagen.forEach(iso => _urExpanded[prefix].add(iso));
+  if(prefix === 'ur') renderUren();
+  else _renderPersoneelDetail();
+};
+
+// Rendert een compacte 1-lijn samenvatting van een dag (ingeklapt)
+function _urDagMiniHtml(prefix, iso, dagData){
+  const today = _todayISO();
+  const isToday = iso === today;
+  const isFuture = iso > today;
+  const { dagNaam, dag } = _urFmtDate(iso);
+  const dagKort = dagNaam.slice(0,2);
+  const notitie = (dagData.notitie || '').trim();
+  const km = _parseNum(dagData.km);
+  const rows = _urRows[_urKey(prefix, iso)] || dagData.rijen || [];
+  const rowsInVoll = rows.filter(r => r.k || _parseNum(r.u) > 0);
+  let tot = 0;
+  rowsInVoll.forEach(r => { tot = _urRound2(tot + _parseNum(r.u)); });
+  const heeftInhoud = tot > 0 || notitie || rowsInVoll.length || km > 0;
+
+  // Klussen samenvatting: naam(s) gescheiden door · (max 3, dan +N)
+  let klussenTxt = '';
+  if(rowsInVoll.length){
+    const namen = rowsInVoll.map(r => {
+      const k = _urKlussen.find(x => x.id === r.k);
+      return k ? k.naam : (r.k ? '(verwijderd)' : '—');
+    });
+    const uniek = [...new Set(namen)];
+    if(uniek.length <= 3) klussenTxt = uniek.join(' · ');
+    else klussenTxt = `${uniek.slice(0,2).join(' · ')} +${uniek.length-2}`;
+  }
+
+  const subParts = [];
+  if(km > 0) subParts.push(`🚗 ${_urFmtKm(km)}`);
+  if(notitie) subParts.push(`<span class="heeft-not-ic">📝</span> notitie`);
+  if(isFuture) subParts.push(`<span style="color:#0e7490;font-weight:800">GEPLAND</span>`);
+  const subHtml = subParts.length ? subParts.map((p,i) => i > 0 ? `<span class="sep">·</span>${p}` : p).join(' ') : '';
+
+  const totHtml = tot > 0
+    ? `<div class="ur-mini-tot">${_urFmtUren(tot)}</div>`
+    : `<div class="ur-mini-tot nul">${isFuture?'gepland':'—'}</div>`;
+
+  return `<div class="ur-dag-mini${isToday?' today':''}${heeftInhoud?' heeft-notitie':''}${isFuture?' toekomst':''}" id="dag-${prefix}-${iso}" onclick="urDagToggle('${prefix}','${iso}')">
+    <div class="ur-mini-datum">
+      <div class="ur-mini-nr">${dag}</div>
+      <div class="ur-mini-lbl">${_urEsc(dagKort)}</div>
+    </div>
+    <div class="ur-mini-info">
+      <div class="ur-mini-klussen${klussenTxt?'':' leeg'}">${klussenTxt || 'Nog niets ingevuld'}</div>
+      ${subHtml ? `<div class="ur-mini-sub">${subHtml}</div>` : ''}
+    </div>
+    ${totHtml}
+    <svg class="ur-mini-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+  </div>`;
+}
+
+// Rendert een collapse/expand toolbar (compact)
+function _urCollapseToggleHtml(prefix){
+  const dagen = prefix === 'ur' ? _urDagenInMaand(_urYear, _urMonth) : _urDagenInMaand(_urpYear, _urpMonth);
+  const aantalOpen = dagen.filter(iso => _urExpanded[prefix].has(iso)).length;
+  const allesOpen = aantalOpen === dagen.length;
+  return `<div class="ur-collapse-toggle">
+    <button onclick="urAllesOpenDicht('${prefix}', ${!allesOpen})">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${allesOpen ? '<polyline points="18 15 12 9 6 15"/>' : '<polyline points="6 9 12 15 18 9"/>'}</svg>
+      ${allesOpen ? 'Alles inklappen' : 'Alles openklappen'}
+    </button>
+  </div>`;
+}
+
+// Bepaalt of een dag matcht met de zoekterm (klus-naam, locatie, notitie)
+function _urDagMatch(prefix, iso, term){
+  if(!term) return true;
+  const q = term.toLowerCase();
+  const bron = prefix === 'ur' ? (_urData[iso] || {}) : ((_urPData[_urStaffSel] || {})[iso] || {});
+  const rows = _urRows[_urKey(prefix, iso)] || bron.rijen || [];
+  if((bron.notitie || '').toLowerCase().includes(q)) return true;
+  for(const r of rows){
+    if((r.s || '').toLowerCase().includes(q)) return true;
+    const klus = _urKlussen.find(k => k.id === r.k);
+    if(klus && klus.naam.toLowerCase().includes(q)) return true;
+  }
+  return false;
+}
+
+function _urZoekBar(prefix){
+  const term = _urZoek[prefix] || '';
+  const open = _urZoekOpen[prefix] || !!term;
+  const btnFn = `urZoekBtn('${prefix}')`;
+  return {
+    btnHtml: `<button class="ur-zoek-btn ${open?'on':''}" onclick="${btnFn}" aria-label="Zoeken">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>`,
+    wrapHtml: `<div class="ur-zoek-wrap ${open?'open':''}" id="${prefix}-zoek-wrap">
+      <span class="ur-zoek-ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <input type="text" class="ur-zoek-in" id="${prefix}-zoek-in" placeholder="Zoek klus, locatie of notitie..." value="${term.replace(/"/g,'&quot;')}" oninput="urZoekIn('${prefix}', this.value)">
+      <button class="ur-zoek-x ${term?'on':''}" id="${prefix}-zoek-x" onclick="urZoekWis('${prefix}')" aria-label="Wissen">✕</button>
+    </div>`
+  };
+}
+
+window.urZoekBtn = function(prefix){
+  _urZoekOpen[prefix] = !_urZoekOpen[prefix];
+  if(!_urZoekOpen[prefix]) _urZoek[prefix] = '';
+  if(prefix === 'ur') renderUren();
+  else _renderPersoneelDetail();
+  // Focus in input als net geopend
+  if(_urZoekOpen[prefix]){
+    setTimeout(() => { const inp = document.getElementById(`${prefix}-zoek-in`); if(inp) inp.focus(); }, 50);
+  }
+};
+
+window.urZoekIn = function(prefix, val){
+  _urZoek[prefix] = val || '';
+  _urZoekOpen[prefix] = true;
+  if(prefix === 'ur') renderUren();
+  else _renderPersoneelDetail();
+  // Focus behouden na re-render
+  setTimeout(() => {
+    const inp = document.getElementById(`${prefix}-zoek-in`);
+    if(inp && document.activeElement !== inp){
+      inp.focus();
+      const v = inp.value; inp.value = ''; inp.value = v; // cursor achteraan
+    }
+  }, 0);
+};
+
+window.urZoekWis = function(prefix){
+  _urZoek[prefix] = '';
+  if(prefix === 'ur') renderUren();
+  else _renderPersoneelDetail();
+};
+
 function renderUren() {
   const list = document.getElementById('ur-list');
   if (!list) return;
-  const dagen = _urDagenInMaand(_urYear, _urMonth);
-  let html = _urMonthNavHtml(_urYear, _urMonth, 'urMaandPrev()', 'urMaandNext()');
+  _urInitExpanded('ur');
+  const dagenAll = _urDagenInMaand(_urYear, _urMonth);
+  const term = _urZoek.ur || '';
+  // Rows initialiseren voor alle dagen zodat matching + samenvatting werkt
+  dagenAll.forEach(iso => { _urInitRows('ur', iso, (_urData[iso] || {}).rijen); });
+  const dagen = term ? dagenAll.filter(iso => _urDagMatch('ur', iso, term)) : dagenAll;
+
+  const zoek = _urZoekBar('ur');
+  let html = `<div class="ur-nav-met-zoek">${_urMonthNavHtml(_urYear, _urMonth, 'urMaandPrev()', 'urMaandNext()')}${zoek.btnHtml}</div>`;
+  html += zoek.wrapHtml;
+  if(term){
+    html += `<div class="ur-zoek-count">${dagen.length} van ${dagenAll.length} ${dagenAll.length===1?'dag':'dagen'}</div>`;
+  }
   html += `<div class="ur-mtot" id="ur-mtot-box" onclick="urMtotToggle('ur')">
     <div class="ur-mtot-top">
       <span class="ur-mtot-lbl">Totaal ${_UR_MND_LBL[_urMonth]} ${_urYear}</span>
@@ -4829,7 +5535,20 @@ function renderUren() {
     </div>
     <div class="ur-mtot-details" id="ur-mtot-details"></div>
   </div>`;
-  dagen.forEach(iso => { html += _urDagCardHtml('ur', iso, _urData[iso] || {}, 'Notitie (optioneel)...'); });
+  // Alleen collapse-toggle als er wat te collapsen valt
+  if(dagen.length > 1) html += _urCollapseToggleHtml('ur');
+  if(term && !dagen.length){
+    html += `<div class="urp-leeg"><div class="urp-leeg-ic">🔎</div><div class="urp-leeg-t">Geen resultaten voor "${_urEsc(term)}"</div><div class="urp-leeg-s">Probeer een andere zoekterm</div></div>`;
+  }
+  // Bij actieve zoekterm: alle matches automatisch uitklappen
+  const forceExpand = !!term;
+  dagen.forEach(iso => {
+    if(forceExpand || _urExpanded.ur.has(iso)){
+      html += _urDagCardHtml('ur', iso, _urData[iso] || {}, 'Notitie (optioneel)...');
+    } else {
+      html += _urDagMiniHtml('ur', iso, _urData[iso] || {});
+    }
+  });
   list.innerHTML = html;
   dagen.forEach(iso => _urResizeNot('ur', iso));
   _urUpdateTotalen('ur');
@@ -5053,6 +5772,7 @@ window.klusNaarEntry = function(iso, source){
   haptic(10);
   if(source === 'ur'){
     _urYear = y; _urMonth = m - 1;
+    _urExpanded.ur.add(iso); // dag auto-openklappen
     urGaNaar('eigen');
     setTimeout(() => {
       const el = document.getElementById(`dag-ur-${iso}`);
@@ -5061,6 +5781,7 @@ window.klusNaarEntry = function(iso, source){
   } else {
     _urStaffSel = source;
     _urpYear = y; _urpMonth = m - 1;
+    _urExpanded.urp.add(iso); // dag auto-openklappen
     urGaNaar('personeel');
     setTimeout(() => {
       const el = document.getElementById(`dag-urp-${iso}`);
@@ -5649,16 +6370,26 @@ function _renderPersoneelDetail(){
 
   const el = document.getElementById('ur-personeel');
   if(!el) return;
+  _urInitExpanded('urp');
 
-  const dagen = _urDagenInMaand(_urpYear, _urpMonth);
+  const dagenAll = _urDagenInMaand(_urpYear, _urpMonth);
   const data = _urPData[_urStaffSel] || {};
   const voornaam = _urEsc(staff.naam.split(' ')[0]);
+  const term = _urZoek.urp || '';
 
-  const lijst = dagen.map(iso =>
-    _urDagCardHtml('urp', iso, data[iso] || {}, `Notitie over ${voornaam} (optioneel)...`)
-  ).join('');
+  // Rows initialiseren voor alle dagen zodat matching + samenvatting werkt
+  dagenAll.forEach(iso => { _urInitRows('urp', iso, (data[iso] || {}).rijen); });
+  const dagen = term ? dagenAll.filter(iso => _urDagMatch('urp', iso, term)) : dagenAll;
 
-  const navHtml = _urMonthNavHtml(_urpYear, _urpMonth, 'urpMaandPrev()', 'urpMaandNext()');
+  const forceExpand = !!term;
+  const lijst = dagen.map(iso => {
+    if(forceExpand || _urExpanded.urp.has(iso)){
+      return _urDagCardHtml('urp', iso, data[iso] || {}, `Notitie over ${voornaam} (optioneel)...`);
+    }
+    return _urDagMiniHtml('urp', iso, data[iso] || {});
+  }).join('');
+
+  const zoek = _urZoekBar('urp');
 
   el.innerHTML = `
     <div class="urp-detail-top">
@@ -5673,7 +6404,9 @@ function _renderPersoneelDetail(){
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
       </button>
     </div>
-    ${navHtml}
+    <div class="ur-nav-met-zoek">${_urMonthNavHtml(_urpYear, _urpMonth, 'urpMaandPrev()', 'urpMaandNext()')}${zoek.btnHtml}</div>
+    ${zoek.wrapHtml}
+    ${term ? `<div class="ur-zoek-count">${dagen.length} van ${dagenAll.length} ${dagenAll.length===1?'dag':'dagen'}</div>` : ''}
     <div class="ur-mtot" id="urp-mtot-box" onclick="urMtotToggle('urp')">
       <div class="ur-mtot-top">
         <span class="ur-mtot-lbl">Totaal ${voornaam} · ${_UR_MND_LBL[_urpMonth]} ${_urpYear}</span>
@@ -5682,6 +6415,8 @@ function _renderPersoneelDetail(){
       </div>
       <div class="ur-mtot-details" id="urp-mtot-details"></div>
     </div>
+    ${dagen.length > 1 ? _urCollapseToggleHtml('urp') : ''}
+    ${term && !dagen.length ? `<div class="urp-leeg"><div class="urp-leeg-ic">🔎</div><div class="urp-leeg-t">Geen resultaten voor "${_urEsc(term)}"</div><div class="urp-leeg-s">Probeer een andere zoekterm</div></div>` : ''}
     ${lijst}
   `;
   dagen.forEach(iso => _urResizeNot('urp', iso));
@@ -5691,11 +6426,13 @@ function _renderPersoneelDetail(){
 window.urpMaandPrev = function(){
   _urpMonth--;
   if(_urpMonth < 0){ _urpMonth = 11; _urpYear--; }
+  _urResetExpanded('urp', _urpYear, _urpMonth);
   _renderPersoneelDetail();
 };
 window.urpMaandNext = function(){
   _urpMonth++;
   if(_urpMonth > 11){ _urpMonth = 0; _urpYear++; }
+  _urResetExpanded('urp', _urpYear, _urpMonth);
   _renderPersoneelDetail();
 };
 
