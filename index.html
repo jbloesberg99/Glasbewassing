@@ -2873,6 +2873,79 @@ header{
 /* Geen animatie herhalen als display van/naar none verandert (zoek-filter) */
 .ur-dag[style*="display"] { animation: none !important; }
 
+/* ── Externe zoek-resultaten (van andere personen) ── */
+.ur-ext-wrap {
+  margin: 20px 0 6px;
+  padding: 14px 16px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+.ur-ext-hdr {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.6rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.13em;
+  color: var(--text3);
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.ur-ext-hdr-count {
+  background: var(--u-primary-tint-2);
+  color: var(--u-primary);
+  border-radius: 99px;
+  padding: 2px 8px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+[data-theme="dark"] .ur-ext-hdr-count { color: var(--u-primary-3); }
+.ur-ext-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 4px;
+  border-bottom: 1px dashed var(--border);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+.ur-ext-item:last-child { border-bottom: none; }
+.ur-ext-item:active { background: var(--surface2); }
+.ur-ext-datum {
+  font-size: 0.75rem; font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--text); flex-shrink: 0;
+  min-width: 70px;
+}
+.ur-ext-mid { flex: 1; min-width: 0; }
+.ur-ext-persoon {
+  font-size: 0.72rem; font-weight: 800;
+  color: var(--u-primary);
+  letter-spacing: -0.1px;
+  display: inline-block;
+  background: var(--u-primary-tint);
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--u-primary-border);
+  margin-bottom: 3px;
+}
+[data-theme="dark"] .ur-ext-persoon { color: var(--u-primary-3); }
+.ur-ext-klus {
+  font-size: 0.75rem; font-weight: 600;
+  color: var(--text2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ur-ext-klus .loc { color: var(--text3); font-weight: 500; }
+.ur-ext-uren {
+  font-size: 0.82rem; font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: var(--u-primary);
+  flex-shrink: 0; min-width: 46px; text-align: right;
+  letter-spacing: -0.3px;
+}
+[data-theme="dark"] .ur-ext-uren { color: var(--u-primary-3); }
+.ur-ext-chev { color: var(--text3); opacity: 0.5; flex-shrink: 0; }
+
 /* ── Zoekbalk voor Mij + Personeel detail ── */
 .ur-zoek-wrap { position: relative; margin: -6px 0 14px; display: none; }
 .ur-zoek-wrap.open { display: block; animation: fds 0.22s ease; }
@@ -5489,9 +5562,24 @@ function _urCollapseToggleHtml(prefix){
 }
 
 // Bepaalt of een dag matcht met de zoekterm (klus-naam, locatie, notitie)
+// Datum-zoekstring bouwer — zodat "8 aug", "augustus", "vrijdag", "8-8" etc. allemaal matchen
+const _MND_LANG_L = ['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+const _MND_KORT_L = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+const _DAG_LANG_L = ['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
+const _DAG_KORT_L = ['zo','ma','di','wo','do','vr','za'];
+function _urDagZoekStr(iso){
+  const [y, m, d] = iso.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  const wd = dt.getDay();
+  // Meerdere formaten om flexibel te zoeken
+  return `${d} ${_MND_LANG_L[m-1]} ${d} ${_MND_KORT_L[m-1]} ${y} ${_DAG_LANG_L[wd]} ${_DAG_KORT_L[wd]} ${d}-${m} ${d}-${m}-${y} ${d}/${m} ${d}/${m}/${y} ${iso}`;
+}
+
 function _urDagMatch(prefix, iso, term){
   if(!term) return true;
   const q = term.toLowerCase();
+  // Datum-check (bijv. "8 aug", "vrijdag", "18-8-2026")
+  if(_urDagZoekStr(iso).includes(q)) return true;
   const bron = prefix === 'ur' ? (_urData[iso] || {}) : ((_urPData[_urStaffSel] || {})[iso] || {});
   const rows = _urRows[_urKey(prefix, iso)] || bron.rijen || [];
   if((bron.notitie || '').toLowerCase().includes(q)) return true;
@@ -5529,6 +5617,100 @@ window.urZoekBtn = function(prefix){
     setTimeout(() => { const inp = document.getElementById(`${prefix}-zoek-in`); if(inp) inp.focus(); }, 50);
   }
 };
+
+// Zoekt door de rijen van één dag; retourneert matches (voor externe resultaten)
+function _urRowMatches(r, q){
+  if((r.s || '').toLowerCase().includes(q)) return true;
+  const klus = _urKlussen.find(k => k.id === r.k);
+  return !!(klus && klus.naam.toLowerCase().includes(q));
+}
+
+// Verzamelt matches van andere personen (niet de huidige view)
+function _urGlobaleMatches(prefix, term){
+  const q = term.toLowerCase().trim();
+  if(!q) return [];
+  const results = [];
+
+  const scanDataset = (dataset, source, naam) => {
+    Object.entries(dataset).forEach(([iso, dag]) => {
+      if(!dag) return;
+      const rowsMatch = (dag.rijen || []).filter(r => _urRowMatches(r, q));
+      const notitieMatch = (dag.notitie || '').toLowerCase().includes(q);
+      const datumMatch = _urDagZoekStr(iso).includes(q);
+      if(rowsMatch.length || notitieMatch || datumMatch){
+        results.push({
+          iso, source, naam,
+          rijen: rowsMatch.length ? rowsMatch : (dag.rijen || []),
+          notitie: dag.notitie || '',
+          km: _parseNum(dag.km)
+        });
+      }
+    });
+  };
+
+  // Als we in staff-detail zijn: ook eigen (Mij) uren doorzoeken
+  if(prefix === 'urp'){
+    scanDataset(_urData, 'ur', 'Mij');
+  }
+  // Alle personeelsleden BEHALVE de huidige
+  Object.entries(_urPData).forEach(([staffId, days]) => {
+    if(prefix === 'urp' && staffId === _urStaffSel) return;
+    const staff = _urStaff.find(s => s.id === staffId);
+    if(staff) scanDataset(days, staffId, staff.naam);
+  });
+
+  results.sort((a,b) => b.iso.localeCompare(a.iso));
+  return results;
+}
+
+// Rendert de "Ook gevonden bij anderen"-sectie onder de dagkaarten
+function _urRenderExternalResults(prefix, results){
+  const listId = prefix === 'ur' ? 'ur-list' : 'ur-personeel';
+  const list = document.getElementById(listId);
+  if(!list) return;
+  let wrap = document.getElementById(`${prefix}-zoek-ext`);
+  if(!results.length){
+    if(wrap) wrap.remove();
+    return;
+  }
+  if(!wrap){
+    wrap = document.createElement('div');
+    wrap.id = `${prefix}-zoek-ext`;
+    wrap.className = 'ur-ext-wrap';
+    list.appendChild(wrap);
+  }
+  // Als resultaten al bestaan met dezelfde data, niet vervangen (voorkomt flicker)
+  const sig = JSON.stringify(results.map(r => [r.iso, r.source, r.rijen.length]));
+  if(wrap.dataset.sig === sig) return;
+  wrap.dataset.sig = sig;
+
+  const items = results.slice(0, 40).map(r => {
+    const klussenTxt = r.rijen.map(row => {
+      const klus = _urKlussen.find(k => k.id === row.k);
+      const naam = klus ? klus.naam : (row.k ? '(verwijderd)' : '—');
+      const loc = row.s && row.s !== '-' ? ` <span class="loc">/ ${_urEsc(row.s)}</span>` : '';
+      return `${_urEsc(naam)}${loc}`;
+    }).join(' · ');
+    let dagtot = 0;
+    r.rijen.forEach(row => { dagtot = _urRound2(dagtot + _parseNum(row.u)); });
+    const urenHtml = dagtot > 0 ? `<span class="ur-ext-uren">${_urFmtUren(dagtot)}</span>` : '';
+    return `<div class="ur-ext-item" onclick="klusNaarEntry('${r.iso}','${r.source}')">
+      <span class="ur-ext-datum">${_fmtDatumKort(r.iso)}</span>
+      <div class="ur-ext-mid">
+        <div><span class="ur-ext-persoon">${_urEsc(r.naam)}</span></div>
+        <div class="ur-ext-klus">${klussenTxt || _urEsc((r.notitie||'').slice(0,60))}</div>
+      </div>
+      ${urenHtml}
+      <svg class="ur-ext-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>`;
+  }).join('');
+
+  wrap.innerHTML = `<div class="ur-ext-hdr">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M1 21v-2a4 4 0 0 1 3-3.87"/></svg>
+    Ook gevonden bij anderen
+    <span class="ur-ext-hdr-count">${results.length}</span>
+  </div>${items}`;
+}
 
 // Past het filter toe op de zichtbare dagkaarten ZONDER de zoekbalk opnieuw te renderen
 // (voorheen: renderUren() zou het input-veld vernietigen en het toetsenbord zou sluiten)
@@ -5579,6 +5761,9 @@ function _urZoekApply(prefix){
   } else if(leeg){
     leeg.remove();
   }
+  // Externe resultaten (matches bij andere personen)
+  const externeResults = term ? _urGlobaleMatches(prefix, term) : [];
+  _urRenderExternalResults(prefix, externeResults);
 }
 
 // Debounce — voorkomt dat DOM-updates het mobiele toetsenbord destabiliseren
