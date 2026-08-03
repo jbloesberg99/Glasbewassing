@@ -2224,6 +2224,9 @@ header{
 .ur-rij-klus:focus,.ur-rij-sub:focus{border-color:#7c3aed;}
 .ur-rij-klus.leeg,.ur-rij-sub.leeg{color:var(--text3);font-weight:500;}
 .ur-rij-uren{width:62px;flex-shrink:0;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;padding:8px 6px;font-family:inherit;font-size:0.8rem;font-weight:700;color:var(--text);text-align:center;outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
+.ur-rij-prijs{width:54px;flex-shrink:0;background:var(--surface2);border:1px dashed var(--border2);border-radius:9px;padding:8px 4px;font-family:inherit;font-size:0.72rem;font-weight:700;color:var(--text2);text-align:center;outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
+.ur-rij-prijs::placeholder{color:var(--text3);font-weight:500;opacity:0.8;}
+.ur-rij-prijs:focus{border-style:solid;border-color:var(--u-primary);box-shadow:0 0 0 3px var(--u-primary-tint-2);color:var(--text);}
 .ur-rij-uren:focus{border-color:#7c3aed;}
 .ur-rij-uren::placeholder{color:var(--text3);font-weight:500;}
 .ur-rij-label{flex:1;min-width:0;background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.18);border-radius:9px;padding:8px 10px;font-size:0.78rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:background 0.15s;}
@@ -2946,6 +2949,129 @@ header{
 [data-theme="dark"] .ur-ext-uren { color: var(--u-primary-3); }
 .ur-ext-chev { color: var(--text3); opacity: 0.5; flex-shrink: 0; }
 
+/* ── Personeel tariefinstellingen ── */
+.pt-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 18px; padding: 0; margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03); overflow: hidden;
+}
+.pt-hdr {
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 16px; cursor: pointer; user-select: none;
+  transition: background 0.15s;
+}
+.pt-hdr:active { background: var(--surface2); }
+.pt-hdr-ic {
+  width: 32px; height: 32px; border-radius: 10px;
+  background: var(--u-primary-tint-2); color: var(--u-primary);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+[data-theme="dark"] .pt-hdr-ic { color: var(--u-primary-3); }
+.pt-hdr-info { flex: 1; min-width: 0; }
+.pt-hdr-titel {
+  font-size: 0.82rem; font-weight: 800; letter-spacing: -0.2px;
+  color: var(--text);
+}
+.pt-hdr-sub {
+  font-size: 0.66rem; color: var(--text3); font-weight: 600;
+  margin-top: 2px;
+}
+.pt-hdr-chev {
+  color: var(--text3); flex-shrink: 0;
+  transition: transform 0.22s cubic-bezier(0.34,1.4,0.64,1);
+}
+.pt-card.open .pt-hdr-chev { transform: rotate(180deg); }
+.pt-body {
+  display: none; padding: 4px 16px 16px;
+  border-top: 1px solid var(--border);
+}
+.pt-card.open .pt-body { display: block; animation: fds 0.22s ease; }
+.pt-veld { margin-top: 14px; }
+.pt-veld-lbl {
+  font-size: 0.6rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.11em;
+  color: var(--text3); margin-bottom: 6px;
+}
+.pt-type-row { display: flex; gap: 6px; }
+.pt-type-btn {
+  flex: 1; padding: 10px 8px; border-radius: 11px;
+  background: var(--surface2); border: 1px solid var(--border);
+  font-family: inherit; font-size: 0.72rem; font-weight: 700;
+  color: var(--text2); cursor: pointer;
+  transition: all 0.15s var(--ease-out); text-align: center;
+}
+.pt-type-btn.on {
+  background: var(--u-primary); color: #fff; border-color: var(--u-primary);
+  box-shadow: 0 2px 8px rgba(67,56,202,0.28);
+}
+.pt-loon-wrap {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 11px; padding: 0 12px;
+  transition: border-color 0.15s;
+}
+.pt-loon-wrap:focus-within {
+  border-color: var(--u-primary);
+  box-shadow: 0 0 0 3px var(--u-primary-tint-2);
+}
+.pt-loon-wrap .prefix, .pt-loon-wrap .suffix {
+  font-size: 0.78rem; font-weight: 600; color: var(--text3);
+  flex-shrink: 0;
+}
+.pt-loon-in {
+  flex: 1; background: transparent; border: none; outline: none;
+  padding: 10px 0; font-family: inherit; font-size: 0.9rem;
+  font-weight: 800; color: var(--text); min-width: 0;
+  font-variant-numeric: tabular-nums;
+}
+.pt-ov-lijst { display: flex; flex-direction: column; gap: 6px; }
+.pt-ov-rij {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 10px;
+}
+.pt-ov-naam {
+  flex: 1; min-width: 0; font-size: 0.78rem; font-weight: 700;
+  color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pt-ov-wrap {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 0 8px; flex-shrink: 0;
+}
+.pt-ov-wrap:focus-within {
+  border-color: var(--u-primary);
+  box-shadow: 0 0 0 2px var(--u-primary-tint-2);
+}
+.pt-ov-in {
+  width: 60px; background: transparent; border: none; outline: none;
+  padding: 7px 0; font-family: inherit; font-size: 0.8rem;
+  font-weight: 800; color: var(--text); text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.pt-ov-in::placeholder { color: var(--text3); font-weight: 500; }
+.pt-ov-suf {
+  font-size: 0.65rem; font-weight: 700; color: var(--text3);
+}
+.pt-ov-x {
+  background: none; border: none; color: var(--text3);
+  cursor: pointer; padding: 2px 6px;
+  font-size: 0.9rem; line-height: 1;
+}
+.pt-ov-x:active { color: var(--urgent); }
+.pt-ov-hint {
+  font-size: 0.66rem; color: var(--text3); font-weight: 500;
+  margin-top: 6px; font-style: italic; line-height: 1.5;
+}
+.pt-status {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 0.62rem; font-weight: 700; color: var(--u-primary);
+  opacity: 0; transition: opacity 0.25s; margin-top: 8px;
+}
+[data-theme="dark"] .pt-status { color: var(--u-primary-3); }
+.pt-status.show { opacity: 1; }
+
 /* ── Zoekbalk voor Mij + Personeel detail ── */
 .ur-zoek-wrap { position: relative; margin: -6px 0 14px; display: none; }
 .ur-zoek-wrap.open { display: block; animation: fds 0.22s ease; }
@@ -3182,6 +3308,67 @@ header{
 .ur-alles.klus {
   background: linear-gradient(135deg, #334155 0%, #1e293b 100%) !important;
   box-shadow: 0 6px 20px rgba(30,41,59,0.35), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+/* Winst-balk variant — groen */
+.ur-alles.winst {
+  background: linear-gradient(135deg, #059669 0%, #065f46 100%) !important;
+  box-shadow: 0 6px 20px rgba(5,150,105,0.32), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+}
+.ur-alles.winst.neg {
+  background: linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%) !important;
+  box-shadow: 0 6px 20px rgba(220,38,38,0.32), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+}
+/* Detail-rij binnen de winst-balk */
+.ur-winst-rij {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 4px;
+  border-bottom: 1px dashed rgba(255,255,255,0.12);
+  cursor: pointer; border-radius: 8px;
+  transition: background 0.15s;
+}
+.ur-winst-rij:last-child { border-bottom: none; }
+.ur-winst-rij:active { background: rgba(255,255,255,0.08); }
+.ur-winst-rij-av {
+  width: 32px; height: 32px; border-radius: 10px;
+  background: rgba(255,255,255,0.14);
+  color: #fff; font-size: 0.65rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.ur-winst-rij-info { flex: 1; min-width: 0; }
+.ur-winst-rij-naam {
+  font-size: 0.82rem; font-weight: 800; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ur-winst-rij-sub {
+  font-size: 0.62rem; color: rgba(255,255,255,0.6);
+  font-weight: 600; margin-top: 2px;
+}
+.ur-winst-rij-bedrag {
+  font-size: 0.88rem; font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: #fff; letter-spacing: -0.3px;
+  flex-shrink: 0; min-width: 72px; text-align: right;
+}
+.ur-winst-rij-bedrag.neg { color: #fecaca; }
+.ur-winst-detail-tbl {
+  width: 100%; margin-top: 8px; font-size: 0.72rem;
+  border-collapse: collapse;
+}
+.ur-winst-detail-tbl td, .ur-winst-detail-tbl th {
+  padding: 4px 6px; color: rgba(255,255,255,0.9);
+}
+.ur-winst-detail-tbl th {
+  font-size: 0.58rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.5);
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  text-align: left;
+}
+.ur-winst-detail-tbl .r { text-align: right; font-variant-numeric: tabular-nums; }
+.ur-winst-nokosten {
+  font-size: 0.7rem; font-weight: 500; color: rgba(255,255,255,0.6);
+  text-align: center; padding: 12px 0; font-style: italic;
 }
 .ur-alles-lbl { color: rgba(255,255,255,0.55) !important; letter-spacing: 0.16em !important; }
 .ur-alles-val {
@@ -4999,6 +5186,8 @@ window.startUrenListener = function() {
   // Collapse-state resetten zodat vandaag automatisch open staat bij openen module
   _urExpandedInit.ur = false; _urExpandedInit.urp = false;
   _urExpanded.ur.clear(); _urExpanded.urp.clear();
+  // Bij openen van de module: eenmalig scrollen naar vandaag
+  _urScrollToday.ur = true; _urScrollToday.urp = true;
   const navE = document.getElementById('nav-ur-eigen');
   const navP = document.getElementById('nav-ur-personeel');
   const navO = document.getElementById('nav-ur-overzicht');
@@ -5145,8 +5334,13 @@ function _urFmtKm(n){
 }
 
 function _urInitRows(prefix, iso, saved){
-  const rows = (saved || []).map(r => ({ k: r.k || '', s: r.s || '', u: (r.u === 0 || r.u) ? r.u : '' }));
-  while(rows.length < _UR_DEFAULT_RIJEN) rows.push({ k:'', s:'', u:'' });
+  const rows = (saved || []).map(r => ({
+    k: r.k || '',
+    s: r.s || '',
+    u: (r.u === 0 || r.u) ? r.u : '',
+    p: (r.p === 0 || r.p) ? r.p : ''
+  }));
+  while(rows.length < _UR_DEFAULT_RIJEN) rows.push({ k:'', s:'', u:'', p:'' });
   _urRows[_urKey(prefix, iso)] = rows;
   return rows;
 }
@@ -5166,6 +5360,8 @@ function _urRijHtml(prefix, iso, idx, row){
   const klus = _urKlussen.find(k => k.id === row.k);
   const subs = klus ? klus.subs : [];
   const urenInput = `<input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-rij-uren" placeholder="uur" value="${row.u !== '' && row.u != null ? String(row.u).replace('.',',') : ''}" oninput="urUrenIn('${prefix}','${iso}',${idx},this.value)">`;
+  // Klantprijs per rij (€) — optioneel, default valt terug op globaal
+  const prijsInput = `<input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-rij-prijs" placeholder="€/u" title="Klantprijs per uur (leeg = standaard)" value="${row.p !== '' && row.p != null && _parseNum(row.p) > 0 ? String(row.p).replace('.',',') : ''}" oninput="urPrijsIn('${prefix}','${iso}',${idx},this.value)">`;
 
   // Ingevulde rij: toon als "Werkgever / Locatie" (of alleen "Werkgever" bij Geen) — tik om te wijzigen
   const compleet = row.k && klus && (!subs.length || row.s);
@@ -5173,6 +5369,7 @@ function _urRijHtml(prefix, iso, idx, row){
     const label = _urEsc(klus.naam) + (row.s && row.s !== '-' ? ` <span class="sub">/ ${_urEsc(row.s)}</span>` : '');
     return `<div class="ur-rij">
       <div class="ur-rij-label" onclick="urRijBewerk('${prefix}','${iso}',${idx})" title="Tik om te wijzigen">${label}</div>
+      ${prijsInput}
       ${urenInput}
     </div>`;
   }
@@ -5182,7 +5379,9 @@ function _urRijHtml(prefix, iso, idx, row){
     let opts = `<option value="">— locatie —</option>`;
     opts += `<option value="-" ${row.s==='-'?'selected':''}>Geen (alleen werkgever)</option>`;
     let found = row.s === '-';
-    subs.forEach(s => {
+    // Alfabetisch sorteren (Nederlandse locale, natuurlijke nummer-sortering)
+    const subsSorted = [...subs].sort((a,b) => String(a).localeCompare(String(b), 'nl', {numeric:true, sensitivity:'base'}));
+    subsSorted.forEach(s => {
       if(s === row.s) found = true;
       opts += `<option value="${_urEsc(s)}" ${s===row.s?'selected':''}>${_urEsc(s)}</option>`;
     });
@@ -5192,6 +5391,7 @@ function _urRijHtml(prefix, iso, idx, row){
   return `<div class="ur-rij">
     <select class="ur-rij-klus ${row.k?'':'leeg'}" onchange="urKlusSel('${prefix}','${iso}',${idx},this.value)">${_urKlusOpties(row.k)}</select>
     ${subHtml}
+    ${prijsInput}
     ${urenInput}
   </div>`;
 }
@@ -5327,7 +5527,12 @@ const _urSaveTimers = {};
 async function _urDoSave(prefix, iso, staffSnapshot){
   const key = _urKey(prefix, iso);
   const rows = (_urRows[key] || []).filter(r => r.k || _parseNum(r.u) > 0);
-  const rijen = rows.map(r => ({ k: r.k || '', s: r.s || '', u: _urRound2(_parseNum(r.u)) }));
+  const rijen = rows.map(r => {
+    const obj = { k: r.k || '', s: r.s || '', u: _urRound2(_parseNum(r.u)) };
+    const p = _urRound2(_parseNum(r.p));
+    if(p > 0) obj.p = p; // Alleen opslaan als een klantprijs is ingevuld
+    return obj;
+  });
   const ta = document.getElementById(`${prefix}-not-${iso}`);
   const notitie = ta ? ta.value : ((prefix==='ur'?_urData[iso]:(_urPData[staffSnapshot]||{})[iso])||{}).notitie || '';
   const kmEl = document.getElementById(`${prefix}-km-${iso}`);
@@ -5440,6 +5645,14 @@ window.urUrenIn = function(prefix, iso, idx, val){
   _urSaveDag(prefix, iso, 900);
 };
 
+// Klantprijs per rij invoeren (optioneel — leeg = default)
+window.urPrijsIn = function(prefix, iso, idx, val){
+  const rows = _urRows[_urKey(prefix, iso)];
+  if(!rows || !rows[idx]) return;
+  rows[idx].p = val;
+  _urSaveDag(prefix, iso, 900);
+};
+
 window.urRijToevoegen = function(prefix, iso){
   const rows = _urRows[_urKey(prefix, iso)];
   if(!rows) return;
@@ -5457,6 +5670,25 @@ window.urNotitieIn = function(prefix, iso){
 // ═══ Zoek-state (Mij + Personeel-detail) ═══
 const _urZoek = { ur: '', urp: '' };
 const _urZoekOpen = { ur: false, urp: false };
+
+// ═══ Scroll-naar-vandaag flag ═══
+// Bij openen van Mij / Personeel-detail: automatisch scrollen naar de kaart van vandaag
+// zodat gebruiker niet vanaf de 31e naar beneden hoeft te scrollen.
+const _urScrollToday = { ur: false, urp: false };
+function _urDoScrollToday(prefix){
+  if(!_urScrollToday[prefix]) return;
+  _urScrollToday[prefix] = false;
+  const today = _todayISO();
+  // Alleen scrollen als vandaag in de zichtbare maand valt
+  const year  = prefix === 'ur' ? _urYear  : _urpYear;
+  const month = prefix === 'ur' ? _urMonth : _urpMonth;
+  const nu = new Date();
+  if(!(nu.getFullYear() === year && nu.getMonth() === month)) return;
+  setTimeout(() => {
+    const el = document.getElementById(`dag-${prefix}-${today}`);
+    if(el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 60);
+}
 
 // ═══ Collapsed-by-default state: welke dagen zijn uitgeklapt ═══
 // Alleen vandaag automatisch open. Rest ingeklapt = compacte samenvatting.
@@ -5820,6 +6052,7 @@ function renderUren() {
   list.innerHTML = html;
   dagen.forEach(iso => _urResizeNot('ur', iso));
   _urUpdateTotalen('ur');
+  _urDoScrollToday('ur');
 }
 
 // ════════════════════════════════
@@ -5836,7 +6069,16 @@ const _urPTimers = {};
 function _urpInit(){
   if(!_urStaffUnsub){
     _urStaffUnsub = onSnapshot(personeelCol, snap => {
-      _urStaff = snap.docs.map(d => ({ id: d.id, naam: d.data().naam || 'Naamloos' }));
+      _urStaff = snap.docs.map(d => {
+        const x = d.data();
+        return {
+          id: d.id,
+          naam: x.naam || 'Naamloos',
+          type: x.type || 'zwart', // 'zwart' | 'wit' | 'zzp'
+          loon: _parseNum(x.loon), // standaard uurloon
+          tarieven: (x.tarieven && typeof x.tarieven === 'object') ? x.tarieven : {} // { klusId: uurloon override }
+        };
+      });
       _urStaff.sort((a,b)=>a.naam.localeCompare(b.naam,'nl'));
       if(_urView === 'lijst') _renderPersoneelLijst();
       if(_urView === 'detail') _renderPersoneelDetail();
@@ -5880,6 +6122,7 @@ window.urGaNaar = async function(view){
   klusEl.style.display  = view === 'klussen' ? '' : 'none';
   if(view === 'eigen'){
     _urStaffSel = null;
+    _urScrollToday.ur = true; // bij openen Mij-tab naar vandaag
     renderUren();
   } else if(view === 'klussen'){
     _renderKlussen();
@@ -5888,8 +6131,10 @@ window.urGaNaar = async function(view){
     _renderOverzicht();
   } else {
     _urpInit();
-    if(_urStaffSel) _renderPersoneelDetail();
-    else _renderPersoneelLijst();
+    if(_urStaffSel){
+      _urScrollToday.urp = true; // bij openen staff-detail naar vandaag
+      _renderPersoneelDetail();
+    } else _renderPersoneelLijst();
   }
 };
 
@@ -5944,7 +6189,10 @@ function _renderKlussen(){
     : _urKlussen;
 
   const cards = zichtbaar.map(k => {
-    const chips = k.subs.map((s,i) =>
+    // Sub-locaties alfabetisch tonen — originele index bewaren voor verwijder-handler
+    const subsGesorteerd = (k.subs || []).map((s, i) => ({ s, i }))
+      .sort((a, b) => String(a.s).localeCompare(String(b.s), 'nl', {numeric:true, sensitivity:'base'}));
+    const chips = subsGesorteerd.map(({s, i}) =>
       `<span class="klus-sub-chip">${_urEsc(s)}<button class="klus-sub-x" onclick="klusSubVerwijderen('${k.id}',${i})" title="Locatie verwijderen">✕</button></span>`
     ).join('');
     const entries = _urEntriesVoorKlus(k.id);
@@ -6186,6 +6434,105 @@ window.urKlusToggle = function(){
   if(box) box.classList.toggle('open', _urKlusOpen);
   haptic(8);
 };
+
+// ═══ Winst-balk state + toggle ═══
+let _urWinstOpen = false;
+const _urWinstDetailOpen = new Set(); // welke staff-detail is uitgeklapt
+
+window.urWinstToggle = function(){
+  _urWinstOpen = !_urWinstOpen;
+  _renderOverzicht(); // full re-render nodig voor de per-persoon rijen
+  haptic(8);
+};
+
+window.urWinstDetailToggle = function(id){
+  if(_urWinstDetailOpen.has(id)) _urWinstDetailOpen.delete(id);
+  else _urWinstDetailOpen.add(id);
+  _urWinstOpen = true;
+  _renderOverzicht();
+  haptic(6);
+};
+
+function _fmtEur(n){
+  const v = _urRound2(n);
+  const s = Math.abs(v).toFixed(2).replace('.', ',');
+  return (v < 0 ? '−' : '') + '€ ' + s;
+}
+
+function _urWinstBalkHtml(){
+  // Alleen personeel wordt hier meegeteld — de eigenaar (Mij) is niet werknemer
+  const items = _urStaff.map(s => ({
+    s,
+    w: _urWinstPerStaff(s, _urpYear, _urpMonth)
+  })).filter(x => x.w.uren > 0 || x.w.omzet > 0);
+
+  const totNetto = items.reduce((a,b) => _urRound2(a + b.w.netto), 0);
+  const totOmzet = items.reduce((a,b) => _urRound2(a + b.w.omzet), 0);
+  const isNeg = totNetto < 0;
+  const sortedItems = [...items].sort((a,b) => b.w.netto - a.w.netto);
+
+  const rijenHtml = sortedItems.length ? sortedItems.map(({s, w}) => {
+    const init = s.naam.trim().split(/\s+/).map(x=>x[0]||'').join('').slice(0,2).toUpperCase() || '?';
+    const isDetailOpen = _urWinstDetailOpen.has(s.id);
+    const typeLbl = _urWinstTypeTxt(s.type);
+    let detailHtml = '';
+    if(isDetailOpen){
+      // Per klus tabel voor deze persoon
+      const perKlusRijen = Object.entries(w.perKlus).sort((a,b) => b[1].omzet - a[1].omzet);
+      if(perKlusRijen.length){
+        detailHtml = `<table class="ur-winst-detail-tbl">
+          <thead><tr><th>Werkgever</th><th class="r">Uren</th><th class="r">Omzet</th><th class="r">Loonkosten</th></tr></thead>
+          <tbody>
+            ${perKlusRijen.map(([kid, d]) => {
+              const klus = _urKlussen.find(k => k.id === kid);
+              const naam = klus ? klus.naam : (kid === '__leeg' ? 'Zonder werkgever' : '(verwijderd)');
+              return `<tr>
+                <td>${_urEsc(naam)}</td>
+                <td class="r">${_urFmtUren(d.uren)}</td>
+                <td class="r">${_fmtEur(d.omzet)}</td>
+                <td class="r">−${_fmtEur(d.loonkosten).replace('€ ','€')}</td>
+              </tr>`;
+            }).join('')}
+            <tr style="border-top:1px solid rgba(255,255,255,0.2)">
+              <td colspan="2" style="font-weight:800;padding-top:8px">Totaal</td>
+              <td class="r" style="font-weight:800;padding-top:8px">${_fmtEur(w.omzet)}</td>
+              <td class="r" style="font-weight:800;padding-top:8px">−${_fmtEur(w.loonkosten).replace('€ ','€')}</td>
+            </tr>
+            <tr>
+              <td colspan="3" style="color:rgba(255,255,255,0.65)">Belasting ${Math.round(WINST_BELASTING*100)}%</td>
+              <td class="r">−${_fmtEur(w.belasting).replace('€ ','€')}</td>
+            </tr>
+            <tr>
+              <td colspan="3" style="font-weight:900;padding-top:8px">Netto winst</td>
+              <td class="r" style="font-weight:900;padding-top:8px">${_fmtEur(w.netto)}</td>
+            </tr>
+          </tbody>
+        </table>`;
+      }
+    }
+    return `<div class="ur-winst-rij" onclick="urWinstDetailToggle('${s.id}')">
+      <div class="ur-winst-rij-av">${init}</div>
+      <div class="ur-winst-rij-info">
+        <div class="ur-winst-rij-naam">${_urEsc(s.naam)}</div>
+        <div class="ur-winst-rij-sub">${typeLbl} · ${_urFmtUren(w.uren)} · omzet ${_fmtEur(w.omzet)}</div>
+      </div>
+      <div class="ur-winst-rij-bedrag ${w.netto<0?'neg':''}">${_fmtEur(w.netto)}</div>
+    </div>
+    ${detailHtml}`;
+  }).join('') : `<div class="ur-winst-nokosten">Nog geen uren van personeel deze maand</div>`;
+
+  return `<div class="ur-alles winst ${_urWinstOpen?'open':''}${isNeg?' neg':''}" onclick="urWinstToggle()">
+    <div class="ur-alles-top">
+      <div>
+        <div class="ur-alles-lbl">Winst op personeel</div>
+        <div class="ur-alles-val">${_fmtEur(totNetto)}</div>
+        <div class="ur-alles-sub">${_UR_MND_LBL[_urpMonth]} ${_urpYear} · omzet ${_fmtEur(totOmzet)} · ${items.length} ${items.length===1?'persoon':'personen'}</div>
+      </div>
+      <svg class="ur-alles-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="ur-alles-details" onclick="event.stopPropagation()">${rijenHtml}</div>
+  </div>`;
+}
 
 // Klapt binnen "Per werkgever · iedereen" een specifieke werkgever open/dicht
 window.urKlusRijToggle = function(kid){
@@ -6624,6 +6971,7 @@ function _renderOverzicht(){
       </div>
       <div class="ur-alles-details">${klusDetailsHtml}</div>
     </div>
+    ${_urWinstBalkHtml()}
     <button class="ur-pdf-btn" onclick="urPdfExport()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       PDF-overzicht van ${_UR_MND_LBL[_urpMonth]}
@@ -6669,6 +7017,7 @@ function _renderPersoneelDetail(){
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
       </button>
     </div>
+    ${_urPtCardHtml(staff)}
     <div class="ur-nav-met-zoek">${_urMonthNavHtml(_urpYear, _urpMonth, 'urpMaandPrev()', 'urpMaandNext()')}${zoek.btnHtml}</div>
     ${zoek.wrapHtml}
     ${term ? `<div class="ur-zoek-count">${dagen.length} van ${dagenAll.length} ${dagenAll.length===1?'dag':'dagen'}</div>` : ''}
@@ -6685,6 +7034,7 @@ function _renderPersoneelDetail(){
   `;
   dagen.forEach(iso => _urResizeNot('urp', iso));
   _urUpdateTotalen('urp');
+  _urDoScrollToday('urp');
 }
 
 window.urpMaandPrev = function(){
@@ -6702,6 +7052,7 @@ window.urpMaandNext = function(){
 
 window.urpOpen = function(id){
   _urStaffSel = id;
+  _urScrollToday.urp = true; // bij openen personeelslid naar vandaag scrollen
   _renderPersoneelDetail();
 };
 
@@ -6742,6 +7093,220 @@ window.urpToevoegenOk = async function(){
 };
 
 let _urpNaamTimer = null;
+// ═══ Personeel tariefinstellingen ═══
+// Bepaalt effectief uurloon voor een personeelslid + klus (met override of default)
+function _urLoonVoor(staff, klusId){
+  if(!staff) return 0;
+  const ov = (staff.tarieven || {})[klusId];
+  if(ov != null && ov !== '' && _parseNum(ov) > 0) return _parseNum(ov);
+  return _parseNum(staff.loon);
+}
+
+// ═══ Winst berekening ═══
+// Globale defaults — kunnen later in een settings sheet worden geregeld
+const WINST_DEFAULT_PRIJS = 35;    // €/uur als niks per rij is ingevuld
+const WINST_BELASTING = 0.30;      // 30% belasting
+
+// Berekent winst voor alle uren van één personeelslid in een maand
+function _urWinstPerStaff(staff, year, month){
+  const dataset = _urPData[staff.id] || {};
+  const last = new Date(year, month + 1, 0).getDate();
+  let omzet = 0, loonkosten = 0, urenTot = 0;
+  const perKlus = {}; // klusId -> { uren, omzet, loonkosten }
+  for(let d = 1; d <= last; d++){
+    const iso = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dag = dataset[iso];
+    if(!dag) continue;
+    (dag.rijen || []).forEach(r => {
+      const u = _parseNum(r.u);
+      if(u <= 0) return;
+      const prijs = _parseNum(r.p) > 0 ? _parseNum(r.p) : WINST_DEFAULT_PRIJS;
+      const loon  = _urLoonVoor(staff, r.k);
+      const rowOmzet = _urRound2(u * prijs);
+      let rowLoon = _urRound2(u * loon);
+      if(staff.type === 'wit') rowLoon = _urRound2(rowLoon * 1.44); // +44% werkgeverslasten
+      omzet = _urRound2(omzet + rowOmzet);
+      loonkosten = _urRound2(loonkosten + rowLoon);
+      urenTot = _urRound2(urenTot + u);
+      const key = r.k || '__leeg';
+      if(!perKlus[key]) perKlus[key] = { uren:0, omzet:0, loonkosten:0 };
+      perKlus[key].uren = _urRound2(perKlus[key].uren + u);
+      perKlus[key].omzet = _urRound2(perKlus[key].omzet + rowOmzet);
+      perKlus[key].loonkosten = _urRound2(perKlus[key].loonkosten + rowLoon);
+    });
+  }
+  // Belasting: zwart = over hele omzet; wit/zzp = over (omzet - loonkosten aftrekbaar)
+  let belasting = 0;
+  if(staff.type === 'zwart') belasting = _urRound2(omzet * WINST_BELASTING);
+  else belasting = _urRound2(Math.max(0, omzet - loonkosten) * WINST_BELASTING);
+  const netto = _urRound2(omzet - loonkosten - belasting);
+  return { omzet, loonkosten, belasting, netto, uren:urenTot, perKlus };
+}
+
+// Detailtekst voor de betaalvorm van een persoon
+function _urWinstTypeTxt(t){ return _PT_TYPE_LBL[t || 'zwart']; }
+
+const _PT_TYPE_LBL = { zwart: 'Zwart', wit: 'Officieel', zzp: "ZZP'er" };
+const _PT_TYPE_DESC = {
+  zwart: 'Cash — geen werkgeverslasten',
+  wit: 'Via loonstrook — +44% werkgeverslasten',
+  zzp: 'Via factuur — geen werkgeverslasten'
+};
+
+const _urPtOpen = new Set(); // welke staff-cards zijn opengeklapt
+window.urPtToggle = function(id){
+  if(_urPtOpen.has(id)) _urPtOpen.delete(id);
+  else _urPtOpen.add(id);
+  const el = document.getElementById(`pt-card-${id}`);
+  if(el) el.classList.toggle('open', _urPtOpen.has(id));
+  haptic(6);
+};
+
+function _urPtCardHtml(staff){
+  if(!staff) return '';
+  const isOpen = _urPtOpen.has(staff.id);
+  const type = staff.type || 'zwart';
+  const loon = staff.loon || '';
+  const tarieven = staff.tarieven || {};
+  // Overzicht-tekst (naast het type-icoon)
+  const loonTxt = loon ? `€${_urRound2(_parseNum(loon)).toFixed(2).replace('.',',').replace(/,00$/,'')}/u` : 'geen loon ingesteld';
+  const sub = `${_PT_TYPE_LBL[type]} · ${loonTxt}${Object.keys(tarieven).length ? ` · ${Object.keys(tarieven).length} override(s)` : ''}`;
+
+  // Per-klus override lijst
+  const ovLijst = _urKlussen.map(k => {
+    const val = tarieven[k.id] != null ? tarieven[k.id] : '';
+    return `<div class="pt-ov-rij">
+      <div class="pt-ov-naam">${_urEsc(k.naam)}</div>
+      <div class="pt-ov-wrap">
+        <span class="pt-ov-suf">€</span>
+        <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="pt-ov-in" placeholder="std" value="${val !== '' ? String(val).replace('.',',') : ''}" oninput="urPtOverrideIn('${staff.id}','${k.id}', this.value)">
+        <span class="pt-ov-suf">/u</span>
+      </div>
+      ${val !== '' ? `<button class="pt-ov-x" onclick="urPtOverrideWis('${staff.id}','${k.id}')" title="Terug naar standaard">✕</button>` : ''}
+    </div>`;
+  }).join('');
+
+  return `<div class="pt-card ${isOpen?'open':''}" id="pt-card-${staff.id}">
+    <div class="pt-hdr" onclick="urPtToggle('${staff.id}')">
+      <div class="pt-hdr-ic">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l1.9 5.9L20 9.5l-4.5 4L17 20l-5-3-5 3 1.5-6.5L4 9.5l6.1-.6L12 3z"/></svg>
+      </div>
+      <div class="pt-hdr-info">
+        <div class="pt-hdr-titel">Tariefinstellingen</div>
+        <div class="pt-hdr-sub">${sub}</div>
+      </div>
+      <svg class="pt-hdr-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="pt-body">
+      <div class="pt-veld">
+        <div class="pt-veld-lbl">Betaalvorm</div>
+        <div class="pt-type-row">
+          <button class="pt-type-btn ${type==='zwart'?'on':''}" onclick="urPtType('${staff.id}','zwart')">Zwart</button>
+          <button class="pt-type-btn ${type==='wit'?'on':''}" onclick="urPtType('${staff.id}','wit')">Officieel</button>
+          <button class="pt-type-btn ${type==='zzp'?'on':''}" onclick="urPtType('${staff.id}','zzp')">ZZP'er</button>
+        </div>
+        <div class="pt-ov-hint">${_PT_TYPE_DESC[type]}</div>
+      </div>
+      <div class="pt-veld">
+        <div class="pt-veld-lbl">Standaard uurloon</div>
+        <div class="pt-loon-wrap">
+          <span class="prefix">€</span>
+          <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="pt-loon-in" id="pt-loon-${staff.id}" value="${loon !== '' && loon != null ? String(loon).replace('.',',') : ''}" placeholder="0,00" oninput="urPtLoon('${staff.id}', this.value)">
+          <span class="suffix">/uur</span>
+        </div>
+      </div>
+      ${_urKlussen.length ? `<div class="pt-veld">
+        <div class="pt-veld-lbl">Afwijkend tarief per klus (optioneel)</div>
+        <div class="pt-ov-lijst">${ovLijst}</div>
+        <div class="pt-ov-hint">Laat leeg om het standaardloon te gebruiken. Alleen invullen als deze persoon bij die klus een ander tarief krijgt.</div>
+      </div>` : ''}
+      <span class="pt-status" id="pt-ok-${staff.id}">✓ opgeslagen</span>
+    </div>
+  </div>`;
+}
+
+const _urPtTimers = {};
+function _urPtSave(id, patch){
+  clearTimeout(_urPtTimers[id]);
+  _urPtTimers[id] = setTimeout(async () => {
+    try{
+      await setDoc(doc(personeelCol, id), patch, { merge: true });
+      const ok = document.getElementById(`pt-ok-${id}`);
+      if(ok){ ok.classList.add('show'); setTimeout(() => ok.classList.remove('show'), 1400); }
+    }catch(e){ console.error('pt save:', e); }
+  }, 700);
+}
+
+window.urPtType = function(id, type){
+  const staff = _urStaff.find(s => s.id === id);
+  if(!staff) return;
+  staff.type = type;
+  // Update de knop-status en de sub-tekst zonder full re-render
+  const card = document.getElementById(`pt-card-${id}`);
+  if(card){
+    card.querySelectorAll('.pt-type-btn').forEach(b => b.classList.remove('on'));
+    const active = card.querySelector(`.pt-type-btn[onclick*="'${type}'"]`);
+    if(active) active.classList.add('on');
+    const hint = card.querySelector('.pt-body .pt-veld .pt-ov-hint');
+    if(hint) hint.textContent = _PT_TYPE_DESC[type];
+    _urPtUpdateSub(id);
+  }
+  _urPtSave(id, { type });
+  haptic(8);
+};
+
+window.urPtLoon = function(id, val){
+  const staff = _urStaff.find(s => s.id === id);
+  if(!staff) return;
+  staff.loon = _parseNum(val);
+  _urPtUpdateSub(id);
+  _urPtSave(id, { loon: staff.loon });
+};
+
+window.urPtOverrideIn = function(id, klusId, val){
+  const staff = _urStaff.find(s => s.id === id);
+  if(!staff) return;
+  if(!staff.tarieven) staff.tarieven = {};
+  const n = _parseNum(val);
+  if(val === '' || n <= 0) delete staff.tarieven[klusId];
+  else staff.tarieven[klusId] = n;
+  _urPtUpdateSub(id);
+  _urPtSave(id, { tarieven: staff.tarieven });
+};
+
+window.urPtOverrideWis = function(id, klusId){
+  const staff = _urStaff.find(s => s.id === id);
+  if(!staff) return;
+  if(staff.tarieven) delete staff.tarieven[klusId];
+  _urPtSave(id, { tarieven: staff.tarieven || {} });
+  // Alleen dat ene invoerveld leegmaken zonder full re-render
+  const card = document.getElementById(`pt-card-${id}`);
+  if(card){
+    const inputs = card.querySelectorAll('.pt-ov-rij input');
+    inputs.forEach(inp => {
+      if(inp.getAttribute('oninput') && inp.getAttribute('oninput').includes(`'${klusId}'`)){
+        inp.value = '';
+        const x = inp.closest('.pt-ov-rij').querySelector('.pt-ov-x');
+        if(x) x.remove();
+      }
+    });
+    _urPtUpdateSub(id);
+  }
+  haptic(6);
+};
+
+function _urPtUpdateSub(id){
+  const staff = _urStaff.find(s => s.id === id);
+  const card = document.getElementById(`pt-card-${id}`);
+  if(!staff || !card) return;
+  const loon = staff.loon || '';
+  const loonTxt = loon ? `€${_urRound2(_parseNum(loon)).toFixed(2).replace('.',',').replace(/,00$/,'')}/u` : 'geen loon ingesteld';
+  const nOv = Object.keys(staff.tarieven || {}).length;
+  const sub = `${_PT_TYPE_LBL[staff.type || 'zwart']} · ${loonTxt}${nOv ? ` · ${nOv} override(s)` : ''}`;
+  const subEl = card.querySelector('.pt-hdr-sub');
+  if(subEl) subEl.textContent = sub;
+}
+
 window.urpNaamWijzig = function(){
   const ta = document.getElementById('urp-naam-in');
   if(!ta || !_urStaffSel) return;
