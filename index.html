@@ -2227,6 +2227,36 @@ header{
 .ur-rij-prijs{width:54px;flex-shrink:0;background:var(--surface2);border:1px dashed var(--border2);border-radius:9px;padding:8px 4px;font-family:inherit;font-size:0.72rem;font-weight:700;color:var(--text2);text-align:center;outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
 .ur-rij-prijs::placeholder{color:var(--text3);font-weight:500;opacity:0.8;}
 .ur-rij-prijs:focus{border-style:solid;border-color:var(--u-primary);box-shadow:0 0 0 3px var(--u-primary-tint-2);color:var(--text);}
+.ur-rij-up{width:54px;flex-shrink:0;background:rgba(220,38,38,0.05);border:1px dashed rgba(220,38,38,0.35);border-radius:9px;padding:8px 4px;font-family:inherit;font-size:0.78rem;font-weight:800;color:#dc2626;text-align:center;outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
+.ur-rij-up::placeholder{color:rgba(220,38,38,0.5);font-weight:600;font-size:0.68rem;}
+.ur-rij-up:focus{border-style:solid;border-color:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,0.15);background:rgba(220,38,38,0.08);}
+[data-theme="dark"] .ur-rij-up{color:#fca5a5;border-color:rgba(252,165,165,0.35);background:rgba(220,38,38,0.08);}
+.ur-rij-up-btn{width:28px;height:36px;flex-shrink:0;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;padding:0;font-family:inherit;font-size:0.95rem;font-weight:800;color:var(--text3);cursor:pointer;line-height:1;transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
+.ur-rij-up-btn:active{transform:scale(0.9);}
+.ur-rij-up-btn.on{background:rgba(220,38,38,0.1);border-color:rgba(220,38,38,0.35);color:#dc2626;}
+[data-theme="dark"] .ur-rij-up-btn.on{color:#fca5a5;}
+/* Groene "klaar" knop tijdens edit-modus */
+.ur-rij-up-btn.ok{background:linear-gradient(145deg,#4ade80,#22c55e);border-color:#16a34a;color:#fff;font-size:0.85rem;box-shadow:0 2px 8px rgba(22,163,74,0.32);}
+.ur-rij-up-btn.ok:active{transform:scale(0.9);box-shadow:0 1px 4px rgba(22,163,74,0.22);}
+/* Compact pill "2 / 2,5" — samenvouwen na invoer */
+.ur-rij-uren-pill{
+  flex-shrink:0;min-width:74px;
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:9px;padding:8px 12px;
+  font-family:inherit;font-size:0.84rem;font-weight:800;
+  color:var(--text);text-align:center;cursor:pointer;
+  font-variant-numeric:tabular-nums;letter-spacing:-0.3px;
+  transition:all 0.15s;
+  display:inline-flex;align-items:center;justify-content:center;gap:2px;
+}
+.ur-rij-uren-pill:active{transform:scale(0.96);background:var(--surface3);}
+.ur-rij-uren-pill .pay{color:#dc2626;font-weight:800;}
+[data-theme="dark"] .ur-rij-uren-pill .pay{color:#fca5a5;}
+.ur-rij-uren-pill .fact{color:var(--text);font-weight:800;}
+/* Rode weergave voor "uitbetaald aan personeel" in de totalen */
+.ur-tot-pay{color:#dc2626 !important;font-weight:800;font-size:0.72em;margin-left:4px;font-variant-numeric:tabular-nums;letter-spacing:-0.2px;}
+[data-theme="dark"] .ur-tot-pay{color:#fca5a5 !important;}
+.ur-mtot .ur-tot-pay{color:#fca5a5 !important;opacity:0.9;font-size:0.6em;font-weight:700;}
 .ur-rij-uren:focus{border-color:#7c3aed;}
 .ur-rij-uren::placeholder{color:var(--text3);font-weight:500;}
 .ur-rij-label{flex:1;min-width:0;background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.18);border-radius:9px;padding:8px 10px;font-size:0.78rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:background 0.15s;}
@@ -5337,10 +5367,11 @@ function _urInitRows(prefix, iso, saved){
   const rows = (saved || []).map(r => ({
     k: r.k || '',
     s: r.s || '',
-    u: (r.u === 0 || r.u) ? r.u : '',
-    p: (r.p === 0 || r.p) ? r.p : ''
+    u:  (r.u  === 0 || r.u)  ? r.u  : '', // Factuur-uren (staat op factuur / bepaalt omzet)
+    up: (r.up === 0 || r.up) ? r.up : '', // Uitbetaald aan personeel (leeg = gelijk aan u)
+    p:  (r.p  === 0 || r.p)  ? r.p  : ''
   }));
-  while(rows.length < _UR_DEFAULT_RIJEN) rows.push({ k:'', s:'', u:'', p:'' });
+  while(rows.length < _UR_DEFAULT_RIJEN) rows.push({ k:'', s:'', u:'', up:'', p:'' });
   _urRows[_urKey(prefix, iso)] = rows;
   return rows;
 }
@@ -5359,9 +5390,35 @@ function _urKlusOpties(sel){
 function _urRijHtml(prefix, iso, idx, row){
   const klus = _urKlussen.find(k => k.id === row.k);
   const subs = klus ? klus.subs : [];
-  const urenInput = `<input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-rij-uren" placeholder="uur" value="${row.u !== '' && row.u != null ? String(row.u).replace('.',',') : ''}" oninput="urUrenIn('${prefix}','${iso}',${idx},this.value)">`;
   // Klantprijs per rij (€) — optioneel, default valt terug op globaal
   const prijsInput = `<input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-rij-prijs" placeholder="€/u" title="Klantprijs per uur (leeg = standaard)" value="${row.p !== '' && row.p != null && _parseNum(row.p) > 0 ? String(row.p).replace('.',',') : ''}" oninput="urPrijsIn('${prefix}','${iso}',${idx},this.value)">`;
+  // Uitbetaald aan personeel (`up`) — alleen relevant voor personeel-uren, niet voor Mij
+  // Drie modes:
+  //   isEditing (twee velden zichtbaar + ✓ knop)
+  //   compact met verschil (pill "2 / 2,5", klikbaar)
+  //   standaard (één uren-vak + ± knop)
+  const upVal = row.up;
+  const upNum = _parseNum(upVal);
+  const uNum  = _parseNum(row.u);
+  const hasUpDiff = prefix === 'urp' && upNum > 0 && upNum !== uNum;
+  const isEditing = prefix === 'urp' && row._upEdit === true;
+
+  let urenControls = '';
+  if(isEditing){
+    // Bewerkmodus: 2 losse velden + groene ✓ om af te ronden
+    urenControls = `<input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-rij-up" placeholder="betaald" title="Uitbetaald aan personeel — voor loonkosten (leeg = zelfde als factuur)" value="${upNum > 0 ? String(upVal).replace('.',',') : ''}" oninput="urUpIn('${prefix}','${iso}',${idx},this.value)">
+    <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-rij-uren" placeholder="factuur" title="Factuur-uren (op factuur / omzet)" value="${row.u !== '' && row.u != null ? String(row.u).replace('.',',') : ''}" oninput="urUrenIn('${prefix}','${iso}',${idx},this.value)">
+    <button class="ur-rij-up-btn ok" onclick="urUpToggle('${prefix}','${iso}',${idx})" title="Klaar — samenvouwen naar compact" aria-label="Klaar">✓</button>`;
+  } else if(hasUpDiff){
+    // Compact pill "2 / 2,5" — tik om weer te bewerken
+    const rood  = _urFmtUren(upNum).replace('u','');
+    const zwart = _urFmtUren(uNum).replace('u','');
+    urenControls = `<div class="ur-rij-uren-pill" onclick="urUpToggle('${prefix}','${iso}',${idx})" title="Tik om uitbetaald/factuur uren te wijzigen"><span class="pay">${rood}</span> / <span class="fact">${zwart}u</span></div>`;
+  } else {
+    // Standaard: één uren-vak + ± knop
+    urenControls = `<input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-rij-uren" placeholder="uur" title="Factuur-uren" value="${row.u !== '' && row.u != null ? String(row.u).replace('.',',') : ''}" oninput="urUrenIn('${prefix}','${iso}',${idx},this.value)">
+    ${prefix === 'urp' ? `<button class="ur-rij-up-btn" onclick="urUpToggle('${prefix}','${iso}',${idx})" title="Uitbetaalde uren afwijkend van factuur invoeren" aria-label="Splits uren">±</button>` : ''}`;
+  }
 
   // Ingevulde rij: toon als "Werkgever / Locatie" (of alleen "Werkgever" bij Geen) — tik om te wijzigen
   const compleet = row.k && klus && (!subs.length || row.s);
@@ -5370,7 +5427,7 @@ function _urRijHtml(prefix, iso, idx, row){
     return `<div class="ur-rij">
       <div class="ur-rij-label" onclick="urRijBewerk('${prefix}','${iso}',${idx})" title="Tik om te wijzigen">${label}</div>
       ${prijsInput}
-      ${urenInput}
+      ${urenControls}
     </div>`;
   }
 
@@ -5392,7 +5449,7 @@ function _urRijHtml(prefix, iso, idx, row){
     <select class="ur-rij-klus ${row.k?'':'leeg'}" onchange="urKlusSel('${prefix}','${iso}',${idx},this.value)">${_urKlusOpties(row.k)}</select>
     ${subHtml}
     ${prijsInput}
-    ${urenInput}
+    ${urenControls}
   </div>`;
 }
 
@@ -5454,19 +5511,27 @@ window.urMtotToggle = function(prefix){
 function _urUpdateTotalen(prefix){
   const dagen = _urDagenVoor(prefix);
   let mtot = 0;
+  let mtotPay = 0; // Uitbetaald aan personeel (som van up, of u als up leeg)
   let mkm = 0;
+  let heeftVerschil = false; // is er ergens een verschil tussen up en u?
   const perKlus = {}; // { klusId: uren }
   dagen.forEach(iso => {
     const rows = _urRows[_urKey(prefix, iso)] || [];
     let dagtot = 0;
+    let dagPay = 0;
     rows.forEach(r => {
       const u = _parseNum(r.u);
       if(u <= 0) return;
       dagtot = _urRound2(dagtot + u);
+      const upVal = _parseNum(r.up);
+      const payU = upVal > 0 ? upVal : u; // fallback: gelijk aan factuur
+      dagPay = _urRound2(dagPay + payU);
+      if(prefix === 'urp' && upVal > 0 && upVal !== u) heeftVerschil = true;
       const key = r.k || '__leeg';
       perKlus[key] = _urRound2((perKlus[key] || 0) + u);
     });
     mtot = _urRound2(mtot + dagtot);
+    mtotPay = _urRound2(mtotPay + dagPay);
     // Km live uitlezen uit input, of anders uit opgeslagen data
     const kmEl = document.getElementById(`${prefix}-km-${iso}`);
     let km = 0;
@@ -5478,14 +5543,26 @@ function _urUpdateTotalen(prefix){
     mkm = _urRound2(mkm + km);
     const el = document.getElementById(`${prefix}-tot-${iso}`);
     if(el){
-      el.textContent = _urFmtUren(dagtot);
+      // Toon factuur-uren + tussen haakjes rood de uitbetaalde uren (alleen bij verschil)
+      let dagLbl = _urFmtUren(dagtot);
+      if(prefix === 'urp' && dagPay !== dagtot && dagPay > 0){
+        dagLbl += ` <span class="ur-tot-pay">(${_urFmtUren(dagPay)})</span>`;
+      }
+      el.innerHTML = dagLbl;
       el.classList.toggle('nul', !(dagtot > 0));
       // Validatie: > 16u op één dag is verdacht (mens werkt niet meer dan 16u)
       el.classList.toggle('warn', dagtot > 16);
     }
   });
   const m = document.getElementById(`${prefix}-mtot`);
-  if(m) m.textContent = _urFmtUren(mtot) + (mkm > 0 ? ` · ${_urFmtKm(mkm)}` : '');
+  if(m){
+    let mLbl = _urFmtUren(mtot);
+    if(prefix === 'urp' && heeftVerschil && mtotPay !== mtot && mtotPay > 0){
+      mLbl += ` <span class="ur-tot-pay">(${_urFmtUren(mtotPay)} betaald)</span>`;
+    }
+    if(mkm > 0) mLbl += ` · ${_urFmtKm(mkm)}`;
+    m.innerHTML = mLbl;
+  }
 
   // Details per hoofdklus (aflopend op uren)
   const details = document.getElementById(`${prefix}-mtot-details`);
@@ -5529,8 +5606,10 @@ async function _urDoSave(prefix, iso, staffSnapshot){
   const rows = (_urRows[key] || []).filter(r => r.k || _parseNum(r.u) > 0);
   const rijen = rows.map(r => {
     const obj = { k: r.k || '', s: r.s || '', u: _urRound2(_parseNum(r.u)) };
-    const p = _urRound2(_parseNum(r.p));
-    if(p > 0) obj.p = p; // Alleen opslaan als een klantprijs is ingevuld
+    const p  = _urRound2(_parseNum(r.p));
+    const up = _urRound2(_parseNum(r.up));
+    if(p > 0)  obj.p  = p;  // Klantprijs alleen opslaan als ingevuld
+    if(up > 0) obj.up = up; // Uitbetaalde uren alleen opslaan als afwijkend
     return obj;
   });
   const ta = document.getElementById(`${prefix}-not-${iso}`);
@@ -5651,6 +5730,44 @@ window.urPrijsIn = function(prefix, iso, idx, val){
   if(!rows || !rows[idx]) return;
   rows[idx].p = val;
   _urSaveDag(prefix, iso, 900);
+};
+
+// Uitbetaalde uren invoeren — alleen personeel-context
+window.urUpIn = function(prefix, iso, idx, val){
+  const rows = _urRows[_urKey(prefix, iso)];
+  if(!rows || !rows[idx]) return;
+  rows[idx].up = val;
+  _urUpdateTotalen(prefix); // dagtotaal-badge kan mee-updaten
+  _urSaveDag(prefix, iso, 900);
+};
+
+// Toggle tussen 3 modes:
+//   standaard [uur] [±]  → tik ± → bewerkmodus
+//   bewerkmodus [betaald] [factuur] [✓] → tik ✓ → compact pill "2 / 2,5" (of standaard als up leeg/gelijk)
+//   compact pill "2 / 2,5" → tik erop → bewerkmodus
+window.urUpToggle = function(prefix, iso, idx){
+  const rows = _urRows[_urKey(prefix, iso)];
+  if(!rows || !rows[idx]) return;
+  const opening = !(rows[idx]._upEdit === true);
+  rows[idx]._upEdit = opening;
+  const cont = document.getElementById(`${prefix}-rijen-${iso}`);
+  if(cont) cont.innerHTML = _urRijenHtml(prefix, iso);
+  _urUpdateTotalen(prefix);
+  haptic(6);
+  // Focus in het "betaald"-veldje als we net openden
+  if(opening){
+    setTimeout(() => {
+      const el = cont && cont.querySelectorAll('.ur-rij-up')[0];
+      if(el){ el.focus(); el.select && el.select(); }
+    }, 20);
+  } else {
+    // Bij sluiten: als up gelijk is aan factuur, wis de up-waarde
+    // (dan valt hij netjes terug naar de standaard "1 vak" weergave)
+    if(_parseNum(rows[idx].up) === _parseNum(rows[idx].u)){
+      rows[idx].up = '';
+      _urSaveDag(prefix, iso, 0);
+    }
+  }
 };
 
 window.urRijToevoegen = function(prefix, iso){
@@ -6481,40 +6598,45 @@ function _urWinstBalkHtml(){
       const perKlusRijen = Object.entries(w.perKlus).sort((a,b) => b[1].omzet - a[1].omzet);
       if(perKlusRijen.length){
         detailHtml = `<table class="ur-winst-detail-tbl">
-          <thead><tr><th>Werkgever</th><th class="r">Uren</th><th class="r">Omzet</th><th class="r">Loonkosten</th></tr></thead>
+          <thead><tr><th>Werkgever</th><th class="r">Uren fact.</th><th class="r">Betaald</th><th class="r">Omzet</th><th class="r">Loonkosten</th></tr></thead>
           <tbody>
             ${perKlusRijen.map(([kid, d]) => {
               const klus = _urKlussen.find(k => k.id === kid);
               const naam = klus ? klus.naam : (kid === '__leeg' ? 'Zonder werkgever' : '(verwijderd)');
+              const payTxt = d.urenPay !== d.urenFact ? `<span style="color:#fca5a5">${_urFmtUren(d.urenPay)}</span>` : _urFmtUren(d.urenPay);
               return `<tr>
                 <td>${_urEsc(naam)}</td>
-                <td class="r">${_urFmtUren(d.uren)}</td>
+                <td class="r">${_urFmtUren(d.urenFact)}</td>
+                <td class="r">${payTxt}</td>
                 <td class="r">${_fmtEur(d.omzet)}</td>
                 <td class="r">−${_fmtEur(d.loonkosten).replace('€ ','€')}</td>
               </tr>`;
             }).join('')}
             <tr style="border-top:1px solid rgba(255,255,255,0.2)">
-              <td colspan="2" style="font-weight:800;padding-top:8px">Totaal</td>
+              <td colspan="3" style="font-weight:800;padding-top:8px">Totaal</td>
               <td class="r" style="font-weight:800;padding-top:8px">${_fmtEur(w.omzet)}</td>
               <td class="r" style="font-weight:800;padding-top:8px">−${_fmtEur(w.loonkosten).replace('€ ','€')}</td>
             </tr>
             <tr>
-              <td colspan="3" style="color:rgba(255,255,255,0.65)">Belasting ${Math.round(WINST_BELASTING*100)}%</td>
+              <td colspan="4" style="color:rgba(255,255,255,0.65)">Belasting ${Math.round(WINST_BELASTING*100)}%</td>
               <td class="r">−${_fmtEur(w.belasting).replace('€ ','€')}</td>
             </tr>
             <tr>
-              <td colspan="3" style="font-weight:900;padding-top:8px">Netto winst</td>
+              <td colspan="4" style="font-weight:900;padding-top:8px">Netto winst</td>
               <td class="r" style="font-weight:900;padding-top:8px">${_fmtEur(w.netto)}</td>
             </tr>
           </tbody>
         </table>`;
       }
     }
+    const urenSub = w.urenPay !== w.uren
+      ? `${_urFmtUren(w.uren)} <span style="color:#fca5a5">(${_urFmtUren(w.urenPay)} betaald)</span>`
+      : _urFmtUren(w.uren);
     return `<div class="ur-winst-rij" onclick="urWinstDetailToggle('${s.id}')">
       <div class="ur-winst-rij-av">${init}</div>
       <div class="ur-winst-rij-info">
         <div class="ur-winst-rij-naam">${_urEsc(s.naam)}</div>
-        <div class="ur-winst-rij-sub">${typeLbl} · ${_urFmtUren(w.uren)} · omzet ${_fmtEur(w.omzet)}</div>
+        <div class="ur-winst-rij-sub">${typeLbl} · ${urenSub} · omzet ${_fmtEur(w.omzet)}</div>
       </div>
       <div class="ur-winst-rij-bedrag ${w.netto<0?'neg':''}">${_fmtEur(w.netto)}</div>
     </div>
@@ -7108,30 +7230,37 @@ const WINST_DEFAULT_PRIJS = 35;    // €/uur als niks per rij is ingevuld
 const WINST_BELASTING = 0.30;      // 30% belasting
 
 // Berekent winst voor alle uren van één personeelslid in een maand
+// KRITIEK voor administratie:
+//   - Omzet = factuur-uren (u) × klantprijs (dat is wat op de factuur staat)
+//   - Loonkosten = uitbetaalde uren (up, of u als up leeg) × loon (dat betaal je uit)
+//   - Het verschil (bv. 2u betaald / 2,5u gefactureerd → 0,5u × klantprijs) is extra winst
 function _urWinstPerStaff(staff, year, month){
   const dataset = _urPData[staff.id] || {};
   const last = new Date(year, month + 1, 0).getDate();
-  let omzet = 0, loonkosten = 0, urenTot = 0;
-  const perKlus = {}; // klusId -> { uren, omzet, loonkosten }
+  let omzet = 0, loonkosten = 0, urenTot = 0, urenPay = 0;
+  const perKlus = {}; // klusId -> { urenFact, urenPay, omzet, loonkosten }
   for(let d = 1; d <= last; d++){
     const iso = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const dag = dataset[iso];
     if(!dag) continue;
     (dag.rijen || []).forEach(r => {
-      const u = _parseNum(r.u);
-      if(u <= 0) return;
+      const uFact = _parseNum(r.u);
+      if(uFact <= 0) return;
+      const uPay  = _parseNum(r.up) > 0 ? _parseNum(r.up) : uFact; // fallback op factuur
       const prijs = _parseNum(r.p) > 0 ? _parseNum(r.p) : WINST_DEFAULT_PRIJS;
       const loon  = _urLoonVoor(staff, r.k);
-      const rowOmzet = _urRound2(u * prijs);
-      let rowLoon = _urRound2(u * loon);
+      const rowOmzet = _urRound2(uFact * prijs);              // factuur-uren × klantprijs
+      let rowLoon = _urRound2(uPay * loon);                   // uitbetaalde uren × loon
       if(staff.type === 'wit') rowLoon = _urRound2(rowLoon * 1.44); // +44% werkgeverslasten
       omzet = _urRound2(omzet + rowOmzet);
       loonkosten = _urRound2(loonkosten + rowLoon);
-      urenTot = _urRound2(urenTot + u);
+      urenTot = _urRound2(urenTot + uFact);
+      urenPay = _urRound2(urenPay + uPay);
       const key = r.k || '__leeg';
-      if(!perKlus[key]) perKlus[key] = { uren:0, omzet:0, loonkosten:0 };
-      perKlus[key].uren = _urRound2(perKlus[key].uren + u);
-      perKlus[key].omzet = _urRound2(perKlus[key].omzet + rowOmzet);
+      if(!perKlus[key]) perKlus[key] = { urenFact:0, urenPay:0, omzet:0, loonkosten:0 };
+      perKlus[key].urenFact  = _urRound2(perKlus[key].urenFact + uFact);
+      perKlus[key].urenPay   = _urRound2(perKlus[key].urenPay + uPay);
+      perKlus[key].omzet     = _urRound2(perKlus[key].omzet + rowOmzet);
       perKlus[key].loonkosten = _urRound2(perKlus[key].loonkosten + rowLoon);
     });
   }
@@ -7140,7 +7269,7 @@ function _urWinstPerStaff(staff, year, month){
   if(staff.type === 'zwart') belasting = _urRound2(omzet * WINST_BELASTING);
   else belasting = _urRound2(Math.max(0, omzet - loonkosten) * WINST_BELASTING);
   const netto = _urRound2(omzet - loonkosten - belasting);
-  return { omzet, loonkosten, belasting, netto, uren:urenTot, perKlus };
+  return { omzet, loonkosten, belasting, netto, uren:urenTot, urenPay, perKlus };
 }
 
 // Detailtekst voor de betaalvorm van een persoon
