@@ -2355,6 +2355,16 @@ header{
 .ur-add-row button{background:linear-gradient(145deg,#a78bfa,#7c3aed);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-family:inherit;font-size:0.8rem;font-weight:700;cursor:pointer;flex-shrink:0;box-shadow:0 3px 12px rgba(124,58,237,0.3);}
 .ur-add-row button:active{transform:scale(0.95);}
 .klus-hint{font-size:0.64rem;color:var(--text3);margin-top:6px;font-weight:500;}
+/* Klantprijs-instelling per klus (uur vs maand tarief) */
+.klus-tarief{margin:8px 0 6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.klus-tarief-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:2px;flex-shrink:0;}
+.klus-tarief-btn{padding:5px 10px;border-radius:7px;border:none;background:transparent;font-family:inherit;font-size:0.66rem;font-weight:800;color:var(--text3);cursor:pointer;letter-spacing:0.02em;transition:all 0.15s;}
+.klus-tarief-btn.on{background:var(--u-primary);color:#fff;box-shadow:0 1px 4px rgba(67,56,202,0.28);}
+.klus-tarief-input{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px dashed var(--border2);border-radius:9px;padding:0 10px;flex:1;min-width:150px;transition:all 0.15s;}
+.klus-tarief-input:focus-within{border-style:solid;border-color:var(--u-primary);box-shadow:0 0 0 3px var(--u-primary-tint-2);}
+.klus-tarief-input .prefix,.klus-tarief-input .suffix{font-size:0.7rem;font-weight:700;color:var(--text3);flex-shrink:0;}
+.klus-tarief-input input{flex:1;min-width:0;background:transparent;border:none;outline:none;padding:8px 0;font-family:inherit;font-size:0.82rem;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;-webkit-appearance:none;}
+.klus-tarief-input input::placeholder{color:var(--text3);font-weight:500;}
 /* Klussen zoekbalk */
 .klus-zoek{position:relative;margin:2px 0 12px;}
 .klus-zoek-in{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:10px 34px 10px 36px;font-family:inherit;font-size:0.84rem;color:var(--text);outline:none;box-shadow:var(--shadow);transition:border-color 0.15s;}
@@ -5238,7 +5248,17 @@ window.startUrenListener = function() {
   // Klussenlijst listener (gedeeld voor eigen + personeel)
   if(!_urKlussenUnsub){
     _urKlussenUnsub = onSnapshot(klussenCol, snap => {
-      _urKlussen = snap.docs.map(d => ({ id: d.id, naam: d.data().naam || 'Naamloos', subs: Array.isArray(d.data().subs) ? d.data().subs : [] }));
+      _urKlussen = snap.docs.map(d => {
+        const x = d.data();
+        return {
+          id: d.id,
+          naam: x.naam || 'Naamloos',
+          subs: Array.isArray(x.subs) ? x.subs : [],
+          prijsType: (x.prijsType === 'maand' ? 'maand' : 'uur'), // default 'uur'
+          prijsUur: _parseNum(x.prijsUur),      // €/uur — 0 = fallback op globale default (€35)
+          prijsMaand: _parseNum(x.prijsMaand)   // €/maand — 0 = niet ingesteld
+        };
+      });
       _urKlussen.sort((a,b) => a.naam.localeCompare(b.naam,'nl'));
       if(_urView === 'klussen'){ if(!_urActiveInside('ur-klussen')) _renderKlussen(); }
       else if(_urView === 'eigen'){ if(!_urActiveInside('ur-list')) renderUren(); }
@@ -6329,6 +6349,25 @@ function _renderKlussen(){
           </div>`;
         }).join('')
       : '<div class="klus-hist-leeg">Deze klus is nog niet ingevuld</div>';
+    // Tarief-instelling per klus
+    const isMaand = k.prijsType === 'maand';
+    const prijsUurVal = k.prijsUur > 0 ? String(k.prijsUur).replace('.',',') : '';
+    const prijsMndVal = k.prijsMaand > 0 ? String(k.prijsMaand).replace('.',',') : '';
+    const tariefRow = `<div class="klus-tarief">
+      <div class="klus-tarief-toggle">
+        <button class="klus-tarief-btn ${!isMaand?'on':''}" onclick="klusPrijsType('${k.id}','uur')">Uurtarief</button>
+        <button class="klus-tarief-btn ${isMaand?'on':''}" onclick="klusPrijsType('${k.id}','maand')">Maandtarief</button>
+      </div>
+      <div class="klus-tarief-input">
+        <span class="prefix">€</span>
+        ${isMaand
+          ? `<input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" placeholder="0,00" value="${prijsMndVal}" oninput="klusPrijsMaand('${k.id}', this.value)">
+             <span class="suffix">/ maand</span>`
+          : `<input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" placeholder="35,00" value="${prijsUurVal}" oninput="klusPrijsUur('${k.id}', this.value)">
+             <span class="suffix">/ uur</span>`}
+      </div>
+    </div>`;
+
     return `<div class="klus-card">
       <div class="klus-card-top">
         <input type="text" class="klus-naam-in" value="${(k.naam||'').replace(/"/g,'&quot;')}" oninput="klusNaamWijzig('${k.id}', this.value)" placeholder="Naam werkgever">
@@ -6336,6 +6375,7 @@ function _renderKlussen(){
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
         </button>
       </div>
+      ${tariefRow}
       <div class="klus-subs">
         ${chips}
         <input type="text" class="klus-sub-in" id="klus-sub-in-${k.id}" style="display:none" placeholder="Locatienaam..." onkeydown="if(event.key==='Enter'){event.preventDefault();klusSubOk('${k.id}')}">
@@ -6449,6 +6489,39 @@ window.klusToevoegenOk = async function(){
   try{
     await setDoc(doc(klussenCol, id), { naam, subs: [], createdAt: Date.now() });
   }catch(e){ console.error('klus add:', e); }
+};
+
+// ═══ Klus-tarief handlers (uur vs maand) ═══
+window.klusPrijsType = function(id, type){
+  const k = _urKlussen.find(x => x.id === id);
+  if(!k) return;
+  k.prijsType = type; // lokale update voor directe UI-refresh
+  _renderKlussen();
+  haptic(8);
+  setDoc(doc(klussenCol, id), { prijsType: type }, { merge: true }).catch(e => console.error('klus type:', e));
+};
+
+const _klusPrijsTimers = {};
+window.klusPrijsUur = function(id, val){
+  clearTimeout(_klusPrijsTimers['u-'+id]);
+  _klusPrijsTimers['u-'+id] = setTimeout(async () => {
+    const n = _urRound2(_parseNum(val));
+    const k = _urKlussen.find(x => x.id === id);
+    if(k) k.prijsUur = n;
+    try{ await setDoc(doc(klussenCol, id), { prijsUur: n }, { merge: true }); }
+    catch(e){ console.error('klus prijsUur:', e); }
+  }, 600);
+};
+
+window.klusPrijsMaand = function(id, val){
+  clearTimeout(_klusPrijsTimers['m-'+id]);
+  _klusPrijsTimers['m-'+id] = setTimeout(async () => {
+    const n = _urRound2(_parseNum(val));
+    const k = _urKlussen.find(x => x.id === id);
+    if(k) k.prijsMaand = n;
+    try{ await setDoc(doc(klussenCol, id), { prijsMaand: n }, { merge: true }); }
+    catch(e){ console.error('klus prijsMaand:', e); }
+  }, 600);
 };
 
 const _klusNaamTimers = {};
@@ -6578,9 +6651,11 @@ function _fmtEur(n){
 
 function _urWinstBalkHtml(){
   // Alleen personeel wordt hier meegeteld — de eigenaar (Mij) is niet werknemer
+  // Pre-calculate totaal uren per klus (voor maandtarief-verdeling) — eenmalig per render
+  const urenSplit = _urTotaalUrenPerKlus(_urpYear, _urpMonth);
   const items = _urStaff.map(s => ({
     s,
-    w: _urWinstPerStaff(s, _urpYear, _urpMonth)
+    w: _urWinstPerStaff(s, _urpYear, _urpMonth, urenSplit)
   })).filter(x => x.w.uren > 0 || x.w.omzet > 0);
 
   const totNetto = items.reduce((a,b) => _urRound2(a + b.w.netto), 0);
@@ -7229,14 +7304,39 @@ function _urLoonVoor(staff, klusId){
 const WINST_DEFAULT_PRIJS = 35;    // €/uur als niks per rij is ingevuld
 const WINST_BELASTING = 0.30;      // 30% belasting
 
+// Bereken totale factuur-uren per klus in een maand (jij + alle personeel)
+// Nodig voor maandtarief-verdeling: het vaste maandbedrag wordt naar rato van uren verdeeld
+function _urTotaalUrenPerKlus(year, month){
+  const last = new Date(year, month + 1, 0).getDate();
+  const perKlus = {}; // klusId -> totaal factuur-uren
+  const collect = dataset => {
+    for(let d = 1; d <= last; d++){
+      const iso = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const dag = dataset[iso];
+      if(!dag) continue;
+      (dag.rijen || []).forEach(r => {
+        const u = _parseNum(r.u);
+        if(u <= 0) return;
+        const key = r.k || '__leeg';
+        perKlus[key] = _urRound2((perKlus[key] || 0) + u);
+      });
+    }
+  };
+  collect(_urData);
+  Object.values(_urPData).forEach(collect);
+  return perKlus;
+}
+
 // Berekent winst voor alle uren van één personeelslid in een maand
 // KRITIEK voor administratie:
-//   - Omzet = factuur-uren (u) × klantprijs (dat is wat op de factuur staat)
+//   - Bij UURTARIEF: Omzet = factuur-uren × (rij.p → klus.prijsUur → default €35)
+//   - Bij MAANDTARIEF: Omzet = (rij.uren / totaal uren op klus deze maand) × klus.prijsMaand
 //   - Loonkosten = uitbetaalde uren (up, of u als up leeg) × loon (dat betaal je uit)
 //   - Het verschil (bv. 2u betaald / 2,5u gefactureerd → 0,5u × klantprijs) is extra winst
-function _urWinstPerStaff(staff, year, month){
+function _urWinstPerStaff(staff, year, month, totaalUrenPerKlus){
   const dataset = _urPData[staff.id] || {};
   const last = new Date(year, month + 1, 0).getDate();
+  const urenSplitBase = totaalUrenPerKlus || _urTotaalUrenPerKlus(year, month);
   let omzet = 0, loonkosten = 0, urenTot = 0, urenPay = 0;
   const perKlus = {}; // klusId -> { urenFact, urenPay, omzet, loonkosten }
   for(let d = 1; d <= last; d++){
@@ -7247,10 +7347,21 @@ function _urWinstPerStaff(staff, year, month){
       const uFact = _parseNum(r.u);
       if(uFact <= 0) return;
       const uPay  = _parseNum(r.up) > 0 ? _parseNum(r.up) : uFact; // fallback op factuur
-      const prijs = _parseNum(r.p) > 0 ? _parseNum(r.p) : WINST_DEFAULT_PRIJS;
+      const klus  = _urKlussen.find(x => x.id === r.k);
+      // Bepaal omzet volgens tarief-type van de klus
+      let rowOmzet;
+      if(klus && klus.prijsType === 'maand' && klus.prijsMaand > 0){
+        // Maandtarief: aandeel = (deze rij uren / totaal uren op klus deze maand) × maandbedrag
+        const totaalKlus = urenSplitBase[r.k] || 0;
+        rowOmzet = totaalKlus > 0 ? _urRound2((uFact / totaalKlus) * klus.prijsMaand) : 0;
+      } else {
+        // Uurtarief: rij override > klus prijsUur > globale default
+        const prijs = _parseNum(r.p) > 0 ? _parseNum(r.p)
+                    : (klus && klus.prijsUur > 0 ? klus.prijsUur : WINST_DEFAULT_PRIJS);
+        rowOmzet = _urRound2(uFact * prijs);
+      }
       const loon  = _urLoonVoor(staff, r.k);
-      const rowOmzet = _urRound2(uFact * prijs);              // factuur-uren × klantprijs
-      let rowLoon = _urRound2(uPay * loon);                   // uitbetaalde uren × loon
+      let rowLoon = _urRound2(uPay * loon);
       if(staff.type === 'wit') rowLoon = _urRound2(rowLoon * 1.44); // +44% werkgeverslasten
       omzet = _urRound2(omzet + rowOmzet);
       loonkosten = _urRound2(loonkosten + rowLoon);
