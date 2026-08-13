@@ -2282,6 +2282,7 @@ header{
 .ur-km-details.open{display:flex;animation:fds 0.22s ease;}
 .ur-km-drij{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:4px 4px 4px 10px;}
 .ur-km-drij:focus-within{border-color:#0891b2;box-shadow:0 0 0 3px rgba(8,145,178,0.14);}
+.ur-km-drij-sel{flex:1;min-width:0;background:transparent;border:none;outline:none;font-family:inherit;font-size:0.78rem;font-weight:700;color:var(--text);padding:6px 24px 6px 0;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");background-repeat:no-repeat;background-position:right center;background-size:10px 10px;}
 .ur-km-drij-naam{flex:1;min-width:0;background:transparent;border:none;outline:none;font-family:inherit;font-size:0.78rem;font-weight:700;color:var(--text);padding:6px 0;}
 .ur-km-drij-naam::placeholder{color:var(--text3);font-weight:500;}
 .ur-km-drij-km{width:60px;background:transparent;border:none;outline:none;font-family:inherit;font-size:0.8rem;font-weight:800;color:var(--text);text-align:right;padding:6px 0;font-variant-numeric:tabular-nums;}
@@ -5654,7 +5655,8 @@ function _urKmDetInit(prefix, iso, saved){
   const key = _urKey(prefix, iso);
   if(_urKmDet[key]) return _urKmDet[key]; // al geïnitialiseerd — behoud live-bewerkstate
   const list = (saved || []).map(x => ({
-    naam: x.naam || '',
+    k: x.k || '',              // klus-id (leeg = "Anders")
+    naam: x.naam || '',        // vrije tekst (alleen gebruikt als k leeg is)
     km: (x.km === 0 || x.km) ? x.km : ''
   }));
   _urKmDet[key] = list;
@@ -5663,12 +5665,30 @@ function _urKmDetInit(prefix, iso, saved){
 
 function _urKmDetailsHtml(prefix, iso, saved){
   const list = _urKmDetInit(prefix, iso, saved);
-  const rows = list.map((r, i) => `<div class="ur-km-drij">
-    <input type="text" class="ur-km-drij-naam" placeholder="Naam / klant" value="${(r.naam||'').replace(/"/g,'&quot;')}" oninput="urKmDetNaam('${prefix}','${iso}',${i},this.value)">
-    <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-km-drij-km" placeholder="0" value="${r.km !== '' && r.km != null ? String(r.km).replace('.',',') : ''}" oninput="urKmDetKm('${prefix}','${iso}',${i},this.value)">
-    <span class="ur-km-drij-suf">km</span>
-    <button class="ur-km-drij-x" onclick="urKmDetDel('${prefix}','${iso}',${i})" title="Verwijderen">✕</button>
-  </div>`).join('');
+  // Klus-opties (alfabetisch)
+  const klusOpts = [..._urKlussen]
+    .sort((a,b) => a.naam.localeCompare(b.naam,'nl',{numeric:true,sensitivity:'base'}))
+    .map(k => `<option value="${k.id}">${_urEsc(k.naam)}</option>`)
+    .join('');
+  const rows = list.map((r, i) => {
+    const isAnders = !r.k; // Als geen klus gekozen → vrije tekst
+    const klusValid = r.k && _urKlussen.some(k => k.id === r.k);
+    // Fallback: als opgeslagen klus niet meer bestaat → toon als vrije tekst met de opgeslagen naam
+    const selectVal = klusValid ? r.k : '__anders__';
+    const naamVal = isAnders || !klusValid ? (r.naam || '') : '';
+    return `<div class="ur-km-drij">
+      <select class="ur-km-drij-sel" onchange="urKmDetKlus('${prefix}','${iso}',${i},this.value)">
+        <option value="">— kies klant / klus —</option>
+        ${klusOpts}
+        <option value="__anders__" ${selectVal==='__anders__'?'selected':''}>✏️ Anders (vrije tekst)</option>
+        ${_urKlussen.map(k => `<option value="${k.id}" ${selectVal===k.id?'selected':''} hidden></option>`).join('')}
+      </select>
+      ${selectVal === '__anders__' ? `<input type="text" class="ur-km-drij-naam" placeholder="Bijv. Boodschappen" value="${(naamVal||'').replace(/"/g,'&quot;')}" oninput="urKmDetNaam('${prefix}','${iso}',${i},this.value)">` : ''}
+      <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-km-drij-km" placeholder="0" value="${r.km !== '' && r.km != null ? String(r.km).replace('.',',') : ''}" oninput="urKmDetKm('${prefix}','${iso}',${i},this.value)">
+      <span class="ur-km-drij-suf">km</span>
+      <button class="ur-km-drij-x" onclick="urKmDetDel('${prefix}','${iso}',${i})" title="Verwijderen">✕</button>
+    </div>`;
+  }).join('');
   return `${rows}<button class="ur-km-add" onclick="urKmDetAdd('${prefix}','${iso}')">
     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     Rit toevoegen
@@ -5710,6 +5730,35 @@ window.urKmDetNaam = function(prefix, iso, idx, val){
   if(!list || !list[idx]) return;
   list[idx].naam = val;
   _urSaveDag(prefix, iso, 700);
+};
+
+// Nieuwe handler: klus-select
+window.urKmDetKlus = function(prefix, iso, idx, val){
+  const list = _urKmDet[_urKey(prefix, iso)];
+  if(!list || !list[idx]) return;
+  if(val === '__anders__'){
+    list[idx].k = '';
+    // Naam behouden zodat user kan blijven typen
+  } else if(val === ''){
+    list[idx].k = '';
+    list[idx].naam = '';
+  } else {
+    list[idx].k = val;
+    list[idx].naam = ''; // Naam wissen — bij klus-koppeling wordt klus.naam gebruikt
+  }
+  // Rerender de km-details om het vrije tekst-veldje in/uit te schakelen
+  const el = document.getElementById(`${prefix}-kmdet-${iso}`);
+  if(el) el.innerHTML = _urKmDetailsHtml(prefix, iso, []);
+  _urSaveDag(prefix, iso, 0);
+  _urUpdateTotalen(prefix);
+  haptic(6);
+  // Focus in het vrije tekstveld als "Anders" is gekozen, anders in de km input
+  if(val === '__anders__'){
+    setTimeout(() => {
+      const naamEls = el && el.querySelectorAll('.ur-km-drij-naam');
+      if(naamEls && naamEls[idx]) naamEls[idx].focus();
+    }, 20);
+  }
 };
 
 window.urKmDetKm = function(prefix, iso, idx, val){
@@ -5755,8 +5804,13 @@ async function _urDoSave(prefix, iso, staffSnapshot){
   // Km-details (rit per klant) — alleen opslaan als er echt iets ingevuld is
   const kmDetLive = _urKmDet[key] || [];
   const kmDetails = kmDetLive
-    .filter(r => (r.naam && String(r.naam).trim()) || _parseNum(r.km) > 0)
-    .map(r => ({ naam: String(r.naam || '').trim(), km: _urRound2(_parseNum(r.km)) }));
+    .filter(r => r.k || (r.naam && String(r.naam).trim()) || _parseNum(r.km) > 0)
+    .map(r => {
+      const obj = { km: _urRound2(_parseNum(r.km)) };
+      if(r.k) obj.k = r.k;                                          // Klus-id: 100% accurate koppeling
+      else if(r.naam) obj.naam = String(r.naam || '').trim();       // Vrije tekst voor losse ritten
+      return obj;
+    });
   try{
     if(prefix === 'ur'){
       await setDoc(doc(db, 'uren', iso), { notitie, rijen, km, kmDetails });
@@ -6469,24 +6523,8 @@ function _renderKlussen(){
           </div>`;
         }).join('')
       : '<div class="klus-hist-leeg">Deze klus is nog niet ingevuld</div>';
-    // Tarief-instelling per klus
-    const isMaand = k.prijsType === 'maand';
-    const prijsUurVal = k.prijsUur > 0 ? String(k.prijsUur).replace('.',',') : '';
-    const prijsMndVal = k.prijsMaand > 0 ? String(k.prijsMaand).replace('.',',') : '';
-    const tariefRow = `<div class="klus-tarief">
-      <div class="klus-tarief-toggle">
-        <button class="klus-tarief-btn ${!isMaand?'on':''}" onclick="klusPrijsType('${k.id}','uur')">Uurtarief</button>
-        <button class="klus-tarief-btn ${isMaand?'on':''}" onclick="klusPrijsType('${k.id}','maand')">Maandtarief</button>
-      </div>
-      <div class="klus-tarief-input">
-        <span class="prefix">€</span>
-        ${isMaand
-          ? `<input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" placeholder="0,00" value="${prijsMndVal}" oninput="klusPrijsMaand('${k.id}', this.value)">
-             <span class="suffix">/ maand</span>`
-          : `<input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" placeholder="35,00" value="${prijsUurVal}" oninput="klusPrijsUur('${k.id}', this.value)">
-             <span class="suffix">/ uur</span>`}
-      </div>
-    </div>`;
+    // Tarief-instelling per klus (helper zodat we deze sectie surgical kunnen updaten)
+    const tariefRow = `<div class="klus-tarief" id="klus-tarief-${k.id}">${_urKlusTariefInnerHtml(k)}</div>`;
 
     return `<div class="klus-card">
       <div class="klus-card-top">
@@ -6612,12 +6650,41 @@ window.klusToevoegenOk = async function(){
 };
 
 // ═══ Klus-tarief handlers (uur vs maand) ═══
+// Bouwt alleen de inner-HTML van de tarief-sectie — zodat we surgical kunnen updaten
+function _urKlusTariefInnerHtml(k){
+  const isMaand = k.prijsType === 'maand';
+  const prijsUurVal = k.prijsUur > 0 ? String(k.prijsUur).replace('.',',') : '';
+  const prijsMndVal = k.prijsMaand > 0 ? String(k.prijsMaand).replace('.',',') : '';
+  return `<div class="klus-tarief-toggle">
+      <button class="klus-tarief-btn ${!isMaand?'on':''}" onclick="klusPrijsType('${k.id}','uur')">Uurtarief</button>
+      <button class="klus-tarief-btn ${isMaand?'on':''}" onclick="klusPrijsType('${k.id}','maand')">Maandtarief</button>
+    </div>
+    <div class="klus-tarief-input">
+      <span class="prefix">€</span>
+      ${isMaand
+        ? `<input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" placeholder="0,00" value="${prijsMndVal}" oninput="klusPrijsMaand('${k.id}', this.value)">
+           <span class="suffix">/ maand</span>`
+        : `<input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" placeholder="35,00" value="${prijsUurVal}" oninput="klusPrijsUur('${k.id}', this.value)">
+           <span class="suffix">/ uur</span>`}
+    </div>`;
+}
+
 window.klusPrijsType = function(id, type){
   const k = _urKlussen.find(x => x.id === id);
   if(!k) return;
-  k.prijsType = type; // lokale update voor directe UI-refresh
-  _renderKlussen();
+  k.prijsType = type;
   haptic(8);
+  // Alleen deze klus zijn tarief-sectie updaten — GEEN full re-render van de tab
+  // Anders "springt" de weergave en gaan uitgeklapte hist-panels weg
+  const el = document.getElementById(`klus-tarief-${id}`);
+  if(el){
+    el.innerHTML = _urKlusTariefInnerHtml(k);
+    // Focus in het nieuwe input-veld zodat je meteen kan typen
+    setTimeout(() => {
+      const inp = el.querySelector('.klus-tarief-input input');
+      if(inp) inp.focus();
+    }, 20);
+  }
   setDoc(doc(klussenCol, id), { prijsType: type }, { merge: true }).catch(e => console.error('klus type:', e));
 };
 
@@ -6855,7 +6922,9 @@ function _urWinstBalkHtml(){
 window.urKlusRijToggle = function(kid){
   _urKlusRijOpen[kid] = !_urKlusRijOpen[kid];
   _urKlusOpen = true; // zorg dat de omhullende balk open blijft
-  _renderPersoneelLijst();
+  // Kies de juiste render-functie op basis van de view
+  if(_urView === 'overzicht') _renderOverzicht();
+  else _renderPersoneelLijst();
   haptic(6);
 };
 
@@ -6873,7 +6942,9 @@ function _pdfPersoonSectie(naam, data, year, month, klussenById){
   const dagen = _pdfDagen(year, month);
   const dagNamen = ['Zo','Ma','Di','Wo','Do','Vr','Za'];
   let totU = 0, totKm = 0;
-  const perKlus = {};
+  const perKlus = {};   // klusId -> uren
+  const kmPerKlus = {}; // klusId -> km (via directe koppeling of naam-match)
+  const losseKm = {};   // vrije naam -> km
   const rijen = [];
 
   dagen.forEach(iso => {
@@ -6890,6 +6961,20 @@ function _pdfPersoonSectie(naam, data, year, month, klussenById){
         const key = r.k || '__leeg';
         perKlus[key] = _urRound2((perKlus[key] || 0) + u);
       }
+    });
+    // Km per klant verzamelen — voorkeur op klus-id, anders naam
+    (dag.kmDetails || []).forEach(rit => {
+      const km = _parseNum(rit.km);
+      if(km <= 0) return;
+      if(rit.k && klussenById[rit.k]){
+        kmPerKlus[rit.k] = _urRound2((kmPerKlus[rit.k] || 0) + km);
+        return;
+      }
+      const naam = String(rit.naam || '').trim();
+      if(!naam) return;
+      const klus = Object.values(klussenById).find(k => k.naam.toLowerCase() === naam.toLowerCase());
+      if(klus) kmPerKlus[klus.id] = _urRound2((kmPerKlus[klus.id] || 0) + km);
+      else losseKm[naam] = _urRound2((losseKm[naam] || 0) + km);
     });
     if(dagU > 0 || dagKm > 0 || (dag.notitie||'').trim() || rijenDag.length){
       const [y,m,d] = iso.split('-').map(Number);
@@ -6914,11 +6999,21 @@ function _pdfPersoonSectie(naam, data, year, month, klussenById){
     }
   });
 
-  const perKlusRijen = Object.entries(perKlus).sort((a,b) => b[1] - a[1]).map(([kid, u]) => {
-    const k = klussenById[kid];
-    const naam = k ? k.naam : (kid === '__leeg' ? 'Zonder werkgever' : '(verwijderd)');
-    return `<tr><td>${naam}</td><td class="r">${_urFmtUren(u)}</td></tr>`;
-  }).join('');
+  // Combineer alle klussen die in perKlus of kmPerKlus voorkomen — soms alleen km, geen uren
+  const alleKlusIds = new Set([...Object.keys(perKlus), ...Object.keys(kmPerKlus)]);
+  const perKlusRijen = [...alleKlusIds].map(kid => ({
+    kid,
+    naam: klussenById[kid] ? klussenById[kid].naam : (kid === '__leeg' ? 'Zonder werkgever' : '(verwijderd)'),
+    u: perKlus[kid] || 0,
+    km: kmPerKlus[kid] || 0
+  }))
+  .sort((a,b) => (b.u - a.u) || (b.km - a.km))
+  .map(r => `<tr><td>${r.naam}</td><td class="r">${r.u > 0 ? _urFmtUren(r.u) : '—'}</td><td class="r">${r.km > 0 ? _urFmtKm(r.km) : '—'}</td></tr>`)
+  .join('');
+  // Losse km — namen die niet aan een klus gekoppeld zijn
+  const losseKmRijen = Object.entries(losseKm).sort((a,b) => b[1] - a[1])
+    .map(([naam, km]) => `<tr><td>${naam}</td><td class="r">—</td><td class="r">${_urFmtKm(km)}</td></tr>`)
+    .join('');
 
   const dagRijen = rijen.length
     ? rijen.map(r => `<tr>
@@ -6939,10 +7034,13 @@ function _pdfPersoonSectie(naam, data, year, month, klussenById){
           ${totKm > 0 ? `<span><strong>${_urFmtKm(totKm)}</strong> gereden</span>` : ''}
         </div>
       </div>
-      ${perKlusRijen ? `
+      ${(perKlusRijen || losseKmRijen) ? `
       <table class="klus-tbl">
-        <thead><tr><th>Per werkgever</th><th class="r">Uren</th></tr></thead>
-        <tbody>${perKlusRijen}</tbody>
+        <thead><tr><th>Per werkgever</th><th class="r">Uren</th><th class="r">Km</th></tr></thead>
+        <tbody>
+          ${perKlusRijen}
+          ${losseKmRijen ? `<tr><td colspan="3" style="background:#f9fafb;font-size:8pt;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;padding:6px 10px">Losse km (geen werkgever)</td></tr>${losseKmRijen}` : ''}
+        </tbody>
       </table>` : ''}
       <table class="dag-tbl">
         <thead>
@@ -7209,18 +7307,22 @@ function _renderOverzicht(){
     return entries;
   }
 
-  // Km per klus verzamelen — probeer kmDetails.naam te matchen met klus-naam
-  // Overige (niet-matchend) worden apart als eigen rij toegevoegd onderaan
-  const kmPerKlus = {}; // klusId of `_naam:xxx` -> totaal km
+  // Km per klus verzamelen — 1) direct via klus-id (nieuw), 2) fallback op naam-match (oude data)
+  const kmPerKlus = {}; // klusId of `_los:xxx` -> totaal km
   const collectKm = dataset => {
     Object.entries(dataset).forEach(([iso, dag]) => {
       if(!iso.startsWith(monthPrefix)) return;
       (dag.kmDetails || []).forEach(rit => {
         const km = _parseNum(rit.km);
         if(km <= 0) return;
+        // Voorkeur: directe klus-koppeling via id (accurate ook na hernoemen)
+        if(rit.k && _urKlussen.some(k => k.id === rit.k)){
+          kmPerKlus[rit.k] = _urRound2((kmPerKlus[rit.k] || 0) + km);
+          return;
+        }
+        // Fallback: oude data met alleen naam → case-insensitive match
         const naam = String(rit.naam || '').trim();
         if(!naam){ kmPerKlus['__leeg'] = _urRound2((kmPerKlus['__leeg'] || 0) + km); return; }
-        // Case-insensitive match met klussenlijst
         const klus = _urKlussen.find(k => k.naam.toLowerCase() === naam.toLowerCase());
         const key = klus ? klus.id : `_los:${naam.toLowerCase()}|${naam}`;
         kmPerKlus[key] = _urRound2((kmPerKlus[key] || 0) + km);
@@ -7323,7 +7425,7 @@ function _renderOverzicht(){
         </div>
         <svg class="ur-alles-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
-      <div class="ur-alles-details">${klusDetailsHtml}</div>
+      <div class="ur-alles-details" onclick="event.stopPropagation()">${klusDetailsHtml}</div>
     </div>
     ${_urWinstBalkHtml()}
     <button class="ur-pdf-btn" onclick="urPdfExport()">
