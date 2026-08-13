@@ -2272,6 +2272,25 @@ header{
 .ur-km-in:focus{border-color:#0891b2;}
 .ur-km-in::placeholder{color:var(--text3);font-weight:500;}
 .ur-km-suf{font-size:0.7rem;font-weight:600;color:var(--text3);}
+/* Uitklap-detail voor km per klant/klus */
+.ur-km-toggle{width:32px;height:34px;border-radius:9px;background:var(--surface2);border:1px solid var(--border);color:var(--text3);cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;}
+.ur-km-toggle:active{transform:scale(0.9);}
+.ur-km-toggle svg{transition:transform 0.22s cubic-bezier(0.34,1.4,0.64,1);}
+.ur-km-toggle.on{background:rgba(8,145,178,0.12);border-color:rgba(8,145,178,0.35);color:#0891b2;}
+.ur-km-toggle.on svg{transform:rotate(180deg);}
+.ur-km-details{display:none;padding:8px 14px 4px;flex-direction:column;gap:6px;}
+.ur-km-details.open{display:flex;animation:fds 0.22s ease;}
+.ur-km-drij{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:4px 4px 4px 10px;}
+.ur-km-drij:focus-within{border-color:#0891b2;box-shadow:0 0 0 3px rgba(8,145,178,0.14);}
+.ur-km-drij-naam{flex:1;min-width:0;background:transparent;border:none;outline:none;font-family:inherit;font-size:0.78rem;font-weight:700;color:var(--text);padding:6px 0;}
+.ur-km-drij-naam::placeholder{color:var(--text3);font-weight:500;}
+.ur-km-drij-km{width:60px;background:transparent;border:none;outline:none;font-family:inherit;font-size:0.8rem;font-weight:800;color:var(--text);text-align:right;padding:6px 0;font-variant-numeric:tabular-nums;}
+.ur-km-drij-km::placeholder{color:var(--text3);font-weight:500;}
+.ur-km-drij-suf{font-size:0.66rem;font-weight:700;color:var(--text3);}
+.ur-km-drij-x{background:none;border:none;color:var(--text3);cursor:pointer;padding:0 6px;font-size:0.85rem;line-height:1;}
+.ur-km-drij-x:active{color:var(--urgent);}
+.ur-km-add{display:flex;align-items:center;justify-content:center;gap:5px;background:none;border:1px dashed var(--border2);border-radius:10px;padding:7px;font-family:inherit;font-size:0.65rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--text3);cursor:pointer;transition:all 0.15s;}
+.ur-km-add:active{background:var(--surface2);}
 /* Validatie-waarschuwing: amber outline + subtiele shake bij extreme waarden */
 .ur-rij-uren.warn,.ur-km-in.warn{border-color:#d97706 !important;box-shadow:0 0 0 3px rgba(217,119,6,0.15) !important;background:rgba(217,119,6,0.06) !important;color:#d97706 !important;}
 .ur-dag-tot.warn{color:#d97706 !important;background:rgba(217,119,6,0.1);padding:2px 8px;border-radius:99px;border:1px solid rgba(217,119,6,0.25);}
@@ -2313,6 +2332,13 @@ header{
 .ur-alles-rij-bar{width:55px;height:5px;background:rgba(255,255,255,0.15);border-radius:99px;overflow:hidden;flex-shrink:0;}
 .ur-alles-rij-fill{height:100%;background:#fff;border-radius:99px;transition:width 0.4s cubic-bezier(0.32,0.72,0,1);}
 .ur-alles-rij-uren{font-size:0.8rem;font-weight:800;color:#fff;flex-shrink:0;min-width:50px;text-align:right;}
+/* Km-badge naast uren in de werkgever-rij */
+.ur-alles-rij-km{font-size:0.66rem;font-weight:700;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.14);border-radius:99px;padding:2px 8px;flex-shrink:0;font-variant-numeric:tabular-nums;letter-spacing:-0.2px;}
+/* Losse km-sectie (namen die niet matchen met een klus) */
+.ur-alles-los-hdr{font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.13em;color:rgba(255,255,255,0.5);padding:14px 4px 6px;border-top:1px dashed rgba(255,255,255,0.15);margin-top:8px;}
+.ur-alles-rij-los{padding:6px 2px !important;}
+.ur-alles-rij-los .ur-alles-rij-naam{color:rgba(255,255,255,0.9) !important;font-weight:600 !important;}
+.ur-alles-rij-los .ur-alles-rij-km{background:rgba(255,255,255,0.14);color:#fff;}
 /* Klapbare klus-rij binnen "Per werkgever · iedereen" */
 .ur-klus-rij{cursor:pointer;border-radius:8px;transition:background 0.15s;padding-left:4px !important;padding-right:4px !important;margin:0 -4px;}
 .ur-klus-rij:active{background:rgba(255,255,255,0.08);}
@@ -5273,7 +5299,7 @@ window.startUrenListener = function() {
     _urData = {};
     snap.docs.forEach(d => {
       const x = d.data();
-      _urData[d.id] = { notitie: x.notitie || '', rijen: Array.isArray(x.rijen) ? x.rijen : [], km: x.km || 0 };
+      _urData[d.id] = { notitie: x.notitie || '', rijen: Array.isArray(x.rijen) ? x.rijen : [], km: x.km || 0, kmDetails: Array.isArray(x.kmDetails) ? x.kmDetails : [] };
     });
     // Alleen her-renderen als er nergens actief getypt wordt
     if(_urView === 'eigen' && !_urActiveInside('ur-list')) renderUren();
@@ -5505,9 +5531,13 @@ function _urDagCardHtml(prefix, iso, dagData, placeholder){
     </button>
     <div class="ur-km-row">
       <span class="ur-km-lbl"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg> Km rijden</span>
-      <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-km-in" id="${prefix}-km-${iso}" placeholder="0" value="${km !== '' && km != null ? String(km).replace('.',',') : ''}" oninput="urKmIn('${prefix}','${iso}',this.value)">
+      <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-km-in" id="${prefix}-km-${iso}" placeholder="totaal" value="${km !== '' && km != null ? String(km).replace('.',',') : ''}" oninput="urKmIn('${prefix}','${iso}',this.value)">
       <span class="ur-km-suf">km</span>
+      <button class="ur-km-toggle ${_urKmDetOpen.has(_urKey(prefix, iso)) || (dagData.kmDetails && dagData.kmDetails.length) ? 'on' : ''}" onclick="urKmDetToggle('${prefix}','${iso}')" title="Km per klant toevoegen">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
     </div>
+    <div class="ur-km-details ${_urKmDetOpen.has(_urKey(prefix, iso)) || (dagData.kmDetails && dagData.kmDetails.length) ? 'open' : ''}" id="${prefix}-kmdet-${iso}">${_urKmDetailsHtml(prefix, iso, dagData.kmDetails || [])}</div>
     <textarea class="ur-notitie-klein" id="${prefix}-not-${iso}" placeholder="${placeholder}" oninput="urNotitieIn('${prefix}','${iso}')">${_urEsc(notitie)}</textarea>
     <div class="ur-status-row">
       <span class="ur-opgeslagen" id="${prefix}-ok-${iso}">✓ opgeslagen</span>
@@ -5616,6 +5646,91 @@ function _urResizeNot(prefix, iso){
   ta.style.height = ta.scrollHeight + 'px';
 }
 
+// ═══ Km-details per dag: welke uitgeklapt zijn + live-bewerkstate ═══
+const _urKmDetOpen = new Set();
+const _urKmDet = {}; // key -> [{naam, km}]
+
+function _urKmDetInit(prefix, iso, saved){
+  const key = _urKey(prefix, iso);
+  if(_urKmDet[key]) return _urKmDet[key]; // al geïnitialiseerd — behoud live-bewerkstate
+  const list = (saved || []).map(x => ({
+    naam: x.naam || '',
+    km: (x.km === 0 || x.km) ? x.km : ''
+  }));
+  _urKmDet[key] = list;
+  return list;
+}
+
+function _urKmDetailsHtml(prefix, iso, saved){
+  const list = _urKmDetInit(prefix, iso, saved);
+  const rows = list.map((r, i) => `<div class="ur-km-drij">
+    <input type="text" class="ur-km-drij-naam" placeholder="Naam / klant" value="${(r.naam||'').replace(/"/g,'&quot;')}" oninput="urKmDetNaam('${prefix}','${iso}',${i},this.value)">
+    <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-km-drij-km" placeholder="0" value="${r.km !== '' && r.km != null ? String(r.km).replace('.',',') : ''}" oninput="urKmDetKm('${prefix}','${iso}',${i},this.value)">
+    <span class="ur-km-drij-suf">km</span>
+    <button class="ur-km-drij-x" onclick="urKmDetDel('${prefix}','${iso}',${i})" title="Verwijderen">✕</button>
+  </div>`).join('');
+  return `${rows}<button class="ur-km-add" onclick="urKmDetAdd('${prefix}','${iso}')">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Rit toevoegen
+  </button>`;
+}
+
+window.urKmDetToggle = function(prefix, iso){
+  const key = _urKey(prefix, iso);
+  if(_urKmDetOpen.has(key)) _urKmDetOpen.delete(key);
+  else _urKmDetOpen.add(key);
+  const el = document.getElementById(`${prefix}-kmdet-${iso}`);
+  const btn = document.querySelector(`#dag-${prefix}-${iso} .ur-km-toggle`);
+  if(el) el.classList.toggle('open', _urKmDetOpen.has(key));
+  if(btn) btn.classList.toggle('on', _urKmDetOpen.has(key));
+  haptic(6);
+};
+
+window.urKmDetAdd = function(prefix, iso){
+  const key = _urKey(prefix, iso);
+  _urKmDetInit(prefix, iso, []);
+  _urKmDet[key].push({ naam:'', km:'' });
+  _urKmDetOpen.add(key);
+  const el = document.getElementById(`${prefix}-kmdet-${iso}`);
+  if(el){
+    el.classList.add('open');
+    el.innerHTML = _urKmDetailsHtml(prefix, iso, []);
+    setTimeout(() => {
+      const inputs = el.querySelectorAll('.ur-km-drij-naam');
+      const last = inputs[inputs.length - 1];
+      if(last) last.focus();
+    }, 20);
+  }
+  _urSaveDag(prefix, iso, 0);
+  haptic(6);
+};
+
+window.urKmDetNaam = function(prefix, iso, idx, val){
+  const list = _urKmDet[_urKey(prefix, iso)];
+  if(!list || !list[idx]) return;
+  list[idx].naam = val;
+  _urSaveDag(prefix, iso, 700);
+};
+
+window.urKmDetKm = function(prefix, iso, idx, val){
+  const list = _urKmDet[_urKey(prefix, iso)];
+  if(!list || !list[idx]) return;
+  list[idx].km = val;
+  _urSaveDag(prefix, iso, 700);
+  _urUpdateTotalen(prefix);
+};
+
+window.urKmDetDel = function(prefix, iso, idx){
+  const list = _urKmDet[_urKey(prefix, iso)];
+  if(!list) return;
+  list.splice(idx, 1);
+  const el = document.getElementById(`${prefix}-kmdet-${iso}`);
+  if(el) el.innerHTML = _urKmDetailsHtml(prefix, iso, []);
+  _urSaveDag(prefix, iso, 0);
+  _urUpdateTotalen(prefix);
+  haptic(8);
+};
+
 // ════ Debounced save met flush-support ════
 // _urSaveTimers is nu een dict van { id, prefix, iso, staffSnapshot } zodat we
 // pending saves synchroon kunnen forceren (bij navigatie, PDF-export, page unload).
@@ -5637,12 +5752,17 @@ async function _urDoSave(prefix, iso, staffSnapshot){
   const kmEl = document.getElementById(`${prefix}-km-${iso}`);
   const kmRaw = kmEl ? kmEl.value : ((prefix==='ur'?_urData[iso]:(_urPData[staffSnapshot]||{})[iso])||{}).km;
   const km = _urRound2(_parseNum(kmRaw));
+  // Km-details (rit per klant) — alleen opslaan als er echt iets ingevuld is
+  const kmDetLive = _urKmDet[key] || [];
+  const kmDetails = kmDetLive
+    .filter(r => (r.naam && String(r.naam).trim()) || _parseNum(r.km) > 0)
+    .map(r => ({ naam: String(r.naam || '').trim(), km: _urRound2(_parseNum(r.km)) }));
   try{
     if(prefix === 'ur'){
-      await setDoc(doc(db, 'uren', iso), { notitie, rijen, km });
+      await setDoc(doc(db, 'uren', iso), { notitie, rijen, km, kmDetails });
     } else {
       if(!staffSnapshot) return;
-      await setDoc(doc(urenPCol, `${staffSnapshot}__${iso}`), { notitie, rijen, km, staffId: staffSnapshot, date: iso });
+      await setDoc(doc(urenPCol, `${staffSnapshot}__${iso}`), { notitie, rijen, km, kmDetails, staffId: staffSnapshot, date: iso });
     }
     const ok = document.getElementById(`${prefix}-ok-${iso}`);
     if(ok){ ok.classList.add('show'); setTimeout(() => ok.classList.remove('show'), 1600); }
@@ -6230,7 +6350,7 @@ function _urpInit(){
         if(!sid || !date) return;
         if(!_urPData[sid]) _urPData[sid] = {};
         const x = d.data();
-        _urPData[sid][date] = { notitie: x.notitie || '', rijen: Array.isArray(x.rijen) ? x.rijen : [], km: x.km || 0 };
+        _urPData[sid][date] = { notitie: x.notitie || '', rijen: Array.isArray(x.rijen) ? x.rijen : [], km: x.km || 0, kmDetails: Array.isArray(x.kmDetails) ? x.kmDetails : [] };
       });
       // Alleen her-renderen als er nergens actief getypt wordt
       if(_urView === 'detail' && _urStaffSel && !_urActiveInside('ur-personeel')) _renderPersoneelDetail();
@@ -7089,11 +7209,38 @@ function _renderOverzicht(){
     return entries;
   }
 
-  const klusDetailsHtml = klusRijen.length
-    ? klusRijen.map(([kid, uren]) => {
+  // Km per klus verzamelen — probeer kmDetails.naam te matchen met klus-naam
+  // Overige (niet-matchend) worden apart als eigen rij toegevoegd onderaan
+  const kmPerKlus = {}; // klusId of `_naam:xxx` -> totaal km
+  const collectKm = dataset => {
+    Object.entries(dataset).forEach(([iso, dag]) => {
+      if(!iso.startsWith(monthPrefix)) return;
+      (dag.kmDetails || []).forEach(rit => {
+        const km = _parseNum(rit.km);
+        if(km <= 0) return;
+        const naam = String(rit.naam || '').trim();
+        if(!naam){ kmPerKlus['__leeg'] = _urRound2((kmPerKlus['__leeg'] || 0) + km); return; }
+        // Case-insensitive match met klussenlijst
+        const klus = _urKlussen.find(k => k.naam.toLowerCase() === naam.toLowerCase());
+        const key = klus ? klus.id : `_los:${naam.toLowerCase()}|${naam}`;
+        kmPerKlus[key] = _urRound2((kmPerKlus[key] || 0) + km);
+      });
+    });
+  };
+  collectKm(_urData);
+  Object.values(_urPData).forEach(collectKm);
+
+  // Toon "losse" km-namen (die niet matchen met een klus) als extra rijen onderaan de balk
+  const losseKmRijen = Object.entries(kmPerKlus)
+    .filter(([key]) => key.startsWith('_los:'))
+    .sort((a,b) => b[1] - a[1]);
+
+  const klusDetailsHtml = (klusRijen.length || losseKmRijen.length)
+    ? (klusRijen.map(([kid, uren]) => {
         const klus = _urKlussen.find(k => k.id === kid);
         const naam = klus ? klus.naam : (kid === '__leeg' ? 'Zonder werkgever' : '(verwijderd)');
         const pct = Math.round(uren / maxKlus * 100);
+        const km = kmPerKlus[kid] || 0;
         const isOpen = !!_urKlusRijOpen[kid];
         const entries = isOpen ? entriesVoorKlus(kid) : [];
         const entriesHtml = entries.map(e => {
@@ -7106,14 +7253,24 @@ function _renderOverzicht(){
           </div>`;
         }).join('');
         const safeKid = kid.replace(/'/g,"\\'");
+        const kmHtml = km > 0 ? `<span class="ur-alles-rij-km">${_urFmtKm(km)}</span>` : '';
         return `<div class="ur-alles-rij ur-klus-rij ${isOpen?'open':''}" onclick="urKlusRijToggle('${safeKid}')">
           <span class="ur-alles-rij-naam" style="padding-left:2px">${_urEsc(naam)}</span>
           <span class="ur-alles-rij-bar"><span class="ur-alles-rij-fill" style="width:${pct}%"></span></span>
+          ${kmHtml}
           <span class="ur-alles-rij-uren">${_urFmtUren(uren)}</span>
           <svg class="ur-klus-rij-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
         <div class="ur-klus-entries ${isOpen?'open':''}">${entriesHtml}</div>`;
       }).join('')
+      + (losseKmRijen.length ? `<div class="ur-alles-los-hdr">Losse km (geen werkgever)</div>` +
+         losseKmRijen.map(([key, km]) => {
+           const naam = key.split('|')[1] || key.slice(5);
+           return `<div class="ur-alles-rij ur-alles-rij-los">
+             <span class="ur-alles-rij-naam" style="padding-left:2px">${_urEsc(naam)}</span>
+             <span class="ur-alles-rij-km">${_urFmtKm(km)}</span>
+           </div>`;
+         }).join('') : ''))
     : '<div class="ur-mtot-leeg" style="color:rgba(255,255,255,0.55)">Nog geen uren deze maand</div>';
 
   // Details-rijen (aflopend op uren) — jij bovenaan als "Mij"
