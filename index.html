@@ -3777,6 +3777,287 @@ header{
   transition: background 0.15s;
 }
 .ur-collapse-toggle button:active { background: var(--surface2); }
+
+/* ═══════════════════════════════════════════════════════
+   ONE UI — COLLAPSING HEADER, STICKY BAR, FAB, PICKER,
+   SKELETON, SWIPE-DELETE, SAVE PULSE, TODAY GLOW
+   ═══════════════════════════════════════════════════════ */
+
+/* ── 3. Grote One UI titel bovenaan (collapst bij scrollen) ── */
+.ui-bigtitle{
+  padding: 18px 4px 10px;
+  transform-origin: left top;
+  transition: opacity 0.25s var(--ease-out), transform 0.3s var(--ease-out), max-height 0.3s var(--ease-out), padding 0.3s var(--ease-out);
+  will-change: transform, opacity;
+  overflow: hidden;
+  max-height: 140px;
+}
+.ui-bigtitle-lbl{
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--text3);
+  margin-bottom: 4px;
+}
+.ui-bigtitle-h1{
+  font-size: 2.1rem; font-weight: 900; letter-spacing: -1.2px;
+  color: var(--text); line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+.ui-bigtitle-sub{
+  font-size: 0.74rem; font-weight: 600; color: var(--text3);
+  margin-top: 5px; letter-spacing: 0.01em;
+}
+.ui-bigtitle.collapsed{
+  opacity: 0; transform: translateY(-10px) scale(0.94);
+  max-height: 0; padding-top: 0; padding-bottom: 0;
+  pointer-events: none;
+}
+
+/* ── 1. Sticky compacte maandbalk ── */
+.ui-stickybar{
+  position: fixed;
+  top: var(--ui-sticky-top, 108px);
+  left: 0; right: 0;
+  z-index: 14;
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 14px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  opacity: 0; transform: translateY(-100%);
+  transition: opacity 0.22s var(--ease-out), transform 0.28s var(--ease-out);
+  pointer-events: none;
+}
+.ui-stickybar.show{ opacity: 1; transform: translateY(0); pointer-events: auto; }
+.ui-stickybar-inner{
+  max-width: 600px; margin: 0 auto; width: 100%;
+  display: flex; align-items: center; gap: 10px;
+}
+.ui-stickybar-arrow{
+  width: 30px; height: 30px; border-radius: 10px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text2); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; padding: 0;
+  transition: transform 0.15s;
+}
+.ui-stickybar-arrow:active{ transform: scale(0.88); }
+.ui-stickybar-mid{ flex: 1; min-width: 0; text-align: center; }
+.ui-stickybar-mnd{
+  font-size: 0.82rem; font-weight: 800; letter-spacing: -0.2px;
+  color: var(--text); font-variant-numeric: tabular-nums;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ui-stickybar-tot{
+  font-size: 0.66rem; font-weight: 700; color: var(--u-primary);
+  font-variant-numeric: tabular-nums; margin-top: 1px;
+}
+[data-theme="dark"] .ui-stickybar-tot{ color: var(--u-primary-3); }
+
+/* ── 2. "Terug naar vandaag" zwevende knop ── */
+.ui-todayfab{
+  position: fixed;
+  bottom: max(22px, calc(12px + env(safe-area-inset-bottom)));
+  right: 18px; z-index: 16;
+  display: flex; align-items: center; gap: 7px;
+  padding: 11px 16px 11px 13px;
+  border-radius: 99px; border: none;
+  background: linear-gradient(145deg, #4f46e5, #4338ca);
+  color: #fff; font-family: inherit;
+  font-size: 0.76rem; font-weight: 800; letter-spacing: 0.01em;
+  cursor: pointer; white-space: nowrap;
+  box-shadow: 0 8px 26px rgba(67,56,202,0.42), inset 0 1px 0 rgba(255,255,255,0.14);
+  opacity: 0; transform: translateY(20px) scale(0.9);
+  transition: opacity 0.24s var(--ease-out), transform 0.32s var(--ease-spring);
+  pointer-events: none;
+}
+.ui-todayfab.show{ opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.ui-todayfab:active{ transform: scale(0.94); }
+.ui-todayfab svg{ flex-shrink: 0; }
+
+/* ── 4. Bottom sheet picker ── */
+.ui-picker-ov{
+  display: none; position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+  align-items: flex-end; justify-content: center;
+}
+.ui-picker-ov.open{ display: flex; animation: fadeIn 0.18s ease; }
+.ui-picker-ov.closing{ animation: overlayOut 0.22s ease forwards; }
+.ui-picker{
+  background: var(--surface); width: 100%; max-width: 520px;
+  border-radius: 26px 26px 0 0;
+  border: 1px solid var(--border2); border-bottom: none;
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.28);
+  max-height: 82dvh; display: flex; flex-direction: column;
+  animation: sheetUp 0.3s var(--ease-spring);
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+.ui-picker-ov.closing .ui-picker{ animation: sheetDown 0.22s var(--ease-out) forwards; }
+.ui-picker-handle{
+  width: 38px; height: 4px; background: var(--border2);
+  border-radius: 99px; margin: 12px auto 4px; flex-shrink: 0;
+}
+.ui-picker-hdr{
+  padding: 10px 20px 12px; flex-shrink: 0;
+  display: flex; align-items: center; gap: 12px;
+}
+.ui-picker-titel{
+  font-size: 1.05rem; font-weight: 900; letter-spacing: -0.4px;
+  color: var(--text); flex: 1; min-width: 0;
+}
+.ui-picker-close{
+  width: 34px; height: 34px; border-radius: 12px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text2); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; padding: 0;
+}
+.ui-picker-close:active{ transform: scale(0.9); }
+.ui-picker-zoek{ padding: 0 20px 10px; flex-shrink: 0; position: relative; }
+.ui-picker-zoek input{
+  width: 100%; background: var(--surface2);
+  border: 1px solid var(--border2); border-radius: 14px;
+  padding: 12px 14px 12px 40px;
+  font-family: inherit; font-size: 0.88rem; font-weight: 600;
+  color: var(--text); outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ui-picker-zoek input:focus{
+  border-color: var(--u-primary);
+  box-shadow: 0 0 0 3px var(--u-primary-tint-2);
+}
+.ui-picker-zoek input::placeholder{ color: var(--text3); font-weight: 500; }
+.ui-picker-zoek-ic{
+  position: absolute; left: 34px; top: 50%; transform: translateY(-50%);
+  color: var(--text3); pointer-events: none; margin-top: -5px;
+  display: flex; align-items: center;
+}
+.ui-picker-lijst{
+  overflow-y: auto; padding: 4px 12px 8px;
+  -webkit-overflow-scrolling: touch;
+}
+.ui-picker-item{
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 12px; border-radius: 14px;
+  cursor: pointer; transition: background 0.14s;
+  border: 1px solid transparent;
+}
+.ui-picker-item:active{ background: var(--surface2); }
+.ui-picker-item.on{
+  background: var(--u-primary-tint-2);
+  border-color: var(--u-primary-border);
+}
+.ui-picker-item-info{ flex: 1; min-width: 0; }
+.ui-picker-item-lbl{
+  font-size: 0.9rem; font-weight: 700; color: var(--text);
+  letter-spacing: -0.2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ui-picker-item.on .ui-picker-item-lbl{ color: var(--u-primary); font-weight: 800; }
+[data-theme="dark"] .ui-picker-item.on .ui-picker-item-lbl{ color: var(--u-primary-3); }
+.ui-picker-item-sub{
+  font-size: 0.68rem; font-weight: 600; color: var(--text3); margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ui-picker-item-check{ color: var(--u-primary); flex-shrink: 0; opacity: 0; }
+[data-theme="dark"] .ui-picker-item-check{ color: var(--u-primary-3); }
+.ui-picker-item.on .ui-picker-item-check{ opacity: 1; }
+.ui-picker-leeg{
+  text-align: center; padding: 34px 20px; color: var(--text3);
+  font-size: 0.82rem; font-weight: 600;
+}
+.ui-picker-sep{
+  font-size: 0.56rem; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text3);
+  padding: 14px 12px 6px;
+}
+
+/* Knop die de picker opent (vervangt de <select>) */
+.ui-pickbtn{
+  flex: 1; min-width: 0;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 13px; padding: 10px 12px;
+  font-family: inherit; font-size: 0.78rem; font-weight: 700;
+  color: var(--text); text-align: left; cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: border-color 0.15s, background 0.15s;
+  white-space: nowrap; overflow: hidden;
+}
+.ui-pickbtn:active{ background: var(--surface3); }
+.ui-pickbtn.leeg{ color: var(--text3); font-weight: 500; }
+.ui-pickbtn-txt{ flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.ui-pickbtn-chev{ color: var(--text3); flex-shrink: 0; opacity: 0.6; }
+.ui-pickbtn.klein{ flex: 0 1 auto; font-size: 0.74rem; padding: 10px 10px; }
+
+/* ── 6. Skeleton loading ── */
+.ui-skel-card{
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
+  border-radius: 18px; padding: 16px 18px; margin-bottom: 12px;
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.ui-skel{
+  background: linear-gradient(90deg, var(--surface2) 25%, var(--surface3) 50%, var(--surface2) 75%);
+  background-size: 200% 100%;
+  animation: uiShimmer 1.4s ease-in-out infinite;
+  border-radius: 8px;
+}
+@keyframes uiShimmer{
+  0%{ background-position: 200% 0; }
+  100%{ background-position: -200% 0; }
+}
+.ui-skel-nr{ width: 38px; height: 30px; flex-shrink: 0; border-radius: 8px; }
+.ui-skel-mid{ flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.ui-skel-l1{ height: 13px; width: 42%; }
+.ui-skel-l2{ height: 10px; width: 62%; }
+.ui-skel-l3{ height: 34px; width: 100%; border-radius: 12px; margin-top: 4px; }
+.ui-skel-pill{ width: 54px; height: 26px; border-radius: 99px; flex-shrink: 0; }
+@media (prefers-reduced-motion: reduce){
+  .ui-skel{ animation: none; }
+}
+
+/* ── 7. Swipe-to-delete op klus-rijen ── */
+.ur-rij{ position: relative; }
+.ur-rij-swipe{
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(220,38,38,0.1) 40%, #dc2626 100%);
+  border-radius: 13px;
+  display: flex; align-items: center; justify-content: flex-end;
+  padding-right: 16px; color: #fff;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.15s;
+  z-index: 0;
+}
+.ur-rij.swiping .ur-rij-swipe{ opacity: 1; }
+.ur-rij-inner{
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  position: relative; z-index: 1;
+  background: var(--surface);
+  border-radius: 13px;
+  transition: transform 0.2s var(--ease-out);
+  will-change: transform;
+}
+.ur-rij.swiping .ur-rij-inner{ transition: none; }
+.ur-dag.today .ur-rij-inner{ background: transparent; }
+.ur-rij-inner.gone{ transform: translateX(-110%) !important; opacity: 0; transition: transform 0.24s var(--ease-out), opacity 0.24s; }
+
+/* ── 8. Opslaan-pulse op de dagkaart ── */
+@keyframes uiSavePulse{
+  0%{ box-shadow: 0 0 0 0 rgba(22,163,74,0.32); }
+  55%{ box-shadow: 0 0 0 5px rgba(22,163,74,0); }
+  100%{ box-shadow: 0 0 0 0 rgba(22,163,74,0); }
+}
+.ur-dag.saved{ animation: uiSavePulse 0.85s var(--ease-out); }
+.ur-opgeslagen{ display: inline-flex; align-items: center; gap: 4px; }
+
+/* ── 9. Vandaag-kaart sterker uitgelicht ── */
+.ur-dag.today{
+  box-shadow: 0 6px 22px rgba(67,56,202,0.14), 0 0 0 1px var(--u-primary-border) !important;
+  border-left-width: 4px !important;
+}
+.ur-dag.today .ur-dag-nr{ text-shadow: 0 0 18px rgba(67,56,202,0.28); }
+[data-theme="dark"] .ur-dag.today{
+  box-shadow: 0 6px 26px rgba(99,102,241,0.2), 0 0 0 1px var(--u-primary-border) !important;
+}
 </style>
 </head>
 <body>
@@ -4253,6 +4534,46 @@ header{
 <!-- Notes FAB -->
 <button class="n-fab" id="n-fab" onclick="nOpen(null)" aria-label="Nieuwe notitie">+</button>
 
+<!-- Uren: sticky compacte maandbalk (verschijnt bij scrollen) -->
+<div class="ui-stickybar" id="ui-stickybar">
+  <div class="ui-stickybar-inner">
+    <button class="ui-stickybar-arrow" id="ui-sb-prev" aria-label="Vorige maand">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="ui-stickybar-mid">
+      <div class="ui-stickybar-mnd" id="ui-sb-mnd">—</div>
+      <div class="ui-stickybar-tot" id="ui-sb-tot"></div>
+    </div>
+    <button class="ui-stickybar-arrow" id="ui-sb-next" aria-label="Volgende maand">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Uren: terug naar vandaag -->
+<button class="ui-todayfab" id="ui-todayfab" aria-label="Terug naar vandaag">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+  Vandaag
+</button>
+
+<!-- Bottom sheet picker (klus / locatie / km-klant) -->
+<div class="ui-picker-ov" id="ui-picker-ov" onclick="uiPickerOvKlik(event)">
+  <div class="ui-picker" id="ui-picker">
+    <div class="ui-picker-handle"></div>
+    <div class="ui-picker-hdr">
+      <div class="ui-picker-titel" id="ui-picker-titel">Kiezen</div>
+      <button class="ui-picker-close" onclick="uiPickerSluit()" aria-label="Sluiten">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="ui-picker-zoek" id="ui-picker-zoekwrap">
+      <span class="ui-picker-zoek-ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <input type="text" id="ui-picker-zoek" placeholder="Zoeken..." oninput="uiPickerFilter(this.value)">
+    </div>
+    <div class="ui-picker-lijst" id="ui-picker-lijst"></div>
+  </div>
+</div>
+
 <!-- Notes modal overlay -->
 <div class="n-overlay" id="n-overlay" onclick="nOverlayKlik(event)">
   <div class="n-modal" id="n-modal"></div>
@@ -4420,6 +4741,12 @@ function _smTypewriter() {
 function naarStart() {
   actModule = null;
   sessionStorage.removeItem('purgato_module');
+  // One UI elementen van de uren-module verbergen
+  const _sb = document.getElementById('ui-stickybar');
+  const _fb = document.getElementById('ui-todayfab');
+  if(_sb) _sb.classList.remove('show');
+  if(_fb) _fb.classList.remove('show');
+  if(window.uiPickerSluit) window.uiPickerSluit();
   document.getElementById('startscherm').classList.add('open');
   document.getElementById('main-header').style.display = 'none';
   document.getElementById('main-page').style.display = 'none';
@@ -4724,6 +5051,14 @@ window.addEventListener('popstate', function(e) {
   if (_backBusy) return;
   _backBusy = true;
   setTimeout(function() { _backBusy = false; }, 350);
+
+  // Priority 0: bottom sheet picker open → sluit die eerst
+  const pOv = document.getElementById('ui-picker-ov');
+  if (pOv && pOv.classList.contains('open')) {
+    if (window.uiPickerSluit) window.uiPickerSluit();
+    if (actModule) history.pushState({ purgato: 'module', mod: actModule }, '');
+    return;
+  }
 
   // Priority 1: notes modal open → close it, stay in module
   const nOv = document.getElementById('n-overlay');
@@ -5331,11 +5666,12 @@ window.startUrenListener = function() {
       const x = d.data();
       _urData[d.id] = { notitie: x.notitie || '', rijen: Array.isArray(x.rijen) ? x.rijen : [], km: x.km || 0, kmDetails: Array.isArray(x.kmDetails) ? x.kmDetails : [] };
     });
+    _urFirstSnap.ur = true; // skeleton mag weg
     // Alleen her-renderen als er nergens actief getypt wordt
     if(_urView === 'eigen' && !_urActiveInside('ur-list')) renderUren();
     // Overzicht-view toont eigen + personeel uren
     if(_urView === 'overzicht' && !_urActiveInside('ur-overzicht')) _renderOverzicht();
-  }, err => console.error('uren:', err));
+  }, err => { console.error('uren:', err); _urFirstSnap.ur = true; });
 };
 
 // Geeft alle dagen van een maand terug (ISO-strings, aflopend) — inclusief toekomstige dagen
@@ -5520,33 +5856,38 @@ function _urRijHtml(prefix, iso, idx, row){
         }
       }
     }
-    return `<div class="ur-rij">
-      <div class="ur-rij-label" onclick="urRijBewerk('${prefix}','${iso}',${idx})" title="Tik om te wijzigen">${label}</div>
-      ${prijsInput}
-      ${urenControls}
-      ${winstBadge}
+    return `<div class="ur-rij" data-idx="${idx}" data-prefix="${prefix}" data-iso="${iso}">
+      <div class="ur-rij-swipe"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
+      <div class="ur-rij-inner">
+        <div class="ur-rij-label" onclick="urRijBewerk('${prefix}','${iso}',${idx})" title="Tik om te wijzigen">${label}</div>
+        ${prijsInput}
+        ${urenControls}
+        ${winstBadge}
+      </div>
     </div>`;
   }
 
+  // Locatie-knop (opent bottom sheet) — alleen als deze klus locaties heeft
   let subHtml = '';
   if(row.k && subs.length){
-    let opts = `<option value="">— locatie —</option>`;
-    opts += `<option value="-" ${row.s==='-'?'selected':''}>Geen (alleen werkgever)</option>`;
-    let found = row.s === '-';
-    // Alfabetisch sorteren (Nederlandse locale, natuurlijke nummer-sortering)
-    const subsSorted = [...subs].sort((a,b) => String(a).localeCompare(String(b), 'nl', {numeric:true, sensitivity:'base'}));
-    subsSorted.forEach(s => {
-      if(s === row.s) found = true;
-      opts += `<option value="${_urEsc(s)}" ${s===row.s?'selected':''}>${_urEsc(s)}</option>`;
-    });
-    if(row.s && !found) opts += `<option value="${_urEsc(row.s)}" selected>${_urEsc(row.s)}</option>`;
-    subHtml = `<select class="ur-rij-sub ${row.s?'':'leeg'}" onchange="urSubSel('${prefix}','${iso}',${idx},this.value)">${opts}</select>`;
+    const subLabel = row.s === '-' ? 'Geen locatie' : (row.s || '— locatie —');
+    subHtml = `<button class="ui-pickbtn klein ${row.s?'':'leeg'}" onclick="uiKiesSub('${prefix}','${iso}',${idx})">
+      <span class="ui-pickbtn-txt">${_urEsc(subLabel)}</span>
+      <svg class="ui-pickbtn-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>`;
   }
-  return `<div class="ur-rij">
-    <select class="ur-rij-klus ${row.k?'':'leeg'}" onchange="urKlusSel('${prefix}','${iso}',${idx},this.value)">${_urKlusOpties(row.k)}</select>
-    ${subHtml}
-    ${prijsInput}
-    ${urenControls}
+  const klusLabel = klus ? klus.naam : '— kies klus —';
+  return `<div class="ur-rij" data-idx="${idx}" data-prefix="${prefix}" data-iso="${iso}">
+    <div class="ur-rij-swipe"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
+    <div class="ur-rij-inner">
+      <button class="ui-pickbtn ${row.k?'':'leeg'}" onclick="uiKiesKlus('${prefix}','${iso}',${idx})">
+        <span class="ui-pickbtn-txt">${_urEsc(klusLabel)}</span>
+        <svg class="ui-pickbtn-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      ${subHtml}
+      ${prijsInput}
+      ${urenControls}
+    </div>
   </div>`;
 }
 
@@ -5742,27 +6083,26 @@ function _urKmDetailsHtml(prefix, iso, saved){
 
   const rows = list.map((r, i) => {
     const klusValid = r.k && _urKlussen.some(k => k.id === r.k);
-    // Bepaal de huidige waarde van de select
-    // - klus-id  = klus is nog geldig → koppel eraan
-    // - '__anders__' = user typt vrije tekst (of oude data met alleen naam, of klus is verwijderd met bewaarde naam)
-    // - '' = niets gekozen (nieuwe lege rij)
-    let selectVal = '';
-    if(klusValid) selectVal = r.k;
-    else if(r.naam || (r.k && !klusValid)) selectVal = '__anders__';
-
-    // Bouw options met correcte `selected`-attribuut op de zichtbare optie
-    const klusOpts = klussenSorted.map(k =>
-      `<option value="${k.id}"${selectVal===k.id?' selected':''}>${_urEsc(k.naam)}</option>`
-    ).join('');
-    const naamVal = selectVal === '__anders__' ? (r.naam || '') : '';
+    const isAnders = !klusValid && (r.naam || (r.k && !klusValid));
+    // Label op de picker-knop
+    let btnLabel = '— kies klant —';
+    let leeg = true;
+    if(klusValid){
+      const k = _urKlussen.find(x => x.id === r.k);
+      btnLabel = k ? k.naam : '— kies klant —';
+      leeg = false;
+    } else if(isAnders){
+      btnLabel = '✏️ Anders';
+      leeg = false;
+    }
+    const naamVal = isAnders ? (r.naam || '') : '';
 
     return `<div class="ur-km-drij">
-      <select class="ur-km-drij-sel" onchange="urKmDetKlus('${prefix}','${iso}',${i},this.value)">
-        <option value=""${selectVal===''?' selected':''}>— kies klant / klus —</option>
-        ${klusOpts}
-        <option value="__anders__"${selectVal==='__anders__'?' selected':''}>✏️ Anders (vrije tekst)</option>
-      </select>
-      ${selectVal === '__anders__' ? `<input type="text" class="ur-km-drij-naam" placeholder="Bijv. Boodschappen" value="${(naamVal||'').replace(/"/g,'&quot;')}" oninput="urKmDetNaam('${prefix}','${iso}',${i},this.value)">` : ''}
+      <button class="ui-pickbtn klein ${leeg?'leeg':''}" onclick="uiKiesKmKlant('${prefix}','${iso}',${i})">
+        <span class="ui-pickbtn-txt">${_urEsc(btnLabel)}</span>
+        <svg class="ui-pickbtn-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      ${isAnders ? `<input type="text" class="ur-km-drij-naam" placeholder="Bijv. Boodschappen" value="${(naamVal||'').replace(/"/g,'&quot;')}" oninput="urKmDetNaam('${prefix}','${iso}',${i},this.value)">` : ''}
       <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-km-drij-km" placeholder="0" value="${r.km !== '' && r.km != null ? String(r.km).replace('.',',') : ''}" oninput="urKmDetKm('${prefix}','${iso}',${i},this.value)">
       <span class="ur-km-drij-suf">km</span>
       <button class="ur-km-drij-x" onclick="urKmDetDel('${prefix}','${iso}',${i})" title="Verwijderen">✕</button>
@@ -5831,34 +6171,18 @@ window.urKmDetKlus = function(prefix, iso, idx, val){
   }
   _urSaveDag(prefix, iso, 0);
   _urUpdateTotalen(prefix);
-  haptic(6);
 
-  // Chirurgische DOM-update: alleen de vrije-tekst input in/uit klappen
-  // NIET de select vervangen — dat kan iOS picker in de war brengen
+  // Her-render het km-panel (geen native select meer, dus veilig)
   const el = document.getElementById(`${prefix}-kmdet-${iso}`);
-  if(!el) return;
-  const rijEls = el.querySelectorAll('.ur-km-drij');
-  const rijEl = rijEls[idx];
-  if(!rijEl) return;
-  const naamInp = rijEl.querySelector('.ur-km-drij-naam');
-  const isAnders = val === '__anders__';
-
-  if(isAnders && !naamInp){
-    // Voeg naam-input toe direct achter de select
-    const sel = rijEl.querySelector('.ur-km-drij-sel');
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'ur-km-drij-naam';
-    input.placeholder = 'Bijv. Boodschappen';
-    input.value = list[idx].naam || '';
-    input.setAttribute('oninput', `urKmDetNaam('${prefix}','${iso}',${idx},this.value)`);
-    if(sel && sel.parentNode) sel.parentNode.insertBefore(input, sel.nextSibling);
-    setTimeout(() => input.focus(), 30);
-  } else if(!isAnders && naamInp){
-    naamInp.remove();
-  } else if(isAnders && naamInp){
-    // Update de bestaande input met de bewaarde naam
-    naamInp.value = list[idx].naam || '';
+  if(el){
+    el.innerHTML = _urKmDetailsHtml(prefix, iso, []);
+    // Bij "Anders": focus direct in het vrije tekstveld
+    if(val === '__anders__'){
+      setTimeout(() => {
+        const naamEls = el.querySelectorAll('.ur-km-drij-naam');
+        if(naamEls[idx]) naamEls[idx].focus();
+      }, 40);
+    }
   }
 };
 
@@ -5921,6 +6245,7 @@ async function _urDoSave(prefix, iso, staffSnapshot){
     }
     const ok = document.getElementById(`${prefix}-ok-${iso}`);
     if(ok){ ok.classList.add('show'); setTimeout(() => ok.classList.remove('show'), 1600); }
+    if(typeof _uiSavePulse === 'function') _uiSavePulse(prefix, iso);
   }catch(e){ console.error('urSaveDag:', e); }
 }
 
@@ -6132,6 +6457,241 @@ function _urWeekSumHtml(dataset, forStaff){
   </div>`;
 }
 
+// ═══════════════════════════════════════════
+// ONE UI RUNTIME — sticky bar, collapsing header, today-FAB,
+// swipe-to-delete, skeleton, save-pulse
+// ═══════════════════════════════════════════
+
+// ── 6. Skeleton loading ──
+let _urFirstSnap = { ur:false, urp:false };
+function _uiSkeletonHtml(n){
+  let out = '';
+  for(let i = 0; i < (n || 5); i++){
+    out += `<div class="ui-skel-card">
+      <div class="ui-skel ui-skel-nr"></div>
+      <div class="ui-skel-mid">
+        <div class="ui-skel ui-skel-l1"></div>
+        <div class="ui-skel ui-skel-l2"></div>
+        <div class="ui-skel ui-skel-l3"></div>
+      </div>
+      <div class="ui-skel ui-skel-pill"></div>
+    </div>`;
+  }
+  return out;
+}
+
+// ── Bepaal waar de sticky bar moet hangen (onder header + nav) ──
+function _uiSyncStickyTop(){
+  const hdr = document.getElementById('main-header');
+  const nav = document.getElementById('nav-uren');
+  let top = 108;
+  if(hdr && nav && nav.style.display !== 'none'){
+    const r = nav.getBoundingClientRect();
+    // nav zit sticky onder de header → onderkant nav is onze top
+    top = Math.max(0, Math.round(r.bottom));
+  } else if(hdr){
+    top = Math.round(hdr.getBoundingClientRect().bottom);
+  }
+  document.documentElement.style.setProperty('--ui-sticky-top', top + 'px');
+}
+
+// ── Welke prefix is actief in de uren-module? ──
+function _uiActievePrefix(){
+  if(actModule !== 'uren') return null;
+  if(_urView === 'eigen') return 'ur';
+  if(_urView === 'detail') return 'urp';
+  return null;
+}
+
+// ── Sticky bar inhoud bijwerken ──
+function _uiSyncStickyContent(){
+  const prefix = _uiActievePrefix();
+  if(!prefix) return;
+  const y = prefix === 'ur' ? _urYear  : _urpYear;
+  const m = prefix === 'ur' ? _urMonth : _urpMonth;
+  const mndEl = document.getElementById('ui-sb-mnd');
+  const totEl = document.getElementById('ui-sb-tot');
+  if(mndEl) mndEl.textContent = `${_UR_MND_LBL[m]} ${y}`;
+  // Totaal overnemen van de maandtotaal-balk (die is al berekend)
+  const bron = document.getElementById(`${prefix}-mtot`);
+  if(totEl) totEl.innerHTML = bron ? bron.innerHTML : '';
+}
+
+// ── 1 + 2 + 3: scroll-afhankelijke UI ──
+let _uiScrollRaf = null;
+function _uiOnScroll(){
+  if(_uiScrollRaf) return;
+  _uiScrollRaf = requestAnimationFrame(() => {
+    _uiScrollRaf = null;
+    const prefix = _uiActievePrefix();
+    const sticky = document.getElementById('ui-stickybar');
+    const fab    = document.getElementById('ui-todayfab');
+    if(!prefix){
+      if(sticky) sticky.classList.remove('show');
+      if(fab) fab.classList.remove('show');
+      return;
+    }
+    _uiSyncStickyTop();
+
+    // 3. Grote titel collapsen zodra hij grotendeels uit beeld is
+    const big = document.getElementById(`ui-bigtitle-${prefix}`);
+    let bigWeg = false;
+    if(big){
+      const r = big.getBoundingClientRect();
+      const grens = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--ui-sticky-top')) || 108;
+      bigWeg = r.bottom < grens + 8;
+      big.classList.toggle('collapsed', bigWeg);
+    }
+
+    // 1. Sticky maandbalk tonen zodra de grote maand-nav voorbij is
+    const nav = document.querySelector(`#${prefix === 'ur' ? 'ur-list' : 'ur-personeel'} .wk-nav`);
+    let toonSticky = false;
+    if(nav){
+      const grens = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--ui-sticky-top')) || 108;
+      toonSticky = nav.getBoundingClientRect().bottom < grens;
+    }
+    if(sticky){
+      if(toonSticky) _uiSyncStickyContent();
+      sticky.classList.toggle('show', toonSticky);
+    }
+
+    // 2. "Vandaag"-knop tonen als de kaart van vandaag niet zichtbaar is
+    if(fab){
+      const todayEl = document.getElementById(`dag-${prefix}-${_todayISO()}`);
+      let toon = false;
+      if(todayEl){
+        const r = todayEl.getBoundingClientRect();
+        const vh = window.innerHeight || document.documentElement.clientHeight;
+        toon = (r.bottom < 80) || (r.top > vh - 60);
+      }
+      fab.classList.toggle('show', toon);
+    }
+  });
+}
+
+window.addEventListener('scroll', _uiOnScroll, { passive: true });
+window.addEventListener('resize', () => { _uiSyncStickyTop(); _uiOnScroll(); }, { passive: true });
+
+// Sticky-bar pijlen + FAB koppelen
+(function(){
+  const prev = document.getElementById('ui-sb-prev');
+  const next = document.getElementById('ui-sb-next');
+  const fab  = document.getElementById('ui-todayfab');
+  if(prev) prev.addEventListener('click', () => {
+    const p = _uiActievePrefix();
+    if(p === 'ur') urMaandPrev(); else if(p === 'urp') urpMaandPrev();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  if(next) next.addEventListener('click', () => {
+    const p = _uiActievePrefix();
+    if(p === 'ur') urMaandNext(); else if(p === 'urp') urpMaandNext();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  if(fab) fab.addEventListener('click', () => {
+    const p = _uiActievePrefix();
+    if(!p) return;
+    const el = document.getElementById(`dag-${p}-${_todayISO()}`);
+    if(el){ el.scrollIntoView({ behavior:'smooth', block:'start' }); haptic(10); }
+  });
+})();
+
+// Na elke render even de scroll-status herberekenen
+function _uiAfterRender(){
+  setTimeout(() => { _uiSyncStickyTop(); _uiOnScroll(); }, 40);
+}
+
+// ── 7. Swipe-to-delete op klus-rijen ──
+(function(){
+  let el = null, startX = 0, startY = 0, dx = 0, actief = false, besloten = false;
+  const DREMPEL = 96;   // px voordat verwijderen triggert
+  const START   = 14;   // px voordat we de swipe overnemen
+
+  function reset(animate){
+    if(el){
+      if(animate) el.style.transform = '';
+      const rij = el.closest('.ur-rij');
+      if(rij) rij.classList.remove('swiping');
+    }
+    el = null; actief = false; besloten = false; dx = 0;
+  }
+
+  document.addEventListener('touchstart', e => {
+    if(actModule !== 'uren') return;
+    if(e.touches.length !== 1) return;
+    const t = e.target;
+    // Niet swipen vanaf invoervelden of knoppen — die moeten normaal werken
+    if(t.closest('input, textarea, select, button')) return;
+    const inner = t.closest('.ur-rij-inner');
+    if(!inner) return;
+    el = inner;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    dx = 0; actief = true; besloten = false;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', e => {
+    if(!actief || !el || e.touches.length !== 1) return;
+    const cx = e.touches[0].clientX, cy = e.touches[0].clientY;
+    const ddx = cx - startX, ddy = cy - startY;
+    if(!besloten){
+      if(Math.abs(ddx) < START && Math.abs(ddy) < START) return;
+      // Verticaal? Dan is het gewoon scrollen → laat los
+      if(Math.abs(ddy) > Math.abs(ddx)){ reset(true); return; }
+      besloten = true;
+      const rij = el.closest('.ur-rij');
+      if(rij) rij.classList.add('swiping');
+    }
+    // Alleen naar links swipen
+    dx = Math.min(0, ddx);
+    el.style.transform = `translateX(${dx}px)`;
+  }, { passive: true });
+
+  function eind(){
+    if(!actief || !el) return;
+    if(besloten && Math.abs(dx) > DREMPEL){
+      const rij = el.closest('.ur-rij');
+      const prefix = rij && rij.dataset.prefix;
+      const iso    = rij && rij.dataset.iso;
+      const idx    = rij && parseInt(rij.dataset.idx, 10);
+      el.classList.add('gone');
+      haptic(18);
+      setTimeout(() => {
+        if(prefix && iso != null && !isNaN(idx)) urRijVerwijder(prefix, iso, idx);
+      }, 200);
+      el = null; actief = false; besloten = false; dx = 0;
+      return;
+    }
+    reset(true);
+  }
+  document.addEventListener('touchend', eind, { passive: true });
+  document.addEventListener('touchcancel', () => reset(true), { passive: true });
+})();
+
+// Verwijdert een klus-rij (via swipe)
+window.urRijVerwijder = function(prefix, iso, idx){
+  const key = _urKey(prefix, iso);
+  const rows = _urRows[key];
+  if(!rows || !rows[idx]) return;
+  rows.splice(idx, 1);
+  // Altijd minimaal het standaard aantal lege rijen behouden
+  while(rows.length < _UR_DEFAULT_RIJEN) rows.push({ k:'', s:'', u:'', up:'', p:'' });
+  const cont = document.getElementById(`${prefix}-rijen-${iso}`);
+  if(cont) cont.innerHTML = _urRijenHtml(prefix, iso);
+  _urUpdateTotalen(prefix);
+  _urSaveDag(prefix, iso, 0);
+  showToast('Rij verwijderd');
+};
+
+// ── 8. Opslaan-pulse op de dagkaart ──
+function _uiSavePulse(prefix, iso){
+  const card = document.getElementById(`dag-${prefix}-${iso}`);
+  if(!card) return;
+  card.classList.remove('saved');
+  void card.offsetWidth; // forceer reflow zodat de animatie opnieuw start
+  card.classList.add('saved');
+  setTimeout(() => card.classList.remove('saved'), 900);
+}
+
 // ═══ Kopieer vorige dag ═══
 // Zoekt tot 7 dagen terug naar de eerste dag met invulling en kopieert die rijen
 function _urVorigeDagMetData(prefix, iso){
@@ -6180,6 +6740,149 @@ window.urKopieerVorige = function(prefix, iso){
 window.urNotitieIn = function(prefix, iso){
   _urResizeNot(prefix, iso);
   _urSaveDag(prefix, iso, 1200);
+};
+
+// ═══════════════════════════════════════════
+// BOTTOM SHEET PICKER — vervangt native <select>
+// Voorkomt iOS-picker bugs en oogt veel prettiger op mobiel
+// ═══════════════════════════════════════════
+let _uiPickerItems = [];
+let _uiPickerOnPick = null;
+let _uiPickerCurrent = '';
+
+// items: [{ value, label, sub, groep }]
+window.uiPickerOpen = function(opts){
+  _uiPickerItems = opts.items || [];
+  _uiPickerOnPick = opts.onPick || null;
+  _uiPickerCurrent = opts.current != null ? String(opts.current) : '';
+  const titel = document.getElementById('ui-picker-titel');
+  if(titel) titel.textContent = opts.titel || 'Kiezen';
+  const zoekWrap = document.getElementById('ui-picker-zoekwrap');
+  const zoekInp = document.getElementById('ui-picker-zoek');
+  // Zoekbalk alleen tonen bij langere lijsten
+  const toonZoek = _uiPickerItems.filter(i => i.value !== '__sep__').length > 6;
+  if(zoekWrap) zoekWrap.style.display = toonZoek ? '' : 'none';
+  if(zoekInp) zoekInp.value = '';
+  _uiPickerRender('');
+  const ov = document.getElementById('ui-picker-ov');
+  if(ov) ov.classList.add('open');
+  haptic(8);
+  // Focus in zoekveld op desktop; op touch niet (voorkomt dat toetsenbord opspringt)
+  if(toonZoek && window.matchMedia && window.matchMedia('(hover:hover)').matches){
+    setTimeout(() => { if(zoekInp) zoekInp.focus(); }, 120);
+  }
+};
+
+function _uiPickerRender(filter){
+  const lijst = document.getElementById('ui-picker-lijst');
+  if(!lijst) return;
+  const q = (filter || '').trim().toLowerCase();
+  const zichtbaar = _uiPickerItems.filter(it => {
+    if(it.value === '__sep__') return !q; // scheidingen verbergen tijdens zoeken
+    if(!q) return true;
+    return String(it.label || '').toLowerCase().includes(q)
+        || String(it.sub || '').toLowerCase().includes(q);
+  });
+  if(!zichtbaar.filter(i => i.value !== '__sep__').length){
+    lijst.innerHTML = `<div class="ui-picker-leeg">Geen resultaten</div>`;
+    return;
+  }
+  lijst.innerHTML = zichtbaar.map((it, i) => {
+    if(it.value === '__sep__'){
+      return `<div class="ui-picker-sep">${_urEsc(it.label)}</div>`;
+    }
+    const on = String(it.value) === _uiPickerCurrent;
+    return `<div class="ui-picker-item ${on?'on':''}" onclick="uiPickerKies(${i})">
+      <div class="ui-picker-item-info">
+        <div class="ui-picker-item-lbl">${_urEsc(it.label)}</div>
+        ${it.sub ? `<div class="ui-picker-item-sub">${_urEsc(it.sub)}</div>` : ''}
+      </div>
+      <svg class="ui-picker-item-check" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>`;
+  }).join('');
+  lijst._zichtbaar = zichtbaar;
+}
+
+window.uiPickerFilter = function(val){ _uiPickerRender(val); };
+
+window.uiPickerKies = function(idx){
+  const lijst = document.getElementById('ui-picker-lijst');
+  const arr = (lijst && lijst._zichtbaar) || _uiPickerItems;
+  const it = arr[idx];
+  if(!it) return;
+  const cb = _uiPickerOnPick;
+  haptic(10);
+  uiPickerSluit();
+  // Callback ná het sluiten zodat de DOM rustig is
+  setTimeout(() => { if(cb) cb(it.value, it); }, 60);
+};
+
+window.uiPickerSluit = function(){
+  const ov = document.getElementById('ui-picker-ov');
+  if(!ov || !ov.classList.contains('open')) return;
+  ov.classList.add('closing');
+  setTimeout(() => { ov.classList.remove('open','closing'); }, 230);
+};
+
+window.uiPickerOvKlik = function(e){
+  if(e.target === document.getElementById('ui-picker-ov')) uiPickerSluit();
+};
+
+// ── Openers voor de drie plekken waar gekozen wordt ──
+window.uiKiesKlus = function(prefix, iso, idx){
+  const rows = _urRows[_urKey(prefix, iso)];
+  if(!rows || !rows[idx]) return;
+  const items = [{ value:'', label:'— geen klus —' }].concat(
+    [..._urKlussen]
+      .sort((a,b) => a.naam.localeCompare(b.naam,'nl',{numeric:true,sensitivity:'base'}))
+      .map(k => ({
+        value: k.id,
+        label: k.naam,
+        sub: k.subs && k.subs.length ? `${k.subs.length} ${k.subs.length===1?'locatie':'locaties'}` : ''
+      }))
+  );
+  uiPickerOpen({
+    titel: 'Kies klus',
+    items,
+    current: rows[idx].k || '',
+    onPick: val => urKlusSel(prefix, iso, idx, val)
+  });
+};
+
+window.uiKiesSub = function(prefix, iso, idx){
+  const rows = _urRows[_urKey(prefix, iso)];
+  if(!rows || !rows[idx]) return;
+  const klus = _urKlussen.find(k => k.id === rows[idx].k);
+  if(!klus) return;
+  const subs = [...(klus.subs||[])].sort((a,b) => String(a).localeCompare(String(b),'nl',{numeric:true,sensitivity:'base'}));
+  const items = [{ value:'-', label:'Geen locatie', sub:'alleen werkgever' }]
+    .concat(subs.map(s => ({ value: s, label: s })));
+  uiPickerOpen({
+    titel: klus.naam,
+    items,
+    current: rows[idx].s || '',
+    onPick: val => urSubSel(prefix, iso, idx, val)
+  });
+};
+
+window.uiKiesKmKlant = function(prefix, iso, idx){
+  const list = _urKmDet[_urKey(prefix, iso)];
+  if(!list || !list[idx]) return;
+  const r = list[idx];
+  const klusValid = r.k && _urKlussen.some(k => k.id === r.k);
+  const current = klusValid ? r.k : (r.naam ? '__anders__' : '');
+  const items = [{ value:'', label:'— geen keuze —' }]
+    .concat([..._urKlussen]
+      .sort((a,b) => a.naam.localeCompare(b.naam,'nl',{numeric:true,sensitivity:'base'}))
+      .map(k => ({ value:k.id, label:k.naam })))
+    .concat([{ value:'__sep__', label:'Overig' },
+             { value:'__anders__', label:'✏️ Anders', sub:'zelf een naam typen' }]);
+  uiPickerOpen({
+    titel: 'Km — kies klant',
+    items,
+    current,
+    onPick: val => urKmDetKlus(prefix, iso, idx, val)
+  });
 };
 
 // ═══ Zoek-state (Mij + Personeel-detail) ═══
@@ -6544,7 +7247,13 @@ function renderUren() {
   const dagen = term ? dagenAll.filter(iso => _urDagMatch('ur', iso, term)) : dagenAll;
 
   const zoek = _urZoekBar('ur');
-  let html = `<div class="ur-nav-met-zoek">${_urMonthNavHtml(_urYear, _urMonth, 'urMaandPrev()', 'urMaandNext()')}${zoek.btnHtml}</div>`;
+  // One UI grote titel (collapst bij scrollen)
+  let html = `<div class="ui-bigtitle" id="ui-bigtitle-ur">
+    <div class="ui-bigtitle-lbl">Mijn uren</div>
+    <div class="ui-bigtitle-h1">${_UR_MND_LBL[_urMonth]}</div>
+    <div class="ui-bigtitle-sub">${_urYear}</div>
+  </div>`;
+  html += `<div class="ur-nav-met-zoek">${_urMonthNavHtml(_urYear, _urMonth, 'urMaandPrev()', 'urMaandNext()')}${zoek.btnHtml}</div>`;
   html += zoek.wrapHtml;
   if(term){
     html += `<div class="ur-zoek-count">${dagen.length} van ${dagenAll.length} ${dagenAll.length===1?'dag':'dagen'}</div>`;
@@ -6562,6 +7271,11 @@ function renderUren() {
   if(term && !dagen.length){
     html += `<div class="urp-leeg"><div class="urp-leeg-ic">🔎</div><div class="urp-leeg-t">Geen resultaten voor "${_urEsc(term)}"</div><div class="urp-leeg-s">Probeer een andere zoekterm</div></div>`;
   }
+  // Skeleton zolang de eerste Firebase-snapshot nog niet binnen is
+  if(!_urFirstSnap.ur && !Object.keys(_urData).length){
+    list.innerHTML = html + _uiSkeletonHtml(6);
+    return;
+  }
   // Alle dagen altijd open — geen mini-kaartjes
   dagen.forEach(iso => {
     html += _urDagCardHtml('ur', iso, _urData[iso] || {}, 'Notitie (optioneel)...');
@@ -6570,6 +7284,7 @@ function renderUren() {
   dagen.forEach(iso => _urResizeNot('ur', iso));
   _urUpdateTotalen('ur');
   _urDoScrollToday('ur');
+  _uiAfterRender();
 }
 
 // ════════════════════════════════
@@ -6653,6 +7368,14 @@ window.urGaNaar = async function(view){
       _renderPersoneelDetail();
     } else _renderPersoneelLijst();
   }
+  // Sticky bar / FAB verbergen buiten Mij + staff-detail
+  if(view !== 'eigen' && view !== 'detail'){
+    const sb = document.getElementById('ui-stickybar');
+    const fb = document.getElementById('ui-todayfab');
+    if(sb) sb.classList.remove('show');
+    if(fb) fb.classList.remove('show');
+  }
+  _uiAfterRender();
 };
 
 // ════ Klussen beheer + zoeken/geschiedenis ════
@@ -7698,6 +8421,11 @@ function _renderPersoneelDetail(){
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
       </button>
     </div>
+    <div class="ui-bigtitle" id="ui-bigtitle-urp">
+      <div class="ui-bigtitle-lbl">${_urEsc(voornaam)}</div>
+      <div class="ui-bigtitle-h1">${_UR_MND_LBL[_urpMonth]}</div>
+      <div class="ui-bigtitle-sub">${_urpYear}</div>
+    </div>
     ${_urPtCardHtml(staff)}
     <div class="ur-nav-met-zoek">${_urMonthNavHtml(_urpYear, _urpMonth, 'urpMaandPrev()', 'urpMaandNext()')}${zoek.btnHtml}</div>
     ${zoek.wrapHtml}
@@ -7717,6 +8445,7 @@ function _renderPersoneelDetail(){
   dagen.forEach(iso => _urResizeNot('urp', iso));
   _urUpdateTotalen('urp');
   _urDoScrollToday('urp');
+  _uiAfterRender();
 }
 
 window.urpMaandPrev = function(){
