@@ -2255,6 +2255,35 @@ header{
 .ur-rij-uren-pill .fact{color:var(--text);font-weight:800;}
 /* Rode weergave voor "uitbetaald aan personeel" in de totalen */
 .ur-tot-pay{color:#dc2626 !important;font-weight:800;font-size:0.72em;margin-left:4px;font-variant-numeric:tabular-nums;letter-spacing:-0.2px;}
+/* Winst-hint per rij (personeel) — kleine groene/rode badge achter de uren */
+.ur-rij-winst{font-size:0.62rem;font-weight:800;color:#16a34a;background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.22);border-radius:6px;padding:3px 6px;flex-shrink:0;font-variant-numeric:tabular-nums;letter-spacing:-0.2px;line-height:1.2;}
+.ur-rij-winst.neg{color:#dc2626;background:rgba(220,38,38,0.08);border-color:rgba(220,38,38,0.22);}
+[data-theme="dark"] .ur-rij-winst{color:#86efac;background:rgba(22,163,74,0.14);}
+[data-theme="dark"] .ur-rij-winst.neg{color:#fca5a5;background:rgba(220,38,38,0.14);}
+/* Kopieer-vorige-dag knop in de dagkaart-header */
+.ur-dag-kopie{width:28px;height:28px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text3);cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;margin-right:6px;}
+.ur-dag-kopie:hover{background:var(--surface3);color:var(--text2);}
+.ur-dag-kopie:active{transform:scale(0.9);}
+/* Weekend-markering */
+.ur-dag.weekend{background:linear-gradient(135deg,rgba(120,113,108,0.05) 0%,var(--surface) 60%) !important;}
+.ur-dag.weekend .ur-dag-naam{color:#a8a29e !important;}
+[data-theme="dark"] .ur-dag.weekend{background:linear-gradient(135deg,rgba(168,162,158,0.06) 0%,var(--surface) 60%) !important;}
+.ur-dag.weekend.today{background:linear-gradient(135deg,var(--u-primary-tint) 0%,var(--surface) 55%) !important;}
+/* Week-samenvatting kaart bovenaan Mij / staff-detail */
+.ur-week-sum{background:linear-gradient(135deg,rgba(67,56,202,0.06) 0%,var(--surface) 60%);border:1px solid var(--border);border-radius:16px;padding:12px 16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,0.03);display:flex;align-items:center;gap:12px;}
+.ur-week-sum-ic{width:36px;height:36px;border-radius:12px;background:var(--u-primary-tint-2);color:var(--u-primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+[data-theme="dark"] .ur-week-sum-ic{color:var(--u-primary-3);}
+.ur-week-sum-info{flex:1;min-width:0;}
+.ur-week-sum-lbl{font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;color:var(--text3);}
+.ur-week-sum-vals{font-size:0.85rem;font-weight:800;color:var(--text);margin-top:2px;letter-spacing:-0.2px;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;gap:6px 10px;}
+.ur-week-sum-vals .sep{color:var(--text3);opacity:0.5;}
+.ur-week-sum-vals .val{white-space:nowrap;}
+.ur-week-sum-vals .val .u{color:var(--u-primary);}
+[data-theme="dark"] .ur-week-sum-vals .val .u{color:var(--u-primary-3);}
+.ur-week-sum-vals .val .k{color:#0891b2;}
+[data-theme="dark"] .ur-week-sum-vals .val .k{color:#67e8f9;}
+.ur-week-sum-vals .val .e{color:#16a34a;}
+[data-theme="dark"] .ur-week-sum-vals .val .e{color:#86efac;}
 [data-theme="dark"] .ur-tot-pay{color:#fca5a5 !important;}
 .ur-mtot .ur-tot-pay{color:#fca5a5 !important;opacity:0.9;font-size:0.6em;font-weight:700;}
 .ur-rij-uren:focus{border-color:#7c3aed;}
@@ -5471,10 +5500,31 @@ function _urRijHtml(prefix, iso, idx, row){
   const compleet = row.k && klus && (!subs.length || row.s);
   if(compleet && !row._edit){
     const label = _urEsc(klus.naam) + (row.s && row.s !== '-' ? ` <span class="sub">/ ${_urEsc(row.s)}</span>` : '');
+    // Winst-hint alleen bij personeel-detail: kleine badge met € winst per rij
+    let winstBadge = '';
+    if(prefix === 'urp' && _urStaffSel){
+      const staff = _urStaff.find(s => s.id === _urStaffSel);
+      if(staff && _parseNum(staff.loon) > 0 && klus && klus.prijsType !== 'maand'){
+        const uFact = _parseNum(row.u);
+        if(uFact > 0){
+          const uPay  = _parseNum(row.up) > 0 ? _parseNum(row.up) : uFact;
+          const prijs = _parseNum(row.p) > 0 ? _parseNum(row.p)
+                       : (klus.prijsUur > 0 ? klus.prijsUur : WINST_DEFAULT_PRIJS);
+          const omzet = _urRound2(uFact * prijs);
+          let loonkost = _urRound2(uPay * _urLoonVoor(staff, row.k));
+          if(staff.type === 'wit') loonkost = _urRound2(loonkost * 1.44);
+          const bruto = _urRound2(omzet - loonkost);
+          const teken = bruto >= 0 ? '+' : '−';
+          const abs = Math.abs(bruto).toFixed(2).replace('.', ',').replace(/,00$/,'');
+          winstBadge = `<span class="ur-rij-winst${bruto < 0 ? ' neg' : ''}" title="Bruto winst (omzet − loonkosten)">${teken}€${abs}</span>`;
+        }
+      }
+    }
     return `<div class="ur-rij">
       <div class="ur-rij-label" onclick="urRijBewerk('${prefix}','${iso}',${idx})" title="Tik om te wijzigen">${label}</div>
       ${prijsInput}
       ${urenControls}
+      ${winstBadge}
     </div>`;
   }
 
@@ -5510,18 +5560,30 @@ function _urDagCardHtml(prefix, iso, dagData, placeholder){
   const isToday = iso === today;
   const isFuture = iso > today; // ISO YYYY-MM-DD is lexicografisch sorteerbaar
   const { dow, dagNaam, dag, maand } = _urFmtDate(iso);
+  // Weekend markering (za=6, zo=0)
+  const [dy, dm, dd] = iso.split('-').map(Number);
+  const dow_idx = new Date(dy, dm - 1, dd).getDay();
+  const isWeekend = dow_idx === 0 || dow_idx === 6;
   const notitie = dagData.notitie || '';
   const km = dagData.km || '';
   const rows = _urInitRows(prefix, iso, dagData.rijen);
   const tot = _urRound2(rows.reduce((s,r) => _urRound2(s + _parseNum(r.u)), 0));
   const heeftInhoud = tot > 0 || notitie.trim().length > 0 || rows.some(r => r.k) || km !== '';
-  return `<div class="ur-dag${isToday?' today':''}${heeftInhoud?' heeft-notitie':''}${isFuture?' toekomst':''}" id="dag-${prefix}-${iso}">
+  // Kopieer-vorige knop: alleen tonen als er een vorige dag mét invulling is
+  const prevIso = _urVorigeDagMetData(prefix, iso);
+  const kopieerBtn = prevIso
+    ? `<button class="ur-dag-kopie" onclick="urKopieerVorige('${prefix}','${iso}')" title="Kopieer vorige dag met invulling">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      </button>`
+    : '';
+  return `<div class="ur-dag${isToday?' today':''}${heeftInhoud?' heeft-notitie':''}${isFuture?' toekomst':''}${isWeekend?' weekend':''}" id="dag-${prefix}-${iso}">
     <div class="ur-dag-hdr">
       <div class="ur-dag-nr">${dag}</div>
       <div class="ur-dag-info">
         <div class="ur-dag-naam">${isToday ? 'Vandaag' : dagNaam}</div>
         <div class="ur-dag-sub">${maand}${isToday ? ' · ' + dow : ''}</div>
       </div>
+      ${kopieerBtn}
       <div class="ur-dag-tot${tot>0?'':' nul'}" id="${prefix}-tot-${iso}">${_urFmtUren(tot)}</div>
       <span class="ur-dag-pill">${isToday ? 'Nu' : (isFuture ? 'Gepland' : '')}</span>
     </div>
@@ -5590,6 +5652,14 @@ function _urUpdateTotalen(prefix){
     else {
       const bron = prefix === 'ur' ? _urData[iso] : ((_urPData[_urStaffSel]||{})[iso]);
       km = bron ? _parseNum(bron.km) : 0;
+    }
+    // Km-details erbij tellen (per-klant ritten) — die tellen NAAST het handmatige totaal-vak
+    const detList = _urKmDet[_urKey(prefix, iso)];
+    if(detList && detList.length){
+      detList.forEach(rit => { km = _urRound2(km + _parseNum(rit.km)); });
+    } else {
+      const bron = prefix === 'ur' ? _urData[iso] : ((_urPData[_urStaffSel]||{})[iso]);
+      (bron && bron.kmDetails || []).forEach(rit => { km = _urRound2(km + _parseNum(rit.km)); });
     }
     mkm = _urRound2(mkm + km);
     const el = document.getElementById(`${prefix}-tot-${iso}`);
@@ -5665,23 +5735,32 @@ function _urKmDetInit(prefix, iso, saved){
 
 function _urKmDetailsHtml(prefix, iso, saved){
   const list = _urKmDetInit(prefix, iso, saved);
-  // Klus-opties (alfabetisch)
-  const klusOpts = [..._urKlussen]
-    .sort((a,b) => a.naam.localeCompare(b.naam,'nl',{numeric:true,sensitivity:'base'}))
-    .map(k => `<option value="${k.id}">${_urEsc(k.naam)}</option>`)
-    .join('');
+  // Alfabetisch gesorteerde klussen (Nederlandse locale, natuurlijk voor nummers)
+  const klussenSorted = [..._urKlussen].sort((a,b) =>
+    a.naam.localeCompare(b.naam,'nl',{numeric:true,sensitivity:'base'})
+  );
+
   const rows = list.map((r, i) => {
-    const isAnders = !r.k; // Als geen klus gekozen → vrije tekst
     const klusValid = r.k && _urKlussen.some(k => k.id === r.k);
-    // Fallback: als opgeslagen klus niet meer bestaat → toon als vrije tekst met de opgeslagen naam
-    const selectVal = klusValid ? r.k : '__anders__';
-    const naamVal = isAnders || !klusValid ? (r.naam || '') : '';
+    // Bepaal de huidige waarde van de select
+    // - klus-id  = klus is nog geldig → koppel eraan
+    // - '__anders__' = user typt vrije tekst (of oude data met alleen naam, of klus is verwijderd met bewaarde naam)
+    // - '' = niets gekozen (nieuwe lege rij)
+    let selectVal = '';
+    if(klusValid) selectVal = r.k;
+    else if(r.naam || (r.k && !klusValid)) selectVal = '__anders__';
+
+    // Bouw options met correcte `selected`-attribuut op de zichtbare optie
+    const klusOpts = klussenSorted.map(k =>
+      `<option value="${k.id}"${selectVal===k.id?' selected':''}>${_urEsc(k.naam)}</option>`
+    ).join('');
+    const naamVal = selectVal === '__anders__' ? (r.naam || '') : '';
+
     return `<div class="ur-km-drij">
       <select class="ur-km-drij-sel" onchange="urKmDetKlus('${prefix}','${iso}',${i},this.value)">
-        <option value="">— kies klant / klus —</option>
+        <option value=""${selectVal===''?' selected':''}>— kies klant / klus —</option>
         ${klusOpts}
-        <option value="__anders__" ${selectVal==='__anders__'?'selected':''}>✏️ Anders (vrije tekst)</option>
-        ${_urKlussen.map(k => `<option value="${k.id}" ${selectVal===k.id?'selected':''} hidden></option>`).join('')}
+        <option value="__anders__"${selectVal==='__anders__'?' selected':''}>✏️ Anders (vrije tekst)</option>
       </select>
       ${selectVal === '__anders__' ? `<input type="text" class="ur-km-drij-naam" placeholder="Bijv. Boodschappen" value="${(naamVal||'').replace(/"/g,'&quot;')}" oninput="urKmDetNaam('${prefix}','${iso}',${i},this.value)">` : ''}
       <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-km-drij-km" placeholder="0" value="${r.km !== '' && r.km != null ? String(r.km).replace('.',',') : ''}" oninput="urKmDetKm('${prefix}','${iso}',${i},this.value)">
@@ -5689,6 +5768,7 @@ function _urKmDetailsHtml(prefix, iso, saved){
       <button class="ur-km-drij-x" onclick="urKmDetDel('${prefix}','${iso}',${i})" title="Verwijderen">✕</button>
     </div>`;
   }).join('');
+
   return `${rows}<button class="ur-km-add" onclick="urKmDetAdd('${prefix}','${iso}')">
     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     Rit toevoegen
@@ -5732,10 +5812,13 @@ window.urKmDetNaam = function(prefix, iso, idx, val){
   _urSaveDag(prefix, iso, 700);
 };
 
-// Nieuwe handler: klus-select
+// Klus-select handler — SURGICAL update i.p.v. full re-render zodat iOS Safari
+// zijn native picker netjes kan afronden zonder DOM-conflicten
 window.urKmDetKlus = function(prefix, iso, idx, val){
   const list = _urKmDet[_urKey(prefix, iso)];
   if(!list || !list[idx]) return;
+
+  // Update model
   if(val === '__anders__'){
     list[idx].k = '';
     // Naam behouden zodat user kan blijven typen
@@ -5746,18 +5829,36 @@ window.urKmDetKlus = function(prefix, iso, idx, val){
     list[idx].k = val;
     list[idx].naam = ''; // Naam wissen — bij klus-koppeling wordt klus.naam gebruikt
   }
-  // Rerender de km-details om het vrije tekst-veldje in/uit te schakelen
-  const el = document.getElementById(`${prefix}-kmdet-${iso}`);
-  if(el) el.innerHTML = _urKmDetailsHtml(prefix, iso, []);
   _urSaveDag(prefix, iso, 0);
   _urUpdateTotalen(prefix);
   haptic(6);
-  // Focus in het vrije tekstveld als "Anders" is gekozen, anders in de km input
-  if(val === '__anders__'){
-    setTimeout(() => {
-      const naamEls = el && el.querySelectorAll('.ur-km-drij-naam');
-      if(naamEls && naamEls[idx]) naamEls[idx].focus();
-    }, 20);
+
+  // Chirurgische DOM-update: alleen de vrije-tekst input in/uit klappen
+  // NIET de select vervangen — dat kan iOS picker in de war brengen
+  const el = document.getElementById(`${prefix}-kmdet-${iso}`);
+  if(!el) return;
+  const rijEls = el.querySelectorAll('.ur-km-drij');
+  const rijEl = rijEls[idx];
+  if(!rijEl) return;
+  const naamInp = rijEl.querySelector('.ur-km-drij-naam');
+  const isAnders = val === '__anders__';
+
+  if(isAnders && !naamInp){
+    // Voeg naam-input toe direct achter de select
+    const sel = rijEl.querySelector('.ur-km-drij-sel');
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'ur-km-drij-naam';
+    input.placeholder = 'Bijv. Boodschappen';
+    input.value = list[idx].naam || '';
+    input.setAttribute('oninput', `urKmDetNaam('${prefix}','${iso}',${idx},this.value)`);
+    if(sel && sel.parentNode) sel.parentNode.insertBefore(input, sel.nextSibling);
+    setTimeout(() => input.focus(), 30);
+  } else if(!isAnders && naamInp){
+    naamInp.remove();
+  } else if(isAnders && naamInp){
+    // Update de bestaande input met de bewaarde naam
+    naamInp.value = list[idx].naam || '';
   }
 };
 
@@ -5971,6 +6072,109 @@ window.urRijToevoegen = function(prefix, iso){
   const cont = document.getElementById(`${prefix}-rijen-${iso}`);
   if(cont) cont.innerHTML = _urRijenHtml(prefix, iso);
   haptic(8);
+};
+
+// ═══ Week-samenvatting ═══
+// Berekent totalen voor de huidige kalenderweek (ma-zo) voor een dataset
+function _urWeekTotalen(dataset, staffForWinst){
+  const nu = new Date();
+  const dowIdx = nu.getDay(); // 0=zo, 1=ma, ...
+  const daysToMonday = dowIdx === 0 ? 6 : (dowIdx - 1);
+  const monday = new Date(nu.getFullYear(), nu.getMonth(), nu.getDate() - daysToMonday);
+  let uren = 0, km = 0, omzet = 0;
+  for(let i = 0; i < 7; i++){
+    const dt = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i);
+    const iso = `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+    const dag = dataset[iso];
+    if(!dag) continue;
+    (dag.rijen || []).forEach(r => {
+      const u = _parseNum(r.u);
+      if(u <= 0) return;
+      uren = _urRound2(uren + u);
+      // Omzet berekenen alleen als klantprijs bekend is (per rij, per klus, of default)
+      const klus = _urKlussen.find(k => k.id === r.k);
+      let prijs = 0;
+      if(_parseNum(r.p) > 0) prijs = _parseNum(r.p);
+      else if(klus && klus.prijsType === 'maand'){ prijs = 0; /* maand → wordt anders berekend */ }
+      else if(klus && klus.prijsUur > 0) prijs = klus.prijsUur;
+      else prijs = WINST_DEFAULT_PRIJS;
+      if(prijs > 0) omzet = _urRound2(omzet + u * prijs);
+    });
+    km = _urRound2(km + _parseNum(dag.km));
+    (dag.kmDetails || []).forEach(rit => { km = _urRound2(km + _parseNum(rit.km)); });
+  }
+  const range = {
+    van: `${monday.getDate()} ${_MND_KORT_L[monday.getMonth()]}`,
+    tot: (() => { const zo = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 6); return `${zo.getDate()} ${_MND_KORT_L[zo.getMonth()]}`; })()
+  };
+  return { uren, km, omzet, range };
+}
+
+function _urWeekSumHtml(dataset, forStaff){
+  const w = _urWeekTotalen(dataset, forStaff);
+  if(w.uren <= 0 && w.km <= 0) return ''; // niets te tonen
+  const vals = [];
+  vals.push(`<span class="val"><span class="u">${_urFmtUren(w.uren)}</span></span>`);
+  if(w.km > 0) vals.push(`<span class="val"><span class="k">${_urFmtKm(w.km)}</span></span>`);
+  if(w.omzet > 0){
+    const eur = '€ ' + w.omzet.toFixed(2).replace('.', ',').replace(/,00$/,'');
+    vals.push(`<span class="val"><span class="e">${eur}</span></span>`);
+  }
+  const valsHtml = vals.join('<span class="sep">·</span>');
+  return `<div class="ur-week-sum">
+    <div class="ur-week-sum-ic">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    </div>
+    <div class="ur-week-sum-info">
+      <div class="ur-week-sum-lbl">Deze week · ${w.range.van} – ${w.range.tot}</div>
+      <div class="ur-week-sum-vals">${valsHtml}</div>
+    </div>
+  </div>`;
+}
+
+// ═══ Kopieer vorige dag ═══
+// Zoekt tot 7 dagen terug naar de eerste dag met invulling en kopieert die rijen
+function _urVorigeDagMetData(prefix, iso){
+  const staffSel = _urStaffSel;
+  const [y, m, d] = iso.split('-').map(Number);
+  for(let i = 1; i <= 7; i++){
+    const dt = new Date(y, m - 1, d - i);
+    const prev = `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+    const bron = prefix === 'ur' ? _urData[prev] : ((_urPData[staffSel]||{})[prev]);
+    if(!bron) continue;
+    const heeftData = (bron.rijen || []).some(r => r.k || _parseNum(r.u) > 0);
+    if(heeftData) return prev;
+  }
+  return null;
+}
+
+window.urKopieerVorige = function(prefix, iso){
+  const prevIso = _urVorigeDagMetData(prefix, iso);
+  if(!prevIso){ showToast('Geen recente dag met invulling gevonden'); return; }
+  const staffSel = _urStaffSel;
+  const bron = prefix === 'ur' ? _urData[prevIso] : ((_urPData[staffSel]||{})[prevIso]);
+  if(!bron) return;
+  const key = _urKey(prefix, iso);
+  const currentRows = _urRows[key] || [];
+  const heeftData = currentRows.some(r => r.k || _parseNum(r.u) > 0);
+  const [y, m, d] = prevIso.split('-').map(Number);
+  const prevDatum = `${d}-${m}`;
+  if(heeftData && !confirm(`Deze dag heeft al invullingen. Overschrijven met die van ${prevDatum}?`)) return;
+  // Rijen kopiëren — klantprijs (p), uren (u) en up (uitbetaald) meenemen
+  const nieuweRijen = (bron.rijen || []).map(r => ({
+    k: r.k || '',
+    s: r.s || '',
+    u: r.u != null ? r.u : '',
+    up: r.up != null ? r.up : '',
+    p: r.p != null ? r.p : ''
+  }));
+  while(nieuweRijen.length < _UR_DEFAULT_RIJEN) nieuweRijen.push({ k:'', s:'', u:'', up:'', p:'' });
+  _urRows[key] = nieuweRijen;
+  _urSaveDag(prefix, iso, 0);
+  if(prefix === 'ur') renderUren();
+  else _renderPersoneelDetail();
+  showToast(`Overgenomen van ${prevDatum}`);
+  haptic(15);
 };
 
 window.urNotitieIn = function(prefix, iso){
@@ -6345,6 +6549,8 @@ function renderUren() {
   if(term){
     html += `<div class="ur-zoek-count">${dagen.length} van ${dagenAll.length} ${dagenAll.length===1?'dag':'dagen'}</div>`;
   }
+  // Week-samenvatting bovenaan (deze kalenderweek)
+  html += _urWeekSumHtml(_urData);
   html += `<div class="ur-mtot" id="ur-mtot-box" onclick="urMtotToggle('ur')">
     <div class="ur-mtot-top">
       <span class="ur-mtot-lbl">Totaal ${_UR_MND_LBL[_urMonth]} ${_urYear}</span>
@@ -6951,8 +7157,15 @@ function _pdfPersoonSectie(naam, data, year, month, klussenById){
     const dag = data[iso] || {};
     const rijenDag = (dag.rijen || []).filter(r => _parseNum(r.u) > 0 || r.k);
     let dagU = 0;
-    rijenDag.forEach(r => { dagU = _urRound2(dagU + _parseNum(r.u)); });
-    const dagKm = _urRound2(_parseNum(dag.km));
+    let dagUp = 0;
+    rijenDag.forEach(r => {
+      dagU  = _urRound2(dagU  + _parseNum(r.u));
+      const up = _parseNum(r.up);
+      dagUp = _urRound2(dagUp + (up > 0 ? up : _parseNum(r.u)));
+    });
+    // Km-totaal = handmatig totaal-vak + som van kmDetails (per-klant ritten)
+    let dagKm = _urRound2(_parseNum(dag.km));
+    (dag.kmDetails || []).forEach(rit => { dagKm = _urRound2(dagKm + _parseNum(rit.km)); });
     totU = _urRound2(totU + dagU);
     totKm = _urRound2(totKm + dagKm);
     rijenDag.forEach(r => {
@@ -6985,14 +7198,26 @@ function _pdfPersoonSectie(naam, data, year, month, klussenById){
             const knm = k ? k.naam : (r.k === '' ? '—' : '(verwijderd)');
             const loc = r.s && r.s !== '-' ? ` / ${r.s}` : '';
             const u = _parseNum(r.u);
-            const uTxt = u > 0 ? ` — ${_urFmtUren(u)}` : '';
+            const up = _parseNum(r.up);
+            let uTxt = '';
+            if(u > 0){
+              // Bij verschil betaald / factuur: toon beide (2u / 2,5u)
+              if(up > 0 && up !== u) uTxt = ` — ${_urFmtUren(up)} / ${_urFmtUren(u)}`;
+              else uTxt = ` — ${_urFmtUren(u)}`;
+            }
             return `${knm}${loc}${uTxt}`;
           }).join('<br>')
         : '—';
+      // Uren-cel: bij verschil betaald / factuur, laat beide zien
+      let urenCel = '—';
+      if(dagU > 0){
+        if(dagUp > 0 && dagUp !== dagU) urenCel = `${_urFmtUren(dagUp)} / ${_urFmtUren(dagU)}`;
+        else urenCel = _urFmtUren(dagU);
+      }
       rijen.push({
         datum: `${dagNamen[dt.getDay()]} ${d}`,
         klussen: klussenTxt,
-        uren: dagU > 0 ? _urFmtUren(dagU) : '—',
+        uren: urenCel,
         km: dagKm > 0 ? _urFmtKm(dagKm) : '—',
         notitie: dag.notitie || ''
       });
@@ -7477,6 +7702,7 @@ function _renderPersoneelDetail(){
     <div class="ur-nav-met-zoek">${_urMonthNavHtml(_urpYear, _urpMonth, 'urpMaandPrev()', 'urpMaandNext()')}${zoek.btnHtml}</div>
     ${zoek.wrapHtml}
     ${term ? `<div class="ur-zoek-count">${dagen.length} van ${dagenAll.length} ${dagenAll.length===1?'dag':'dagen'}</div>` : ''}
+    ${_urWeekSumHtml(data, staff)}
     <div class="ur-mtot" id="urp-mtot-box" onclick="urMtotToggle('urp')">
       <div class="ur-mtot-top">
         <span class="ur-mtot-lbl">Totaal ${voornaam} · ${_UR_MND_LBL[_urpMonth]} ${_urpYear}</span>
