@@ -4064,28 +4064,6 @@ header{
    cascade, sticky weekkoppen, sheet-drag
    ═══════════════════════════════════════════════════════ */
 
-/* ── 4. Kleurcode per klus ── */
-.ui-kdot{
-  width: 8px; height: 8px; border-radius: 50%;
-  flex-shrink: 0; display: inline-block;
-  background: var(--kc, var(--text3));
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--kc, #888) 18%, transparent);
-}
-.ui-kdot.groot{ width: 10px; height: 10px; }
-.ui-pickbtn .ui-kdot{ margin-right: 2px; }
-.ur-rij-label{ display: flex !important; align-items: center; gap: 8px; }
-.ur-rij-label .ui-kdot{ margin-top: 0; }
-/* Gekleurde linkerrand op de rij als er een klus gekozen is */
-.ur-rij-inner.heeft-klus{
-  border-left: 3px solid var(--kc, transparent);
-  padding-left: 7px;
-  margin-left: -1px;
-}
-.ur-alles-rij .ui-kdot{ margin-right: 4px; }
-.ui-picker-item .ui-kdot{ margin-right: 2px; }
-.klus-card{ border-left-color: var(--kc, var(--u-primary)) !important; }
-.klus-naam-in{ padding-left: 0 !important; }
-.klus-card-top{ gap: 10px; }
 
 /* ── 5. Sparkline in de maandbalk ── */
 .ui-spark{
@@ -4134,45 +4112,14 @@ header{
   animation-delay: var(--casc, 0ms) !important;
 }
 
-/* ── 9. Week-koppen die blijven plakken ── */
-.ui-weekgroep{ position: relative; }
-.ui-weekhdr{
-  position: sticky;
-  top: calc(var(--ui-sticky-top, 108px) + 6px);
-  z-index: 9;
-  display: flex; align-items: center; gap: 8px;
-  padding: 7px 12px; margin: 16px 0 8px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  border: 1px solid var(--border);
-  border-radius: 99px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  transition: top 0.2s var(--ease-out);
-}
-body.ui-sb-on .ui-weekhdr{ top: calc(var(--ui-sticky-top, 108px) + 52px); }
-.ui-weekhdr-lbl{
-  font-size: 0.62rem; font-weight: 800;
-  letter-spacing: 0.11em; text-transform: uppercase;
-  color: var(--text2); flex-shrink: 0;
-}
-.ui-weekhdr-range{
-  font-size: 0.62rem; font-weight: 600; color: var(--text3);
-  flex: 1; min-width: 0; white-space: nowrap;
-  overflow: hidden; text-overflow: ellipsis;
-}
-.ui-weekhdr-tot{
-  font-size: 0.66rem; font-weight: 800;
-  color: var(--u-primary); flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
-  background: var(--u-primary-tint-2);
-  border: 1px solid var(--u-primary-border);
-  border-radius: 99px; padding: 2px 9px;
-}
-[data-theme="dark"] .ui-weekhdr-tot{ color: var(--u-primary-3); }
-.ui-weekhdr-tot.nul{
-  color: var(--text3); background: transparent;
-  border-color: var(--border); font-weight: 700;
-}
+
+/* ── Horizontale overflow afvangen (clip breekt geen sticky) ── */
+html, body{ max-width: 100%; overflow-x: clip; }
+.page{ overflow-x: clip; }
+#app-uren, #app-glas, #app-winst, #app-extra, #app-notes{ overflow-x: clip; max-width: 100%; }
+.ur-dag, .ur-rijen, .ur-rij, .ur-rij-inner{ max-width: 100%; min-width: 0; }
+.ur-rij-inner{ overflow: hidden; }
+.ur-mtot, .ur-alles, .ui-spark{ max-width: 100%; overflow: hidden; }
 
 /* ── 3. Sheet drag-to-dismiss ── */
 .ui-picker{ touch-action: pan-y; }
@@ -6125,11 +6072,10 @@ function _urRijHtml(prefix, iso, idx, row){
         }
       }
     }
-    const kc = _uiKlusKleur(row.k);
     return `<div class="ur-rij" data-idx="${idx}" data-prefix="${prefix}" data-iso="${iso}">
       <div class="ur-rij-swipe"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
-      <div class="ur-rij-inner heeft-klus" style="--kc:${kc}">
-        <div class="ur-rij-label" onclick="urRijBewerk('${prefix}','${iso}',${idx})" title="Tik om te wijzigen">${_uiKdot(row.k)}<span>${label}</span></div>
+      <div class="ur-rij-inner">
+        <div class="ur-rij-label" onclick="urRijBewerk('${prefix}','${iso}',${idx})" title="Tik om te wijzigen">${label}</div>
         ${prijsInput}
         ${urenControls}
         ${winstBadge}
@@ -6147,12 +6093,10 @@ function _urRijHtml(prefix, iso, idx, row){
     </button>`;
   }
   const klusLabel = klus ? klus.naam : '— kies klus —';
-  const kc2 = row.k ? _uiKlusKleur(row.k) : 'transparent';
   return `<div class="ur-rij" data-idx="${idx}" data-prefix="${prefix}" data-iso="${iso}">
     <div class="ur-rij-swipe"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
-    <div class="ur-rij-inner${row.k?' heeft-klus':''}" style="--kc:${kc2}">
+    <div class="ur-rij-inner">
       <button class="ui-pickbtn ${row.k?'':'leeg'}" onclick="uiKiesKlus('${prefix}','${iso}',${idx})">
-        ${_uiKdot(row.k)}
         <span class="ui-pickbtn-txt">${_urEsc(klusLabel)}</span>
         <svg class="ui-pickbtn-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
@@ -6319,7 +6263,6 @@ function _urUpdateTotalen(prefix){
   // Sparkline vullen (chronologisch oplopend)
   _uiSparkVul(prefix, [...sparkData].reverse());
   // Week-koppen bijwerken met hun eigen totaal
-  _uiWeekTotalenVul(prefix, sparkData);
 
   // Details per hoofdklus (aflopend op uren)
   const details = document.getElementById(`${prefix}-mtot-details`);
@@ -6856,7 +6799,6 @@ function _uiOnScroll(){
       if(toonSticky) _uiSyncStickyContent();
       sticky.classList.toggle('show', toonSticky);
       // Week-koppen schuiven mee onder de sticky balk
-      document.body.classList.toggle('ui-sb-on', toonSticky);
     }
 
     // 2. "Vandaag"-knop tonen als de kaart van vandaag niet zichtbaar is
@@ -7001,26 +6943,6 @@ function _uiSavePulse(prefix, iso){
 // ripple, long-press, sheet-drag
 // ═══════════════════════════════════════════
 
-// ── 4. Kleurcode per klus (deterministisch uit het id) ──
-const _UI_KLUS_KLEUREN = [
-  '#6366f1', '#10b981', '#f59e0b', '#f43f5e', '#06b6d4',
-  '#8b5cf6', '#f97316', '#14b8a6', '#ec4899', '#84cc16'
-];
-const _uiKleurCache = {};
-function _uiKlusKleur(klusId){
-  if(!klusId) return 'var(--text3)';
-  if(_uiKleurCache[klusId]) return _uiKleurCache[klusId];
-  let h = 0;
-  const s = String(klusId);
-  for(let i = 0; i < s.length; i++){ h = ((h << 5) - h + s.charCodeAt(i)) | 0; }
-  const kleur = _UI_KLUS_KLEUREN[Math.abs(h) % _UI_KLUS_KLEUREN.length];
-  _uiKleurCache[klusId] = kleur;
-  return kleur;
-}
-function _uiKdot(klusId, groot){
-  if(!klusId) return '';
-  return `<span class="ui-kdot${groot?' groot':''}" style="--kc:${_uiKlusKleur(klusId)}"></span>`;
-}
 
 // ── 1. Tellende getallen ──
 const _uiNumRaf = {};
@@ -7063,54 +6985,6 @@ function _uiSparkVul(prefix, dagenData){
       <div class="ui-spark-bar" style="height:${pct}%"></div>
     </div>`;
   }).join('');
-}
-
-// ── 9. Week-indeling binnen een maand ──
-function _uiISOWeek(iso){
-  const [y, m, d] = iso.split('-').map(Number);
-  const dt = new Date(y, m - 1, d);
-  dt.setHours(0,0,0,0);
-  dt.setDate(dt.getDate() + 3 - ((dt.getDay() + 6) % 7));
-  const w1 = new Date(dt.getFullYear(), 0, 4);
-  return 1 + Math.round(((dt - w1) / 86400000 - 3 + ((w1.getDay() + 6) % 7)) / 7);
-}
-function _uiWeekRange(iso){
-  const [y, m, d] = iso.split('-').map(Number);
-  const dt = new Date(y, m - 1, d);
-  const off = (dt.getDay() + 6) % 7; // ma = 0
-  const ma = new Date(y, m - 1, d - off);
-  const zo = new Date(y, m - 1, d - off + 6);
-  const mk = _MND_KORT_L;
-  return `${ma.getDate()} ${mk[ma.getMonth()]} – ${zo.getDate()} ${mk[zo.getMonth()]}`;
-}
-// Vult de totaal-badge van elke week-kop op basis van de dag-uren
-function _uiWeekTotalenVul(prefix, dagData){
-  const perWeek = {};
-  (dagData || []).forEach(d => {
-    const w = _uiISOWeek(d.iso);
-    perWeek[w] = _urRound2((perWeek[w] || 0) + d.uren);
-  });
-  Object.entries(perWeek).forEach(([w, uren]) => {
-    const el = document.getElementById(`${prefix}-wtot-${w}`);
-    if(!el) return;
-    el.textContent = _urFmtUren(uren);
-    el.classList.toggle('nul', !(uren > 0));
-  });
-}
-
-// Groepeert ISO-datums per ISO-weeknummer, met behoud van volgorde
-function _uiGroepeerPerWeek(dagen){
-  const groepen = [];
-  let huidig = null;
-  dagen.forEach(iso => {
-    const w = _uiISOWeek(iso);
-    if(!huidig || huidig.week !== w){
-      huidig = { week: w, range: _uiWeekRange(iso), dagen: [] };
-      groepen.push(huidig);
-    }
-    huidig.dagen.push(iso);
-  });
-  return groepen;
 }
 
 // ── 8. Ripple bij tikken ──
@@ -7390,9 +7264,7 @@ function _uiPickerRender(filter){
       return `<div class="ui-picker-sep">${_urEsc(it.label)}</div>`;
     }
     const on = String(it.value) === _uiPickerCurrent;
-    const dot = it.kleur ? `<span class="ui-kdot groot" style="--kc:${it.kleur}"></span>` : '';
     return `<div class="ui-picker-item ${on?'on':''}" onclick="uiPickerKies(${i})">
-      ${dot}
       <div class="ui-picker-item-info">
         <div class="ui-picker-item-lbl">${_urEsc(it.label)}</div>
         ${it.sub ? `<div class="ui-picker-item-sub">${_urEsc(it.sub)}</div>` : ''}
@@ -7440,7 +7312,6 @@ window.uiKiesKlus = function(prefix, iso, idx){
       .map(k => ({
         value: k.id,
         label: k.naam,
-        kleur: _uiKlusKleur(k.id),
         sub: k.subs && k.subs.length ? `${k.subs.length} ${k.subs.length===1?'locatie':'locaties'}` : ''
       }))
   );
@@ -7477,7 +7348,7 @@ window.uiKiesKmKlant = function(prefix, iso, idx){
   const items = [{ value:'', label:'— geen keuze —' }]
     .concat([..._urKlussen]
       .sort((a,b) => a.naam.localeCompare(b.naam,'nl',{numeric:true,sensitivity:'base'}))
-      .map(k => ({ value:k.id, label:k.naam, kleur:_uiKlusKleur(k.id) })))
+      .map(k => ({ value:k.id, label:k.naam })))
     .concat([{ value:'__sep__', label:'Overig' },
              { value:'__anders__', label:'✏️ Anders', sub:'zelf een naam typen' }]);
   uiPickerOpen({
@@ -7880,27 +7751,10 @@ function renderUren() {
     list.innerHTML = html + _uiSkeletonHtml(6);
     return;
   }
-  // Dagen per week groeperen met plakkende week-koppen
   let ci = 0;
-  if(term){
-    // Bij zoeken geen weekgroepen — gewoon platte lijst met matches
-    dagen.forEach(iso => {
-      html += _urDagCardHtml('ur', iso, _urData[iso] || {}, 'Notitie (optioneel)...', ci++);
-    });
-  } else {
-    _uiGroepeerPerWeek(dagen).forEach(g => {
-      html += `<div class="ui-weekgroep">
-        <div class="ui-weekhdr">
-          <span class="ui-weekhdr-lbl">Week ${g.week}</span>
-          <span class="ui-weekhdr-range">${g.range}</span>
-          <span class="ui-weekhdr-tot nul" id="ur-wtot-${g.week}">0u</span>
-        </div>`;
-      g.dagen.forEach(iso => {
-        html += _urDagCardHtml('ur', iso, _urData[iso] || {}, 'Notitie (optioneel)...', ci++);
-      });
-      html += `</div>`;
-    });
-  }
+  dagen.forEach(iso => {
+    html += _urDagCardHtml('ur', iso, _urData[iso] || {}, 'Notitie (optioneel)...', ci++);
+  });
   list.innerHTML = html;
   dagen.forEach(iso => _urResizeNot('ur', iso));
   _urUpdateTotalen('ur');
@@ -8081,9 +7935,8 @@ function _renderKlussen(){
     // Tarief-instelling per klus (helper zodat we deze sectie surgical kunnen updaten)
     const tariefRow = `<div class="klus-tarief" id="klus-tarief-${k.id}">${_urKlusTariefInnerHtml(k)}</div>`;
 
-    return `<div class="klus-card" style="--kc:${_uiKlusKleur(k.id)}">
+    return `<div class="klus-card">
       <div class="klus-card-top">
-        ${_uiKdot(k.id, true)}
         <input type="text" class="klus-naam-in" value="${(k.naam||'').replace(/"/g,'&quot;')}" oninput="klusNaamWijzig('${k.id}', this.value)" placeholder="Naam werkgever">
         <button class="klus-del" onclick="klusVerwijderen('${k.id}')" title="Verwijderen">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
@@ -8932,7 +8785,6 @@ function _renderOverzicht(){
         const safeKid = kid.replace(/'/g,"\\'");
         const kmHtml = km > 0 ? `<span class="ur-alles-rij-km">${_urFmtKm(km)}</span>` : '';
         return `<div class="ur-alles-rij ur-klus-rij ${isOpen?'open':''}" onclick="urKlusRijToggle('${safeKid}')">
-          ${kid !== '__leeg' ? _uiKdot(kid) : ''}
           <span class="ur-alles-rij-naam" style="padding-left:2px">${_urEsc(naam)}</span>
           <span class="ur-alles-rij-bar"><span class="ur-alles-rij-fill" style="width:${pct}%"></span></span>
           ${kmHtml}
@@ -9029,27 +8881,10 @@ function _renderPersoneelDetail(){
   dagenAll.forEach(iso => { _urInitRows('urp', iso, (data[iso] || {}).rijen); });
   const dagen = term ? dagenAll.filter(iso => _urDagMatch('urp', iso, term)) : dagenAll;
 
-  // Dagen per week groeperen met plakkende week-koppen (niet tijdens zoeken)
   let ci = 0;
-  let lijst = '';
-  if(term){
-    lijst = dagen.map(iso =>
-      _urDagCardHtml('urp', iso, data[iso] || {}, `Notitie over ${voornaam} (optioneel)...`, ci++)
-    ).join('');
-  } else {
-    _uiGroepeerPerWeek(dagen).forEach(g => {
-      lijst += `<div class="ui-weekgroep">
-        <div class="ui-weekhdr">
-          <span class="ui-weekhdr-lbl">Week ${g.week}</span>
-          <span class="ui-weekhdr-range">${g.range}</span>
-          <span class="ui-weekhdr-tot nul" id="urp-wtot-${g.week}">0u</span>
-        </div>`;
-      g.dagen.forEach(iso => {
-        lijst += _urDagCardHtml('urp', iso, data[iso] || {}, `Notitie over ${voornaam} (optioneel)...`, ci++);
-      });
-      lijst += `</div>`;
-    });
-  }
+  const lijst = dagen.map(iso =>
+    _urDagCardHtml('urp', iso, data[iso] || {}, `Notitie over ${voornaam} (optioneel)...`, ci++)
+  ).join('');
 
   const zoek = _urZoekBar('urp');
 
