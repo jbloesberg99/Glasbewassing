@@ -4113,6 +4113,14 @@ header{
 }
 
 
+/* ── Tikbare elementen: geen dubbeltik-zoom en geen 300ms vertraging ── */
+button, a, input, select, textarea, label,
+.module-card, .ur-dag, .kkaart, .witem, .wk-day, .chip, .nav-item, .stat-card,
+.ui-pickbtn, .ui-picker-item, .ui-todayfab, .ui-stickybar-arrow, .wk-arrow,
+.urp-card, .klus-card, .ur-rij-label, .ur-rij-uren-pill, .n-card, .dtag{
+  touch-action: manipulation;
+}
+
 /* ── Horizontale overflow afvangen (clip breekt geen sticky) ── */
 html, body{ max-width: 100%; overflow-x: clip; }
 .page{ overflow-x: clip; }
@@ -5781,12 +5789,22 @@ function showToast(msg) {
     if (e.touches.length > 1) e.preventDefault();
   }, { passive: false });
 
-  // Dubbeltik zoom op iOS
-  let _lastTap = 0;
+  // Dubbeltik zoom op iOS.
+  // BELANGRIJK: alleen blokkeren bij twee tikken kort na elkaar op ONGEVEER DEZELFDE PLEK.
+  // Zonder die positiecheck werd ook een gewone tik vlak na het scrollen geannuleerd
+  // (scrollen eindigt namelijk óók met een touchend) — knoppen leken dan niet te werken.
+  let _lastTap = 0, _lastTapX = -999, _lastTapY = -999;
   document.addEventListener('touchend', e => {
     const nu = Date.now();
-    if (nu - _lastTap < 350) e.preventDefault();
-    _lastTap = nu;
+    const t = e.changedTouches && e.changedTouches[0];
+    const x = t ? t.clientX : -999;
+    const y = t ? t.clientY : -999;
+    const zelfdePlek = Math.abs(x - _lastTapX) < 34 && Math.abs(y - _lastTapY) < 34;
+    // Nooit blokkeren op knoppen/velden — die hebben touch-action:manipulation
+    const opControl = e.target && e.target.closest &&
+      e.target.closest('button, a, input, textarea, select, .module-card, .ur-dag, .kkaart, .ui-picker-item');
+    if (nu - _lastTap < 350 && zelfdePlek && !opControl) e.preventDefault();
+    _lastTap = nu; _lastTapX = x; _lastTapY = y;
   }, { passive: false });
 
   // Desktop: Ctrl/Cmd + scroll-wiel zoom
@@ -6833,12 +6851,66 @@ window.addEventListener('resize', () => { _uiSyncStickyTop(); _uiOnScroll(); }, 
     if(p === 'ur') urMaandNext(); else if(p === 'urp') urpMaandNext();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
-  if(fab) fab.addEventListener('click', () => {
+  // Scrollt betrouwbaar naar een element. scrollIntoView({behavior:'smooth'})
+  // faalt stil op sommige mobiele browsers, daarom rekenen we de positie zelf uit.
+  function _uiScrollNaar(el){
+    if(!el) return;
+    const offset = (parseInt(getComputedStyle(document.documentElement)
+                      .getPropertyValue('--ui-sticky-top')) || 108) + 10;
+    const doel = Math.max(0, window.scrollY + el.getBoundingClientRect().top - offset);
+    const voor = window.scrollY;
+    try { window.scrollTo({ top: doel, behavior: 'smooth' }); }
+    catch(e){ window.scrollTo(0, doel); }
+    // Vangnet: als er na 400ms niets bewoog, hard springen
+    setTimeout(() => {
+      if(Math.abs(window.scrollY - voor) < 4 && Math.abs(doel - voor) > 20){
+        window.scrollTo(0, doel);
+      }
+    }, 400);
+  }
+
+  function _uiNaarVandaag(){
     const p = _uiActievePrefix();
     if(!p) return;
-    const el = document.getElementById(`dag-${p}-${_todayISO()}`);
-    if(el){ el.scrollIntoView({ behavior:'smooth', block:'start' }); haptic(10); }
-  });
+    const iso = _todayISO();
+    const nu = new Date();
+    haptic(10);
+    // Kijk je in een andere maand? Spring dan eerst terug naar deze maand.
+    const j = p === 'ur' ? _urYear  : _urpYear;
+    const m = p === 'ur' ? _urMonth : _urpMonth;
+    const anderemaand = (j !== nu.getFullYear() || m !== nu.getMonth());
+    if(anderemaand){
+      try{
+        if(p === 'ur'){ _urYear = nu.getFullYear(); _urMonth = nu.getMonth(); renderUren(); }
+        else          { _urpYear = nu.getFullYear(); _urpMonth = nu.getMonth(); _renderPersoneelDetail(); }
+      }catch(e){ console.error('naar vandaag:', e); }
+    }
+    setTimeout(() => {
+      _uiScrollNaar(document.getElementById(`dag-${p}-${iso}`));
+    }, anderemaand ? 90 : 0);
+  }
+
+  if(fab){
+    // Alleen reageren op een échte tik (vinger nauwelijks bewogen), niet op
+    // het einde van een scroll-gebaar dat toevallig op de knop eindigt.
+    let tx = 0, ty = 0, tapt = false;
+    fab.addEventListener('touchstart', e => {
+      const t = e.touches[0];
+      tx = t.clientX; ty = t.clientY; tapt = true;
+    }, { passive: true });
+    fab.addEventListener('touchmove', e => {
+      const t = e.touches[0];
+      if(Math.abs(t.clientX - tx) > 12 || Math.abs(t.clientY - ty) > 12) tapt = false;
+    }, { passive: true });
+    fab.addEventListener('touchend', e => {
+      if(!tapt) return;
+      tapt = false;
+      e.preventDefault();   // voorkomt de dubbele click erachteraan
+      _uiNaarVandaag();
+    }, { passive: false });
+    // Desktop / muis
+    fab.addEventListener('click', _uiNaarVandaag);
+  }
 })();
 
 // Na elke render even de scroll-status herberekenen
