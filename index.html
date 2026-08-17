@@ -6775,9 +6775,11 @@ function _uiSyncStickyContent(){
   const mndEl = document.getElementById('ui-sb-mnd');
   const totEl = document.getElementById('ui-sb-tot');
   if(mndEl) mndEl.textContent = `${_UR_MND_LBL[m]} ${y}`;
-  // Totaal overnemen van de maandtotaal-balk (die is al berekend)
+  // Totaal overnemen van de maandtotaal-balk (die is al berekend).
+  // BELANGRIJK: id's strippen — anders staan dezelfde id's twee keer in de DOM
+  // en pakt getElementById later de kopie in plaats van het echte element.
   const bron = document.getElementById(`${prefix}-mtot`);
-  if(totEl) totEl.innerHTML = bron ? bron.innerHTML : '';
+  if(totEl) totEl.textContent = bron ? (bron.textContent || '').trim() : '';
 }
 
 // ── 1 + 2 + 3: scroll-afhankelijke UI ──
@@ -6785,7 +6787,15 @@ let _uiScrollRaf = null;
 function _uiOnScroll(){
   if(_uiScrollRaf) return;
   _uiScrollRaf = requestAnimationFrame(() => {
+    // KRITIEK: de vlag altijd resetten, óók als er hieronder iets misgaat.
+    // Anders blijft _uiScrollRaf gevuld en reageert de app nooit meer op scrollen
+    // (symptoom: knop werkt één keer en komt daarna niet meer terug).
     _uiScrollRaf = null;
+    try { _uiScrollTick(); } catch(e){ console.error('scroll-tick:', e); }
+  });
+}
+
+function _uiScrollTick(){
     const prefix = _uiActievePrefix();
     const sticky = document.getElementById('ui-stickybar');
     const fab    = document.getElementById('ui-todayfab');
@@ -6830,11 +6840,17 @@ function _uiOnScroll(){
       }
       fab.classList.toggle('show', toon);
     }
-  });
 }
 
+// Meerdere triggers zodat de knop altijd bijwerkt, ook als scroll-events
+// tijdens momentum-scrollen door de browser worden ingehouden
 window.addEventListener('scroll', _uiOnScroll, { passive: true });
+window.addEventListener('touchmove', _uiOnScroll, { passive: true });
+window.addEventListener('touchend', _uiOnScroll, { passive: true });
+window.addEventListener('scrollend', _uiOnScroll, { passive: true });
 window.addEventListener('resize', () => { _uiSyncStickyTop(); _uiOnScroll(); }, { passive: true });
+// Vangnet: rustige hartslag terwijl je in de uren-module zit
+setInterval(() => { if(_uiActievePrefix()) _uiOnScroll(); }, 700);
 
 // Sticky-bar pijlen + FAB koppelen
 (function(){
