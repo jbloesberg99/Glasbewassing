@@ -5379,6 +5379,8 @@ const notesCol = collection(db, 'notes');
 const personeelCol = collection(db, 'personeel');
 const urenPCol = collection(db, 'uren_personeel');
 const klussenCol = collection(db, 'klussen');
+const afstandenCol = collection(db, 'afstanden');   // geleerde/berekende trajecten
+const _urConfigDoc = doc(db, 'config', 'uren');     // o.a. thuisadres
 const _dDashDoc = doc(db, 'config', 'dashboard');
 
 let kl = [], vK = null, actF = 'all', actN = null, sId = null, actST = 'gedaan', uT = null, si = 0, wo = 0, navTab = 'klanten', selectedWDag = null;
@@ -5920,7 +5922,10 @@ window.startUrenListener = function() {
           subs: Array.isArray(x.subs) ? x.subs : [],
           prijsType: (x.prijsType === 'maand' ? 'maand' : 'uur'), // default 'uur'
           prijsUur: _parseNum(x.prijsUur),      // €/uur — 0 = fallback op globale default (€35)
-          prijsMaand: _parseNum(x.prijsMaand)   // €/maand — 0 = niet ingesteld
+          prijsMaand: _parseNum(x.prijsMaand),  // €/maand — 0 = niet ingesteld
+          adres: x.adres || '',                 // adres van de klus zelf (als er geen locaties zijn)
+          // Adres per locatie. Los van `subs` bewaard zodat bestaande data blijft werken.
+          subAdressen: (x.subAdressen && typeof x.subAdressen === 'object') ? x.subAdressen : {}
         };
       });
       _urKlussen.sort((a,b) => a.naam.localeCompare(b.naam,'nl'));
@@ -6056,11 +6061,12 @@ function _urInitRows(prefix, iso, saved){
   const rows = (saved || []).map(r => ({
     k: r.k || '',
     s: r.s || '',
+    h:  !!r.h,                            // "daarna terug naar huis" (voor de route)
     u:  (r.u  === 0 || r.u)  ? r.u  : '', // Factuur-uren (staat op factuur / bepaalt omzet)
     up: (r.up === 0 || r.up) ? r.up : '', // Uitbetaald aan personeel (leeg = gelijk aan u)
     p:  (r.p  === 0 || r.p)  ? r.p  : ''
   }));
-  while(rows.length < _UR_DEFAULT_RIJEN) rows.push({ k:'', s:'', u:'', up:'', p:'' });
+  while(rows.length < _UR_DEFAULT_RIJEN) rows.push({ k:'', s:'', u:'', up:'', p:'', h:false });
   _urRows[_urKey(prefix, iso)] = rows;
   return rows;
 }
@@ -6113,6 +6119,8 @@ function _urRijHtml(prefix, iso, idx, row){
   const compleet = row.k && klus && (!subs.length || row.s);
   if(compleet && !row._edit){
     const label = _urEsc(klus.naam) + (row.s && row.s !== '-' ? ` <span class="sub">/ ${_urEsc(row.s)}</span>` : '');
+    // NOG NIET IN GEBRUIK — hoort bij de km/route-functie die nog niet af is.
+    // De logica staat er (zie _urDagRoute), maar UI, CSS en adresvelden ontbreken.
     // Netto winst-hint per rij — alleen bij personeel
     let winstBadge = '';
     if(prefix === 'urp' && _urStaffSel){
@@ -6313,7 +6321,7 @@ function _urUpdateTotalen(prefix){
       // Netto winst van deze persoon deze maand (na belasting)
       if(prefix === 'urp' && _urStaffSel){
         const staff = _urStaff.find(s => s.id === _urStaffSel);
-        if(staff && _parseNum(staff.loon) > 0){
+        if(staff && _urHeeftLoon(staff)){
           try{
             const w = _urWinstPerStaff(staff, _urpYear, _urpMonth);
             if(w && (w.omzet > 0 || w.netto !== 0)){
@@ -6361,6 +6369,185 @@ function _urResizeNot(prefix, iso){
   if(!ta) return;
   ta.style.height = 'auto';
   ta.style.height = ta.scrollHeight + 'px';
+}
+
+// ═══════════════════════════════════════════
+// ROUTE & KILOMETERS
+// Een dag is een volgorde van stops. Tussen elke twee opeenvolgende stops
+// zit een "traject". Trajecten worden onthouden, dus je vult ze hooguit
+// één keer in — daarna rekent de app de dag zelf uit.
+// ═══════════════════════════════════════════
+
+const THUIS = '__THUIS__';
+let _urThuisAdres = '';
+let _urAfstanden = {};          // 'A||B' (gesorteerd) -> { km, bron }
+let _urAfstandenUnsub = null;
+let _urConfigUnsub = null;
+
+// Unieke sleutel van een stop
+function _stopId(klusId, locatie){
+  if(!klusId) return null;
+  return locatie && locatie !== '-' ? `${klusId}::${locatie}` : klusId;
+}
+// Leesbare naam van een stop
+function _stopNaam(id){
+  if(id === THUIS) return 'Thuis';
+  if(!id) return '?';
+  const [kid, loc] = String(id).split('::');
+  const k = _urKlussen.find(x => x.id === kid);
+  const knaam = k ? k.naam : '(verwijderd)';
+  return loc ? `${knaam} — ${loc}` : knaam;
+}
+// Adres dat bij een stop hoort
+function _stopAdres(id){
+  if(id === THUIS) return _urThuisAdres || '';
+  if(!id) return '';
+  const [kid, loc] = String(id).split('::');
+  const k = _urKlussen.find(x => x.id === kid);
+  if(!k) return '';
+  if(loc) return (k.subAdressen && k.subAdressen[loc]) || k.adres || '';
+  return k.adres || '';
+}
+// Trajectsleutel — richting maakt niet uit, dus altijd gesorteerd
+function _trajectKey(a, b){
+  return [String(a), String(b)].sort().join('||');
+}
+function _trajectKm(a, b){
+  if(a === b) return 0;
+  const t = _urAfstanden[_trajectKey(a, b)];
+  return t ? _parseNum(t.km) : null;   // null = nog onbekend
+}
+
+// Bouwt de route van een dag op uit de ingevulde regels
+function _urDagRoute(prefix, iso){
+  const rows = _urRows[_urKey(prefix, iso)] || [];
+  const stops = [];
+  rows.forEach(r => {
+    if(!r.k) return;
+    const id = _stopId(r.k, r.s);
+    if(!id) return;
+    stops.push(id);
+    if(r.h) stops.push(THUIS);      // "daarna terug naar huis"
+  });
+  if(!stops.length) return { legs: [], totaal: 0, onbekend: 0 };
+  // Begin en eind altijd thuis
+  const vol = [THUIS, ...stops];
+  if(vol[vol.length - 1] !== THUIS) vol.push(THUIS);
+  // Dubbele opeenvolgende stops eruit (bijv. twee keer thuis achter elkaar)
+  const schoon = vol.filter((s, i) => i === 0 || s !== vol[i - 1]);
+
+  const legs = [];
+  let totaal = 0, onbekend = 0;
+  for(let i = 0; i < schoon.length - 1; i++){
+    const van = schoon[i], naar = schoon[i + 1];
+    const km = _trajectKm(van, naar);
+    if(km == null) onbekend++;
+    else totaal = _urRound2(totaal + km);
+    legs.push({ van, naar, km, key: _trajectKey(van, naar) });
+  }
+  return { legs, totaal, onbekend };
+}
+
+// Traject opslaan (handmatig ingevuld of later via kaartendienst)
+window.urTrajectOpslaan = async function(key, km, bron){
+  const n = _urRound2(_parseNum(km));
+  if(!key) return;
+  _urAfstanden[key] = { km: n, bron: bron || 'handmatig' };  // lokaal meteen bij
+  try{
+    if(n > 0) await setDoc(doc(afstandenCol, key), { km: n, bron: bron || 'handmatig', updatedAt: Date.now() });
+    else { await deleteDoc(doc(afstandenCol, key)); delete _urAfstanden[key]; }
+  }catch(e){ console.error('traject opslaan:', e); }
+};
+
+const _urTrajectTimers = {};
+window.urTrajectIn = function(prefix, iso, key, val){
+  clearTimeout(_urTrajectTimers[key]);
+  // Direct in het geheugen zetten zodat de route-tellers meteen kloppen
+  const n = _urRound2(_parseNum(val));
+  if(n > 0) _urAfstanden[key] = { km: n, bron: 'handmatig' };
+  else delete _urAfstanden[key];
+  _urRouteVul(prefix, iso);
+  _urTrajectTimers[key] = setTimeout(() => urTrajectOpslaan(key, val, 'handmatig'), 700);
+};
+
+// "Daarna terug naar huis" aan/uit voor een regel
+window.urThuisToggle = function(prefix, iso, idx){
+  const rows = _urRows[_urKey(prefix, iso)];
+  if(!rows || !rows[idx]) return;
+  rows[idx].h = !rows[idx].h;
+  const cont = document.getElementById(`${prefix}-rijen-${iso}`);
+  if(cont) cont.innerHTML = _urRijenHtml(prefix, iso);
+  _urRouteVul(prefix, iso);
+  _urSaveDag(prefix, iso, 0);
+  haptic(8);
+};
+
+// Route van de dag berekende km overnemen als dagtotaal
+window.urRouteOvernemen = function(prefix, iso){
+  const r = _urDagRoute(prefix, iso);
+  const el = document.getElementById(`${prefix}-km-${iso}`);
+  if(el){
+    el.value = r.totaal > 0 ? String(r.totaal).replace('.', ',') : '';
+    _urSaveDag(prefix, iso, 0);
+    _urUpdateTotalen(prefix);
+  }
+  showToast(`${_urFmtKm(r.totaal)} overgenomen`);
+  haptic(12);
+};
+
+// Rendert het route-blok van één dag
+function _urRouteHtml(prefix, iso){
+  const r = _urDagRoute(prefix, iso);
+  if(!r.legs.length){
+    return `<div class="ur-route-leeg">Kies eerst een klus om de route te bepalen</div>`;
+  }
+  const rijen = r.legs.map(l => {
+    const bekend = l.km != null;
+    return `<div class="ur-route-leg${bekend?'':' onbekend'}">
+      <span class="ur-route-pad">${_urEsc(_stopNaam(l.van))} <span class="pijl">→</span> ${_urEsc(_stopNaam(l.naar))}</span>
+      ${bekend
+        ? `<span class="ur-route-km">${_urFmtKm(l.km)}</span>`
+        : `<span class="ur-route-in-wrap">
+             <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-route-in"
+               placeholder="?" oninput="urTrajectIn('${prefix}','${iso}','${l.key}',this.value)">
+             <span class="ur-route-suf">km</span>
+           </span>`}
+    </div>`;
+  }).join('');
+  const klaar = r.onbekend === 0;
+  return `<div class="ur-route-lijst">${rijen}</div>
+    <div class="ur-route-voet">
+      <span class="ur-route-tot${klaar?'':' deels'}">${_urFmtKm(r.totaal)}${r.onbekend ? ` · ${r.onbekend} onbekend` : ''}</span>
+      ${r.totaal > 0 ? `<button class="ur-route-btn" onclick="urRouteOvernemen('${prefix}','${iso}')">Overnemen</button>` : ''}
+    </div>`;
+}
+
+// Route-blok verversen zonder de rest opnieuw te tekenen
+function _urRouteVul(prefix, iso){
+  const el = document.getElementById(`${prefix}-route-${iso}`);
+  if(el) el.innerHTML = _urRouteHtml(prefix, iso);
+}
+
+// Luisteraars voor afstanden + thuisadres
+function _urRouteInit(){
+  if(!_urAfstandenUnsub){
+    _urAfstandenUnsub = onSnapshot(afstandenCol, snap => {
+      _urAfstanden = {};
+      snap.docs.forEach(d => { _urAfstanden[d.id] = { km: _parseNum(d.data().km), bron: d.data().bron || 'handmatig' }; });
+      // Zichtbare routes bijwerken
+      document.querySelectorAll('[id^="ur-route-"],[id^="urp-route-"]').forEach(el => {
+        const m = el.id.match(/^(ur|urp)-route-(\d{4}-\d{2}-\d{2})$/);
+        if(m && !_urActiveInside(el.id)) el.innerHTML = _urRouteHtml(m[1], m[2]);
+      });
+    }, err => console.error('afstanden:', err));
+  }
+  if(!_urConfigUnsub){
+    _urConfigUnsub = onSnapshot(_urConfigDoc, snap => {
+      _urThuisAdres = (snap.exists() && snap.data().thuisAdres) || '';
+      const inp = document.getElementById('ur-thuis-in');
+      if(inp && document.activeElement !== inp) inp.value = _urThuisAdres;
+    }, err => console.error('config uren:', err));
+  }
 }
 
 // ═══ Km-details per dag: welke uitgeklapt zijn + live-bewerkstate ═══
@@ -6531,6 +6718,7 @@ async function _urDoSave(prefix, iso, staffSnapshot){
     const up = _urRound2(_parseNum(r.up));
     if(p > 0)  obj.p  = p;  // Klantprijs alleen opslaan als ingevuld
     if(up > 0) obj.up = up; // Uitbetaalde uren alleen opslaan als afwijkend
+    if(r.h)    obj.h  = true; // Ging daarna naar huis (route)
     return obj;
   });
   const ta = document.getElementById(`${prefix}-not-${iso}`);
@@ -6705,7 +6893,7 @@ window.urUpToggle = function(prefix, iso, idx){
 window.urRijToevoegen = function(prefix, iso){
   const rows = _urRows[_urKey(prefix, iso)];
   if(!rows) return;
-  rows.push({ k:'', s:'', u:'' });
+  rows.push({ k:'', s:'', u:'', up:'', p:'', h:false });
   const cont = document.getElementById(`${prefix}-rijen-${iso}`);
   if(cont) cont.innerHTML = _urRijenHtml(prefix, iso);
   haptic(8);
@@ -6895,6 +7083,11 @@ function _uiScrollTick(){
         // uit, omhoog scrollen duurt veel langer — vandaar de tweede voorwaarde,
         // zodat de knop in beide richtingen ongeveer even snel terugkomt.
         toon = (zichtbaar / nuttig) < 0.5 || r.top > vh * 0.55;
+      } else {
+        // Geen kaart van vandaag in beeld — je kijkt in een andere maand of er
+        // staat een zoekterm aan. Juist dán moet de knop bereikbaar blijven,
+        // anders zit je vast zonder weg terug.
+        toon = true;
       }
       fab.classList.toggle('show', toon);
     }
@@ -6952,6 +7145,11 @@ setInterval(() => { if(_uiActievePrefix()) _uiOnScroll(); }, 700);
     // Kijk je in een andere maand? Spring dan eerst terug naar deze maand.
     const j = p === 'ur' ? _urYear  : _urpYear;
     const m = p === 'ur' ? _urMonth : _urpMonth;
+    // Zoekterm wissen — anders springen we naar een kaart die verborgen is
+    const zoekEl = document.getElementById(`${p}-zoek-in`);
+    const hadZoek = zoekEl && zoekEl.value.trim() !== '';
+    if(hadZoek){ try{ urZoekWis(p); }catch(e){ console.error('zoek wissen:', e); } }
+
     const anderemaand = (j !== nu.getFullYear() || m !== nu.getMonth());
     if(anderemaand){
       try{
@@ -6959,9 +7157,11 @@ setInterval(() => { if(_uiActievePrefix()) _uiOnScroll(); }, 700);
         else          { _urpYear = nu.getFullYear(); _urpMonth = nu.getMonth(); _renderPersoneelDetail(); }
       }catch(e){ console.error('naar vandaag:', e); }
     }
+    // Na een maandwissel of het wissen van de zoekterm moet de lijst eerst
+    // opnieuw getekend zijn voordat we naar de kaart kunnen scrollen
     setTimeout(() => {
       _uiScrollNaar(document.getElementById(`dag-${p}-${iso}`));
-    }, anderemaand ? 90 : 0);
+    }, (anderemaand || hadZoek) ? 110 : 0);
   }
 
   if(fab){
@@ -7066,7 +7266,7 @@ window.urRijVerwijder = function(prefix, iso, idx){
   if(!rows || !rows[idx]) return;
   rows.splice(idx, 1);
   // Altijd minimaal het standaard aantal lege rijen behouden
-  while(rows.length < _UR_DEFAULT_RIJEN) rows.push({ k:'', s:'', u:'', up:'', p:'' });
+  while(rows.length < _UR_DEFAULT_RIJEN) rows.push({ k:'', s:'', u:'', up:'', p:'', h:false });
   const cont = document.getElementById(`${prefix}-rijen-${iso}`);
   if(cont) cont.innerHTML = _urRijenHtml(prefix, iso);
   _urUpdateTotalen(prefix);
@@ -7257,7 +7457,7 @@ window.uiDagWissen = function(prefix, iso){
   if(!confirm(`Alle invullingen van ${dagNaam} ${dag} ${maand} wissen?`)) return;
   const key = _urKey(prefix, iso);
   _urRows[key] = [];
-  while(_urRows[key].length < _UR_DEFAULT_RIJEN) _urRows[key].push({ k:'', s:'', u:'', up:'', p:'' });
+  while(_urRows[key].length < _UR_DEFAULT_RIJEN) _urRows[key].push({ k:'', s:'', u:'', up:'', p:'', h:false });
   _urKmDet[key] = [];
   const not = document.getElementById(`${prefix}-not-${iso}`);
   if(not) not.value = '';
@@ -7346,7 +7546,7 @@ window.urKopieerVorige = function(prefix, iso){
     up: r.up != null ? r.up : '',
     p: r.p != null ? r.p : ''
   }));
-  while(nieuweRijen.length < _UR_DEFAULT_RIJEN) nieuweRijen.push({ k:'', s:'', u:'', up:'', p:'' });
+  while(nieuweRijen.length < _UR_DEFAULT_RIJEN) nieuweRijen.push({ k:'', s:'', u:'', up:'', p:'', h:false });
   _urRows[key] = nieuweRijen;
   _urSaveDag(prefix, iso, 0);
   if(prefix === 'ur') renderUren();
@@ -8799,7 +8999,7 @@ function _renderPersoneelLijst(){
     const st = staffTotalen.find(x => x.s.id === s.id);
     const uren = st ? st.uren : 0;
     let winstHtml = '';
-    if(_parseNum(s.loon) > 0){
+    if(_urHeeftLoon(s)){
       try{
         const w = _urWinstPerStaff(s, _urpYear, _urpMonth, urenSplit);
         if(w && w.omzet > 0){
@@ -9153,6 +9353,14 @@ function _urLoonVoor(staff, klusId){
   const ov = (staff.tarieven || {})[klusId];
   if(ov != null && ov !== '' && _parseNum(ov) > 0) return _parseNum(ov);
   return _parseNum(staff.loon);
+}
+
+// Is er ergens een uurloon bekend? Ook als het standaardloon leeg is maar er
+// wel per-klus tarieven staan, kan de winst gewoon berekend worden.
+function _urHeeftLoon(staff){
+  if(!staff) return false;
+  if(_parseNum(staff.loon) > 0) return true;
+  return Object.values(staff.tarieven || {}).some(v => _parseNum(v) > 0);
 }
 
 // ═══ Winst berekening ═══
