@@ -2246,6 +2246,41 @@ header{
 .ur-km-perklus{display:none;font-size:0.64rem;font-weight:700;color:#0891b2;white-space:nowrap;margin-left:auto;padding-right:2px;}
 .ur-km-perklus.on{display:inline;}
 [data-theme="dark"] .ur-km-perklus{color:#67e8f9;}
+/* ── Waarschuwing: dag niet opgeslagen ── */
+.ur-savefout{
+  position: fixed; z-index: 40;
+  left: 50%; transform: translateX(-50%) translateY(-16px);
+  top: max(10px, calc(6px + env(safe-area-inset-top)));
+  display: none; align-items: center; gap: 9px;
+  padding: 9px 10px 9px 14px; border-radius: 99px;
+  background: #dc2626; color: #fff;
+  box-shadow: 0 6px 24px rgba(220,38,38,0.4);
+  font-size: 0.76rem; font-weight: 800; white-space: nowrap;
+  opacity: 0; transition: opacity 0.22s, transform 0.28s var(--ease-spring);
+}
+.ur-savefout.show{ display: inline-flex; opacity: 1; transform: translateX(-50%) translateY(0); }
+.ur-savefout svg{ flex-shrink: 0; }
+.ur-savefout button{
+  background: rgba(255,255,255,0.22); color: #fff;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 99px; padding: 4px 12px;
+  font-family: inherit; font-size: 0.72rem; font-weight: 800; cursor: pointer;
+}
+.ur-savefout button:active{ transform: scale(0.94); }
+/* Dagkaart die niet is weggeschreven */
+.ur-dag.ur-niet-opgeslagen{
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 2px rgba(220,38,38,0.18) !important;
+}
+.ur-dag.ur-niet-opgeslagen::after{
+  content: 'niet opgeslagen';
+  position: absolute; top: 8px; right: 10px; z-index: 5;
+  background: #dc2626; color: #fff;
+  font-size: 0.56rem; font-weight: 900;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 99px;
+}
+
 /* ── Ongedaan maken: zwevende knop linksonder ── */
 .ur-undo-fab{
   position: fixed; z-index: 16;
@@ -4900,6 +4935,13 @@ html, body{ max-width: 100%; overflow-x: clip; }
   </div>
 </div>
 
+<!-- Uren: waarschuwing als opslaan mislukt is -->
+<div class="ur-savefout" id="ur-savefout">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+  <span id="ur-savefout-t">niet opgeslagen</span>
+  <button onclick="urNuOpslaan()">Opnieuw</button>
+</div>
+
 <!-- Uren: ongedaan maken -->
 <button class="ur-undo-fab" id="ur-undo" onclick="urUndo()" aria-label="Ongedaan maken">
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
@@ -5466,7 +5508,7 @@ window.addEventListener('popstate', function(e) {
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, runTransaction } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBDc1KYZCCaDEZZuR273Trmo68ra0uyeYQ",
@@ -5505,27 +5547,40 @@ window.syncS = function syncS(s){
   if(el) el.className = 'sync-dot' + (s==='bezig' ? ' bezig' : s==='fout' ? ' fout' : '');
 }
 
+// Deze functies GEVEN DE FOUT DOOR. De aanroeper mag nooit "opgeslagen"
+// melden terwijl het schrijven mislukt is — dit is administratie.
+// Voert een schrijfactie uit en meldt eerlijk of het gelukt is.
+// Geeft true bij succes, false bij een fout (en toont dan een waarschuwing).
+window.fbProbeer = async function(fn, faalTekst){
+  try{ await fn(); return true; }
+  catch(e){
+    console.error('opslaan mislukt:', e);
+    showToast(faalTekst || 'Opslaan mislukt — controleer je verbinding');
+    return false;
+  }
+};
+
 window.fbSave = async function fbSave(k){
-  _bezig=true; window.syncS('bezig');
+  _bezigStart(); window.syncS('bezig');
   try{
     await setDoc(doc(db,'klanten',String(k.id)),{naam:k.naam,plaats:k.plaats||'',freq:k.freq,laatste:k.laatste,notitie:k.notitie||'',prijs:k.prijs||0,historie:k.historie||[]});
     window.syncS('ok');
-  }catch(e){console.error(e);window.syncS('fout');}
-  finally{_bezig=false;}
+  }catch(e){console.error(e);window.syncS('fout');throw e;}
+  finally{_bezigKlaar();}
 }
 window.fbDelete = async function fbDelete(id){
-  _bezig=true; window.syncS('bezig');
+  _bezigStart(); window.syncS('bezig');
   try{await deleteDoc(doc(db,'klanten',String(id)));window.syncS('ok');}
-  catch(e){console.error(e);window.syncS('fout');}
-  finally{_bezig=false;}
+  catch(e){console.error(e);window.syncS('fout');throw e;}
+  finally{_bezigKlaar();}
 }
 window.fbSaveAll = async function fbSaveAll(){
-  _bezig=true; window.syncS('bezig');
+  _bezigStart(); window.syncS('bezig');
   try{
     await Promise.all(kl.map(k=>setDoc(doc(db,'klanten',String(k.id)),{naam:k.naam,plaats:k.plaats||'',freq:k.freq,laatste:k.laatste,notitie:k.notitie||'',prijs:k.prijs||0,historie:k.historie||[]})));
     window.syncS('ok');
-  }catch(e){console.error(e);window.syncS('fout');}
-  finally{_bezig=false;}
+  }catch(e){console.error(e);window.syncS('fout');throw e;}
+  finally{_bezigKlaar();}
 }
 
 function vD(l,f){const[y,m,d]=l.split('-').map(Number);const dt=new Date(y,m-1,d);dt.setDate(dt.getDate()+Math.round(f*7));return dt;}
@@ -5542,8 +5597,121 @@ function _lokaalISO(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padSt
 function vnd(){return _lokaalISO(new Date());}
 function natSort(a,b){return a.localeCompare(b,"nl",{numeric:true,sensitivity:"base"});}
 
-window.slaOp = function slaOp(txt){vK=JSON.parse(JSON.stringify(kl));document.getElementById('undo-t').textContent=txt;document.getElementById('undo').classList.add('show');if(uT)clearTimeout(uT);uT=setTimeout(()=>{document.getElementById('undo').classList.remove('show');vK=null;},6000);}
-window.undo=async function(){if(!vK)return;const herstel=vK;vK=null;document.getElementById('undo').classList.remove('show');if(uT)clearTimeout(uT);kl=herstel;render();await window.fbSaveAll();}
+// ═══════════════════════════════════════════
+// ONGEDAAN MAKEN — per actie, niet per momentopname
+// We bewaren alleen wat nodig is om precies één actie terug te draaien.
+// Andere klanten worden nooit aangeraakt, en is dezelfde klant ondertussen
+// gewijzigd, dan weigert undo in plaats van die wijziging te overschrijven.
+// ═══════════════════════════════════════════
+
+// vK bevat nu een actie: { soort, id, klant?, oudeNotitie?, gezetteNotitie? }
+window.slaOp = function slaOp(txt, actie){
+  vK = actie || null;
+  document.getElementById('undo-t').textContent = txt;
+  document.getElementById('undo').classList.add('show');
+  if(uT) clearTimeout(uT);
+  uT = setTimeout(() => {
+    document.getElementById('undo').classList.remove('show');
+    vK = null;
+  }, 12000);
+}
+
+function _undoVerberg(){
+  document.getElementById('undo').classList.remove('show');
+  if(uT) clearTimeout(uT);
+  vK = null;
+}
+
+// Alle velden die van een klant worden opgeslagen, in één vergelijkbare vorm.
+// Wordt gebruikt om te zien of een klant sinds de actie is gewijzigd.
+function _klantKern(o){
+  o = o || {};
+  return JSON.stringify({
+    naam:     o.naam || '',
+    plaats:   o.plaats || '',
+    freq:     Number(o.freq) || 0,
+    laatste:  o.laatste || '',
+    notitie:  o.notitie || '',
+    prijs:    Number(o.prijs) || 0,
+    historie: Array.isArray(o.historie) ? o.historie : []
+  });
+}
+
+window.undo = async function(){
+  const a = vK;
+  if(!a) return;
+  const ref = doc(db, 'klanten', String(a.id));
+
+  try{
+    // Controleren én schrijven binnen één transactie. Verandert een ander
+    // apparaat het document tussendoor, dan draait Firestore de transactie
+    // terug en proberen we het niet alsnog blind.
+    await runTransaction(db, async (tx) => {
+      const snap = await tx.get(ref);
+
+      if(a.soort === 'toevoegen'){
+        if(!snap.exists()) return;                       // al weg: niets te doen
+        // Ondertussen aangepast? Dan niet weggooien. Alle opgeslagen velden
+        // vergelijken — ook plaats, prijs en historie.
+        if(_klantKern(snap.data()) !== _klantKern(a.gemaakt || {})) throw new Error('UNDO_GEWIJZIGD');
+        tx.delete(ref);
+
+      } else if(a.soort === 'notitie'){
+        if(!snap.exists()) throw new Error('UNDO_WEG');
+        if((snap.data().notitie || '') !== (a.gezetteNotitie || '')) throw new Error('UNDO_GEWIJZIGD');
+        // Alleen het notitieveld aanpassen — de rest van het document blijft
+        // precies zoals het is, ook als een ander apparaat er iets aan wijzigde.
+        tx.update(ref, { notitie: a.oudeNotitie || '' });
+
+      } else if(a.soort === 'verwijderen'){
+        if(snap.exists()) throw new Error('UNDO_BESTAAT');
+        const k = a.klant;
+        tx.set(ref, { naam:k.naam, plaats:k.plaats||'', freq:k.freq, laatste:k.laatste,
+                      notitie:k.notitie||'', prijs:k.prijs||0, historie:k.historie||[] });
+
+      } else {
+        throw new Error('UNDO_ONBEKEND');
+      }
+    });
+
+    // Gelukt. De lijst wordt door de synchronisatie bijgewerkt; we passen hem
+    // hier alleen alvast aan zodat het scherm meteen klopt. Alle drie de
+    // bewerkingen zijn zo geschreven dat ze niets dubbel doen.
+    if(a.soort === 'toevoegen'){
+      kl = kl.filter(k => String(k.id) !== String(a.id));
+    } else if(a.soort === 'notitie'){
+      kl = kl.map(k => String(k.id) === String(a.id) ? { ...k, notitie: a.oudeNotitie || '' } : k);
+    } else if(a.soort === 'verwijderen'){
+      // Alleen toevoegen als de synchronisatie ons niet al voor was
+      if(!kl.some(k => String(k.id) === String(a.id))) kl = [...kl, a.klant];
+    }
+    _undoVerberg();
+    render();
+    showToast('Teruggedraaid');
+
+  }catch(e){
+    const code = String(e && e.message || '');
+    if(code === 'UNDO_GEWIJZIGD'){
+      _undoVerberg(); render();
+      showToast('Inmiddels gewijzigd op een ander apparaat — niet teruggedraaid');
+    }else if(code === 'UNDO_WEG'){
+      _undoVerberg(); render();
+      showToast('Klant bestaat niet meer');
+    }else if(code === 'UNDO_BESTAAT'){
+      _undoVerberg(); render();
+      showToast('Klant bestaat alweer — niet teruggeplaatst');
+    }else if(code === 'UNDO_ONBEKEND'){
+      _undoVerberg();
+    }else{
+      // Echte opslagfout: actie bewaren zodat opnieuw proberen kan
+      console.error('undo mislukt:', e);
+      showToast('Terugdraaien mislukt — probeer opnieuw');
+      document.getElementById('undo').classList.add('show');
+      if(uT) clearTimeout(uT);
+      uT = setTimeout(() => { document.getElementById('undo').classList.remove('show'); vK = null; }, 12000);
+    }
+  }
+}
 window.deelWhatsApp=function(){window.open('https://wa.me/?text='+encodeURIComponent('Purgato Planner app: https://jbloesberg99.github.io/Glasbewassing'),'_blank');}
 window.openMaps=function(id){const x=kl.find(x=>x.id===id);if(!x)return;window.open('https://maps.google.com/?q='+encodeURIComponent(x.naam+' '+(x.plaats||'')),'_blank');}
 // HTML escape helper — voorkomt XSS bij user-gegenereerde content in innerHTML
@@ -5707,7 +5875,7 @@ window.slaOmzetOp=async function(){
     const val=parseFloat(el.querySelector('.pinput').value)||0;
     if(id)kl=kl.map(x=>x.id===id?{...x,prijs:val}:x);
   });
-  await window.fbSaveAll();
+  await window.fbProbeer(()=>window.fbSaveAll());
   gaNaar('klanten');
 }
 
@@ -5799,30 +5967,33 @@ window.voegToe=async function(){
     if(!confirm(msg)) return;
   }
   const nieuw={id:Date.now()*100+Math.floor(Math.random()*100),naam,plaats,freq,laatste:lVV(vd,freq),notitie:'',prijs,historie:[]};
-  slaOp(`"${naam}" toegevoegd`);kl.push(nieuw);
+  slaOp(`"${naam}" toegevoegd`, { soort:'toevoegen', id:nieuw.id, gemaakt:{...nieuw} });kl.push(nieuw);
   document.getElementById('n-naam').value='';document.getElementById('n-datum').value='';
   document.getElementById('n-plaats').value='';document.getElementById('n-prijs').value='';
   renderK();
-  await window.fbSave(nieuw);
+  await window.fbProbeer(()=>window.fbSave(nieuw));
 }
 
 window.togN=function(id){actN=actN===id?null:id;renderK();}
 window.kopieer=async function(id){
   const x=kl.find(x=>x.id===id);if(!x)return;
   const nieuw={...x,id:Date.now()*100+Math.floor(Math.random()*100),naam:x.naam+" (kopie)",notitie:"",historie:[]};
-  slaOp(`"${x.naam}" gekopieerd`);kl.push(nieuw);renderK();
-  await window.fbSave(nieuw);
+  slaOp(`"${x.naam}" gekopieerd`, { soort:'toevoegen', id:nieuw.id, gemaakt:{...nieuw} });kl.push(nieuw);renderK();
+  await window.fbProbeer(()=>window.fbSave(nieuw));
 }
 window.slaNotitie=async function(id,val){
-  slaOp('Notitie gewijzigd');kl=kl.map(x=>x.id===id?{...x,notitie:val}:x);
-  await window.fbSave(kl.find(x=>x.id===id));
+  const vorige = kl.find(x=>x.id===id);
+  const oudeNotitie = vorige ? (vorige.notitie||'') : '';
+  slaOp('Notitie gewijzigd', { soort:'notitie', id, oudeNotitie, gezetteNotitie:val });
+  kl=kl.map(x=>x.id===id?{...x,notitie:val}:x);
+  await window.fbProbeer(()=>window.fbSave(kl.find(x=>x.id===id)));
 }
 window.del=async function(id){
   const x=kl.find(x=>x.id===id);
   if(!x){renderK();return;} // al verwijderd op ander apparaat
   if(!confirm(`"${x.naam}" verwijderen?`))return;
-  slaOp(`"${x.naam}" verwijderd`);kl=kl.filter(x=>x.id!==id);renderK();
-  await window.fbDelete(id);
+  slaOp(`"${x.naam}" verwijderd`, { soort:'verwijderen', id, klant:JSON.parse(JSON.stringify(x)) });kl=kl.filter(x=>x.id!==id);renderK();
+  await window.fbProbeer(()=>window.fbDelete(id));
 }
 window.openSheet=function(id){
   sId=id;const x=kl.find(x=>x.id===id);
@@ -5857,8 +6028,9 @@ window.bevestig=async function(){
     const h=[...(x.historie||[]),d];
     kl=kl.map(k=>k.id===sId?{...k,laatste:d,historie:h}:k);
     sluitSheet();renderK();
-    await window.fbSave(kl.find(k=>k.id===sId));
-    setTimeout(()=>showToast(`${x.naam} gemarkeerd als gedaan`),300);
+    if(await window.fbProbeer(()=>window.fbSave(kl.find(k=>k.id===sId)))){
+      setTimeout(()=>showToast(`${x.naam} gemarkeerd als gedaan`),300);
+    }
   }else{
     const v=document.getElementById('s-datum-volgende').value;
     const f=parseFloat(document.getElementById('s-freq').value);
@@ -5868,21 +6040,38 @@ window.bevestig=async function(){
     haptic(15);
     kl=kl.map(k=>k.id===sId?{...k,naam:n,plaats:p,freq:f,laatste:lVV(v,f)}:k);
     sluitSheet();renderK();
-    await window.fbSave(kl.find(k=>k.id===sId));
-    setTimeout(()=>showToast(`${n} opgeslagen`),300);
+    if(await window.fbProbeer(()=>window.fbSave(kl.find(k=>k.id===sId)))){
+      setTimeout(()=>showToast(`${n} opgeslagen`),300);
+    }
   }
 }
 
-let _bezig = false;
+// TELLER, geen aan/uit-vlag: bij twee gelijktijdige schrijfacties zou de eerste
+// die klaar is de vlag al uitzetten, terwijl de tweede nog loopt.
+let _bezigN = 0;
 let _klUnsub = null;
+let _wachtendeSnap = null;   // snapshot die binnenkwam tijdens het opslaan
+
+function _bezigStart(){ _bezigN++; }
+function _pasSnapToe(nieuw){
+  if(JSON.stringify(nieuw)!==JSON.stringify(kl)){kl=nieuw;window.render();}
+  window.syncS('ok');
+}
+// Pas verwerken als élke lopende schrijfactie klaar is
+function _bezigKlaar(){
+  _bezigN = Math.max(0, _bezigN - 1);
+  if(_bezigN > 0) return;
+  if(_wachtendeSnap){ const n=_wachtendeSnap; _wachtendeSnap=null; _pasSnapToe(n); }
+}
 
 function startListener(){
   if(_klUnsub){_klUnsub();_klUnsub=null;}
   _klUnsub=onSnapshot(klantenCol,(snap)=>{
-    if(_bezig)return;
     const nieuw=snap.docs.map(d=>({id:Number(d.id),...d.data(),prijs:d.data().prijs||0,historie:d.data().historie||[]}));
-    if(JSON.stringify(nieuw)!==JSON.stringify(kl)){kl=nieuw;window.render();}
-    window.syncS('ok');
+    // Tijdens het opslaan niet meteen verwerken — maar ook NIET weggooien, want
+    // dan mist een wijziging van een collega. Bewaren en zodra we klaar zijn alsnog toepassen.
+    if(_bezigN > 0){ _wachtendeSnap=nieuw; return; }
+    _pasSnapToe(nieuw);
   },(err)=>{
     console.error('klantenListener fout:',err);
     window.syncS('fout');
@@ -7008,8 +7197,77 @@ async function _urDoSave(prefix, iso, staffSnapshot){
     const ok = document.getElementById(`${prefix}-ok-${iso}`);
     if(ok){ ok.classList.add('show'); setTimeout(() => ok.classList.remove('show'), 1600); }
     if(typeof _uiSavePulse === 'function') _uiSavePulse(prefix, iso);
-  }catch(e){ console.error('urSaveDag:', e); }
+    _urSaveGelukt(prefix, iso);
+  }catch(e){
+    // NOOIT stil falen: dit is administratie. Zichtbaar melden én opnieuw proberen.
+    console.error('urSaveDag:', e);
+    _urSaveMislukt(prefix, iso, staffSnapshot, e);
+  }
 }
+
+// ═══════════════════════════════════════════
+// OPSLAGFOUTEN — zichtbaar maken en herstellen
+// Een mislukte schrijfactie mag nooit onopgemerkt blijven; je maakt op basis
+// van deze gegevens je facturen.
+// ═══════════════════════════════════════════
+const _urSaveFout = new Map();   // key -> { prefix, iso, staff, pogingen, timer }
+const _UR_RETRY_MS = [2000, 5000, 12000, 30000];
+
+function _urSaveMislukt(prefix, iso, staffSnapshot, err){
+  const key = _urKey(prefix, iso);
+  const bestaand = _urSaveFout.get(key);
+  const pogingen = bestaand ? bestaand.pogingen + 1 : 0;
+  if(bestaand && bestaand.timer) clearTimeout(bestaand.timer);
+
+  // Dagkaart markeren zodat je ziet wélke dag niet weg is
+  const kaart = document.getElementById(`dag-${prefix}-${iso}`);
+  if(kaart) kaart.classList.add('ur-niet-opgeslagen');
+
+  const wacht = _UR_RETRY_MS[Math.min(pogingen, _UR_RETRY_MS.length - 1)];
+  const timer = setTimeout(() => _urOpnieuwProberen(key), wacht);
+  _urSaveFout.set(key, { prefix, iso, staff: staffSnapshot, pogingen, timer, err: String(err && err.message || err) });
+  _urFoutBalkVul();
+}
+
+function _urSaveGelukt(prefix, iso){
+  const key = _urKey(prefix, iso);
+  const f = _urSaveFout.get(key);
+  if(f){
+    if(f.timer) clearTimeout(f.timer);
+    _urSaveFout.delete(key);
+  }
+  const kaart = document.getElementById(`dag-${prefix}-${iso}`);
+  if(kaart) kaart.classList.remove('ur-niet-opgeslagen');
+  _urFoutBalkVul();
+}
+
+async function _urOpnieuwProberen(key){
+  const f = _urSaveFout.get(key);
+  if(!f) return;
+  f.timer = null;
+  await _urDoSave(f.prefix, f.iso, f.staff);
+}
+
+window.urNuOpslaan = async function(){
+  const items = [..._urSaveFout.values()];
+  if(!items.length) return;
+  items.forEach(f => { if(f.timer){ clearTimeout(f.timer); f.timer = null; } });
+  showToast(`Opnieuw proberen (${items.length})...`);
+  for(const f of items) await _urDoSave(f.prefix, f.iso, f.staff);
+  if(!_urSaveFout.size) showToast('Alles opgeslagen');
+};
+
+function _urFoutBalkVul(){
+  const balk = document.getElementById('ur-savefout');
+  if(!balk) return;
+  const n = _urSaveFout.size;
+  balk.classList.toggle('show', n > 0);
+  const t = document.getElementById('ur-savefout-t');
+  if(t) t.textContent = n === 1 ? '1 dag niet opgeslagen' : `${n} dagen niet opgeslagen`;
+}
+
+// Terug online? Meteen alles opnieuw proberen.
+window.addEventListener('online', () => { if(_urSaveFout.size) window.urNuOpslaan(); });
 
 function _urSaveDag(prefix, iso, delay){
   const key = _urKey(prefix, iso);
@@ -10447,8 +10705,10 @@ function _dStartDashListener(){
       return;
     }
     const d=snap.data();
-    if(d.customers&&d.customers.length)_DC=d.customers;
-    if(d.employees&&d.employees.length)_DE=d.employees;
+    // Op Array controleren, niet op lengte — anders blijft een leeggemaakte
+    // lijst op andere apparaten de oude gegevens tonen
+    if(Array.isArray(d.customers))_DC=d.customers;
+    if(Array.isArray(d.employees))_DE=d.employees;
     if(d.tasks)_DM=d.tasks;
     if(d.status)_dMStatus=d.status;
     if(d.maanden&&d.maanden.length===12)_dMonthData=d.maanden;
