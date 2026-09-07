@@ -2237,6 +2237,27 @@ header{
 .ur-rij-uren{width:62px;flex-shrink:0;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;padding:8px 6px;font-family:inherit;font-size:0.8rem;font-weight:700;color:var(--text);text-align:center;outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
 .ur-rij-prijs{width:54px;flex-shrink:0;background:var(--surface2);border:1px dashed var(--border2);border-radius:9px;padding:8px 4px;font-family:inherit;font-size:0.72rem;font-weight:700;color:var(--text2);text-align:center;outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
 .ur-rij-prijs::placeholder{color:var(--text3);font-weight:500;opacity:0.8;}
+/* Km per klus — smal vakje naast de prijs, in cyaan zodat het niet met € verwart */
+.ur-rij-km{width:44px;flex-shrink:0;background:var(--surface2);border:1px dashed var(--border2);border-radius:9px;padding:8px 3px;font-family:inherit;font-size:0.72rem;font-weight:700;color:#0891b2;text-align:center;outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
+.ur-rij-km::placeholder{color:var(--text3);font-weight:500;opacity:0.8;}
+.ur-rij-km:focus{border-style:solid;border-color:#0891b2;box-shadow:0 0 0 3px rgba(8,145,178,0.15);}
+[data-theme="dark"] .ur-rij-km{color:#67e8f9;}
+/* Hulplabel bij de km-regel: "+ 34 km per klus" */
+.ur-km-perklus{display:none;font-size:0.64rem;font-weight:700;color:#0891b2;white-space:nowrap;margin-left:auto;padding-right:2px;}
+.ur-km-perklus.on{display:inline;}
+[data-theme="dark"] .ur-km-perklus{color:#67e8f9;}
+/* Vrij te typen locatie (keuze "Overig…") */
+.ur-svrij-wrap{flex:1 1 auto;min-width:0;display:flex;}
+.ur-svrij-in{width:100%;min-width:0;background:var(--surface2);border:1px solid var(--u-primary);border-radius:99px;padding:7px 12px;font-family:inherit;font-size:0.74rem;font-weight:700;color:var(--text);outline:none;-webkit-appearance:none;box-shadow:0 0 0 3px var(--u-primary-tint-2);}
+.ur-svrij-in::placeholder{color:var(--text3);font-weight:500;}
+/* Smalle telefoons: velden iets krapper zodat klus + € + km + uren blijven passen */
+@media (max-width: 400px){
+  .ur-rij-inner{gap:5px !important;}
+  .ur-rij-label{padding:8px 7px;font-size:0.74rem;}
+  .ur-rij-prijs{width:44px;}
+  .ur-rij-km{width:38px;}
+  .ur-rij-uren{width:52px;}
+}
 .ur-rij-prijs:focus{border-style:solid;border-color:var(--u-primary);box-shadow:0 0 0 3px var(--u-primary-tint-2);color:var(--text);}
 .ur-rij-up{width:54px;flex-shrink:0;background:rgba(220,38,38,0.05);border:1px dashed rgba(220,38,38,0.35);border-radius:9px;padding:8px 4px;font-family:inherit;font-size:0.78rem;font-weight:800;color:#dc2626;text-align:center;outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
 .ur-rij-up::placeholder{color:rgba(220,38,38,0.5);font-weight:600;font-size:0.68rem;}
@@ -5929,6 +5950,10 @@ window.startUrenListener = function() {
         };
       });
       _urKlussen.sort((a,b) => a.naam.localeCompare(b.naam,'nl'));
+      // "Overig" is een vaste, ingebouwde klant voor losse klussen zonder vaste
+      // werkgever. Hij staat niet in Firebase maar doet verder overal mee:
+      // overzicht, PDF, totalen en winst.
+      _urKlussen.push({ ...OVERIG_KLUS });
       if(_urView === 'klussen'){ if(!_urActiveInside('ur-klussen')) _renderKlussen(); }
       else if(_urView === 'eigen'){ if(!_urActiveInside('ur-list')) renderUren(); }
       else if(_urView === 'detail'){ if(!_urActiveInside('ur-personeel')) _renderPersoneelDetail(); }
@@ -6062,11 +6087,12 @@ function _urInitRows(prefix, iso, saved){
     k: r.k || '',
     s: r.s || '',
     h:  !!r.h,                            // "daarna terug naar huis" (voor de route)
+    km: (r.km === 0 || r.km) ? r.km : '', // Kilometers voor deze klus
     u:  (r.u  === 0 || r.u)  ? r.u  : '', // Factuur-uren (staat op factuur / bepaalt omzet)
     up: (r.up === 0 || r.up) ? r.up : '', // Uitbetaald aan personeel (leeg = gelijk aan u)
     p:  (r.p  === 0 || r.p)  ? r.p  : ''
   }));
-  while(rows.length < _UR_DEFAULT_RIJEN) rows.push({ k:'', s:'', u:'', up:'', p:'', h:false });
+  while(rows.length < _UR_DEFAULT_RIJEN) rows.push({ k:'', s:'', u:'', up:'', p:'', h:false, km:'' });
   _urRows[_urKey(prefix, iso)] = rows;
   return rows;
 }
@@ -6087,6 +6113,8 @@ function _urRijHtml(prefix, iso, idx, row){
   const subs = klus ? klus.subs : [];
   // Klantprijs per rij (€) — optioneel, default valt terug op globaal
   const prijsInput = `<input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-rij-prijs" placeholder="€/u" title="Klantprijs per uur (leeg = standaard)" value="${row.p !== '' && row.p != null && _parseNum(row.p) > 0 ? String(row.p).replace('.',',') : ''}" oninput="urPrijsIn('${prefix}','${iso}',${idx},this.value)">`;
+  // Km voor deze klus — telt automatisch mee in het dagtotaal
+  const kmInput = `<input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-rij-km" placeholder="km" title="Kilometers voor deze klus — telt mee in het dagtotaal" value="${row.km !== '' && row.km != null && _parseNum(row.km) > 0 ? String(row.km).replace('.',',') : ''}" oninput="urRijKmIn('${prefix}','${iso}',${idx},this.value)">`;
   // Uitbetaald aan personeel (`up`) — alleen relevant voor personeel-uren, niet voor Mij
   // Drie modes:
   //   isEditing (twee velden zichtbaar + ✓ knop)
@@ -6116,7 +6144,8 @@ function _urRijHtml(prefix, iso, idx, row){
   }
 
   // Ingevulde rij: toon als "Werkgever / Locatie" (of alleen "Werkgever" bij Geen) — tik om te wijzigen
-  const compleet = row.k && klus && (!subs.length || row.s);
+  // Overig heeft geen vaste locaties; die is optioneel en vrij te typen
+  const compleet = row.k && klus && (_isOverig(row.k) || !subs.length || row.s);
   if(compleet && !row._edit){
     const label = _urEsc(klus.naam) + (row.s && row.s !== '-' ? ` <span class="sub">/ ${_urEsc(row.s)}</span>` : '');
     // NOG NIET IN GEBRUIK — hoort bij de km/route-functie die nog niet af is.
@@ -6138,6 +6167,7 @@ function _urRijHtml(prefix, iso, idx, row){
       <div class="ur-rij-inner">
         <div class="ur-rij-label" onclick="urRijBewerk('${prefix}','${iso}',${idx})" title="Tik om te wijzigen">${label}</div>
         ${prijsInput}
+        ${kmInput}
         ${urenControls}
         ${winstBadge}
       </div>
@@ -6146,7 +6176,15 @@ function _urRijHtml(prefix, iso, idx, row){
 
   // Locatie-knop (opent bottom sheet) — alleen als deze klus locaties heeft
   let subHtml = '';
-  if(row.k && subs.length){
+  if(row.k && (row._sVrij || _isOverig(row.k))){
+    // "Overig…" gekozen — zelf een locatie typen
+    subHtml = `<span class="ur-svrij-wrap">
+      <input type="text" class="ur-svrij-in" id="${prefix}-svrij-${iso}-${idx}" placeholder="locatie typen..." value="${_urEsc(row.s || '')}"
+        oninput="urSubVrijIn('${prefix}','${iso}',${idx},this.value)"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
+        onblur="urSubVrijKlaar('${prefix}','${iso}',${idx})">
+    </span>`;
+  } else if(row.k && subs.length){
     const subLabel = row.s === '-' ? 'Geen locatie' : (row.s || '— locatie —');
     subHtml = `<button class="ui-pickbtn klein ${row.s?'':'leeg'}" onclick="uiKiesSub('${prefix}','${iso}',${idx})">
       <span class="ui-pickbtn-txt">${_urEsc(subLabel)}</span>
@@ -6215,7 +6253,8 @@ function _urDagCardHtml(prefix, iso, dagData, placeholder, cascadeIdx){
     </button>
     <div class="ur-km-row">
       <span class="ur-km-lbl"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg> Km rijden</span>
-      <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-km-in" id="${prefix}-km-${iso}" placeholder="totaal" value="${km !== '' && km != null ? String(km).replace('.',',') : ''}" oninput="urKmIn('${prefix}','${iso}',this.value)">
+      <span class="ur-km-perklus" id="${prefix}-kmrij-${iso}"></span>
+      <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" class="ur-km-in" id="${prefix}-km-${iso}" placeholder="overig" title="Losse km die niet bij een klus horen" value="${km !== '' && km != null ? String(km).replace('.',',') : ''}" oninput="urKmIn('${prefix}','${iso}',this.value)">
       <span class="ur-km-suf">km</span>
       <button class="ur-km-toggle ${_urKmDetOpen.has(_urKey(prefix, iso)) || (dagData.kmDetails && dagData.kmDetails.length) ? 'on' : ''}" onclick="urKmDetToggle('${prefix}','${iso}')" title="Km per klant toevoegen">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
@@ -6283,6 +6322,9 @@ function _urUpdateTotalen(prefix){
       const bron = prefix === 'ur' ? _urData[iso] : ((_urPData[_urStaffSel]||{})[iso]);
       (bron && bron.kmDetails || []).forEach(rit => { km = _urRound2(km + _parseNum(rit.km)); });
     }
+    // Km die op de klus-regels zelf staan — tellen ook mee in het dagtotaal
+    km = _urRound2(km + _urRijenKm(prefix, iso));
+    _urKmRegelVul(prefix, iso);
     mkm = _urRound2(mkm + km);
     const el = document.getElementById(`${prefix}-tot-${iso}`);
     if(el){
@@ -6377,6 +6419,18 @@ function _urResizeNot(prefix, iso){
 // zit een "traject". Trajecten worden onthouden, dus je vult ze hooguit
 // één keer in — daarna rekent de app de dag zelf uit.
 // ═══════════════════════════════════════════
+
+// ═══ Ingebouwde klant "Overig" ═══
+// Voor losse klussen zonder vaste werkgever. Geen Firebase-document; wordt bij
+// elke snapshot aan _urKlussen toegevoegd zodat overzicht, PDF, totalen en winst
+// er vanzelf mee werken. De locatie typ je per keer zelf.
+const OVERIG_ID = '__overig__';
+const OVERIG_KLUS = {
+  id: OVERIG_ID, naam: 'Overig', subs: [],
+  prijsType: 'uur', prijsUur: 0, prijsMaand: 0,
+  adres: '', subAdressen: {}, _virtueel: true
+};
+function _isOverig(klusId){ return klusId === OVERIG_ID; }
 
 const THUIS = '__THUIS__';
 let _urThuisAdres = '';
@@ -6711,7 +6765,7 @@ function _urNetZelfOpgeslagen(){ return (Date.now() - _urEigenSaveTs) < 1500; }
 async function _urDoSave(prefix, iso, staffSnapshot){
   _urEigenSaveTs = Date.now();
   const key = _urKey(prefix, iso);
-  const rows = (_urRows[key] || []).filter(r => r.k || _parseNum(r.u) > 0);
+  const rows = (_urRows[key] || []).filter(r => r.k || _parseNum(r.u) > 0 || _parseNum(r.km) > 0);
   const rijen = rows.map(r => {
     const obj = { k: r.k || '', s: r.s || '', u: _urRound2(_parseNum(r.u)) };
     const p  = _urRound2(_parseNum(r.p));
@@ -6719,6 +6773,8 @@ async function _urDoSave(prefix, iso, staffSnapshot){
     if(p > 0)  obj.p  = p;  // Klantprijs alleen opslaan als ingevuld
     if(up > 0) obj.up = up; // Uitbetaalde uren alleen opslaan als afwijkend
     if(r.h)    obj.h  = true; // Ging daarna naar huis (route)
+    const rkm = _urRound2(_parseNum(r.km));
+    if(rkm > 0) obj.km = rkm; // Km voor deze klus — alleen opslaan als ingevuld
     return obj;
   });
   const ta = document.getElementById(`${prefix}-not-${iso}`);
@@ -6806,16 +6862,42 @@ window.urKlusSel = function(prefix, iso, idx, val){
   rows[idx].k = val;
   rows[idx].s = '';
   const klus = _urKlussen.find(k => k.id === val);
-  // Heeft deze werkgever locaties? Dan in bewerkstand blijven voor de locatie-keuze
-  rows[idx]._edit = !!(klus && klus.subs.length);
+  // Overig: meteen een tekstveld om de locatie te typen
+  if(_isOverig(val)){
+    rows[idx]._edit = true;
+    rows[idx]._sVrij = true;
+  } else {
+    // Heeft deze werkgever locaties? Dan in bewerkstand blijven voor de keuze
+    rows[idx]._edit = !!(klus && klus.subs.length);
+    rows[idx]._sVrij = false;
+  }
   const cont = document.getElementById(`${prefix}-rijen-${iso}`);
-  if(cont) cont.innerHTML = _urRijenHtml(prefix, iso);
+  if(cont){
+    cont.innerHTML = _urRijenHtml(prefix, iso);
+    if(_isOverig(val)){
+      const inp = document.getElementById(`${prefix}-svrij-${iso}-${idx}`);
+      if(inp) inp.focus();
+    }
+  }
   _urSaveDag(prefix, iso, 0);
 };
 
 window.urSubSel = function(prefix, iso, idx, val){
   const rows = _urRows[_urKey(prefix, iso)];
   if(!rows || !rows[idx]) return;
+  if(val === '__vrij__'){
+    // Geen vaste locatie: tekstveld openen zodat je zelf kunt typen
+    rows[idx]._sVrij = true;
+    rows[idx].s = '';
+    const c = document.getElementById(`${prefix}-rijen-${iso}`);
+    if(c){
+      c.innerHTML = _urRijenHtml(prefix, iso);
+      const inp = document.getElementById(`${prefix}-svrij-${iso}-${idx}`);
+      if(inp){ inp.focus(); }
+    }
+    return;
+  }
+  rows[idx]._sVrij = false;
   rows[idx].s = val;
   if(val) rows[idx]._edit = false; // compleet → samenklappen naar "Werkgever / Locatie"
   const cont = document.getElementById(`${prefix}-rijen-${iso}`);
@@ -6851,6 +6933,31 @@ window.urPrijsIn = function(prefix, iso, idx, val){
   rows[idx].p = val;
   _urSaveDag(prefix, iso, 900);
 };
+
+// Km per klus invoeren — telt direct door in dag- en maandtotaal
+window.urRijKmIn = function(prefix, iso, idx, val){
+  const rows = _urRows[_urKey(prefix, iso)];
+  if(!rows || !rows[idx]) return;
+  rows[idx].km = val;
+  _urKmRegelVul(prefix, iso);   // "waarvan x km per klus" bijwerken
+  _urUpdateTotalen(prefix);     // maandtotaal bijwerken
+  _urSaveDag(prefix, iso, 900);
+};
+
+// Som van de km die op de klus-regels van één dag staan
+function _urRijenKm(prefix, iso){
+  const rows = _urRows[_urKey(prefix, iso)] || [];
+  return _urRound2(rows.reduce((s, r) => _urRound2(s + _parseNum(r.km)), 0));
+}
+
+// Werkt het hulplabel bij de km-regel bij (zonder de hele dag te hertekenen)
+function _urKmRegelVul(prefix, iso){
+  const el = document.getElementById(`${prefix}-kmrij-${iso}`);
+  if(!el) return;
+  const n = _urRijenKm(prefix, iso);
+  el.textContent = n > 0 ? `+ ${_urFmtKm(n)} per klus` : '';
+  el.classList.toggle('on', n > 0);
+}
 
 // Uitbetaalde uren invoeren — alleen personeel-context
 window.urUpIn = function(prefix, iso, idx, val){
@@ -6893,7 +7000,7 @@ window.urUpToggle = function(prefix, iso, idx){
 window.urRijToevoegen = function(prefix, iso){
   const rows = _urRows[_urKey(prefix, iso)];
   if(!rows) return;
-  rows.push({ k:'', s:'', u:'', up:'', p:'', h:false });
+  rows.push({ k:'', s:'', u:'', up:'', p:'', h:false, km:'' });
   const cont = document.getElementById(`${prefix}-rijen-${iso}`);
   if(cont) cont.innerHTML = _urRijenHtml(prefix, iso);
   haptic(8);
@@ -6927,6 +7034,7 @@ function _urWeekTotalen(dataset, staffForWinst){
     });
     km = _urRound2(km + _parseNum(dag.km));
     (dag.kmDetails || []).forEach(rit => { km = _urRound2(km + _parseNum(rit.km)); });
+    (dag.rijen || []).forEach(r => { km = _urRound2(km + _parseNum(r.km)); });
   }
   const range = {
     van: `${monday.getDate()} ${_MND_KORT_L[monday.getMonth()]}`,
@@ -7266,7 +7374,7 @@ window.urRijVerwijder = function(prefix, iso, idx){
   if(!rows || !rows[idx]) return;
   rows.splice(idx, 1);
   // Altijd minimaal het standaard aantal lege rijen behouden
-  while(rows.length < _UR_DEFAULT_RIJEN) rows.push({ k:'', s:'', u:'', up:'', p:'', h:false });
+  while(rows.length < _UR_DEFAULT_RIJEN) rows.push({ k:'', s:'', u:'', up:'', p:'', h:false, km:'' });
   const cont = document.getElementById(`${prefix}-rijen-${iso}`);
   if(cont) cont.innerHTML = _urRijenHtml(prefix, iso);
   _urUpdateTotalen(prefix);
@@ -7457,7 +7565,7 @@ window.uiDagWissen = function(prefix, iso){
   if(!confirm(`Alle invullingen van ${dagNaam} ${dag} ${maand} wissen?`)) return;
   const key = _urKey(prefix, iso);
   _urRows[key] = [];
-  while(_urRows[key].length < _UR_DEFAULT_RIJEN) _urRows[key].push({ k:'', s:'', u:'', up:'', p:'', h:false });
+  while(_urRows[key].length < _UR_DEFAULT_RIJEN) _urRows[key].push({ k:'', s:'', u:'', up:'', p:'', h:false, km:'' });
   _urKmDet[key] = [];
   const not = document.getElementById(`${prefix}-not-${iso}`);
   if(not) not.value = '';
@@ -7546,7 +7654,7 @@ window.urKopieerVorige = function(prefix, iso){
     up: r.up != null ? r.up : '',
     p: r.p != null ? r.p : ''
   }));
-  while(nieuweRijen.length < _UR_DEFAULT_RIJEN) nieuweRijen.push({ k:'', s:'', u:'', up:'', p:'', h:false });
+  while(nieuweRijen.length < _UR_DEFAULT_RIJEN) nieuweRijen.push({ k:'', s:'', u:'', up:'', p:'', h:false, km:'' });
   _urRows[key] = nieuweRijen;
   _urSaveDag(prefix, iso, 0);
   if(prefix === 'ur') renderUren();
@@ -7653,14 +7761,15 @@ window.uiKiesKlus = function(prefix, iso, idx){
   const rows = _urRows[_urKey(prefix, iso)];
   if(!rows || !rows[idx]) return;
   const items = [{ value:'', label:'— geen klus —' }].concat(
-    [..._urKlussen]
+    _urKlussen.filter(k => !k._virtueel)
       .sort((a,b) => a.naam.localeCompare(b.naam,'nl',{numeric:true,sensitivity:'base'}))
       .map(k => ({
         value: k.id,
         label: k.naam,
         sub: k.subs && k.subs.length ? `${k.subs.length} ${k.subs.length===1?'locatie':'locaties'}` : ''
       }))
-  );
+  // "Overig" altijd onderaan, niet meegesorteerd
+  ).concat([{ value: OVERIG_ID, label: 'Overig', sub: 'losse klus — locatie zelf typen' }]);
   uiPickerOpen({
     titel: 'Kies klus',
     items,
@@ -7676,13 +7785,36 @@ window.uiKiesSub = function(prefix, iso, idx){
   if(!klus) return;
   const subs = [...(klus.subs||[])].sort((a,b) => String(a).localeCompare(String(b),'nl',{numeric:true,sensitivity:'base'}));
   const items = [{ value:'-', label:'Geen locatie', sub:'alleen werkgever' }]
-    .concat(subs.map(s => ({ value: s, label: s })));
+    .concat(subs.map(s => ({ value: s, label: s })))
+    .concat([{ value:'__vrij__', label:'Anders, zelf typen…', sub:'eenmalig adres' }]);
   uiPickerOpen({
     titel: klus.naam,
     items,
     current: rows[idx].s || '',
     onPick: val => urSubSel(prefix, iso, idx, val)
   });
+};
+
+// Vrije locatie typen (na keuze "Overig…")
+window.urSubVrijIn = function(prefix, iso, idx, val){
+  const rows = _urRows[_urKey(prefix, iso)];
+  if(!rows || !rows[idx]) return;
+  rows[idx].s = val;
+  _urSaveDag(prefix, iso, 900);
+};
+
+// Vrije locatie afronden — rij klapt dicht naar het compacte label
+window.urSubVrijKlaar = function(prefix, iso, idx){
+  const rows = _urRows[_urKey(prefix, iso)];
+  if(!rows || !rows[idx]) return;
+  rows[idx].s = String(rows[idx].s || '').trim();
+  rows[idx]._sVrij = false;
+  // Klaar met typen → rij dichtklappen naar het compacte label
+  rows[idx]._edit = false;
+  const cont = document.getElementById(`${prefix}-rijen-${iso}`);
+  if(cont) cont.innerHTML = _urRijenHtml(prefix, iso);
+  _urSaveDag(prefix, iso, 0);
+  haptic(8);
 };
 
 window.uiKiesKmKlant = function(prefix, iso, idx){
@@ -8247,12 +8379,14 @@ function _renderKlussen(){
   if(!el) return;
 
   const q = _klusFilter.trim().toLowerCase();
+  // "Overig" is ingebouwd en niet te bewerken — hoort niet in het beheer-overzicht
+  const echte = _urKlussen.filter(k => !k._virtueel);
   const zichtbaar = q
-    ? _urKlussen.filter(k =>
+    ? echte.filter(k =>
         k.naam.toLowerCase().includes(q) ||
         (k.subs || []).some(s => s.toLowerCase().includes(q))
       )
-    : _urKlussen;
+    : echte;
 
   const cards = zichtbaar.map(k => {
     // Sub-locaties alfabetisch tonen — originele index bewaren voor verwijder-handler
@@ -8700,6 +8834,7 @@ function _pdfPersoonSectie(naam, data, year, month, klussenById){
   const perKlus = {};   // klusId -> uren
   const kmPerKlus = {}; // klusId -> km (via directe koppeling of naam-match)
   const losseKm = {};   // vrije naam -> km
+  const kmPerLoc = {};  // klusId -> { locatie -> km } — km die op de klus-regels staan
   const rijen = [];
 
   dagen.forEach(iso => {
@@ -8712,9 +8847,10 @@ function _pdfPersoonSectie(naam, data, year, month, klussenById){
       const up = _parseNum(r.up);
       dagUp = _urRound2(dagUp + (up > 0 ? up : _parseNum(r.u)));
     });
-    // Km-totaal = handmatig totaal-vak + som van kmDetails (per-klant ritten)
+    // Km-totaal = handmatig totaal-vak + kmDetails (losse ritten) + km op de klus-regels
     let dagKm = _urRound2(_parseNum(dag.km));
     (dag.kmDetails || []).forEach(rit => { dagKm = _urRound2(dagKm + _parseNum(rit.km)); });
+    rijenDag.forEach(r => { dagKm = _urRound2(dagKm + _parseNum(r.km)); });
     totU = _urRound2(totU + dagU);
     totKm = _urRound2(totKm + dagKm);
     rijenDag.forEach(r => {
@@ -8722,6 +8858,15 @@ function _pdfPersoonSectie(naam, data, year, month, klussenById){
       if(u > 0){
         const key = r.k || '__leeg';
         perKlus[key] = _urRound2((perKlus[key] || 0) + u);
+      }
+      // Km die op de regel zelf staat — per klus én per locatie bijhouden
+      const rkm = _parseNum(r.km);
+      if(rkm > 0){
+        const kid = r.k || '__leeg';
+        kmPerKlus[kid] = _urRound2((kmPerKlus[kid] || 0) + rkm);
+        const loc = (r.s && r.s !== '-') ? String(r.s) : '—';
+        if(!kmPerLoc[kid]) kmPerLoc[kid] = {};
+        kmPerLoc[kid][loc] = _urRound2((kmPerLoc[kid][loc] || 0) + rkm);
       }
     });
     // Km per klant verzamelen — voorkeur op klus-id, anders naam
@@ -8754,6 +8899,9 @@ function _pdfPersoonSectie(naam, data, year, month, klussenById){
               if(up > 0 && up !== u) uTxt = ` — ${_urFmtUren(up)} / ${_urFmtUren(u)}`;
               else uTxt = ` — ${_urFmtUren(u)}`;
             }
+            // Km van deze klus-regel achter de uren zetten
+            const rkm = _parseNum(r.km);
+            if(rkm > 0) uTxt += ` · ${_urFmtKm(rkm)}`;
             return `${knm}${loc}${uTxt}`;
           }).join('<br>')
         : '—';
@@ -8782,7 +8930,19 @@ function _pdfPersoonSectie(naam, data, year, month, klussenById){
     km: kmPerKlus[kid] || 0
   }))
   .sort((a,b) => (b.u - a.u) || (b.km - a.km))
-  .map(r => `<tr><td>${r.naam}</td><td class="r">${r.u > 0 ? _urFmtUren(r.u) : '—'}</td><td class="r">${r.km > 0 ? _urFmtKm(r.km) : '—'}</td></tr>`)
+  .map(r => {
+    const hoofd = `<tr><td>${r.naam}</td><td class="r">${r.u > 0 ? _urFmtUren(r.u) : '—'}</td><td class="r">${r.km > 0 ? _urFmtKm(r.km) : '—'}</td></tr>`;
+    // Uitsplitsing per locatie eronder, als er km per locatie bekend zijn
+    const locs = kmPerLoc[r.kid];
+    if(!locs) return hoofd;
+    const namen = Object.keys(locs);
+    // Alleen uitsplitsen als het iets toevoegt (meer dan één locatie, of een echte naam)
+    if(namen.length === 1 && namen[0] === '—') return hoofd;
+    const sub = namen.sort((a,b) => locs[b] - locs[a])
+      .map(loc => `<tr class="subloc"><td>&nbsp;&nbsp;&nbsp;↳ ${loc === '—' ? '<em>zonder locatie</em>' : loc}</td><td class="r">—</td><td class="r">${_urFmtKm(locs[loc])}</td></tr>`)
+      .join('');
+    return hoofd + sub;
+  })
   .join('');
   // Losse km — namen die niet aan een klus gekoppeld zijn
   const losseKmRijen = Object.entries(losseKm).sort((a,b) => b[1] - a[1])
@@ -8924,6 +9084,8 @@ window.urPdfExport = async function(){
   .r{text-align:right;}
   .datum{font-weight:700;color:#111827;white-space:nowrap;width:60px;}
   .notitie{color:#6b7280;font-style:italic;font-size:9pt;}
+  tr.subloc td{color:#6b7280;font-size:9pt;border-top:none;padding-top:2px;padding-bottom:2px;}
+  tr.subloc td:first-child{padding-left:14px;}
   .leeg{text-align:center;color:#9ca3af;font-style:italic;padding:20px;}
   .footer{margin-top:32px;padding-top:12px;border-top:1px solid #e5e7eb;font-size:8pt;color:#9ca3af;text-align:center;}
   @page{size:A4;margin:15mm;}
@@ -9101,6 +9263,13 @@ function _renderOverzicht(){
   const collectKm = dataset => {
     Object.entries(dataset).forEach(([iso, dag]) => {
       if(!iso.startsWith(monthPrefix)) return;
+      // Km die op de klus-regels zelf staan — altijd direct aan de klus gekoppeld
+      (dag.rijen || []).forEach(r => {
+        const km = _parseNum(r.km);
+        if(km <= 0) return;
+        const kid = (r.k && _urKlussen.some(k => k.id === r.k)) ? r.k : '__leeg';
+        kmPerKlus[kid] = _urRound2((kmPerKlus[kid] || 0) + km);
+      });
       (dag.kmDetails || []).forEach(rit => {
         const km = _parseNum(rit.km);
         if(km <= 0) return;
