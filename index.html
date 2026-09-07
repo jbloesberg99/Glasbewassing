@@ -2378,15 +2378,31 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 [data-theme="dark"] .ur-tot-pay{color:#fca5a5 !important;}
 .ur-mtot .ur-tot-pay{color:#fca5a5 !important;opacity:0.9;font-size:0.6em;font-weight:700;}
 /* Netto winst in de maandtotaal-balk van een personeelslid */
-.ur-mtot-winst{
-  display:inline-block;margin-left:6px;
-  font-size:0.58em;font-weight:800;letter-spacing:-0.2px;
-  color:#86efac;background:rgba(255,255,255,0.14);
-  border:1px solid rgba(255,255,255,0.18);
-  border-radius:99px;padding:2px 9px;
-  font-variant-numeric:tabular-nums;vertical-align:middle;
+/* Extra gegevens onder het maandtotaal — eigen regel met kleine pillen,
+   zodat ze niet door het grote uren-getal heen lopen */
+.ur-mtot-extra{
+  display:flex;flex-wrap:wrap;gap:6px;
+  margin-top:9px;
 }
-.ur-mtot-winst.neg{color:#fecaca;background:rgba(220,38,38,0.26);border-color:rgba(254,202,202,0.28);}
+.ur-mtot-extra:empty{display:none;}
+.ur-mp{
+  display:inline-flex;align-items:center;
+  font-size:0.66rem;font-weight:800;letter-spacing:-0.1px;
+  padding:3px 10px;border-radius:99px;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+  background:var(--surface);border:1px solid var(--border2);color:var(--text2);
+}
+.ur-mp.pay{color:#dc2626;background:rgba(220,38,38,0.07);border-color:rgba(220,38,38,0.2);}
+.ur-mp.km{color:#0891b2;background:rgba(8,145,178,0.07);border-color:rgba(8,145,178,0.2);}
+.ur-mp.winst{color:#15803d;background:rgba(22,163,74,0.09);border-color:rgba(22,163,74,0.22);}
+.ur-mp.winst.neg{color:#dc2626;background:rgba(220,38,38,0.09);border-color:rgba(220,38,38,0.22);}
+[data-theme="dark"] .ur-mp{background:rgba(255,255,255,0.05);color:var(--text2);}
+[data-theme="dark"] .ur-mp.pay{color:#fca5a5;background:rgba(220,38,38,0.16);}
+[data-theme="dark"] .ur-mp.km{color:#67e8f9;background:rgba(8,145,178,0.16);}
+[data-theme="dark"] .ur-mp.winst{color:#86efac;background:rgba(22,163,74,0.16);}
+[data-theme="dark"] .ur-mp.winst.neg{color:#fca5a5;background:rgba(220,38,38,0.16);}
+/* Het grote getal mag niet ingedrukt worden door de rest */
+.ur-mtot-val{flex-shrink:0;white-space:nowrap;}
 .ur-rij-uren:focus{border-color:#7c3aed;}
 .ur-rij-uren::placeholder{color:var(--text3);font-weight:500;}
 .ur-rij-label{flex:1;min-width:0;background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.18);border-radius:9px;padding:8px 10px;font-size:0.78rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:background 0.15s;}
@@ -6414,18 +6430,20 @@ function _urUpdateTotalen(prefix){
     // Getal apart houden zodat we het kunnen laten optellen
     let nEl = document.getElementById(`${prefix}-mtot-n`);
     if(!nEl){
-      m.innerHTML = `<span id="${prefix}-mtot-n">${_urFmtUren(mtot)}</span><span id="${prefix}-mtot-rest"></span>`;
+      m.innerHTML = `<span id="${prefix}-mtot-n">${_urFmtUren(mtot)}</span>`;
       nEl = document.getElementById(`${prefix}-mtot-n`);
       if(nEl) nEl.dataset.uiNum = mtot;
     }
     if(nEl) _uiAnimNum(nEl, mtot, v => _urFmtUren(v));
-    const restEl = document.getElementById(`${prefix}-mtot-rest`);
+    // Extra gegevens als losse pillen op een eigen regel — anders loopt het
+    // door het grote uren-getal heen
+    const restEl = document.getElementById(`${prefix}-mtot-extra`);
     if(restEl){
-      let rest = '';
+      const pillen = [];
       if(prefix === 'urp' && heeftVerschil && mtotPay !== mtot && mtotPay > 0){
-        rest += ` <span class="ur-tot-pay">(${_urFmtUren(mtotPay)} betaald)</span>`;
+        pillen.push(`<span class="ur-mp pay">${_urFmtUren(mtotPay)} betaald</span>`);
       }
-      if(mkm > 0) rest += ` · ${_urFmtKm(mkm)}`;
+      if(mkm > 0) pillen.push(`<span class="ur-mp km">${_urFmtKm(mkm)}</span>`);
       // Netto winst van deze persoon deze maand (na belasting)
       if(prefix === 'urp' && _urStaffSel){
         const staff = _urStaff.find(s => s.id === _urStaffSel);
@@ -6435,12 +6453,12 @@ function _urUpdateTotalen(prefix){
             if(w && (w.omzet > 0 || w.netto !== 0)){
               const teken = w.netto >= 0 ? '+' : '−';
               const abs = Math.abs(w.netto).toFixed(2).replace('.', ',').replace(/,00$/,'');
-              rest += ` <span class="ur-mtot-winst${w.netto < 0 ? ' neg' : ''}">${teken}€${abs} netto</span>`;
+              pillen.push(`<span class="ur-mp winst${w.netto < 0 ? ' neg' : ''}">${teken}€${abs} netto</span>`);
             }
           }catch(e){ /* stil overslaan */ }
         }
       }
-      restEl.innerHTML = rest;
+      restEl.innerHTML = pillen.join('');
     }
   }
   // Sparkline vullen (chronologisch oplopend)
@@ -8528,6 +8546,7 @@ function renderUren() {
       <span class="ur-mtot-val" id="ur-mtot">0u</span>
       <svg class="ur-mtot-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
+    <div class="ur-mtot-extra" id="ur-mtot-extra"></div>
     ${_uiSparkHtml('ur')}
     <div class="ur-mtot-details" id="ur-mtot-details"></div>
   </div>`;
@@ -9757,6 +9776,7 @@ function _renderPersoneelDetail(){
         <span class="ur-mtot-val" id="urp-mtot">0u</span>
         <svg class="ur-mtot-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
+      <div class="ur-mtot-extra" id="urp-mtot-extra"></div>
       ${_uiSparkHtml('urp')}
       <div class="ur-mtot-details" id="urp-mtot-details"></div>
     </div>
