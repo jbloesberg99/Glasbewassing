@@ -14,8 +14,13 @@
 <title>Purgato — jouw werkdag</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>
-  const t=localStorage.getItem('gw_theme')||'light';
-  document.documentElement.setAttribute('data-theme',t);
+  try {
+    const t=localStorage.getItem('gw_theme')||'light';
+    document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');
+    if(!sessionStorage.getItem('purgato_module') && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      document.documentElement.classList.add('pg-opening');
+    }
+  } catch(e) { /* Keep the immediately usable light home if storage is unavailable. */ }
 </script>
 <style>
 @layer purgato-original {
@@ -4444,7 +4449,7 @@ html, body{ max-width: 100%; overflow-x: clip; }
 :root {
   --green:#245b46; --green2:#183f32; --green3:#38725b;
   --urgent:#b44236; --urgent-s:#fbefeb; --urgent-b:#ebd2cb;
-  --soon:#926120; --soon-s:#f7f0e2; --soon-b:#e8dbc1;
+  --soon:#805418; --soon-s:#f7f0e2; --soon-b:#e8dbc1;
   --ok:#245b46; --ok-s:#eaf2ed; --ok-b:#ccdfd2;
   --ease-out:cubic-bezier(.22,1,.36,1); --ease-spring:cubic-bezier(.2,.8,.2,1);
   --ui-sticky-top:72px;
@@ -4452,20 +4457,20 @@ html, body{ max-width: 100%; overflow-x: clip; }
 html[data-theme="light"] {
   color-scheme:light;
   --bg:#f3f4ef; --surface:#fff; --surface2:#eef1eb; --surface3:#e2e8df;
-  --border:#e8ece5; --border2:#d8dfd5; --text:#20352c; --text2:#58695e; --text3:#768175;
+  --border:#e8ece5; --border2:#d8dfd5; --text:#20352c; --text2:#58695e; --text3:#5c6b5f;
   --accent:#245b46; --accent2:#183f32; --accent-glow:#245b4614;
   --shadow:0 3px 16px #263c2d05; --shadow-md:0 10px 28px #263c2d0a; --shadow2:0 20px 70px #142e2320;
   --inset:none; --glass-bg:#f3f4eff2;
   --u-primary:#245b46; --u-primary-2:#183f32; --u-primary-3:#42775e;
   --u-primary-tint:#eff4ee; --u-primary-tint-2:#e6eee4;
   --u-primary-border:#cbdcc9; --u-primary-border-2:#a5c0ac;
-  --u-planned:#758473; --u-planned-tint:#eff2ec; --u-planned-border:#d9e1d6;
+  --u-planned:#5c6b5f; --u-planned-tint:#eff2ec; --u-planned-border:#d9e1d6;
   --pg-ink:#203d30; --pg-feature:#e4eddf; --pg-inverse:#fff;
 }
 html[data-theme="dark"] {
   color-scheme:dark;
   --bg:#151b18; --surface:#1e2721; --surface2:#28342c; --surface3:#35433a;
-  --border:#2c3830; --border2:#415246; --text:#e5ebe0; --text2:#b1beb1; --text3:#93a491;
+  --border:#2c3830; --border2:#415246; --text:#e5ebe0; --text2:#b1beb1; --text3:#b0bfae;
   --accent:#a3c5a3; --accent2:#c1d8b9; --accent-glow:#a3c5a319;
   --urgent:#eaa99d; --urgent-s:#382720; --urgent-b:#624037;
   --soon:#dfc080; --soon-s:#322f22; --soon-b:#605336;
@@ -4484,6 +4489,12 @@ button,input,select,textarea{font-family:inherit}
 button,[role="button"]{touch-action:manipulation}
 button:focus-visible,[role="button"]:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
 input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent)!important;outline-offset:2px;box-shadow:none!important}
+/* Hour rows clip their contents: draw focus inside the field's own rounded edge. */
+.ur-rij-inner input:focus{
+ outline:none!important;outline-offset:0;
+ border-color:var(--accent)!important;
+ box-shadow:inset 0 0 0 1px var(--accent)!important;
+}
 button{transition:transform .2s var(--ease-out),background .2s,color .2s,box-shadow .2s}
 button:active{transform:scale(.975)}
 input,select,textarea{font-size:16px!important;min-width:0}
@@ -4513,19 +4524,19 @@ input,select,textarea{font-size:16px!important;min-width:0}
 .pg-home-date{display:flex;align-items:center;justify-content:center;gap:10px;margin:16px auto 0;font-size:11px;color:var(--text3);text-transform:capitalize}
 .pg-home-date svg{color:var(--accent);width:17px;height:17px}
 .sm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;width:100%;max-width:none}
-.module-card{appearance:none;font-family:inherit;border:0!important;border-radius:28px;padding:22px!important;aspect-ratio:1.65;align-items:center;justify-content:center;gap:10px;text-align:center;box-shadow:none!important;overflow:hidden;position:relative;color:var(--pg-ink);cursor:pointer;animation:pg-arrive .65s var(--ease-out) both;animation-delay:var(--d,0ms);will-change:auto}
+.module-card{appearance:none;font-family:inherit;border:0!important;border-radius:28px;padding:22px!important;aspect-ratio:1.65;align-items:center;justify-content:center;gap:10px;text-align:center;box-shadow:none!important;overflow:hidden;position:relative;color:var(--pg-ink);cursor:pointer;animation:none;will-change:auto}
 .module-card::before,.module-card::after{display:none}
 .module-card.mc-glas{background:#e1ece7;color:#285947}
 .module-card.mc-winst{background:#ecebdd;color:#6d6643}
 .module-card.mc-uren{background:#e4e9ed;color:#405e71}
-.module-card.mc-extra{background:#eee3dc;color:#8a5f4b}
+.module-card.mc-extra{background:#eee3dc;color:#74503f}
 .pg-module-top{width:100%;display:flex;justify-content:center;align-items:center;position:relative}
 .pg-module-top .pg-module-arrow{position:absolute;right:0;top:0}
 .pg-module-arrow{width:18px;height:18px;opacity:.55}
 .pg-module-art{width:64px;height:64px;flex-shrink:0;overflow:visible;transition:transform .45s var(--ease-out)}
 .mc-text{align-items:center;gap:5px;width:100%;z-index:1}
 .mc-name{color:inherit;font-size:14px;font-weight:750;letter-spacing:-.45px;text-shadow:none;line-height:1.25}
-.mc-desc{color:inherit;opacity:.73;font-size:10px;line-height:1.5;font-weight:500}
+.mc-desc{color:inherit;opacity:1;font-size:11px;line-height:1.5;font-weight:500}
 .pg-notes{grid-column:1/-1;display:flex;justify-content:center;gap:14px;align-items:center;position:relative;min-height:69px;text-align:center;padding:17px 6px;background:none;border:0;border-top:1px solid var(--border2);color:var(--text);cursor:pointer;margin-top:5px;width:100%}
 .pg-notes>span:not(.pg-note-icon){padding:0 44px}
 .pg-notes>.pg-note-icon{position:absolute;left:3px}
@@ -4535,18 +4546,16 @@ input,select,textarea{font-size:16px!important;min-width:0}
 .pg-notes strong{display:block;font-size:13px;font-weight:700}
 .pg-notes small{display:block;color:var(--text3);font-size:10px;margin-top:2px}
 .pg-home-bottom{margin-top:20px;display:flex;justify-content:center;gap:16px;color:var(--text3);font-size:10px;letter-spacing:.1px}
-.pg-home-bottom span:last-child{display:flex;align-items:center;gap:6px}
-.pg-home-bottom span:last-child::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent)}
 [data-theme="dark"] .mc-glas{background:#2c4034;color:#bad8be}
 [data-theme="dark"] .mc-winst{background:#383b2c;color:#d0cc9d}
 [data-theme="dark"] .mc-uren{background:#2d3940;color:#adc8d7}
 [data-theme="dark"] .mc-extra{background:#41352d;color:#ddbaa5}
 @media(hover:hover){
- .module-card:hover{transform:translateY(-4px)!important;box-shadow:0 14px 28px #243b2b0a!important}
- .module-card:hover .pg-module-art{transform:translateY(-3px) rotate(-4deg)}
+ .module-card:hover{transform:translateY(-1px)!important;box-shadow:none!important}
+ .module-card:hover .pg-module-art{transform:none}
  .pg-notes:hover{color:var(--accent)}
 }
-.module-card:active{transform:scale(.965)!important;box-shadow:none!important}
+.module-card:active{transform:scale(.985)!important;box-shadow:none!important}
 @keyframes pg-arrive{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
 /* Shared chrome. Existing navigation actions and routing are retained. */
@@ -4573,8 +4582,8 @@ body>#nav-notes>.nav-item{flex-direction:row}
 .pg-section-eyebrow{font-size:11px;letter-spacing:.08em;font-weight:650;color:var(--text3);margin-bottom:8px}
 .pg-section-intro h1{font-size:42px;font-weight:650;line-height:1.12;letter-spacing:-1.8px;color:var(--text)}
 .pg-section-intro p{font-size:13px;color:var(--text2);margin-top:9px}
-.app-entering{animation:pg-arrive .42s var(--ease-out)!important}
-.tab.on{animation:pg-arrive .3s var(--ease-out)}
+.app-entering{animation:pg-module-enter .18s var(--ease-out)!important}
+.tab.on{animation:none}
 
 /* Customers: legible, practical cards with one dominant action. */
 .stats{gap:0;background:var(--surface);border-radius:24px;padding:20px 0;margin-bottom:20px;border:1px solid var(--border)}
@@ -4644,7 +4653,6 @@ body>#nav-notes>.nav-item{flex-direction:row}
 .omzet-shell{background:none;border:0;padding:0;margin-bottom:24px}
 .omzet-top{background:var(--pg-feature);border-radius:28px;padding:32px;color:var(--text);box-shadow:none}
 .omzet-eyebrow{background:none;border:0;padding:0;color:var(--text2);font-size:12px;letter-spacing:0;text-transform:none}
-.omzet-eyebrow-dot{background:var(--accent)}
 .omzet-bedrag{color:var(--pg-ink);font-size:56px;font-weight:600;letter-spacing:-3px;margin:12px 0 10px}
 .omzet-sub-lbl{color:var(--text2);font-size:12px;line-height:1.7}
 .os{background:none;border:0;border-radius:0;text-align:left;padding:10px 12px 0 0;box-shadow:none}
@@ -4923,7 +4931,7 @@ html .b-save,html .n-save-btn{background:var(--accent)!important;color:var(--pg-
 #extra-list>.d-hdr:has(.d-hdr-sub){display:none}
 .ui-bigtitle.collapsed{max-height:160px;padding:25px 0 30px;visibility:hidden}
 .ur-dag,.ur-dag-mini{scroll-margin-top:10px}
-#app-extra:has(#extra-list>.d-hdr:not(:has(.d-hdr-sub)))>.pg-section-intro{display:none}
+#app-extra:not(:has(#extra-list .d-hdr-sub))>.pg-section-intro{display:none}
 #extra-list>.d-hdr:not(:has(.d-hdr-sub)){padding:24px 0 16px}
 #extra-list>.d-hdr:not(:has(.d-hdr-sub)) .d-hdr-title{font-size:36px;letter-spacing:-1.4px}
 @media(max-width:450px){
@@ -4937,8 +4945,49 @@ html .b-save,html .n-save-btn{background:var(--accent)!important;color:var(--pg-
 .weer-ic-big .pg-inline-icon{width:58px;height:58px;color:var(--accent);vertical-align:middle}
 .weer-dag-ic .pg-inline-icon,.weer-uur-ic .pg-inline-icon{width:25px;height:25px;color:var(--accent)}
 html[data-theme] .weer-dag.vandaag .weer-dag-rain{color:var(--accent)!important}
-.pg-home-top,.pg-home-intro{animation:pg-arrive .55s var(--ease-out) both}
+.pg-home-top,.pg-home-intro{animation:none}
 .sheet .s-lbl{display:block}
+.pg-dashboard-note{font-size:13px;line-height:1.7;color:var(--text2);text-align:center;max-width:65ch;margin:0 auto 24px}
+#extra-list>.d-hdr{flex-wrap:wrap;gap:12px}
+.n-modal-back{min-width:44px;min-height:44px}
+@media(max-width:400px){
+ .module-card{min-height:144px;min-width:0;width:100%;aspect-ratio:auto}
+ body>.nav:not(#nav-extra)>.nav-item{min-width:0;padding-left:4px!important;padding-right:4px!important;font-size:9px!important}
+ .ur-dag-hdr{flex-wrap:wrap}
+ .ur-dag-info{flex:1 0 80px!important;order:1}
+ .ur-dag-tot{order:2}
+ .ur-dag-kopie{order:3;min-width:36px;min-height:36px}
+ .ur-dag-pill{order:4}
+}
+
+/* Text must stay legible when the theme changes, including legacy inline colors. */
+html input::placeholder,html textarea::placeholder{color:var(--text3)!important;opacity:1!important}
+input,textarea{caret-color:var(--accent)}
+.dtag small,.dtag span,.tt-lbl{opacity:1!important}
+.tt-lbl{font-size:10px!important}
+.ur-dag.weekend:not(.today) .ur-dag-naam{color:var(--text2)!important}
+.ur-dag.today .ur-dag-pill,.klus-tarief-btn.on{color:var(--pg-inverse)!important}
+.klus-sub-x{color:var(--urgent)!important;background:var(--urgent-s)!important}
+.ur-rij-uren-pill .pay{color:var(--urgent)!important}
+#extra-list .d-badge{background:var(--surface2)!important;color:var(--text)!important;border-color:var(--border2)!important}
+#extra-list [style*="color:"]{color:var(--text)!important}
+#extra-list button[style*="background:var(--accent)"],#extra-list button[style*="background: var(--accent)"]{color:var(--pg-inverse)!important}
+@media(max-width:849px){.mc-desc{font-size:10px}}
+.glas-score-titel,.glas-score-rijen{color:var(--text)!important}
+.uur-dag.nu{background:var(--pg-feature)!important}
+.uur-dag.nu :is(.uur-naam,.uur-temp,.uur-ic){color:var(--accent)!important}
+
+/* One short opening, no overlay and no delay before the menu can be used. */
+html.pg-opening .pg-brand{animation:pg-brand-open .36s var(--ease-out) both}
+html.pg-opening :is(.pg-home-intro,.sm-grid,.pg-home-bottom){animation:pg-home-open .4s var(--ease-out) .08s both}
+.app-entering :is(.stat-shell,.add-card,.zoek,.wc-hero-banner,.wc-mode-toggle,.wc-row,#wc-result-grid,#wc-breakdown){animation:none!important}
+@keyframes pg-brand-open{from{opacity:.5;transform:translateY(3px)}to{opacity:1;transform:none}}
+@keyframes pg-home-open{from{opacity:.72;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes pg-module-enter{from{opacity:.88;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){
+  html.pg-opening :is(.pg-brand,.pg-home-intro,.sm-grid,.pg-home-bottom),.app-entering{animation:none!important}
+  .module-card:hover,.module-card:active{transform:none!important}
+}
 
 
 /* Center section titles and control groups while keeping records readable. */
@@ -5027,7 +5076,7 @@ html[data-theme] .weer-dag.vandaag .weer-dag-rain{color:var(--accent)!important}
 .pg-pdf-customer-head h3{font-size:15px;line-height:1.4;overflow-wrap:anywhere;margin:0}
 .pg-pdf-customer-head>strong{font-size:12px;white-space:nowrap}
 .pg-pdf-paper table{width:100%;border-collapse:collapse;font-size:11px;line-height:1.5;table-layout:auto}
-.pg-pdf-paper th{font-size:9px;color:#647168;text-align:left;background:#ebf2ec;padding:9px 8px;font-weight:650}
+.pg-pdf-paper th{font-size:9px;color:#5b685f;text-align:left;background:#ebf2ec;padding:9px 8px;font-weight:650}
 .pg-pdf-paper td{padding:10px 8px;border-bottom:1px solid #e0e7e1;vertical-align:top;overflow-wrap:anywhere}
 .pg-pdf-paper .pg-pdf-number{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:700;width:50px}
 .pg-pdf-date{width:85px}
@@ -5077,31 +5126,27 @@ html[data-theme] .weer-dag.vandaag .weer-dag-rain{color:var(--accent)!important}
         <div class="pg-home-date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="5" width="17" height="16" rx="4"/><path d="M8 3v4m8-4v4M4 11h16"/></svg><span id="sm-greet-datum"></span></div>
       </div>
       <div class="sm-grid" aria-label="Hoofdmenu">
-        <button class="module-card mc-glas" style="--d:50ms" onclick="openModule('glas')">
+        <button class="module-card mc-glas" onclick="openModule('glas')">
           <span class="pg-module-top">
-            <svg class="pg-module-art" viewBox="0 0 80 80" fill="none" aria-hidden="true"><rect x="13" y="9" width="48" height="57" rx="12" fill="currentColor" opacity=".12"/><rect x="18" y="6" width="46" height="56" rx="11" fill="white" opacity=".55"/><rect x="18" y="6" width="46" height="56" rx="11" stroke="currentColor" stroke-width="2"/><path d="M41 7v54M19 34h44" stroke="currentColor" stroke-width="2"/><path d="m25 22 8-8m-8 15 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".45"/><path d="M59 44v15m-7-8 14 7m-14 0 14-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-            <svg class="pg-module-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg>
+            <svg class="pg-module-art" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="18" y="12" width="44" height="54" rx="8"/><path d="M40 13v52M19 39h42"/></svg>
           </span>
           <span class="mc-text"><span class="mc-name">Glasbewassing</span><span class="mc-desc">Klanten, planning & omzet</span></span>
         </button>
-        <button class="module-card mc-winst" style="--d:110ms" onclick="openModule('winst')">
+        <button class="module-card mc-winst" onclick="openModule('winst')">
           <span class="pg-module-top">
-            <svg class="pg-module-art" viewBox="0 0 80 80" fill="none" aria-hidden="true"><rect x="13" y="43" width="13" height="23" rx="5" fill="currentColor" opacity=".2"/><rect x="32" y="30" width="13" height="36" rx="5" fill="currentColor" opacity=".35"/><rect x="51" y="14" width="13" height="52" rx="5" fill="currentColor" opacity=".65"/><path d="m11 31 15-12 13 3L60 5M49 5h11v11" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <svg class="pg-module-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg>
+            <svg class="pg-module-art" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 66h50"/><rect x="18" y="45" width="10" height="21" rx="3"/><rect x="35" y="31" width="10" height="35" rx="3"/><rect x="52" y="15" width="10" height="51" rx="3"/></svg>
           </span>
           <span class="mc-text"><span class="mc-name">Winstcalculator</span><span class="mc-desc">Inzicht in wat je overhoudt</span></span>
         </button>
-        <button class="module-card mc-uren" style="--d:170ms" onclick="openModule('uren')">
+        <button class="module-card mc-uren" onclick="openModule('uren')">
           <span class="pg-module-top">
-            <svg class="pg-module-art" viewBox="0 0 80 80" fill="none" aria-hidden="true"><circle cx="37" cy="38" r="28" fill="currentColor" opacity=".12"/><circle cx="41" cy="34" r="28" fill="white" opacity=".55"/><circle cx="41" cy="34" r="28" stroke="currentColor" stroke-width="2"/><path d="M41 17v18l12 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M41 10v3m24 21h-3M41 58v-3M17 34h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"/><circle cx="41" cy="34" r="3.5" fill="currentColor"/></svg>
-            <svg class="pg-module-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg>
+            <svg class="pg-module-art" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="40" cy="40" r="26"/><path d="M40 23v18l12 7"/></svg>
           </span>
           <span class="mc-text"><span class="mc-name">Uren Registratie</span><span class="mc-desc">Jouw uren & die van je team</span></span>
         </button>
-        <button class="module-card mc-extra" style="--d:230ms" onclick="openModule('extra')">
+        <button class="module-card mc-extra" onclick="openModule('extra')">
           <span class="pg-module-top">
-            <svg class="pg-module-art" viewBox="0 0 80 80" fill="none" aria-hidden="true"><rect x="10" y="8" width="27" height="34" rx="9" fill="currentColor" opacity=".6"/><rect x="43" y="8" width="27" height="21" rx="8" fill="currentColor" opacity=".18"/><rect x="10" y="48" width="27" height="20" rx="8" fill="currentColor" opacity=".2"/><rect x="43" y="35" width="27" height="33" rx="9" fill="currentColor" opacity=".35"/><path d="M18 31V22m6 9V17m6 14v-7" stroke="white" stroke-width="2" stroke-linecap="round" opacity=".8"/><circle cx="56.5" cy="51.5" r="7" stroke="currentColor" stroke-width="2"/></svg>
-            <svg class="pg-module-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg>
+            <svg class="pg-module-art" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="17" y="15" width="19" height="27" rx="5"/><rect x="44" y="15" width="19" height="17" rx="5"/><rect x="17" y="50" width="19" height="15" rx="5"/><rect x="44" y="40" width="19" height="25" rx="5"/></svg>
           </span>
           <span class="mc-text"><span class="mc-name">Dashboard</span><span class="mc-desc">Je bedrijf in één overzicht</span></span>
         </button>
@@ -5112,7 +5157,7 @@ html[data-theme] .weer-dag.vandaag .weer-dag-rain{color:var(--accent)!important}
         </button>
       </div>
     </div>
-    <div class="pg-home-bottom"><span>Purgato Cleaning</span><span>Jouw werkplek</span></div>
+    <div class="pg-home-bottom"><span>Purgato Cleaning</span></div>
     <span id="sm-p-cur" hidden></span><span id="sm-s-cur" hidden></span>
   </div>
 </div>
@@ -5261,7 +5306,7 @@ html[data-theme] .weer-dag.vandaag .weer-dag-rain{color:var(--accent)!important}
     <div class="tab" id="tab-week">
 <div class="pg-section-intro"><div class="pg-section-eyebrow">PLANNING</div><h1>De week vooruit.</h1><p>Je afspraken, dag voor dag.</p></div>
       <div class="b7" id="b7" style="display:none">
-        <div class="b7-title"><span class="b7-title-dot"></span>Volgende 7 dagen</div>
+        <div class="b7-title">Volgende 7 dagen</div>
         <div class="b7-items" id="b7-items"></div>
       </div>
       <div class="wk-nav">
@@ -5280,7 +5325,7 @@ html[data-theme] .weer-dag.vandaag .weer-dag-rain{color:var(--accent)!important}
 <div class="pg-section-intro"><div class="pg-section-eyebrow">GLASBEWASSING</div><h1>Grip op je omzet.</h1><p>Je klanten en prijzen bij elkaar.</p></div>
       <div class="omzet-shell">
         <div class="omzet-top">
-          <div class="omzet-eyebrow"><span class="omzet-eyebrow-dot"></span>Verwachte omzet</div>
+          <div class="omzet-eyebrow">Verwachte omzet</div>
           <div class="omzet-bedrag" id="omzet-bedrag">€ 0</div>
           <div class="omzet-sub-lbl">per jaar · op basis van huidige klanten &amp; prijzen</div>
           <div class="omzet-stats">
@@ -5910,29 +5955,29 @@ function wcBereken() {
       <div class="wc-res-sub">${urenWerk > 0 ? fEur(winstWerknemer/urenWerk)+'/uur' : '—'}</div>
     </div>
     <div class="wc-res-card ${cExtra}">
-      <div class="wc-res-label">Jouw ${urenExtra} extra uur${urenExtra !== 1 ? 'en' : ''}</div>
+      <div class="wc-res-label">Jouw ${urenExtra} extra uur</div>
       <div class="wc-res-bedrag">${urenExtra > 0 ? fEur(winstExtra) : '—'}</div>
       <div class="wc-res-sub">${urenExtra > 0 ? fEur(winstExtra/urenExtra)+'/uur (alleen IB)' : 'geen extra uren'}</div>
     </div>`;
 
   let rows = '';
-  rows += `<div class="wc-br-row"><span class="lbl">Omzet (${urenKlant} uur × €${klantprijs.toFixed(2)})</span><span class="val pos">${fEur(omzet, false)}</span></div>`;
+  rows += `<div class="wc-br-row"><span class="lbl">Omzet (${urenKlant} uur × €${klantprijs.toFixed(2).replace('.',',')})</span><span class="val pos">${fEur(omzet, false)}</span></div>`;
 
   if(wcMode === 'zwart'){
-    rows += `<div class="wc-br-row"><span class="lbl">Loon werknemer (${urenWerk} uur × €${loon.toFixed(2)})</span><span class="val neg">−${fEur(loonkosten, false)}</span></div>`;
+    rows += `<div class="wc-br-row"><span class="lbl">Loon werknemer (${urenWerk} uur × €${loon.toFixed(2).replace('.',',')})</span><span class="val neg">−${fEur(loonkosten, false)}</span></div>`;
     rows += `<div class="wc-br-row"><span class="lbl">= Netto na belasting ${belasting}% over omzet</span><span class="val neu">${fEur(omzet * factor, false)}</span></div>`;
     if(urenExtra > 0){
       rows += `<div class="wc-br-row"><span class="lbl">↑ waarvan ${urenExtra} extra uur (alleen IB)</span><span class="val pos">${fEur(winstExtra, false)}</span></div>`;
     }
   } else if(wcMode === 'zzp'){
-    rows += `<div class="wc-br-row"><span class="lbl">ZZP-factuur (${urenWerk} uur × €${loon.toFixed(2)})</span><span class="val neg">−${fEur(loonkosten, false)}</span></div>`;
+    rows += `<div class="wc-br-row"><span class="lbl">ZZP-factuur (${urenWerk} uur × €${loon.toFixed(2).replace('.',',')})</span><span class="val neg">−${fEur(loonkosten, false)}</span></div>`;
     rows += `<div class="wc-br-row"><span class="lbl">= Belastbare winst</span><span class="val neu">${fEur(omzet - loonkosten, false)}</span></div>`;
     rows += `<div class="wc-br-row"><span class="lbl">Belasting ${belasting}%</span><span class="val neg">−${fEur((omzet - loonkosten) * belasting/100, false)}</span></div>`;
     if(urenExtra > 0){
       rows += `<div class="wc-br-row"><span class="lbl">↑ waarvan ${urenExtra} extra uur (alleen IB)</span><span class="val pos">${fEur(winstExtra, false)}</span></div>`;
     }
   } else {
-    rows += `<div class="wc-br-row"><span class="lbl">Brutoloon (${urenWerk} uur × €${loon.toFixed(2)})</span><span class="val neg">−${fEur(loonkostenRaw, false)}</span></div>`;
+    rows += `<div class="wc-br-row"><span class="lbl">Brutoloon (${urenWerk} uur × €${loon.toFixed(2).replace('.',',')})</span><span class="val neg">−${fEur(loonkostenRaw, false)}</span></div>`;
     rows += `<div class="wc-br-row"><span class="lbl">Werkgeverslasten 44%</span><span class="val neg">−${fEur(loonkostenRaw * 0.44, false)}</span></div>`;
     rows += `<div class="wc-br-row"><span class="lbl">= Belastbare winst</span><span class="val neu">${fEur(omzet - loonkosten, false)}</span></div>`;
     rows += `<div class="wc-br-row"><span class="lbl">Belasting ${belasting}%</span><span class="val neg">−${fEur((omzet - loonkosten) * belasting/100, false)}</span></div>`;
@@ -6068,22 +6113,52 @@ window.addEventListener('popstate', function(e) {
 // UI-only enhancements: accessible controls, modal focus, headings and theme chrome.
 (() => {
   const page = document.getElementById('main-page');
+  const finishOpening=()=>document.documentElement.classList.remove('pg-opening');
+  const homeGrid=document.querySelector('#startscherm .sm-grid');
+  homeGrid.addEventListener('animationend',e=>{
+    if(e.target===homeGrid && e.animationName==='pg-home-open')finishOpening();
+  });
+  document.getElementById('startscherm').addEventListener('pointerdown',finishOpening,{once:true});
+  document.getElementById('startscherm').addEventListener('keydown',finishOpening,{once:true});
+  setTimeout(finishOpening,700);
   const originalOpen = window.openModule;
   const originalHome = window.naarStart;
   let launcher = null;
   window.openModule = function(mod) {
+    finishOpening();
     launcher = document.activeElement;
     originalOpen(mod);
     window.scrollTo({top:0,behavior:'instant'});
     document.body.dataset.pgModule = mod;
   };
   window.naarStart = function() {
+    finishOpening();
     originalHome();
     document.body.dataset.pgModule = 'home';
     if (launcher && launcher.isConnected) launcher.focus({preventScroll:true});
   };
-  const labels = { 'naarStart()':'Naar het beginscherm', 'toggleTheme()':'Wissel tussen licht en donker', 'deelWhatsApp()':'App delen' };
+  const labels = { 'naarStart()':'Naar het beginscherm', 'toggleTheme()':'Wissel tussen licht en donker', 'deelWhatsApp()':'App delen', 'nClose()':'Notitie sluiten', 'urpTerug()':'Terug naar personeel', 'dPlanPrev()':'Vorige week', 'dPlanNext()':'Volgende week' };
   function controls(root) {
+    root.querySelectorAll('[onclick]').forEach(el=>{
+      const label=labels[el.getAttribute('onclick')];
+      if(label)el.setAttribute('aria-label',label);
+    });
+    root.querySelectorAll('.wk-arrow').forEach(el=>{
+      const previous=el.querySelector('polyline')?.getAttribute('points')?.startsWith('15');
+      const period=el.getAttribute('onclick')?.startsWith('weekNav')?'week':'maand';
+      el.setAttribute('aria-label',(previous?'Vorige ':'Volgende ')+period);
+    });
+    root.querySelectorAll('.pg-field-label').forEach(label=>{
+      const field=label.nextElementSibling;
+      if(field?.matches('input,select,textarea'))field.setAttribute('aria-label',label.textContent.trim());
+    });
+    root.querySelectorAll('[id^="dss-"]').forEach(el=>{
+      const parts=el.id.split('-'),name={d:'Dag',f:'Frequentie',h:'Uren'}[parts[1]];
+      if(name)el.setAttribute('aria-label',name+' planningregel '+(Number(parts[2])+1));
+    });
+    root.querySelectorAll('[onclick^="dPickColor("]').forEach((el,i)=>el.setAttribute('aria-label','Kleur '+(i+1)+' kiezen'));
+    root.querySelectorAll('[onclick^="dBRemSched("]').forEach(el=>el.setAttribute('aria-label','Planningregel verwijderen'));
+    root.querySelectorAll('.pitem .pinput').forEach(el=>el.setAttribute('aria-label','Prijs voor '+el.closest('.pitem').querySelector('.pnaam').textContent.trim()));
     root.querySelectorAll('.b-loc').forEach(el=>el.setAttribute('aria-label','Adres openen in Maps'));
     root.querySelectorAll('.b-del').forEach(el=>el.setAttribute('aria-label','Klant verwijderen'));
     const nodes = root.querySelectorAll('[onclick]:not(button):not(a):not(input):not(select):not(textarea)');
@@ -6123,9 +6198,13 @@ window.addEventListener('popstate', function(e) {
   const observer=new MutationObserver(() => {
     if(queued) return;
     queued=true;
-    requestAnimationFrame(() => {queued=false;controls(page);});
+    requestAnimationFrame(() => {
+      queued=false;controls(page);
+      document.querySelectorAll('body>.nav,#overlay,#n-overlay,#ui-picker-ov').forEach(controls);
+    });
   });
   observer.observe(page,{childList:true,subtree:true});
+  document.querySelectorAll('#overlay,#n-overlay,#ui-picker-ov').forEach(el=>observer.observe(el,{childList:true,subtree:true}));
   for(const nav of document.querySelectorAll('body>.nav')) {
     nav.setAttribute('aria-label','Navigatie binnen module');
     nav.addEventListener('click',() => {controls(nav);window.scrollTo({top:0,behavior:'instant'});});
@@ -6911,7 +6990,7 @@ window.sTab=function(tab){
   document.getElementById('s-title').textContent=tab==='gedaan'?'Gedaan!':tab==='aanpassen'?'Aanpassen':'Geschiedenis';
   if(tab==='hist'){const x=kl.find(x=>x.id===sId);const h=x?.historie||[];const el=document.getElementById('hist-list');
     if(!h.length){el.innerHTML='<div style="text-align:center;padding:18px;color:var(--text3);font-size:0.78rem;">Nog geen geschiedenis</div>';return;}
-    el.innerHTML=[...h].reverse().map(d=>{const dt=new Date(d);const diff=Math.round((new Date()-dt)/86400000);const ago=diff===0?'vandaag':diff===1?'gisteren':`${diff} dagen geleden`;return`<div class="hi"><div class="hi-dot"></div><div class="hi-d">${dt.toLocaleDateString('nl-NL',{day:'numeric',month:'long',year:'numeric'})}</div><div class="hi-ago">${ago}</div></div>`;}).join('');
+    el.innerHTML=[...h].reverse().map(d=>{const dt=new Date(d);const diff=Math.round((new Date()-dt)/86400000);const ago=diff===0?'vandaag':diff===1?'gisteren':`${diff} dagen geleden`;return`<div class="hi"><div class="hi-d">${dt.toLocaleDateString('nl-NL',{day:'numeric',month:'long',year:'numeric'})}</div><div class="hi-ago">${ago}</div></div>`;}).join('');
   }
 }
 window.updateRes=function(){const x=kl.find(x=>x.id===sId);if(!x)return;const d=document.getElementById('s-datum-gedaan').value;if(!d)return;document.getElementById('s-result').textContent=fL(vD(d,x.freq));}
@@ -7010,47 +7089,6 @@ function showToast(msg) {
   }
   document.addEventListener('touchend',    _pop, { passive: true });
   document.addEventListener('touchcancel', () => { if(_el){ _el.classList.remove('tpop'); _el=null; } }, { passive: true });
-})();
-
-// ── Voorkom inzoomen (pinch, dubbeltik, Ctrl+wiel) ──
-(() => {
-  // iOS Safari: gesture events (pinch zoom)
-  document.addEventListener('gesturestart', e => e.preventDefault());
-  document.addEventListener('gesturechange', e => e.preventDefault());
-  document.addEventListener('gestureend', e => e.preventDefault());
-
-  // Android Chrome / iOS: pinch via 2-vinger touch
-  document.addEventListener('touchmove', e => {
-    if (e.touches.length > 1) e.preventDefault();
-  }, { passive: false });
-
-  // Dubbeltik zoom op iOS.
-  // BELANGRIJK: alleen blokkeren bij twee tikken kort na elkaar op ONGEVEER DEZELFDE PLEK.
-  // Zonder die positiecheck werd ook een gewone tik vlak na het scrollen geannuleerd
-  // (scrollen eindigt namelijk óók met een touchend) — knoppen leken dan niet te werken.
-  let _lastTap = 0, _lastTapX = -999, _lastTapY = -999;
-  document.addEventListener('touchend', e => {
-    const nu = Date.now();
-    const t = e.changedTouches && e.changedTouches[0];
-    const x = t ? t.clientX : -999;
-    const y = t ? t.clientY : -999;
-    const zelfdePlek = Math.abs(x - _lastTapX) < 34 && Math.abs(y - _lastTapY) < 34;
-    // Nooit blokkeren op knoppen/velden — die hebben touch-action:manipulation
-    const opControl = e.target && e.target.closest &&
-      e.target.closest('button, a, input, textarea, select, .module-card, .ur-dag, .kkaart, .ui-picker-item');
-    if (nu - _lastTap < 350 && zelfdePlek && !opControl) e.preventDefault();
-    _lastTap = nu; _lastTapX = x; _lastTapY = y;
-  }, { passive: false });
-
-  // Desktop: Ctrl/Cmd + scroll-wiel zoom
-  document.addEventListener('wheel', e => {
-    if (e.ctrlKey || e.metaKey) e.preventDefault();
-  }, { passive: false });
-
-  // Desktop: Ctrl/Cmd + / - / 0 toetsen
-  document.addEventListener('keydown', e => {
-    if ((e.ctrlKey || e.metaKey) && ['+','-','=','0'].includes(e.key)) e.preventDefault();
-  });
 })();
 
 // ════════════════════════════════
@@ -10418,7 +10456,7 @@ function _pgPdfForm(){
     '<div class="pg-export-body" id="pg-pdf-settings"><fieldset class="pg-export-section"><legend>1. Kies de periode</legend><div class="pg-export-dates"><label>Van<input type="date" id="pg-pdf-from" value="'+esc(state.from)+'"></label><label>Tot en met<input type="date" id="pg-pdf-to" value="'+esc(state.to)+'"></label></div></fieldset>'+
     '<fieldset class="pg-export-section"><legend>2. Kies klanten en klussen</legend><p class="pg-export-help">Vink een klant aan voor alle locaties met uren in deze periode. Je kunt ook losse locaties kiezen. Je selectie blijft bewaard als je de periode of medewerkers verandert.</p><div class="pg-export-select-actions"><button data-pdf-action="all">Alles selecteren</button><button data-pdf-action="none">Selectie wissen</button></div><div id="pg-pdf-jobs" class="pg-export-jobs"></div></fieldset>'+
     '<details class="pg-export-people"><summary>Medewerkers kiezen <span id="pg-pdf-people-count"></span></summary><p class="pg-export-help">Bepaal wiens factuururen meetellen.</p><div class="pg-export-person-list">'+state.sources.map(p=>'<label class="pg-export-check"><input type="checkbox" data-pdf-person value="'+esc(p.id)+'" '+(state.people.has(p.id)?'checked':'')+'><span>'+esc(p.label || p.name)+'</span></label>').join('')+'</div></details>'+
-    '<fieldset class="pg-export-section pg-export-options"><legend>3. Vermelding op de PDF</legend><label class="pg-export-check"><input type="checkbox" id="pg-pdf-names" '+(state.showPeople?'checked':'')+'><span>Namen van medewerkers tonen</span></label><label class="pg-export-field">Factuurreferentie <span>(optioneel)</span><input type="text" id="pg-pdf-reference" maxlength="120" placeholder="Bijvoorbeeld 2026-042" value="'+esc(state.reference)+'"></label><p class="pg-export-help">Alleen factuururen. Bedragen, betaalde personeelsuren, kilometers en interne notities staan niet op deze PDF.</p></fieldset></div>'+
+    '<fieldset class="pg-export-section pg-export-options"><legend>3. Vermelding op de PDF</legend><label class="pg-export-check"><input type="checkbox" id="pg-pdf-names" aria-describedby="pg-pdf-names-help" '+(state.showPeople?'checked':'')+'><span>Namen van medewerkers tonen</span></label><p class="pg-export-help" id="pg-pdf-names-help">Uit voor je klant, aan voor je eigen administratie. De uren van alle geselecteerde medewerkers blijven in beide gevallen meetellen.</p><label class="pg-export-field">Factuurreferentie <span>(optioneel)</span><input type="text" id="pg-pdf-reference" maxlength="120" placeholder="Bijvoorbeeld 2026-042" value="'+esc(state.reference)+'"></label><p class="pg-export-help">Alleen factuururen. Bedragen, betaalde personeelsuren, kilometers en interne notities staan niet op deze PDF.</p></fieldset></div>'+
     '<div id="pg-pdf-preview" class="pg-export-preview" hidden></div><footer class="pg-export-footer"><p id="pg-pdf-status" role="status" aria-live="polite"></p><a id="pg-pdf-open" class="pg-pdf-open" target="_blank" rel="noopener" hidden>PDF openen</a><p id="pg-pdf-error" class="pg-export-error" role="alert" hidden></p><div class="pg-export-buttons"><button class="pg-export-secondary" id="pg-pdf-edit" data-pdf-action="edit" hidden>Selectie aanpassen</button><button class="pg-export-primary" id="pg-pdf-preview-btn" data-pdf-action="preview" disabled>Voorbeeld bekijken</button><button class="pg-export-primary" id="pg-pdf-download" data-pdf-action="download" hidden>PDF downloaden</button></div></footer>';
   _pgPdfRecollect();
 }
@@ -11337,14 +11375,14 @@ function _dRenderDashboard(){
   const totalHrs=_DC.reduce((s,c)=>s+_dCalcHrs(c),0);
   const sorted=[..._DC].sort((a,b)=>_dCalcRev(b)-_dCalcRev(a));
   const kpis=[
-    {label:"Maandomzet",val:`€${totalRev.toLocaleString('nl')}`,color:"#6EE7B7"},
-    {label:"Uren/maand",val:`${totalHrs}u`,color:"#93C5FD"},
+    {label:"Verwachte maandomzet",val:`€${totalRev.toLocaleString('nl')}`,color:"#6EE7B7"},
+    {label:"Geplande uren/maand",val:`${totalHrs}u`,color:"#93C5FD"},
     {label:"Klanten",val:_DC.length,color:"#FCA5A5"},
     {label:"Team",val:_DE.length-1,color:"#FDE68A"},
   ];
   const kpiHtml=kpis.map(k=>`<div class="d-card d-kpi"><div class="d-kpi-orb" style="background:${k.color}18"></div><div class="d-kpi-val">${k.val}</div><div class="d-kpi-lbl">${k.label}</div></div>`).join('');
   const revHtml=sorted.map(c=>{const rev=_dCalcRev(c);const pct=Math.round(rev/totalRev*100);return `<div class="d-rev-row"><div class="d-rev-top"><div class="d-rev-name"><span class="d-dot" style="background:${c.color}"></span>${c.name}</div><span style="font-size:13px;font-weight:700;color:${c.color}">€${rev.toLocaleString('nl')}</span></div><div class="d-bar-wrap"><div class="d-bar-fill" style="width:${pct}%;background:${c.color}"></div></div></div>`;}).join('');
-  const qnav=[{label:"Klanten",page:"customers",color:"#93C5FD"},{label:"Planning",page:"planning",color:"#6EE7B7"},{label:"Onderhoud",page:"maintenance",color:"#FDE68A"},{label:"Analyse",page:"analytics",color:"#C4B5FD"}].map(a=>`<button class="d-qbtn" style="background:${a.color}15;border:1px solid ${a.color}30;color:var(--text)" onclick="dNav('${a.page}')"><span style="color:${a.color}">●</span> ${a.label}</button>`).join('');
+  const qnav=[{label:"Klanten",page:"customers",color:"#93C5FD"},{label:"Planning",page:"planning",color:"#6EE7B7"},{label:"Onderhoud",page:"maintenance",color:"#FDE68A"},{label:"Analyse",page:"analytics",color:"#C4B5FD"}].map(a=>`<button class="d-qbtn" style="background:${a.color}15;border:1px solid ${a.color}30;color:var(--text)" onclick="dNav('${a.page}')">${a.label}</button>`).join('');
   return `<div class="d-hdr"><div><div class="d-hdr-sub">Bedrijfsoverzicht</div><h1 class="d-hdr-title">Dashboard</h1></div><div class="d-avatar">S</div></div><div class="d-grid-2" style="margin-bottom:14px">${kpiHtml}</div>${_dCard(`${_dST('Omzet per klant')}<div>${revHtml}</div>`,'margin-bottom:14px')}<div class="d-grid-2">${qnav}</div>`;
 }
 
@@ -11373,7 +11411,7 @@ function _dRenderEmployees(){
   const ownerHrs=Math.round(totalHrs*0.35);const staffHrs=totalHrs-ownerHrs;
   const pct=Math.round(staffHrs/totalHrs*100);const ok=pct>=75;const col=ok?'#6EE7B7':'#FCA5A5';
   const teamHtml=_DE.map(e=>{const hrs=e.isOwner?ownerHrs:Math.round(staffHrs/(_DE.length-1));return `<div class="d-card d-emp-row"><div class="d-emp-avatar" style="background:${e.color}22;border:2px solid ${e.color};color:${e.color}">${e.name[0]}</div><div style="flex:1"><div style="font-weight:700;font-size:14px">${e.name}</div><div style="font-size:12px;color:var(--text3)">${e.isOwner?'Eigenaar':'Medewerker'}</div></div>${_dBadge(hrs+'u/mnd',e.color)}</div>`;}).join('');
-  return `<div class="d-hdr"><h1 class="d-hdr-title" style="margin:0">Medewerkers</h1></div><div class="d-card" style="background:${ok?'rgba(110,231,183,0.07)':'rgba(252,165,165,0.07)'};border-color:${ok?'rgba(110,231,183,0.2)':'rgba(252,165,165,0.2)'};margin-bottom:14px">${_dST('Schaaldoel — personeel vs eigenaar')}<div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:14px">Personeel aandeel</span><span style="font-weight:800;font-size:18px;color:${col}">${pct}%</span></div><div class="d-bar-wrap"><div class="d-bar-fill" style="width:${pct}%;background:${col}"></div></div><div style="font-size:12px;color:var(--text3);margin-top:6px">Doel: ≥ 75% via personeel</div></div><div class="d-grid-2" style="margin-bottom:14px">${_dCard(`<div class="d-kpi-lbl2">Personeel/mnd</div><div style="font-size:22px;font-weight:800;color:#6EE7B7">${staffHrs}u</div>`)} ${_dCard(`<div class="d-kpi-lbl2">Eigenaar/mnd</div><div style="font-size:22px;font-weight:800;color:#FCA5A5">${ownerHrs}u</div>`)}</div>${_dST('Team')}<div style="display:flex;flex-direction:column;gap:8px">${teamHtml}</div>`;
+  return `<div class="d-hdr"><h1 class="d-hdr-title" style="margin:0">Medewerkers</h1></div><p class="pg-dashboard-note">Dit is een schatting op basis van de planning: 35% voor de eigenaar en 65% gelijk verdeeld over medewerkers. Je werkelijk geregistreerde uren vind je bij Urenregistratie.</p><div class="d-card" style="background:${ok?'rgba(110,231,183,0.07)':'rgba(252,165,165,0.07)'};border-color:${ok?'rgba(110,231,183,0.2)':'rgba(252,165,165,0.2)'};margin-bottom:14px">${_dST('Schaaldoel — personeel vs eigenaar')}<div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:14px">Personeel aandeel</span><span style="font-weight:800;font-size:18px;color:${col}">${pct}%</span></div><div class="d-bar-wrap"><div class="d-bar-fill" style="width:${pct}%;background:${col}"></div></div><div style="font-size:12px;color:var(--text3);margin-top:6px">Doel: ≥ 75% via personeel</div></div><div class="d-grid-2" style="margin-bottom:14px">${_dCard(`<div class="d-kpi-lbl2">Personeel/mnd</div><div style="font-size:22px;font-weight:800;color:#6EE7B7">${staffHrs}u</div>`)} ${_dCard(`<div class="d-kpi-lbl2">Eigenaar/mnd</div><div style="font-size:22px;font-weight:800;color:#FCA5A5">${ownerHrs}u</div>`)}</div>${_dST('Team')}<div style="display:flex;flex-direction:column;gap:8px">${teamHtml}</div>`;
 }
 
 function _dRenderAnalytics(){
@@ -11525,7 +11563,7 @@ function _dStartDashListener(){
 }
 
 function _dFld(){return `background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:0.84rem;font-weight:500;color:var(--text);width:100%;outline:none;box-sizing:border-box`;}
-function _dLbl(t){return `<div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-bottom:4px;margin-top:14px">${t}</div>`;}
+function _dLbl(t){return `<div class="pg-field-label" style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-bottom:4px;margin-top:14px">${t}</div>`;}
 function _dColorPicker(sel){return _DCOLORS.map(c=>`<div onclick="dPickColor('${c}')" id="dcp-${c.slice(1)}" style="width:26px;height:26px;border-radius:50%;background:${c};cursor:pointer;border:3px solid ${sel===c?'var(--text)':'transparent'};box-sizing:border-box;flex-shrink:0"></div>`).join('');}
 
 function _dSchedRowHtml(s,i){
@@ -11542,7 +11580,7 @@ function _dRenderBeheer(){
   const pills=['klanten','employees','taken'].map(s=>`<button onclick="dBSec('${s}')" style="padding:6px 14px;border-radius:16px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${_dBeheerSec===s?'var(--accent)':'var(--surface2)'};border:1px solid ${_dBeheerSec===s?'var(--accent)':'var(--border)'};color:${_dBeheerSec===s?'#fff':'var(--text3)'}">${{klanten:'Klanten',employees:'Medewerkers',taken:'Taken'}[s]}</button>`).join('');
   let content='';
   if(_dBeheerSec==='klanten'){
-    content=_DC.map(c=>`<div class="d-card" style="display:flex;align-items:center;gap:10px;padding:12px 14px;margin-bottom:8px;border-left:3px solid ${c.color}"><div style="flex:1"><div style="font-weight:700;font-size:14px">${c.name}</div><div style="font-size:12px;color:var(--text3);margin-top:2px">${c.addresses.length} adres · €${_dCalcRev(c)}/mnd</div></div><button onclick="dBEdit('customer',${c.id})" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:var(--text)">Bewerk</button></div>`).join('')
+    content=_DC.map(c=>`<div class="d-card" style="display:flex;align-items:center;gap:10px;padding:12px 14px;margin-bottom:8px;border-left:3px solid ${c.color}"><div style="flex:1"><div style="font-weight:700;font-size:14px">${c.name}</div><div style="font-size:12px;color:var(--text3);margin-top:2px">${c.addresses.length} ${c.addresses.length===1?'adres':'adressen'} · €${_dCalcRev(c)}/mnd</div></div><button onclick="dBEdit('customer',${c.id})" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:var(--text)">Bewerk</button></div>`).join('')
     +`<button onclick="dBNew('customer')" style="width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;margin-top:4px">+ Nieuwe klant</button>`;
   } else if(_dBeheerSec==='employees'){
     content=_DE.map(e=>`<div class="d-card d-emp-row"><div class="d-emp-avatar" style="background:${e.color}22;border:2px solid ${e.color};color:${e.color};width:36px;height:36px;font-size:14px">${e.name[0]}</div><div style="flex:1"><div style="font-weight:700;font-size:14px">${e.name}</div><div style="font-size:12px;color:var(--text3)">${e.isOwner?'Eigenaar':'Medewerker'}</div></div><button onclick="dBEdit('employee',${e.id})" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:var(--text)">Bewerk</button></div>`).join('')
@@ -12060,7 +12098,7 @@ function _wUurStrip(){
     const rain=_wData.hourly.precipitation_probability[i];
     const temp=Math.round(_wData.hourly.temperature_2m[i]);
     const [ic]=_wCode(_wData.hourly.weathercode[i]);
-    const rc=rain>60?'#dc2626':rain>30?'#d97706':'#16a34a';
+    const rc=rain>60?'var(--urgent)':rain>30?'var(--soon)':'var(--ok)';
     const isNu=items.length===0;
     const lbl=isNu?'Nu':`${String(h).padStart(2,'0')}:00`;
     items.push(`<div class="uur-dag${isNu?' nu':''}">
@@ -12099,7 +12137,7 @@ function _wRender(){
     const min=Math.round(d.temperature_2m_min[i]);
     const rain=d.precipitation_probability_max[i];
     const [ic]=_wCode(d.weathercode[i]);
-    const rc=rain>60?'#dc2626':rain>30?'#d97706':'#16a34a';
+    const rc=rain>60?'var(--urgent)':rain>30?'var(--soon)':'var(--ok)';
     return`<div class="weer-dag${i===0?' vandaag':''}">
       <div class="weer-dag-naam">${naam}</div>
       <div class="weer-dag-ic">${ic}</div>
