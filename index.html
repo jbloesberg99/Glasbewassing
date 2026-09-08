@@ -4878,6 +4878,8 @@ html .b-del{color:var(--urgent)!important;background:transparent!important}
 .undo,.s-toast{visibility:hidden;pointer-events:none}
 .undo.show,.s-toast.show{visibility:visible;pointer-events:auto}
 .s-toast{bottom:108px!important;background:var(--text)!important;color:var(--bg)!important;border:0!important;box-shadow:var(--shadow2)!important;border-radius:17px!important}
+.s-toast{width:max-content;max-width:calc(100vw - 32px);white-space:normal!important}
+.s-toast-ic{flex-shrink:0}
 .n-fab:not(.visible),.ui-stickybar:not(.show),.ur-undo-fab:not(.show),.ui-todayfab:not(.show){visibility:hidden}
 .d-kpi-orb{display:none}.d-kpi-val{margin-top:8px!important;font-size:29px!important}
 .d-st{text-transform:none!important;margin-top:0!important;margin-bottom:18px!important}
@@ -4967,7 +4969,10 @@ input,textarea{caret-color:var(--accent)}
 .tt-lbl{font-size:10px!important}
 .ur-dag.weekend:not(.today) .ur-dag-naam{color:var(--text2)!important}
 .ur-dag.today .ur-dag-pill,.klus-tarief-btn.on{color:var(--pg-inverse)!important}
-.klus-sub-x{color:var(--urgent)!important;background:var(--urgent-s)!important}
+.klus-sub-chip{max-width:100%;padding:3px 4px 3px 12px;min-height:44px;overflow-wrap:anywhere}
+.klus-sub-x{width:44px;height:44px;min-width:44px;flex:0 0 44px;font-size:14px;color:var(--urgent)!important;background:var(--urgent-s)!important}
+.klus-sub-add{min-height:44px}
+.klus-sub-x:disabled,.klus-sub-add:disabled{opacity:.55;cursor:wait}
 .ur-rij-uren-pill .pay{color:var(--urgent)!important}
 #extra-list .d-badge{background:var(--surface2)!important;color:var(--text)!important;border-color:var(--border2)!important}
 #extra-list [style*="color:"]{color:var(--text)!important}
@@ -5006,6 +5011,10 @@ html.pg-opening :is(.pg-home-intro,.sm-grid,.pg-home-bottom){animation:pg-home-o
 .urp-hdr{position:relative;justify-content:center;min-height:48px}
 .urp-hdr-titel{text-align:center}
 .urp-hdr>.urp-add{position:absolute;right:0}
+@media(max-width:600px){
+ .urp-hdr{flex-direction:column;gap:12px}
+ .urp-hdr>.urp-add{position:static}
+}
 .ur-pdf-btn{flex-direction:column;gap:5px}
 .pg-pdf-entry-title{display:flex;align-items:center;justify-content:center;gap:9px}
 .pg-pdf-entry-sub{font-size:11px;font-weight:450;opacity:.82}
@@ -7064,9 +7073,11 @@ function haptic(ms = 10) {
 
 // ── Success toast ──
 let _toastT = null;
-function showToast(msg) {
+function showToast(msg,kind='success') {
   const el = document.getElementById('s-toast');
   document.getElementById('s-toast-t').textContent = msg;
+  el.querySelector('.s-toast-ic').textContent = kind==='error'?'!':'✓';
+  el.setAttribute('role',kind==='error'?'alert':'status');
   el.classList.add('show');
   clearTimeout(_toastT);
   _toastT = setTimeout(() => el.classList.remove('show'), 2400);
@@ -7106,7 +7117,7 @@ let _urRows = {};           // '${prefix}|${iso}' -> [{k,s,u}] live bewerkstaat
 
 function _urActiveInside(id){
   const c = document.getElementById(id);
-  return !!(c && c.contains(document.activeElement));
+  return !!(c && c.contains(document.activeElement) && document.activeElement.matches('input,textarea,select,[contenteditable="true"]'));
 }
 
 window.startUrenListener = function() {
@@ -7250,7 +7261,7 @@ function _urFmtDate(iso) {
 }
 
 function _urEsc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
 // ════ Robuust numeriek parsen (accepteert "4,5" én "4.5") ════
@@ -9915,7 +9926,7 @@ function _renderKlussen(){
     const subsGesorteerd = (k.subs || []).map((s, i) => ({ s, i }))
       .sort((a, b) => String(a.s).localeCompare(String(b.s), 'nl', {numeric:true, sensitivity:'base'}));
     const chips = subsGesorteerd.map(({s, i}) =>
-      `<span class="klus-sub-chip">${_urEsc(s)}<button class="klus-sub-x" onclick="klusSubVerwijderen('${k.id}',${i})" title="Locatie verwijderen">✕</button></span>`
+      `<span class="klus-sub-chip">${_urEsc(s)}<button class="klus-sub-x" type="button" data-location="${_urEsc(s)}" onclick="klusSubVerwijderen('${k.id}',this.dataset.location)" title="Locatie verwijderen" aria-label="Locatie ${_urEsc(s)} verwijderen">✕</button></span>`
     ).join('');
     const entries = _urEntriesVoorKlus(k.id);
     const totKlus = entries.reduce((s,e) => s + e.uren, 0);
@@ -10040,26 +10051,6 @@ window.klusToevoegen = function(){
   if(inp) inp.focus();
 };
 
-window.klusToevoegenOk = async function(){
-  const inp = document.getElementById('klus-add-in');
-  const naam = (inp ? inp.value : '').trim();
-  if(!naam){
-    const row = document.getElementById('klus-add-row');
-    if(row) row.classList.remove('open');
-    return;
-  }
-  const id = String(Date.now()*100 + Math.floor(Math.random()*100));
-  // Lokaal direct toevoegen zodat de UI meteen bijwerkt
-  _urKlussen.push({ id, naam, subs: [] });
-  _urKlussen.sort((a,b) => a.naam.localeCompare(b.naam,'nl'));
-  _renderKlussen();
-  haptic(15);
-  showToast(naam + ' toegevoegd');
-  try{
-    await setDoc(doc(klussenCol, id), { naam, subs: [], createdAt: Date.now() });
-  }catch(e){ console.error('klus add:', e); }
-};
-
 // ═══ Klus-tarief handlers (uur vs maand) ═══
 // Bouwt alleen de inner-HTML van de tarief-sectie — zodat we surgical kunnen updaten
 function _urKlusTariefInnerHtml(k){
@@ -10136,15 +10127,47 @@ window.klusNaamWijzig = function(id, val){
   }, 800);
 };
 
-window.klusVerwijderen = async function(id){
-  const k = _urKlussen.find(x => x.id === id);
-  if(!k) return;
-  if(!confirm(`"${k.naam}" verwijderen uit de klussenlijst?\n\nReeds ingevulde uren blijven gewoon staan.`)) return;
+let _pgKlusAdding=false;
+window.klusToevoegenOk = async function(){
+  if(_pgKlusAdding)return;
+  const inp=document.getElementById('klus-add-in');
+  const naam=(inp?.value||'').trim();
+  if(!naam){inp?.focus();return;}
+  _pgKlusAdding=true;
+  const id=String(Date.now()*100+Math.floor(Math.random()*100));
   try{
-    await deleteDoc(doc(klussenCol, id));
+    await setDoc(doc(klussenCol,id),{naam,subs:[],createdAt:Date.now()});
+    // The listener may already have inserted the confirmed record.
+    if(!_urKlussen.some(k=>k.id===id))_urKlussen.push({id,naam,subs:[]});
+    _urKlussen.sort((a,b)=>a.naam.localeCompare(b.naam,'nl'));
+    if(_urView==='klussen')_renderKlussen();
+    haptic(15);
+    showToast(naam+' toegevoegd');
+  }catch(e){
+    console.error('Klus toevoegen:',e);
+    showToast('Klus niet opgeslagen. Probeer opnieuw.','error');
+  }finally{_pgKlusAdding=false;}
+};
+const _pgKlusDeleting=new Set();
+window.klusVerwijderen = async function(id){
+  const k=_urKlussen.find(x=>x.id===id);
+  if(!k||_pgKlusDeleting.has(id))return;
+  if(!confirm(`"${k.naam}" verwijderen uit de klussenlijst?\n\nReeds ingevulde uren blijven gewoon staan.`))return;
+  _pgKlusDeleting.add(id);
+  // A pending rename or price save must not recreate the deleted document.
+  clearTimeout(_klusNaamTimers[id]);
+  clearTimeout(_klusPrijsTimers['u-'+id]);
+  clearTimeout(_klusPrijsTimers['m-'+id]);
+  try{
+    await deleteDoc(doc(klussenCol,id));
+    _urKlussen=_urKlussen.filter(x=>x.id!==id);
+    if(_urView==='klussen')_renderKlussen();
     haptic(20);
-    showToast(k.naam + ' verwijderd');
-  }catch(e){ console.error('klus del:', e); }
+    showToast(k.naam+' verwijderd');
+  }catch(e){
+    console.error('Klus verwijderen:',e);
+    showToast('Klus niet verwijderd. Probeer opnieuw.','error');
+  }finally{_pgKlusDeleting.delete(id);}
 };
 
 window.klusSubKlik = function(id){
@@ -10162,28 +10185,53 @@ window.klusSubKlik = function(id){
   }
 };
 
-window.klusSubOk = async function(id){
-  const k = _urKlussen.find(x => x.id === id);
-  const inp = document.getElementById('klus-sub-in-' + id);
-  const naam = (inp ? inp.value : '').trim();
-  if(!k || !naam){ _renderKlussen(); return; }
-  k.subs = [...k.subs, naam]; // lokaal direct bijwerken
-  _renderKlussen();
-  haptic(10);
+// Location mutations use the location name, not its changing position in the list.
+const _pgLocationPending = new Set();
+function _pgLocationBusy(id,busy){
+  const card=document.getElementById('klus-sub-btn-'+id)?.closest('.klus-card');
+  if(!card)return;
+  card.querySelectorAll('.klus-sub-x,.klus-sub-add').forEach(b=>b.disabled=busy);
+}
+async function _pgChangeLocation(id,naam,remove){
+  if(_pgLocationPending.has(id))return;
+  _pgLocationPending.add(id);
+  _pgLocationBusy(id,true);
   try{
-    await setDoc(doc(klussenCol, id), { subs: k.subs }, { merge: true });
-  }catch(e){ console.error('klus sub add:', e); }
+    const ref=doc(klussenCol,id);
+    const subs=await runTransaction(db,async tx=>{
+      const saved=await tx.get(ref);
+      if(!saved.exists())throw new Error('Deze klus bestaat niet meer.');
+      const current=Array.isArray(saved.data().subs)?saved.data().subs:[];
+      const next=remove?current.filter(s=>s!==naam):
+        current.some(s=>String(s).trim().toLocaleLowerCase('nl')===naam.toLocaleLowerCase('nl'))?current:[...current,naam];
+      tx.update(ref,{subs:next});
+      return next;
+    });
+    const k=_urKlussen.find(x=>x.id===id);
+    if(k)k.subs=subs;
+    if(_urView==='klussen')_renderKlussen();
+    haptic(10);
+    showToast(remove?'Locatie verwijderd · ingevulde uren blijven staan':'Locatie opgeslagen');
+  }catch(e){
+    console.error('Locatie opslaan:',e);
+    showToast(remove?'Locatie niet verwijderd. Probeer opnieuw.':'Locatie niet opgeslagen. Probeer opnieuw.','error');
+  }finally{
+    _pgLocationPending.delete(id);
+    _pgLocationBusy(id,false);
+  }
+}
+window.klusSubOk = async function(id){
+  const inp=document.getElementById('klus-sub-in-'+id);
+  const naam=(inp?.value||'').trim();
+  if(!naam){inp?.focus();return;}
+  if(!_urKlussen.some(k=>k.id===id))return;
+  return _pgChangeLocation(id,naam,false);
+};
+window.klusSubVerwijderen = async function(id,naam){
+  if(typeof naam!=='string'||!_urKlussen.some(k=>k.id===id))return;
+  return _pgChangeLocation(id,naam,true);
 };
 
-window.klusSubVerwijderen = async function(id, idx){
-  const k = _urKlussen.find(x => x.id === id);
-  if(!k) return;
-  const subs = k.subs.filter((_,i) => i !== idx);
-  try{
-    await setDoc(doc(klussenCol, id), { subs }, { merge: true });
-    haptic(10);
-  }catch(e){ console.error('klus sub del:', e); }
-};
 
 let _urAllesOpen = false;
 let _urKlusOpen = false;
@@ -10579,6 +10627,7 @@ window.urlMaandNext = function(){
 function _renderPersoneelLijst(){
   _urView = 'lijst';
   _urStaffSel = null;
+  for(const id of ['ui-stickybar','ui-todayfab'])document.getElementById(id)?.classList.remove('show');
   const el = document.getElementById('ur-personeel');
   if(!el) return;
 
@@ -11276,15 +11325,17 @@ function _urPtUpdateSub(id){
   if(subEl) subEl.textContent = sub;
 }
 
+const _urpNaamTimers = {};
 window.urpNaamWijzig = function(){
   const ta = document.getElementById('urp-naam-in');
   if(!ta || !_urStaffSel) return;
-  clearTimeout(_urpNaamTimer);
-  _urpNaamTimer = setTimeout(async () => {
-    const naam = ta.value.trim();
+  const staffId = _urStaffSel;
+  const naam = ta.value.trim();
+  clearTimeout(_urpNaamTimers[staffId]);
+  _urpNaamTimers[staffId] = setTimeout(async () => {
     if(!naam) return;
     try{
-      await setDoc(doc(personeelCol, _urStaffSel), { naam, updatedAt: Date.now() }, { merge: true });
+      await setDoc(doc(personeelCol, staffId), { naam, updatedAt: Date.now() }, { merge: true });
     }catch(e){ console.error('personeel naam:', e); }
   }, 800);
 };
