@@ -4785,8 +4785,10 @@ body>#nav-notes>.nav-item{flex-direction:row}
 .n-modal-title{font-size:26px!important}.n-modal-content{font-size:16px!important;line-height:1.8}
 .n-modal-save{background:var(--accent)!important;color:var(--pg-inverse)!important;box-shadow:none!important;border-radius:13px}
 .toast{bottom:108px!important;background:var(--text)!important;color:var(--bg)!important;box-shadow:var(--shadow2)!important;border:0!important;border-radius:18px!important}
-.undo{bottom:108px!important;border:0;border-radius:18px;box-shadow:var(--shadow2);padding:16px 20px;max-width:calc(100% - 32px)}
-.undo span{font-size:12px}.b-undo{min-height:36px;white-space:nowrap}
+.undo{bottom:108px!important;border:0;border-radius:18px;box-shadow:var(--shadow2);padding:16px 20px;width:min(520px,calc(100% - 32px));max-width:calc(100% - 32px);box-sizing:border-box}
+.undo span{font-size:12px;min-width:0;flex:1;white-space:normal;overflow-wrap:anywhere}.b-undo{min-height:44px;white-space:nowrap;flex-shrink:0}
+.ur-undo-fab{min-height:44px}
+.b-undo:disabled,.ur-undo-fab:disabled{opacity:.6;cursor:wait}
 
 @media(min-width:850px){
  #tab-klanten .list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
@@ -5130,9 +5132,52 @@ html.pg-boot-leaving #pg-boot{animation:pg-boot-out .28s ease-out both}
 @media(max-height:500px){#pg-boot{padding:24px}.pg-boot-mark{width:54px;height:62px;margin-bottom:18px}.pg-boot-identity{padding-bottom:18px}.pg-boot-wordmark{font-size:23px}}
 @media(prefers-reduced-motion:reduce){.pg-boot-identity,html.pg-boot-leaving #pg-boot{animation:none!important}}
 
+/* Date order is explicit, including on devices configured in English. */
+.pg-date-field{display:flex;position:relative;width:100%;min-width:0;align-items:center}
+.pg-date-field input[data-pg-date]{width:100%;min-width:0;min-height:50px;padding:12px 48px 12px 12px!important;margin:0;text-align:left;font-variant-numeric:tabular-nums;letter-spacing:.3px;border:1px solid var(--border2);border-radius:12px;background:var(--surface);color:var(--text)}
+.pg-date-field input::placeholder{color:var(--text3);opacity:1}
+.pg-date-field input[aria-invalid="true"]{border-color:var(--urgent)}
+.pg-date-open{position:absolute;right:3px;top:50%;transform:translateY(-50%);width:44px;height:44px;padding:11px;display:grid;place-items:center;border:0;border-radius:10px;background:transparent;color:var(--accent);cursor:pointer}
+.pg-date-open:active{transform:translateY(-50%) scale(.97)}
+.pg-date-open svg{width:22px;height:22px}
+.pg-calendar{margin:auto;padding:24px;width:min(384px,calc(100% - 24px));max-width:none;max-height:calc(100dvh - 32px);overflow:auto;box-sizing:border-box;border:1px solid var(--border2);border-radius:24px;background:var(--surface);color:var(--text);box-shadow:var(--shadow2)}
+.pg-calendar::backdrop{background:#0b1b1466}
+.pg-calendar-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.pg-calendar-heading p{margin:0 0 3px;font-size:12px;color:var(--text2)}
+.pg-calendar-heading h2{margin:0;font-size:22px;line-height:1.2;letter-spacing:-.5px;font-weight:650}
+.pg-calendar button{cursor:pointer;border:0;font:inherit;color:var(--text);background:transparent;display:grid;place-items:center;min-height:44px;border-radius:12px}
+.pg-calendar-heading button{width:44px;flex-shrink:0;background:var(--surface2);font-size:26px;font-weight:400}
+.pg-calendar-month{display:grid;grid-template-columns:40px minmax(0,1fr) 72px 40px;gap:4px;align-items:center;margin-bottom:16px}
+.pg-calendar-month button{font-size:27px}
+.pg-calendar-month select,.pg-calendar-month input{width:100%;min-width:0;padding:8px 4px;border:0;border-radius:8px;background:var(--surface2);color:var(--text);font:inherit;min-height:44px;box-sizing:border-box}
+.pg-calendar-week,.pg-calendar-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;text-align:center}
+.pg-calendar-week{font-size:11px;color:var(--text2);margin-bottom:8px}
+.pg-calendar-days button{font-size:15px;font-variant-numeric:tabular-nums;aspect-ratio:1;min-height:40px;position:relative}
+.pg-calendar-days button[aria-current="date"]{box-shadow:inset 0 0 0 1px var(--accent);color:var(--accent)}
+.pg-calendar-days button[aria-pressed="true"]{background:var(--accent);color:var(--pg-inverse);font-weight:700}
+.pg-calendar button:disabled{opacity:.3;cursor:default}
+.pg-calendar-footer{margin-top:16px;padding-top:12px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pg-calendar-footer span{font-size:11px;color:var(--text2)}
+.pg-calendar-footer button{padding:0 14px;background:var(--surface2);color:var(--accent);font-size:13px;font-weight:650}
+@media(max-width:380px){.pg-calendar{padding:16px}.pg-export-dates{grid-template-columns:1fr}}
+
+#undo,#ur-undo{display:none!important}
+.pg-history{position:fixed;left:max(16px,calc((100vw - 1008px)/2));bottom:max(104px,calc(env(safe-area-inset-bottom) + 94px));z-index:960;max-width:calc(100vw - 32px);display:flex;flex-direction:column;align-items:flex-start;gap:8px;pointer-events:none}
+.pg-history button{pointer-events:auto;border:1px solid var(--border2);background:var(--surface);color:var(--text);border-radius:17px;box-shadow:var(--shadow-md);cursor:pointer;font:inherit}
+#pg-history-button{display:grid;grid-template-columns:24px minmax(0,1fr) auto;align-items:center;column-gap:9px;text-align:left;padding:10px 14px;max-width:100%;min-height:52px}
+#pg-history-button svg{grid-row:1/3;width:21px;height:21px;color:var(--accent)}
+#pg-history-button strong{font-size:12px;line-height:1.4;font-weight:650}
+#pg-history-button small{grid-column:2;max-width:190px;font-size:10px;line-height:1.5;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pg-history-button span{grid-column:3;grid-row:1/3;min-width:24px;height:24px;padding:0 5px;border-radius:8px;background:var(--surface2);display:grid;place-items:center;font-size:11px;font-variant-numeric:tabular-nums}
+#pg-history-button:disabled{opacity:.7;cursor:wait}
+#pg-history-button[hidden],#pg-history-skip[hidden]{display:none}
+#pg-history-skip{font-size:11px;padding:10px 14px;min-height:44px}
+.n-modal{padding-bottom:180px}
+
 </style>
-<meta name="purgato-build" content="4bdac8d8a72d8f65"></head>
+<meta name="purgato-build" content="779c1415468d221e"></head>
 <body>
+<div class="pg-history"><button type="button" id="pg-history-button" onclick="pgHistoryUndo()" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 4-5 5 5 5M4 9h10a6 6 0 0 1 0 12"/></svg><strong>Ongedaan</strong><small></small><span>0</span></button><button type="button" id="pg-history-skip" onclick="pgHistorySkip()" hidden>Deze herstelstap overslaan</button></div>
 <div id="pg-boot" role="status" aria-live="polite" aria-label="Purgato wordt geopend">
   <div class="pg-boot-identity" aria-hidden="true">
     <svg class="pg-boot-mark" viewBox="0 0 40 46" fill="none"><path d="M7 40V7h14c9 0 14 5 14 13s-5 13-14 13h-6" stroke="currentColor" stroke-width="5.5" stroke-linecap="round"/><path d="M15 13v12h6c4 0 6-2 6-6s-2-6-6-6" fill="currentColor" opacity=".24"/></svg>
@@ -5364,7 +5409,7 @@ html.pg-boot-leaving #pg-boot{animation:pg-boot-out .28s ease-out both}
                 <option value="26">Elke 6 maanden</option>
               </select>
             </div>
-            <div class="f"><label>Volgende beurt</label><input type="date" id="n-datum"></div>
+            <div class="f"><label>Volgende beurt</label><input type="text" data-pg-date inputmode="numeric" placeholder="dd-mm-jjjj" autocomplete="off" maxlength="10" id="n-datum"></div>
           </div>
           <div class="f-row">
             <div class="f"><label>Plaats</label><input type="text" id="n-plaats" placeholder="Bijv. Enkhuizen"></div>
@@ -5719,7 +5764,7 @@ html.pg-boot-leaving #pg-boot{animation:pg-boot-out .28s ease-out both}
     </div>
     <div id="ss-gedaan">
       <span class="s-lbl">Wanneer gedaan?</span>
-      <input type="date" class="s-input" id="s-datum-gedaan" oninput="updateRes()">
+      <input type="text" data-pg-date inputmode="numeric" placeholder="dd-mm-jjjj" autocomplete="off" maxlength="10" class="s-input" id="s-datum-gedaan" oninput="updateRes()">
       <div class="result"><small>Volgende beurt wordt</small><strong id="s-result">—</strong></div>
     </div>
     <div id="ss-aanpassen" style="display:none">
@@ -5736,7 +5781,7 @@ html.pg-boot-leaving #pg-boot{animation:pg-boot-out .28s ease-out both}
         <option value="26">Elke 6 maanden</option>
       </select>
       <span class="s-lbl">Volgende beurt</span>
-      <input type="date" class="s-input" id="s-datum-volgende">
+      <input type="text" data-pg-date inputmode="numeric" placeholder="dd-mm-jjjj" autocomplete="off" maxlength="10" class="s-input" id="s-datum-volgende">
     </div>
     <div id="ss-hist" style="display:none"><div class="hist-list" id="hist-list"></div></div>
     <div class="s-btns" id="s-btns">
@@ -6554,10 +6599,276 @@ SOFTWARE.
 })(typeof window==='undefined'?globalThis:window);
 
 </script>
+<script>
+// The UI uses Dutch dates; the existing data model keeps YYYY-MM-DD.
+(function(root){
+  const pad=n=>String(n).padStart(2,'0');
+  const iso=(y,m,d)=>String(y).padStart(4,'0')+'-'+pad(m)+'-'+pad(d);
+  const days=(y,m)=>[31,(y%4===0 && (y%100!==0 || y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31][m-1]||0;
+  function parse(value){
+    let text=String(value||'').trim();
+    if(/^\d{8}$/.test(text))text=text.slice(0,2)+'-'+text.slice(2,4)+'-'+text.slice(4);
+    const match=/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/.exec(text);
+    if(!match)return '';
+    const [,d,m,y]=match.map(Number);
+    return y>=1 && y<=9999 && m>=1 && m<=12 && d>=1 && d<=days(y,m)?iso(y,m,d):'';
+  }
+  function format(value){
+    const match=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value||''));
+    return match?match[3]+'-'+match[2]+'-'+match[1]:'';
+  }
+  function allowed(value,min='',max=''){return !!value && (!min || value>=min) && (!max || value<=max);}
+  function set(id,value){
+    const input=document.getElementById(id);input.value=format(value);
+    input.setCustomValidity('');input.removeAttribute('aria-invalid');
+  }
+  function read(input,report=false){
+    if(typeof input==='string')input=document.getElementById(input);
+    const value=parse(input.value);
+    let error=!value?'Vul een geldige datum in als dd-mm-jjjj.':'';
+    if(value && input.min && value<input.min)error='Kies '+format(input.min)+' of later.';
+    if(value && input.max && value>input.max)error='Kies '+format(input.max)+' of eerder.';
+    input.setCustomValidity(error);
+    if(report && error)input.reportValidity();
+    return error?'':value;
+  }
+  root.PurgatoDates={parse,format,iso,days,allowed,read,set};
+})(globalThis);
+
+// A consistent calendar, independent of the browser's native date-field locale.
+(function(){
+  const D=window.PurgatoDates;
+  const months=['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+  const labels={'n-datum':'Volgende beurt','s-datum-gedaan':'Wanneer gedaan?','s-datum-volgende':'Volgende beurt','pg-pdf-from':'Van','pg-pdf-to':'Tot en met'};
+  let calendar,field,returnFocus,year,month;
+  const today=()=>{const n=new Date();return D.iso(n.getFullYear(),n.getMonth()+1,n.getDate());};
+  function init(){
+    document.querySelectorAll('input[data-pg-date]:not([data-pg-date-ready])').forEach(input=>{
+      input.dataset.pgDateReady='';
+      input.setAttribute('aria-label',labels[input.id]||'Datum');
+      const wrap=document.createElement('span');wrap.className='pg-date-field';
+      input.before(wrap);wrap.append(input);
+      const button=document.createElement('button');
+      button.type='button';button.className='pg-date-open';button.dataset.dateFor=input.id;
+      button.setAttribute('aria-label','Kalender openen: '+(labels[input.id]||'Datum'));
+      button.setAttribute('aria-haspopup','dialog');
+      button.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4m8-4v4M4 11h16m-11 4h2m2 0h2"/></svg>';
+      wrap.append(button);
+    });
+  }
+  function close(){if(calendar?.open)calendar.close();}
+  function moveMonth(step){
+    const index=year*12+month-1+step;
+    const nextYear=Math.floor(index/12);
+    if(nextYear<1 || nextYear>9999)return;
+    year=nextYear;month=index%12+1;render();
+  }
+  function choose(value){
+    if(!D.allowed(value,field.min,field.max))return;
+    field.value=D.format(value);field.setCustomValidity('');field.removeAttribute('aria-invalid');
+    field.dispatchEvent(new Event('input',{bubbles:true}));
+    field.dispatchEvent(new Event('change',{bubbles:true}));
+    close();
+  }
+  function render(focusDay){
+    const selected=D.parse(field.value),now=today();
+    const first=new Date(0);first.setUTCFullYear(year,month-1,1);first.setUTCHours(12,0,0,0);
+    const offset=(first.getUTCDay()+6)%7;
+    const last=D.days(year,month);
+    const tabDay=focusDay || (selected.startsWith(D.iso(year,month,1).slice(0,7))?Number(selected.slice(8)):1);
+    calendar.innerHTML='<header class="pg-calendar-heading"><div><p>Datum kiezen</p><h2 id="pg-calendar-title">'+labels[field.id]+'</h2></div><button type="button" data-calendar-close aria-label="Kalender sluiten">×</button></header>'+
+      '<div class="pg-calendar-month"><button type="button" data-month-step="-1" aria-label="Vorige maand" '+(year===1&&month===1?'disabled':'')+'>‹</button><select aria-label="Maand">'+months.map((m,i)=>'<option value="'+(i+1)+'" '+(month===i+1?'selected':'')+'>'+m+'</option>').join('')+'</select><input aria-label="Jaar" type="number" inputmode="numeric" min="1" max="9999" value="'+year+'"><button type="button" data-month-step="1" aria-label="Volgende maand" '+(year===9999&&month===12?'disabled':'')+'>›</button></div>'+
+      '<div class="pg-calendar-week" aria-hidden="true">'+['Ma','Di','Wo','Do','Vr','Za','Zo'].map(d=>'<span>'+d+'</span>').join('')+'</div>'+
+      '<div class="pg-calendar-days" role="group" aria-label="'+months[month-1]+' '+year+'">'+Array.from({length:offset},()=>'<span></span>').join('')+
+      Array.from({length:last},(_,i)=>{const date=D.iso(year,month,i+1);return '<button type="button" data-day="'+date+'" aria-label="'+(i+1)+' '+months[month-1]+' '+year+'" aria-pressed="'+(date===selected)+'" '+(date===now?'aria-current="date" ':'')+(D.allowed(date,field.min,field.max)?'':'disabled ')+ 'tabindex="'+(i+1===tabDay?'0':'-1')+'">'+(i+1)+'</button>';}).join('')+'</div>'+
+      '<footer class="pg-calendar-footer"><span>dag · maand · jaar</span><button type="button" data-calendar-today '+(D.allowed(now,field.min,field.max)?'':'disabled')+'>Vandaag</button></footer>';
+    // Ensure the day grid is reachable even when a date limit excludes day one.
+    if(!calendar.querySelector('[data-day][tabindex="0"]:not(:disabled)'))calendar.querySelector('[data-day]:not(:disabled)')?.setAttribute('tabindex','0');
+    if(focusDay)calendar.querySelector('[data-day][tabindex="0"]:not(:disabled)')?.focus();
+  }
+  function open(input,trigger){
+    window.pgHistoryBeginDate?.(input);
+    field=input;returnFocus=trigger;
+    const value=D.read(input)||today();[year,month]=value.split('-').map(Number);
+    if(!calendar){
+      calendar=document.createElement('dialog');calendar.className='pg-calendar';calendar.setAttribute('aria-labelledby','pg-calendar-title');document.body.append(calendar);
+      calendar.addEventListener('close',()=>{if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});});
+      calendar.addEventListener('click',e=>{
+        const b=e.target.closest('button');if(!b)return;
+        if(b.hasAttribute('data-calendar-close'))close();
+        if(b.hasAttribute('data-month-step')){const step=b.dataset.monthStep;moveMonth(Number(step));calendar.querySelector('[data-month-step="'+step+'"]')?.focus();}
+        if(b.dataset.day)choose(b.dataset.day);
+        if(b.hasAttribute('data-calendar-today'))choose(today());
+      });
+      calendar.addEventListener('change',e=>{
+        if(e.target.matches('select')){month=Number(e.target.value);render();calendar.querySelector('select').focus();}
+        if(e.target.matches('input')){const n=Number(e.target.value);if(Number.isInteger(n)&&n>=1&&n<=9999)year=n;render();calendar.querySelector('input').focus();}
+      });
+      calendar.addEventListener('input',e=>{
+        if(e.target.matches('input') && /^\d{4}$/.test(e.target.value) && Number(e.target.value)>0){
+          year=Number(e.target.value);render();calendar.querySelector('input').focus();
+        }
+      });
+      calendar.addEventListener('keydown',e=>{
+        if(!e.target.dataset.day)return;
+        const jumps={ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7};
+        if(!(e.key in jumps))return;
+        e.preventDefault();
+        const date=new Date(e.target.dataset.day+'T12:00:00Z');date.setUTCDate(date.getUTCDate()+jumps[e.key]);
+        const value=D.iso(date.getUTCFullYear(),date.getUTCMonth()+1,date.getUTCDate());
+        if(date.getUTCFullYear()<1||date.getUTCFullYear()>9999||!D.allowed(value,field.min,field.max))return;
+        year=date.getUTCFullYear();month=date.getUTCMonth()+1;render(date.getUTCDate());
+      });
+    }
+    render();calendar.showModal();calendar.querySelector('[data-day][tabindex="0"]:not(:disabled)')?.focus();
+  }
+  document.addEventListener('click',e=>{const b=e.target.closest('[data-date-for]');if(b)open(document.getElementById(b.dataset.dateFor),b);});
+  document.addEventListener('input',e=>{if(e.target.matches('[data-pg-date]')){D.read(e.target);e.target.removeAttribute('aria-invalid');}});
+  function finishDate(e){
+    const input=e.target;if(!input.matches('[data-pg-date]'))return;
+    const value=D.read(input);if(value)input.value=D.format(value);
+    input.setAttribute('aria-invalid',String(!value));
+  }
+  document.addEventListener('change',finishDate);
+  document.addEventListener('focusout',finishDate);
+  document.addEventListener('keydown',e=>{if(e.target.matches('[data-pg-date]')&&e.altKey&&e.key==='ArrowDown'){e.preventDefault();open(e.target,e.target);}});
+  init();new MutationObserver(init).observe(document.body,{childList:true,subtree:true});
+})();
+
+</script>
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, runTransaction, getDocsFromServer } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getFirestore, collection, doc, setDoc as _pgFirebaseSet, deleteDoc as _pgFirebaseDelete, onSnapshot as _pgFirebaseSnapshot, runTransaction as _pgFirebaseTransaction, getDocsFromServer } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+// Pure, field-level inverse patches. An undo never replaces unrelated fields.
+const _pgHistoryCopy=value=>value==null?value:structuredClone(value);
+function _pgHistoryEqual(a,b){
+  if(a===b)return true;
+  if(a==null||b==null||typeof a!=='object'||typeof b!=='object')return false;
+  if(Array.isArray(a)!==Array.isArray(b))return false;
+  const ak=Object.keys(a).sort(),bk=Object.keys(b).sort();
+  return ak.length===bk.length&&ak.every((k,i)=>k===bk[i]&&_pgHistoryEqual(a[k],b[k]));
+}
+function _pgHistoryDiff(before,after,path=[]){
+  if(_pgHistoryEqual(before,after))return [];
+  if(before && after && !Array.isArray(before)&&!Array.isArray(after)&&typeof before==='object'&&typeof after==='object'){
+    return [...new Set([...Object.keys(before),...Object.keys(after)])].filter(k=>k!=='updatedAt').flatMap(k=>_pgHistoryDiff(before[k],after[k],[...path,k]));
+  }
+  return [{path,before:_pgHistoryCopy(before),after:_pgHistoryCopy(after)}];
+}
+function _pgHistoryInverse(current,before,after){
+  let result=_pgHistoryCopy(current);
+  for(const change of _pgHistoryDiff(before,after)){
+    let actual=result;for(const key of change.path)actual=actual?.[key];
+    if(_pgHistoryEqual(actual,change.before))continue;
+    if(!_pgHistoryEqual(actual,change.after))throw Error('Deze gegevens zijn daarna opnieuw gewijzigd. Deze stap kan niet veilig worden teruggedraaid.');
+    if(!change.path.length){result=_pgHistoryCopy(change.before);continue;}
+    let target=result;
+    for(const key of change.path.slice(0,-1)){if(!target[key]||typeof target[key]!=='object')target[key]={};target=target[key];}
+    const key=change.path.at(-1);
+    if(change.before===undefined)delete target[key];else target[key]=_pgHistoryCopy(change.before);
+  }
+  return result;
+}
+function _pgHistoryMerge(base,patch){
+  const result=_pgHistoryCopy(base)||{};
+  for(const [key,value] of Object.entries(patch))result[key]=value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).length?_pgHistoryMerge(result[key],value):_pgHistoryCopy(value);
+  return result;
+}
+
+const _pgHistory=[],_pgHistoryCache=new Map(),_pgHistoryCollections=new Set(),_pgHistoryTimers=new Map(),_pgHistoryWorking=new Set();
+let _pgHistoryActive=null,_pgHistorySequence=0,_pgHistoryPaused=false,_pgHistoryBusy=false,_pgHistoryInput=null;
+function _pgHistoryContext(){
+  return {module:actModule,view:typeof _urView==='undefined'?null:_urView,staff:typeof _urStaffSel==='undefined'?null:_urStaffSel,
+    year:typeof _urYear==='undefined'?0:_urYear,month:typeof _urMonth==='undefined'?0:_urMonth,
+    staffYear:typeof _urpYear==='undefined'?0:_urpYear,staffMonth:typeof _urpMonth==='undefined'?0:_urpMonth};
+}
+function _pgHistoryGroup(label){return {id:++_pgHistorySequence,label,context:_pgHistoryContext(),ops:new Map(),pending:new Set(),draft:null};}
+function _pgHistoryKeep(group){
+  if(!group||_pgHistoryPaused)return;
+  const hasChanges=[...group.ops.values()].some(op=>_pgHistoryDiff(op.before,op.after).length)||group.draft&&!_pgHistoryEqual(group.draft.before,group.draft.after);
+  const index=_pgHistory.indexOf(group);
+  if(hasChanges&&index<0){_pgHistory.push(group);_pgHistory.sort((a,b)=>a.id-b.id);if(_pgHistory.length>100)_pgHistory.shift();}
+  if(!hasChanges&&index>=0)_pgHistory.splice(index,1);
+  _pgHistoryPaint();
+}
+function _pgHistoryWith(group,fn){const previous=_pgHistoryActive;_pgHistoryActive=group;try{return fn();}finally{_pgHistoryActive=previous;}}
+function _pgHistoryLater(group,fn,delay,...args){
+  const id=globalThis.setTimeout(()=>{_pgHistoryTimers.delete(id);_pgHistoryWith(group,()=>fn(...args));},delay);
+  _pgHistoryTimers.set(id,{group,run:()=>_pgHistoryWith(group,()=>fn(...args))});return id;
+}
+function _pgHistoryClearTimer(id){globalThis.clearTimeout(id);_pgHistoryTimers.delete(id);}
+function _pgHistoryFlush(){
+  // Execute pending saves before another edit changes the fields they read.
+  const timers=[..._pgHistoryTimers];
+  for(const [id,item] of timers){_pgHistoryClearTimer(id);item.run();}
+}
+function _pgHistoryObserve(ref,...args){
+  const index=args.findIndex(value=>typeof value==='function'),next=args[index];
+  if(index<0)return _pgFirebaseSnapshot(ref,...args);
+  args[index]=snapshot=>{
+    if(snapshot.docs){
+      const present=new Set(snapshot.docs.map(d=>ref.path+'/'+d.id));
+      for(const path of _pgHistoryCache.keys())if(path.startsWith(ref.path+'/')&&!present.has(path))_pgHistoryCache.set(path,null);
+      snapshot.docs.forEach(d=>_pgHistoryCache.set(ref.path+'/'+d.id,_pgHistoryCopy(d.data())));
+      _pgHistoryCollections.add(ref.path);
+    }else _pgHistoryCache.set(ref.path,snapshot.exists()?_pgHistoryCopy(snapshot.data()):null);
+    next(snapshot);
+  };
+  return _pgFirebaseSnapshot(ref,...args);
+}
+function _pgHistoryTrack(group,promise){
+  if(!group)return promise;
+  group.pending.add(promise);_pgHistoryWorking.add(group);_pgHistoryPaint();
+  const done=()=>{group.pending.delete(promise);if(!group.pending.size)_pgHistoryWorking.delete(group);_pgHistoryKeep(group);};
+  promise.then(done,done);return promise;
+}
+function _pgHistoryOp(group,ref,before,after){
+  if(!group||_pgHistoryPaused)return;
+  const op=group.ops.get(ref.path);
+  if(op)op.after=_pgHistoryCopy(after);
+  else group.ops.set(ref.path,{ref,before:_pgHistoryCopy(before),after:_pgHistoryCopy(after)});
+  _pgHistoryKeep(group);
+}
+function _pgHistoryWrite(group,ref,value,options,remove=false){
+  if(!group||_pgHistoryPaused)return remove?_pgFirebaseDelete(ref):_pgFirebaseSet(ref,value,options);
+  const promise=(async()=>{
+    let before;
+    if(_pgHistoryCache.has(ref.path))before=_pgHistoryCopy(_pgHistoryCache.get(ref.path));
+    else if(_pgHistoryCollections.has(ref.path.split('/')[0]))before=null;
+    else before=await _pgFirebaseTransaction(db,async tx=>{const snap=await tx.get(ref);return snap.exists()?snap.data():null;});
+    const after=remove?null:options?.merge?_pgHistoryMerge(before,value):_pgHistoryCopy(value);
+    _pgHistoryOp(group,ref,before,after);_pgHistoryCache.set(ref.path,_pgHistoryCopy(after));
+    return remove?_pgFirebaseDelete(ref):_pgFirebaseSet(ref,value,options);
+  })();
+  return _pgHistoryTrack(group,promise);
+}
+function _pgHistoryTransaction(group,database,fn){
+  if(!group||_pgHistoryPaused)return _pgFirebaseTransaction(database,fn);
+  let committed=[];
+  const promise=_pgFirebaseTransaction(database,async tx=>{
+    const reads=new Map(),writes=[];
+    const proxy={
+      get:async ref=>{const snap=await tx.get(ref);reads.set(ref.path,snap.exists()?snap.data():null);return snap;},
+      set:(ref,value,opts)=>{const before=reads.has(ref.path)?reads.get(ref.path):_pgHistoryCache.get(ref.path)||null;writes.push({ref,before,after:opts?.merge?_pgHistoryMerge(before,value):value});tx.set(ref,value,...(opts?[opts]:[]));return proxy;},
+      update:(ref,value)=>{const before=reads.has(ref.path)?reads.get(ref.path):_pgHistoryCache.get(ref.path)||null;writes.push({ref,before,after:_pgHistoryMerge(before,value)});tx.update(ref,value);return proxy;},
+      delete:ref=>{writes.push({ref,before:reads.get(ref.path)||_pgHistoryCache.get(ref.path)||null,after:null});tx.delete(ref);return proxy;}
+    };
+    const result=await fn(proxy);committed=writes;return result;
+  }).then(result=>{for(const op of committed)_pgHistoryOp(group,op.ref,op.before,op.after);return result;});
+  return _pgHistoryTrack(group,promise);
+}
+function _pgHistoryScope(){
+  const group=_pgHistoryActive;
+  return {setDoc:(ref,value,options)=>_pgHistoryWrite(group,ref,value,options),deleteDoc:ref=>_pgHistoryWrite(group,ref,null,null,true),
+    runTransaction:(database,fn)=>_pgHistoryTransaction(group,database,fn),setTimeout:(fn,delay,...args)=>group?_pgHistoryLater(group,fn,delay,...args):globalThis.setTimeout(fn,delay,...args)};
+}
+const onSnapshot=_pgHistoryObserve;
+const setDoc=(ref,value,options)=>_pgHistoryWrite(_pgHistoryActive,ref,value,options);
+const deleteDoc=ref=>_pgHistoryWrite(_pgHistoryActive,ref,null,null,true);
+const runTransaction=(database,fn)=>_pgHistoryTransaction(_pgHistoryActive,database,fn);
+const clearTimeout=_pgHistoryClearTimer;
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyBDc1KYZCCaDEZZuR273Trmo68ra0uyeYQ",
@@ -6652,6 +6963,7 @@ window.fbProbeer = async function(fn, faalTekst){
 };
 
 window.fbSave = async function fbSave(k){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   _bezigStart(); window.syncS('bezig');
   try{
     await setDoc(doc(db,'klanten',String(k.id)),{naam:k.naam,plaats:k.plaats||'',freq:k.freq,laatste:k.laatste,notitie:k.notitie||'',prijs:k.prijs||0,historie:k.historie||[]});
@@ -6660,12 +6972,14 @@ window.fbSave = async function fbSave(k){
   finally{_bezigKlaar();}
 }
 window.fbDelete = async function fbDelete(id){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   _bezigStart(); window.syncS('bezig');
   try{await deleteDoc(doc(db,'klanten',String(id)));window.syncS('ok');}
   catch(e){console.error(e);window.syncS('fout');throw e;}
   finally{_bezigKlaar();}
 }
 window.fbSaveAll = async function fbSaveAll(){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   _bezigStart(); window.syncS('bezig');
   try{
     await Promise.all(kl.map(k=>setDoc(doc(db,'klanten',String(k.id)),{naam:k.naam,plaats:k.plaats||'',freq:k.freq,laatste:k.laatste,notitie:k.notitie||'',prijs:k.prijs||0,historie:k.historie||[]})));
@@ -6696,113 +7010,7 @@ function natSort(a,b){return a.localeCompare(b,"nl",{numeric:true,sensitivity:"b
 // ═══════════════════════════════════════════
 
 // vK bevat nu een actie: { soort, id, klant?, oudeNotitie?, gezetteNotitie? }
-window.slaOp = function slaOp(txt, actie){
-  vK = actie || null;
-  document.getElementById('undo-t').textContent = txt;
-  document.getElementById('undo').classList.add('show');
-  if(uT) clearTimeout(uT);
-  uT = setTimeout(() => {
-    document.getElementById('undo').classList.remove('show');
-    vK = null;
-  }, 12000);
-}
-
-function _undoVerberg(){
-  document.getElementById('undo').classList.remove('show');
-  if(uT) clearTimeout(uT);
-  vK = null;
-}
-
-// Alle velden die van een klant worden opgeslagen, in één vergelijkbare vorm.
-// Wordt gebruikt om te zien of een klant sinds de actie is gewijzigd.
-function _klantKern(o){
-  o = o || {};
-  return JSON.stringify({
-    naam:     o.naam || '',
-    plaats:   o.plaats || '',
-    freq:     Number(o.freq) || 0,
-    laatste:  o.laatste || '',
-    notitie:  o.notitie || '',
-    prijs:    Number(o.prijs) || 0,
-    historie: Array.isArray(o.historie) ? o.historie : []
-  });
-}
-
-window.undo = async function(){
-  const a = vK;
-  if(!a) return;
-  const ref = doc(db, 'klanten', String(a.id));
-
-  try{
-    // Controleren én schrijven binnen één transactie. Verandert een ander
-    // apparaat het document tussendoor, dan draait Firestore de transactie
-    // terug en proberen we het niet alsnog blind.
-    await runTransaction(db, async (tx) => {
-      const snap = await tx.get(ref);
-
-      if(a.soort === 'toevoegen'){
-        if(!snap.exists()) return;                       // al weg: niets te doen
-        // Ondertussen aangepast? Dan niet weggooien. Alle opgeslagen velden
-        // vergelijken — ook plaats, prijs en historie.
-        if(_klantKern(snap.data()) !== _klantKern(a.gemaakt || {})) throw new Error('UNDO_GEWIJZIGD');
-        tx.delete(ref);
-
-      } else if(a.soort === 'notitie'){
-        if(!snap.exists()) throw new Error('UNDO_WEG');
-        if((snap.data().notitie || '') !== (a.gezetteNotitie || '')) throw new Error('UNDO_GEWIJZIGD');
-        // Alleen het notitieveld aanpassen — de rest van het document blijft
-        // precies zoals het is, ook als een ander apparaat er iets aan wijzigde.
-        tx.update(ref, { notitie: a.oudeNotitie || '' });
-
-      } else if(a.soort === 'verwijderen'){
-        if(snap.exists()) throw new Error('UNDO_BESTAAT');
-        const k = a.klant;
-        tx.set(ref, { naam:k.naam, plaats:k.plaats||'', freq:k.freq, laatste:k.laatste,
-                      notitie:k.notitie||'', prijs:k.prijs||0, historie:k.historie||[] });
-
-      } else {
-        throw new Error('UNDO_ONBEKEND');
-      }
-    });
-
-    // Gelukt. De lijst wordt door de synchronisatie bijgewerkt; we passen hem
-    // hier alleen alvast aan zodat het scherm meteen klopt. Alle drie de
-    // bewerkingen zijn zo geschreven dat ze niets dubbel doen.
-    if(a.soort === 'toevoegen'){
-      kl = kl.filter(k => String(k.id) !== String(a.id));
-    } else if(a.soort === 'notitie'){
-      kl = kl.map(k => String(k.id) === String(a.id) ? { ...k, notitie: a.oudeNotitie || '' } : k);
-    } else if(a.soort === 'verwijderen'){
-      // Alleen toevoegen als de synchronisatie ons niet al voor was
-      if(!kl.some(k => String(k.id) === String(a.id))) kl = [...kl, a.klant];
-    }
-    _undoVerberg();
-    render();
-    showToast('Teruggedraaid');
-
-  }catch(e){
-    const code = String(e && e.message || '');
-    if(code === 'UNDO_GEWIJZIGD'){
-      _undoVerberg(); render();
-      showToast('Inmiddels gewijzigd op een ander apparaat — niet teruggedraaid');
-    }else if(code === 'UNDO_WEG'){
-      _undoVerberg(); render();
-      showToast('Klant bestaat niet meer');
-    }else if(code === 'UNDO_BESTAAT'){
-      _undoVerberg(); render();
-      showToast('Klant bestaat alweer — niet teruggeplaatst');
-    }else if(code === 'UNDO_ONBEKEND'){
-      _undoVerberg();
-    }else{
-      // Echte opslagfout: actie bewaren zodat opnieuw proberen kan
-      console.error('undo mislukt:', e);
-      showToast('Terugdraaien mislukt — probeer opnieuw');
-      document.getElementById('undo').classList.add('show');
-      if(uT) clearTimeout(uT);
-      uT = setTimeout(() => { document.getElementById('undo').classList.remove('show'); vK = null; }, 12000);
-    }
-  }
-}
+window.slaOp=function(){};
 window.deelWhatsApp=function(){window.open('https://wa.me/?text='+encodeURIComponent('Purgato Planner app: https://jbloesberg99.github.io/Glasbewassing'),'_blank');}
 window.openMaps=function(id){const x=kl.find(x=>x.id===id);if(!x)return;window.open('https://maps.google.com/?q='+encodeURIComponent(x.naam+' '+(x.plaats||'')),'_blank');}
 // HTML escape helper — voorkomt XSS bij user-gegenereerde content in innerHTML
@@ -7046,7 +7254,7 @@ window.toggleAdd=function(){const b=document.getElementById('add-body'),i=docume
 window.voegToe=async function(){
   const naam=document.getElementById('n-naam').value.trim();
   const freq=parseFloat(document.getElementById('n-freq').value);
-  const vd=document.getElementById('n-datum').value;
+  const vd=PurgatoDates.read('n-datum',true);
   const plaats=document.getElementById('n-plaats').value.trim();
   const prijs=parseFloat(String(document.getElementById('n-prijs').value).replace(',','.'))||0;
   if(!naam||!vd){alert('Vul naam en volgende beurt in.');return;}
@@ -7090,8 +7298,8 @@ window.openSheet=function(id){
   sId=id;const x=kl.find(x=>x.id===id);
   if(!x){renderK();return;} // al verwijderd op ander apparaat
   document.getElementById('s-sub').textContent=x.naam;
-  document.getElementById('s-datum-gedaan').value=vnd();document.getElementById('s-datum-gedaan').max=vnd();
-  document.getElementById('s-datum-volgende').value=_lokaalISO(vD(x.laatste,x.freq));
+  PurgatoDates.set('s-datum-gedaan',vnd());document.getElementById('s-datum-gedaan').max=vnd();
+  PurgatoDates.set('s-datum-volgende',_lokaalISO(vD(x.laatste,x.freq)));
   document.getElementById('s-freq').value=x.freq;document.getElementById('s-naam').value=x.naam;document.getElementById('s-plaats').value=x.plaats||'';
   sTab('gedaan');updateRes();document.getElementById('overlay').classList.add('open');
 }
@@ -7110,20 +7318,20 @@ window.sTab=function(tab){
     el.innerHTML=[...h].reverse().map(d=>{const dt=new Date(d);const diff=Math.round((new Date()-dt)/86400000);const ago=diff===0?'vandaag':diff===1?'gisteren':`${diff} dagen geleden`;return`<div class="hi"><div class="hi-d">${dt.toLocaleDateString('nl-NL',{day:'numeric',month:'long',year:'numeric'})}</div><div class="hi-ago">${ago}</div></div>`;}).join('');
   }
 }
-window.updateRes=function(){const x=kl.find(x=>x.id===sId);if(!x)return;const d=document.getElementById('s-datum-gedaan').value;if(!d)return;document.getElementById('s-result').textContent=fL(vD(d,x.freq));}
+window.updateRes=function(){const x=kl.find(x=>x.id===sId);if(!x)return;const d=PurgatoDates.read('s-datum-gedaan');if(!d){document.getElementById('s-result').textContent='—';return;}document.getElementById('s-result').textContent=fL(vD(d,x.freq));}
 window.bevestig=async function(){
   const x=kl.find(x=>x.id===sId);if(!x)return;
   if(actST==='gedaan'){
-    const d=document.getElementById('s-datum-gedaan').value;if(!d)return;
+    const d=PurgatoDates.read('s-datum-gedaan',true);if(!d)return;
     haptic(25);
     const h=[...(x.historie||[]),d];
     kl=kl.map(k=>k.id===sId?{...k,laatste:d,historie:h}:k);
     sluitSheet();renderK();
-    if(await window.fbProbeer(()=>window.fbSave(kl.find(k=>k.id===sId)))){
+    if(await window.fbProbeer(()=>window.fbSave(kl.find(k=>k.id===x.id)))){
       setTimeout(()=>showToast(`${x.naam} gemarkeerd als gedaan`),300);
     }
   }else{
-    const v=document.getElementById('s-datum-volgende').value;
+    const v=PurgatoDates.read('s-datum-volgende',true);
     const f=parseFloat(document.getElementById('s-freq').value);
     const n=document.getElementById('s-naam').value.trim()||x.naam;
     const p=document.getElementById('s-plaats').value.trim();
@@ -7131,7 +7339,7 @@ window.bevestig=async function(){
     haptic(15);
     kl=kl.map(k=>k.id===sId?{...k,naam:n,plaats:p,freq:f,laatste:lVV(v,f)}:k);
     sluitSheet();renderK();
-    if(await window.fbProbeer(()=>window.fbSave(kl.find(k=>k.id===sId)))){
+    if(await window.fbProbeer(()=>window.fbSave(kl.find(k=>k.id===x.id)))){
       setTimeout(()=>showToast(`${n} opgeslagen`),300);
     }
   }
@@ -7832,6 +8040,7 @@ function _urDagRoute(prefix, iso){
 
 // Traject opslaan (handmatig ingevuld of later via kaartendienst)
 window.urTrajectOpslaan = async function(key, km, bron){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   const n = _urRound2(_parseNum(km));
   if(!key) return;
   _urAfstanden[key] = { km: n, bron: bron || 'handmatig' };  // lokaal meteen bij
@@ -7843,6 +8052,7 @@ window.urTrajectOpslaan = async function(key, km, bron){
 
 const _urTrajectTimers = {};
 window.urTrajectIn = function(prefix, iso, key, val){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   clearTimeout(_urTrajectTimers[key]);
   // Direct in het geheugen zetten zodat de route-tellers meteen kloppen
   const n = _urRound2(_parseNum(val));
@@ -7941,120 +8151,8 @@ const _urKmDet = {}; // key -> [{naam, km}]
 // Voor elke ingrijpende actie leggen we de héle dag vast. Ongedaan maken
 // zet die dag exact terug — inclusief rijen, km, notitie en losse ritten.
 // ═══════════════════════════════════════════
-const _undoStack = [];
-const UNDO_MAX = 40;
-
-function _undoMaakSnapshot(prefix, iso, label){
-  const key = _urKey(prefix, iso);
-  const kmEl  = document.getElementById(`${prefix}-km-${iso}`);
-  const notEl = document.getElementById(`${prefix}-not-${iso}`);
-  const bron  = prefix === 'ur' ? (_urData[iso] || {}) : ((_urPData[_urStaffSel] || {})[iso] || {});
-  return {
-    prefix, iso, label,
-    staff: prefix === 'urp' ? _urStaffSel : null,
-    jaar:  prefix === 'ur' ? _urYear  : _urpYear,
-    maand: prefix === 'ur' ? _urMonth : _urpMonth,
-    rijen: JSON.parse(JSON.stringify(_urRows[key] || [])),
-    km:      kmEl  ? kmEl.value  : (bron.km != null ? String(bron.km) : ''),
-    notitie: notEl ? notEl.value : (bron.notitie || ''),
-    kmDet: JSON.parse(JSON.stringify(_urKmDet[key] || bron.kmDetails || []))
-  };
-}
-
-// Legt de huidige stand vast vóór een wijziging
-function _undoPush(prefix, iso, label){
-  if(!prefix || !iso) return;
-  try{
-    _undoStack.push(_undoMaakSnapshot(prefix, iso, label));
-    if(_undoStack.length > UNDO_MAX) _undoStack.shift();
-    _undoKnopVul();
-  }catch(e){ console.error('undo vastleggen:', e); }
-}
-
-function _undoKnopVul(){
-  const btn = document.getElementById('ur-undo');
-  if(!btn) return;
-  const n = _undoStack.length;
-  const inUren = actModule === 'uren' && (_urView === 'eigen' || _urView === 'detail');
-  btn.classList.toggle('show', n > 0 && inUren);
-  const tel = document.getElementById('ur-undo-n');
-  if(tel) tel.textContent = n > 9 ? '9+' : String(n);
-  const laatste = _undoStack[_undoStack.length - 1];
-  btn.title = laatste ? `Ongedaan maken: ${laatste.label}` : 'Ongedaan maken';
-}
-
-window.urUndo = async function(){
-  const s = _undoStack.pop();
-  if(!s){ _undoKnopVul(); return; }
-  haptic(14);
-  try{
-    // Zit de wijziging bij een ander personeelslid of in een andere maand?
-    // Dan eerst daarheen, anders zie je niet wat er terugkomt.
-    if(s.prefix === 'urp'){
-      if(s.staff && s.staff !== _urStaffSel){ _urStaffSel = s.staff; }
-      _urpYear = s.jaar; _urpMonth = s.maand;
-    } else {
-      _urYear = s.jaar; _urMonth = s.maand;
-    }
-    const key = _urKey(s.prefix, s.iso);
-    _urRows[key] = JSON.parse(JSON.stringify(s.rijen));
-    _urKmDet[key] = JSON.parse(JSON.stringify(s.kmDet));
-
-    if(s.prefix === 'ur') renderUren(); else _renderPersoneelDetail();
-
-    // Km- en notitieveld terugzetten na het hertekenen
-    const kmEl  = document.getElementById(`${s.prefix}-km-${s.iso}`);
-    const notEl = document.getElementById(`${s.prefix}-not-${s.iso}`);
-    if(kmEl)  kmEl.value  = s.km;
-    if(notEl) notEl.value = s.notitie;
-
-    _urSaveDag(s.prefix, s.iso, 0);
-    _urUpdateTotalen(s.prefix);
-    _undoKnopVul();
-    showToast(`Ongedaan: ${s.label}`);
-
-    // Even oplichten zodat je ziet welke dag is teruggezet
-    const kaart = document.getElementById(`dag-${s.prefix}-${s.iso}`);
-    if(kaart){
-      kaart.classList.add('ur-undo-flits');
-      setTimeout(() => kaart.classList.remove('ur-undo-flits'), 900);
-      kaart.scrollIntoView({ behavior:'smooth', block:'center' });
-    }
-  }catch(e){
-    console.error('ongedaan maken:', e);
-    showToast('Ongedaan maken lukte niet');
-  }
-};
-
-// Typen in een veld telt als één stap: vastleggen bij focus, pas bewaren als
-// er daadwerkelijk iets veranderd is.
-let _undoPending = null;
-document.addEventListener('focusin', e => {
-  if(actModule !== 'uren') return;
-  const inp = e.target.closest('.ur-rij-uren, .ur-rij-km, .ur-rij-prijs, .ur-rij-up, .ur-km-in, .ur-notitie-klein, .ur-svrij-in, .ur-kmdet-in');
-  if(!inp) return;
-  const kaart = inp.closest('.ur-dag');
-  const m = kaart && kaart.id.match(/^dag-(ur|urp)-(\d{4}-\d{2}-\d{2})$/);
-  if(!m) return;
-  const soort = inp.classList.contains('ur-notitie-klein') ? 'notitie'
-              : inp.classList.contains('ur-km-in') ? 'km'
-              : inp.classList.contains('ur-rij-km') ? 'km per klus'
-              : inp.classList.contains('ur-rij-prijs') ? 'prijs'
-              : inp.classList.contains('ur-svrij-in') ? 'locatie'
-              : 'uren';
-  _undoPending = { waarde: inp.value, snap: _undoMaakSnapshot(m[1], m[2], `${soort} wijzigen`) };
-}, true);
-
-document.addEventListener('focusout', e => {
-  if(!_undoPending) return;
-  const p = _undoPending; _undoPending = null;
-  if(e.target && e.target.value !== p.waarde){
-    _undoStack.push(p.snap);
-    if(_undoStack.length > UNDO_MAX) _undoStack.shift();
-    _undoKnopVul();
-  }
-}, true);
-
+function _undoPush(){}
+function _undoKnopVul(){if(typeof _pgHistoryPaint==='function')_pgHistoryPaint();}
 function _urKmDetInit(prefix, iso, saved){
   const key = _urKey(prefix, iso);
   if(_urKmDet[key]) return _urKmDet[key]; // al geïnitialiseerd — behoud live-bewerkstate
@@ -8210,6 +8308,7 @@ let _urEigenSaveTs = 0;
 function _urNetZelfOpgeslagen(){ return (Date.now() - _urEigenSaveTs) < 1500; }
 
 async function _urDoSave(prefix, iso, staffSnapshot){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   _urEigenSaveTs = Date.now();
   const key = _urKey(prefix, iso);
   const rows = (_urRows[key] || []).filter(r => r.k || _parseNum(r.u) > 0 || _parseNum(r.km) > 0);
@@ -8322,14 +8421,16 @@ function _urFoutBalkVul(){
 window.addEventListener('online', () => { if(_urSaveFout.size) window.urNuOpslaan(); });
 
 function _urSaveDag(prefix, iso, delay){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   const key = _urKey(prefix, iso);
   const staffSnapshot = _urStaffSel;
   if(_urSaveTimers[key]) clearTimeout(_urSaveTimers[key].id);
   _urSaveTimers[key] = {
+    historyGroup:_pgHistoryActive,
     prefix, iso, staffSnapshot,
     id: setTimeout(async () => {
-      await _urDoSave(prefix, iso, staffSnapshot);
       delete _urSaveTimers[key];
+      await _urDoSave(prefix, iso, staffSnapshot);
     }, delay || 0)
   };
 }
@@ -8342,7 +8443,7 @@ async function _urFlushSaves(){
     delete _urSaveTimers[_urKey(p.prefix, p.iso)];
   });
   if(!pending.length) return;
-  await Promise.all(pending.map(p => _urDoSave(p.prefix, p.iso, p.staffSnapshot)));
+  await Promise.all(pending.map(p => _pgHistoryWith(p.historyGroup,()=>_urDoSave(p.prefix, p.iso, p.staffSnapshot))));
 }
 
 // ═══ Vangnet: bij app-naar-achtergrond, tab-switch of unload alles direct opslaan ═══
@@ -9908,7 +10009,7 @@ function _urpInit(){
       _urStaff.sort((a,b)=>a.naam.localeCompare(b.naam,'nl'));
       _pgPdfStaffReady = true;
       if(_urView === 'lijst') _renderPersoneelLijst();
-      if(_urView === 'detail') _renderPersoneelDetail();
+      if(_urView === 'detail' && !_urActiveInside('ur-personeel')) _renderPersoneelDetail();
       if(_urView === 'overzicht') _renderOverzicht();
     }, err => console.error('personeel:', err));
   }
@@ -10180,6 +10281,7 @@ function _urKlusTariefInnerHtml(k){
 }
 
 window.klusPrijsType = function(id, type){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   const k = _urKlussen.find(x => x.id === id);
   if(!k) return;
   k.prijsType = type;
@@ -10200,6 +10302,7 @@ window.klusPrijsType = function(id, type){
 
 const _klusPrijsTimers = {};
 window.klusPrijsUur = function(id, val){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   clearTimeout(_klusPrijsTimers['u-'+id]);
   _klusPrijsTimers['u-'+id] = setTimeout(async () => {
     const n = _urRound2(_parseNum(val));
@@ -10211,6 +10314,7 @@ window.klusPrijsUur = function(id, val){
 };
 
 window.klusPrijsMaand = function(id, val){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   clearTimeout(_klusPrijsTimers['m-'+id]);
   _klusPrijsTimers['m-'+id] = setTimeout(async () => {
     const n = _urRound2(_parseNum(val));
@@ -10223,6 +10327,7 @@ window.klusPrijsMaand = function(id, val){
 
 const _klusNaamTimers = {};
 window.klusNaamWijzig = function(id, val){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   clearTimeout(_klusNaamTimers[id]);
   _klusNaamTimers[id] = setTimeout(async () => {
     const naam = (val||'').trim();
@@ -10237,6 +10342,7 @@ window.klusNaamWijzig = function(id, val){
 
 let _pgKlusAdding=false;
 window.klusToevoegenOk = async function(){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   if(_pgKlusAdding)return;
   const inp=document.getElementById('klus-add-in');
   const naam=(inp?.value||'').trim();
@@ -10258,6 +10364,7 @@ window.klusToevoegenOk = async function(){
 };
 const _pgKlusDeleting=new Set();
 window.klusVerwijderen = async function(id){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   const k=_urKlussen.find(x=>x.id===id);
   if(!k||_pgKlusDeleting.has(id))return;
   if(!confirm(`"${k.naam}" verwijderen uit de klussenlijst?\n\nReeds ingevulde uren blijven gewoon staan.`))return;
@@ -10301,6 +10408,7 @@ function _pgLocationBusy(id,busy){
   card.querySelectorAll('.klus-sub-x,.klus-sub-add').forEach(b=>b.disabled=busy);
 }
 async function _pgChangeLocation(id,naam,remove){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   if(_pgLocationPending.has(id))return;
   _pgLocationPending.add(id);
   _pgLocationBusy(id,true);
@@ -10567,8 +10675,8 @@ function _pgPdfCreateDialog(){
     const el=e.target, state=_pgPdfState;
     if(!state)return;
     if(el.id==='pg-pdf-from'||el.id==='pg-pdf-to'){
-      state.from=d.querySelector('#pg-pdf-from').value;
-      state.to=d.querySelector('#pg-pdf-to').value;
+      state.from=window.PurgatoDates.read(d.querySelector('#pg-pdf-from'));
+      state.to=window.PurgatoDates.read(d.querySelector('#pg-pdf-to'));
       _pgPdfRecollect();return;
     }
     if(el.hasAttribute('data-pdf-person')){
@@ -10587,6 +10695,11 @@ function _pgPdfCreateDialog(){
     if(el.id==='pg-pdf-names')state.showPeople=el.checked;
   });
   d.addEventListener('input',e=>{
+    if(_pgPdfState && (e.target.id==='pg-pdf-from'||e.target.id==='pg-pdf-to')){
+      _pgPdfState.from=window.PurgatoDates.read(d.querySelector('#pg-pdf-from'));
+      _pgPdfState.to=window.PurgatoDates.read(d.querySelector('#pg-pdf-to'));
+      _pgPdfRecollect();return;
+    }
     if(_pgPdfState && e.target.id==='pg-pdf-reference')_pgPdfState.reference=e.target.value;
   });
   d.addEventListener('close',()=>{
@@ -10626,7 +10739,7 @@ window.urPdfExport = async function(){
 function _pgPdfForm(){
   const state=_pgPdfState, esc=_pgPdf.esc;
   _pgPdfDialog.innerHTML=_pgPdfHeader()+
-    '<div class="pg-export-body" id="pg-pdf-settings"><fieldset class="pg-export-section"><legend>1. Kies de periode</legend><div class="pg-export-dates"><label>Van<input type="date" id="pg-pdf-from" value="'+esc(state.from)+'"></label><label>Tot en met<input type="date" id="pg-pdf-to" value="'+esc(state.to)+'"></label></div></fieldset>'+
+    '<div class="pg-export-body" id="pg-pdf-settings"><fieldset class="pg-export-section"><legend>1. Kies de periode</legend><div class="pg-export-dates"><label>Van<input type="text" data-pg-date inputmode="numeric" placeholder="dd-mm-jjjj" autocomplete="off" maxlength="10" id="pg-pdf-from" value="'+esc(window.PurgatoDates.format(state.from))+'"></label><label>Tot en met<input type="text" data-pg-date inputmode="numeric" placeholder="dd-mm-jjjj" autocomplete="off" maxlength="10" id="pg-pdf-to" value="'+esc(window.PurgatoDates.format(state.to))+'"></label></div></fieldset>'+
     '<fieldset class="pg-export-section"><legend>2. Kies klanten en klussen</legend><p class="pg-export-help">Vink een klant aan voor alle locaties met uren in deze periode. Je kunt ook losse locaties kiezen. Je selectie blijft bewaard als je de periode of medewerkers verandert.</p><div class="pg-export-select-actions"><button data-pdf-action="all">Alles selecteren</button><button data-pdf-action="none">Selectie wissen</button></div><div id="pg-pdf-jobs" class="pg-export-jobs"></div></fieldset>'+
     '<details class="pg-export-people"><summary>Medewerkers kiezen <span id="pg-pdf-people-count"></span></summary><p class="pg-export-help">Bepaal wiens factuururen meetellen.</p><div class="pg-export-person-list">'+state.sources.map(p=>'<label class="pg-export-check"><input type="checkbox" data-pdf-person value="'+esc(p.id)+'" '+(state.people.has(p.id)?'checked':'')+'><span>'+esc(p.label || p.name)+'</span></label>').join('')+'</div></details>'+
     '<fieldset class="pg-export-section pg-export-options"><legend>3. Vermelding op de PDF</legend><label class="pg-export-check"><input type="checkbox" id="pg-pdf-names" aria-describedby="pg-pdf-names-help" '+(state.showPeople?'checked':'')+'><span>Namen van medewerkers tonen</span></label><p class="pg-export-help" id="pg-pdf-names-help">Uit voor je klant, aan voor je eigen administratie. De uren van alle geselecteerde medewerkers blijven in beide gevallen meetellen.</p><label class="pg-export-field">Factuurreferentie <span>(optioneel)</span><input type="text" id="pg-pdf-reference" maxlength="120" placeholder="Bijvoorbeeld 2026-042" value="'+esc(state.reference)+'"></label><p class="pg-export-help">Alleen factuururen. Bedragen, betaalde personeelsuren, kilometers en interne notities staan niet op deze PDF.</p></fieldset></div>'+
@@ -11107,6 +11220,7 @@ window.urpToevoegen = function(){
 };
 
 window.urpToevoegenOk = async function(){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   const inp = document.getElementById('urp-add-in');
   const naam = (inp ? inp.value : '').trim();
   if(!naam){
@@ -11368,6 +11482,7 @@ function _urPtCardHtml(staff){
 
 const _urPtTimers = {};
 function _urPtSave(id, patch){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   clearTimeout(_urPtTimers[id]);
   _urPtTimers[id] = setTimeout(async () => {
     try{
@@ -11454,6 +11569,7 @@ function _urPtUpdateSub(id){
 
 const _urpNaamTimers = {};
 window.urpNaamWijzig = function(){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   const ta = document.getElementById('urp-naam-in');
   if(!ta || !_urStaffSel) return;
   const staffId = _urStaffSel;
@@ -11468,14 +11584,13 @@ window.urpNaamWijzig = function(){
 };
 
 window.urpVerwijderen = async function(id){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   const staff = _urStaff.find(s => s.id === id);
   if(!staff) return;
   if(!confirm(`"${staff.naam}" verwijderen?\n\nAlle uren-notities van dit personeelslid worden ook verwijderd.`)) return;
   try{
-    // Verwijder staff doc
+    const eigen = structuredClone(_urPData[id] || {});
     await deleteDoc(doc(personeelCol, id));
-    // Verwijder alle uren-notities van deze persoon
-    const eigen = _urPData[id] || {};
     await Promise.all(Object.keys(eigen).map(date =>
       deleteDoc(doc(urenPCol, `${id}__${date}`)).catch(()=>{})
     ));
@@ -11715,6 +11830,7 @@ let _dBeheerSec='klanten',_dBeheerEdit=null,_dBeheerIsNew=false,_dBeheerSchedRow
 let _dDashUnsub=null;
 
 async function _dSaveData(){
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   try{
     await setDoc(_dDashDoc,{customers:_DC,employees:_DE,tasks:_DM,status:_dMStatus,maanden:_dMonthData,updatedAt:Date.now()});
   }catch(e){console.error('dash save:',e);}
@@ -12100,6 +12216,7 @@ window.nPickColor = function(col) {
 };
 
 window.nSave = async function(rawId) {
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   const isNew = rawId === 'null' || rawId === null;
   const title   = (document.getElementById('n-m-title').value   || '').trim();
   const content = (document.getElementById('n-m-content').value || '').trim();
@@ -12131,6 +12248,7 @@ window.nSave = async function(rawId) {
 };
 
 window.nDelete = async function(id) {
+  const {setDoc,deleteDoc,runTransaction,setTimeout}=_pgHistoryScope();
   if (!id || id === 'null') { window.nClose(); return; }
   try {
     window.syncS('bezig');
@@ -12397,7 +12515,7 @@ window.renderK = function() {
 };
 
 // ── App init (hier pas, zodat alle window.* functies al klaarstaan) ──
-document.getElementById('n-datum').value = vnd();
+PurgatoDates.set('n-datum',vnd());
 const _savedMod = sessionStorage.getItem('purgato_module');
 if (_savedMod) {
   openModule(_savedMod);
@@ -12406,6 +12524,196 @@ if (_savedMod) {
   setTimeout(_smTypewriter, 120);
 }
 startListener();
+let _pgHistoryNoteId=null;
+function _pgHistoryDraft(args=[]){
+  const active=document.activeElement;
+  const match=active?.closest?.('.ur-dag')?.id.match(/^dag-(ur|urp)-(\d{4}-\d{2}-\d{2})$/);
+  const prefix=/^(ur|urp)$/.test(args[0])?args[0]:match?.[1],iso=/^\d{4}-\d{2}-\d{2}$/.test(args[1])?args[1]:match?.[2];
+  if(prefix&&iso){
+    const key=_urKey(prefix,iso),saved=prefix==='ur'?_urData[iso]:(_urPData[_urStaffSel]||{})[iso];
+    return {kind:'hours',prefix,iso,staff:prefix==='urp'?_urStaffSel:null,day:{rijen:_pgHistoryCopy(_urRows[key]||saved?.rijen||[]),km:document.getElementById(prefix+'-km-'+iso)?.value??saved?.km??'',notitie:document.getElementById(prefix+'-not-'+iso)?.value??saved?.notitie??'',kmDetails:_pgHistoryCopy(_urKmDet[key]||saved?.kmDetails||[])}};
+  }
+  const root=document.querySelector('#n-overlay.open')||document.querySelector('#overlay.open')||document.getElementById({glas:'app-glas',uren:'app-uren',winst:'app-winst',extra:'app-extra',notes:'app-notes'}[actModule]);
+  if(!root)return null;
+  return {kind:'form',root:root.id,fields:[...root.querySelectorAll('input,textarea,select')].map((el,index)=>({id:el.id,index,value:el.value,checked:el.checked,display:el.style.display})),
+    openRows:[...root.querySelectorAll('#klus-add-row.open,#urp-add-row.open')].map(el=>el.id),
+    noteId:_pgHistoryNoteId,noteColor:_nEditColor,notePinned:_nEditPinned,sheetId:sId,sheetTab:actST,addOpen:!!document.querySelector('#add-body.open'),
+    dashboard:{page:_dPage,edit:_pgHistoryCopy(_dBeheerEdit),isNew:_dBeheerIsNew,schedule:_pgHistoryCopy(_dBeheerSchedRows)},mode:wcMode};
+}
+function _pgHistoryCaptureAfter(group,args){
+  if(!group.draft)return;
+  if(group.draft.before?.kind==='hours'){
+    const before=group.draft.before;
+    group.draft.after=_pgHistoryDraft([before.prefix,before.iso]);
+  }else group.draft.after=_pgHistoryDraft(args);
+  _pgHistoryKeep(group);
+}
+function _pgHistoryPaint(){
+  const button=document.getElementById('pg-history-button');if(!button)return;
+  const step=[...new Set([..._pgHistory,..._pgHistoryWorking])].sort((a,b)=>a.id-b.id).at(-1);
+  button.hidden=!step;button.disabled=_pgHistoryBusy||!!step?.pending.size;
+  button.setAttribute('aria-label',step?'Ongedaan maken: '+step.label:'Ongedaan maken');
+  button.title=step?'Ongedaan maken: '+step.label:'';
+  button.querySelector('strong').textContent=_pgHistoryBusy?'Bezig…':step?.pending.size?'Opslaan…':'Ongedaan';
+  button.querySelector('small').textContent=step?.label||'';
+  button.querySelector('span').textContent=String(new Set([..._pgHistory,..._pgHistoryWorking]).size);
+}
+function _pgHistoryApply(path,value){
+  const [collection,id]=path.split('/');
+  let item=value==null?null:{id,..._pgHistoryCopy(value)};
+  if(item&&collection==='klussen')item={...item,naam:item.naam||'Naamloos',subs:Array.isArray(item.subs)?item.subs:[],prijsType:item.prijsType==='maand'?'maand':'uur',prijsUur:_parseNum(item.prijsUur),prijsMaand:_parseNum(item.prijsMaand)};
+  if(item&&collection==='personeel')item={...item,naam:item.naam||'Naamloos',type:item.type||'zwart',loon:_parseNum(item.loon),tarieven:item.tarieven||{}};
+  const replace=list=>{const next=list.filter(x=>String(x.id)!==id);if(item)next.push(item);return next;};
+  if(collection==='klanten'){kl=replace(kl).map(x=>({...x,id:Number(x.id)}));}
+  if(collection==='klussen')_urKlussen=replace(_urKlussen).sort((a,b)=>a.naam.localeCompare(b.naam,'nl'));
+  if(collection==='personeel')_urStaff=replace(_urStaff).sort((a,b)=>a.naam.localeCompare(b.naam,'nl'));
+  if(collection==='notes')_nNotes=replace(_nNotes);
+  if(collection==='uren'){
+    if(value==null)delete _urData[id];else _urData[id]=_pgHistoryCopy(value);
+    delete _urRows[_urKey('ur',id)];delete _urKmDet[_urKey('ur',id)];
+  }
+  if(collection==='uren_personeel'){
+    const split=id.lastIndexOf('__'),staff=id.slice(0,split),date=id.slice(split+2);_urPData[staff] ||= {};
+    if(value==null)delete _urPData[staff][date];else _urPData[staff][date]=_pgHistoryCopy(value);
+    delete _urRows[_urKey('urp',date)];delete _urKmDet[_urKey('urp',date)];
+  }
+  if(collection==='afstanden'){if(value==null)delete _urAfstanden[id];else _urAfstanden[id]=_pgHistoryCopy(value);}
+  if(path==='config/dashboard'&&value){_DC=value.customers||[];_DE=value.employees||[];_DM=value.tasks||[];_dMStatus=value.status||{};if(value.maanden)_dMonthData=value.maanden;}
+}
+async function _pgHistoryReveal(group,restoreDraft){
+  const context=group.context,draft=group.draft?.before;
+  document.getElementById('n-overlay').classList.remove('open');document.getElementById('overlay').classList.remove('open');
+  if(context.module&&actModule!==context.module)openModule(context.module);
+  if(context.module==='uren'){
+    _urYear=context.year;_urMonth=context.month;_urpYear=context.staffYear;_urpMonth=context.staffMonth;_urStaffSel=context.staff;
+    if(draft?.kind==='hours'){
+      const data=draft.prefix==='ur'?_urData:(_urPData[draft.staff] ||= {});
+      // Preserve empty UI rows without overwriting unrelated server changes.
+      const restored=_pgHistoryCopy(data[draft.iso])||{rijen:[],km:0,notitie:'',kmDetails:[]};
+      while(restored.rijen.length<draft.day.rijen.length)restored.rijen.push({k:'',s:'',u:'',up:'',p:'',h:false,km:''});
+      data[draft.iso]=restored;
+      _urKmDet[_urKey(draft.prefix,draft.iso)]=_pgHistoryCopy(restoreDraft?draft.day.kmDetails:restored.kmDetails||[]);
+      _urZoek[draft.prefix]='';
+    }
+    await window.urGaNaar(context.view||'eigen');
+    if(draft?.kind==='hours')document.getElementById('dag-'+draft.prefix+'-'+draft.iso)?.scrollIntoView({behavior:'auto',block:'center'});
+  }else if(context.module==='glas')render();
+  else if(context.module==='notes')_nRender();
+  else if(context.module==='extra')_dRenderAll();
+  if(!restoreDraft||draft?.kind!=='form')return;
+  if(draft.root==='n-overlay'){
+    window.nOpen(draft.noteId);if(_nEditPinned!==draft.notePinned)window.nTogglePin();window.nPickColor(draft.noteColor);
+  }
+  if(draft.root==='overlay'&&draft.sheetId!=null){window.openSheet(draft.sheetId);window.sTab(draft.sheetTab);}
+  if(context.module==='glas')document.getElementById('add-body').classList.toggle('open',draft.addOpen);
+  if(context.module==='extra'){
+    _dPage=draft.dashboard.page;_dBeheerEdit=draft.dashboard.edit;_dBeheerIsNew=draft.dashboard.isNew;_dBeheerSchedRows=draft.dashboard.schedule;_dRenderAll();
+  }
+  if(context.module==='winst')wcSetMode(draft.mode);
+  const root=document.getElementById(draft.root),fields=root?.querySelectorAll('input,textarea,select')||[];
+  for(const id of draft.openRows||[])document.getElementById(id)?.classList.add('open');
+  for(const old of draft.fields){
+    const el=old.id?document.getElementById(old.id):fields[old.index];if(!el)continue;el.value=old.value;if(old.checked!==undefined)el.checked=old.checked;
+    if(old.id.startsWith('klus-sub-in-')){el.style.display=old.display;const button=document.getElementById(old.id.replace('klus-sub-in-','klus-sub-btn-'));if(button)button.textContent=old.display==='none'?'+ locatie':'✓ opslaan';}
+  }
+  if(context.module==='extra'){
+    const role=document.getElementById('df-role'),color=document.getElementById('df-color');
+    if(role)window.dSetRole(role.value==='1');if(color)window.dPickColor(color.value);
+  }
+  if(context.module==='winst')wcBereken();
+  if(draft.root==='overlay')updateRes();
+}
+window.pgHistoryUndo=async function(){
+  if(_pgHistoryBusy)return;
+  _pgHistoryFlush();
+  let step=[...new Set([..._pgHistory,..._pgHistoryWorking])].sort((a,b)=>a.id-b.id).at(-1);if(!step)return;
+  _pgHistoryBusy=true;_pgHistoryPaint();
+  try{
+    await Promise.allSettled([..._pgHistoryWorking].flatMap(group=>[...group.pending]));
+    if(step!==_pgHistory.at(-1))throw Error('Er is ondertussen nog een wijziging gedaan. Probeer opnieuw.');
+    _pgHistoryPaused=true;_pgHistoryInput=null;
+    const ops=[...step.ops.values()].filter(op=>_pgHistoryDiff(op.before,op.after).length);
+    let restored=[];
+    if(ops.length)restored=await _pgFirebaseTransaction(db,async tx=>{
+      const snapshots=await Promise.all(ops.map(op=>tx.get(op.ref)));
+      const next=ops.map((op,i)=>({path:op.ref.path,ref:op.ref,value:_pgHistoryInverse(snapshots[i].exists()?snapshots[i].data():null,op.before,op.after)}));
+      for(const item of next){if(item.value==null)tx.delete(item.ref);else tx.set(item.ref,item.value);}
+      return next;
+    });
+    for(const item of restored){_pgHistoryCache.set(item.path,_pgHistoryCopy(item.value));_pgHistoryApply(item.path,item.value);}
+    await _pgHistoryReveal(step,!ops.length);
+    _pgHistory.splice(_pgHistory.indexOf(step),1);
+    document.getElementById('pg-history-skip').hidden=true;
+    showToast('Ongedaan: '+step.label);haptic(12);
+  }catch(e){
+    console.error('Herstellen:',e);showToast(/^(Deze gegevens|Er is ondertussen)/.test(e.message)?e.message:'Ongedaan maken is niet gelukt. Controleer je verbinding en probeer opnieuw.','error');
+    document.getElementById('pg-history-skip').hidden=!String(e.message).includes('opnieuw gewijzigd');
+  }finally{_pgHistoryPaused=false;_pgHistoryBusy=false;_pgHistoryPaint();}
+};
+window.pgHistorySkip=function(){if(_pgHistoryBusy)return;_pgHistory.pop();document.getElementById('pg-history-skip').hidden=true;_pgHistoryPaint();};
+window.undo=window.urUndo=window.pgHistoryUndo;
+const _pgHistoryActions={
+  voegToe:'klant toevoegen',kopieer:'klant kopiëren',del:'klant verwijderen',slaNotitie:'klantnotitie wijzigen',bevestig:'klantbeurt wijzigen',slaOmzetOp:'klantprijzen wijzigen',
+  urTrajectIn:'trajectafstand wijzigen',urTrajectOpslaan:'trajectafstand wijzigen',urThuisToggle:'terugrit wijzigen',urKmDetAdd:'rit toevoegen',urKmDetNaam:'ritnaam wijzigen',urKmDetKlus:'ritlocatie wijzigen',urKmDetKm:'kilometers wijzigen',urKmDetDel:'rit verwijderen',
+  urKmIn:'kilometers wijzigen',urKlusSel:'klus kiezen',urSubSel:'locatie kiezen',urUrenIn:'uren wijzigen',urPrijsIn:'uurtarief wijzigen',urRijKmIn:'kilometers wijzigen',urUpIn:'personeelsuren wijzigen',urUpToggle:'personeelsuren aanpassen',
+  urRijToevoegen:'rij toevoegen',urRijVerplaats:'rijen omwisselen',urRijVerwijder:'rij verwijderen',uiDagWissen:'dag leegmaken',urKopieerVorige:'dag kopiëren',urNotitieIn:'dagnotitie wijzigen',urSubVrijIn:'locatie wijzigen',urSubVrijKlaar:'locatie wijzigen',
+  klusToevoegenOk:'klus toevoegen',klusVerwijderen:'klus verwijderen',klusNaamWijzig:'klusnaam wijzigen',klusPrijsType:'tariefsoort wijzigen',klusPrijsUur:'uurtarief wijzigen',klusPrijsMaand:'maandtarief wijzigen',klusSubOk:'locatie toevoegen',klusSubVerwijderen:'locatie verwijderen',
+  urpToevoegenOk:'medewerker toevoegen',urpVerwijderen:'medewerker en uren verwijderen',urpNaamWijzig:'medewerker hernoemen',urPtType:'dienstverband wijzigen',urPtLoon:'uurloon wijzigen',urPtOverrideIn:'afwijkend tarief wijzigen',urPtOverrideWis:'afwijkend tarief wissen',
+  nSave:'notitie opslaan',nDelete:'notitie verwijderen',nTogglePin:'notitie vastzetten',nPickColor:'notitiekleur wijzigen',
+  dBSaveCust:'dashboardklant opslaan',dBSaveEmp:'dashboardmedewerker opslaan',dBSaveTask:'onderhoudstaak opslaan',dBDel:'dashboardgegevens verwijderen',dToggle:'taakstatus wijzigen',dMaandOpslaan:'maandbedragen wijzigen',
+  dPickColor:'kleur wijzigen',dSetRole:'rol wijzigen',dBAddSched:'planningsregel toevoegen',dBRemSched:'planningsregel verwijderen',wcSetMode:'rekenwijze wijzigen'
+};
+for(const [name,label] of Object.entries(_pgHistoryActions)){
+  const fn=window[name];if(typeof fn!=='function')continue;
+  window[name]=function(...args){
+    if(_pgHistoryPaused)return fn.apply(this,args);
+    const group=_pgHistoryActive||_pgHistoryGroup(label);
+    if(!_pgHistoryActive)_pgHistoryFlush();
+    if(!group.draft)group.draft={before:_pgHistoryDraft(args),after:null};
+    const result=_pgHistoryWith(group,()=>fn.apply(this,args));
+    _pgHistoryCaptureAfter(group,args);
+    if(result?.then)_pgHistoryTrack(group,result.then(value=>{_pgHistoryCaptureAfter(group,args);return value;}));
+    return result;
+  };
+}
+const _pgOriginalNoteOpen=window.nOpen;
+window.nOpen=function(id){_pgHistoryNoteId=id;return _pgOriginalNoteOpen.apply(this,arguments);};
+function _pgHistoryEditable(el){
+  return el?.matches?.('input,textarea,select')&&!el.disabled&&!el.readOnly&&el.type!=='hidden'&&!el.closest('#pg-pdf-dialog,.pg-calendar')&&!/zoek|search|filter/i.test([el.id,el.className,el.placeholder].join(' '));
+}
+document.addEventListener('pointerdown',()=>{if(!_pgHistoryPaused)_pgHistoryFlush();},true);
+document.addEventListener('focusin',e=>{
+  if(_pgHistoryPaused||!_pgHistoryEditable(e.target))return;
+  _pgHistoryFlush();
+  const labels={'n-m-title':'notitietitel','n-m-content':'notitietekst','n-naam':'klantnaam','n-plaats':'plaats','n-prijs':'klantprijs','n-datum':'volgende beurt','s-datum-gedaan':'beurtdatum','s-datum-volgende':'volgende beurt','urp-naam-in':'medewerkernaam','klus-add-in':'nieuwe klus','urp-add-in':'nieuwe medewerker'};
+  const kind=e.target.matches('.ur-rij-uren')?'uren':e.target.matches('.klus-naam-in')?'klusnaam':e.target.matches('.ur-notitie-klein')?'dagnotitie':null;
+  const label=(labels[e.target.id]||kind||e.target.getAttribute('aria-label')||e.target.placeholder||'invoer').replace(/\.+$/,'').trim();
+  const group=_pgHistoryGroup(label?(label.toLowerCase()+' wijzigen'):'tekst wijzigen');group.draft={before:_pgHistoryDraft(),after:null};
+  _pgHistoryInput={input:e.target,group};
+},true);
+function _pgHistoryInputEvent(e){
+  if(_pgHistoryPaused||!_pgHistoryEditable(e.target))return;
+  if(_pgHistoryInput?.input!==e.target)return;
+  const group=_pgHistoryInput.group,previous=_pgHistoryActive;_pgHistoryActive=group;
+  queueMicrotask(()=>{_pgHistoryCaptureAfter(group,[]);if(_pgHistoryActive===group)_pgHistoryActive=previous;});
+}
+document.addEventListener('input',_pgHistoryInputEvent,true);
+document.addEventListener('change',_pgHistoryInputEvent,true);
+document.addEventListener('focusout',e=>{
+  if(_pgHistoryInput?.input!==e.target)return;
+  _pgHistoryInputEvent(e);
+  const input=_pgHistoryInput;queueMicrotask(()=>{if(_pgHistoryInput===input)_pgHistoryInput=null;});
+},true);
+window.pgHistoryBeginDate=function(input){
+  if(_pgHistoryPaused||input.closest('#pg-pdf-dialog'))return;
+  _pgHistoryFlush();const group=_pgHistoryGroup('datum wijzigen');group.draft={before:_pgHistoryDraft(),after:null};_pgHistoryInput={input,group};
+};
+document.addEventListener('keydown',e=>{
+  if(e.target.matches?.('input,textarea,[contenteditable]')&&!_pgHistoryEditable(e.target))return;
+  if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key.toLowerCase()==='z'&&!_pgHistoryBusy&&_pgHistory.length){e.preventDefault();window.pgHistoryUndo();}
+});
+_pgHistoryPaint();
+
 window.dispatchEvent(new Event('purgato:ready'));
 </script>
 <script>
