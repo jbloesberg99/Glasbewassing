@@ -4994,6 +4994,12 @@ html.pg-opening :is(.pg-home-intro,.sm-grid,.pg-home-bottom){animation:pg-home-o
   .module-card:hover,.module-card:active{transform:none!important}
 }
 
+.pg-load-state{text-align:center;padding:32px 20px;background:var(--surface);border-radius:24px;color:var(--text)}
+.pg-load-state h2{font-size:20px;margin:0 0 12px}.pg-load-state p{font-size:14px;color:var(--text2);line-height:1.6}
+.pg-load-state button,.pg-update-notice button{min-height:44px;padding:10px 16px;border-radius:12px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);cursor:pointer}
+.pg-update-notice{position:fixed;z-index:950;bottom:calc(108px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);width:min(440px,calc(100% - 32px));padding:20px;border:1px solid var(--border2);border-radius:22px;background:var(--surface);color:var(--text);box-shadow:var(--shadow2)}
+.pg-update-notice[hidden]{display:none}.pg-update-notice strong{font-size:16px}.pg-update-notice p{color:var(--text2);font-size:13px;line-height:1.5;margin:8px 0 14px}.pg-update-notice>div{display:flex;flex-wrap:wrap;gap:8px}.pg-update-notice [data-update-open]{background:var(--accent);color:var(--pg-inverse);border-color:var(--accent)}
+
 
 /* Center section titles and control groups while keeping records readable. */
 #main-header>.pg-header-title{position:absolute;left:50%;transform:translateX(-50%);justify-content:center;text-align:center;gap:0!important}
@@ -5111,7 +5117,7 @@ html.pg-opening :is(.pg-home-intro,.sm-grid,.pg-home-bottom){animation:pg-home-o
 }
 
 </style>
-</head>
+<meta name="purgato-build" content="4554c5e6d5053ec3"></head>
 <body>
 <a class="pg-skip" href="#main-page">Naar de inhoud</a>
 
@@ -6491,7 +6497,7 @@ SOFTWARE.
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, runTransaction } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, runTransaction, getDocsFromServer } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBDc1KYZCCaDEZZuR273Trmo68ra0uyeYQ",
@@ -6510,6 +6516,48 @@ const notesCol = collection(db, 'notes');
 const personeelCol = collection(db, 'personeel');
 const urenPCol = collection(db, 'uren_personeel');
 const klussenCol = collection(db, 'klussen');
+// Never present a partially loaded team total as a completed overview.
+const _pgHourLoad={uren:'loading',uren_personeel:'loading',personeel:'loading',klussen:'loading'};
+function _pgHourLoadReady(){return Object.values(_pgHourLoad).every(s=>s==='ready');}
+function _pgHoursGate(el){
+  if(_pgHourLoadReady())return false;
+  const failed=Object.values(_pgHourLoad).includes('error');
+  el.innerHTML='<div class="pg-load-state" role="'+(failed?'alert':'status')+'"><h2>'+ (failed?'Uren niet volledig geladen':'Uren worden bijgewerkt…')+'</h2><p>'+ (failed?'Controleer je verbinding en probeer opnieuw.':'Eigen uren, medewerkers en klussen worden opgehaald. De totalen verschijnen zodra alles compleet is.')+'</p><button onclick="pgHerlaadUren()">Opnieuw proberen</button></div>';
+  return true;
+}
+function _pgRefreshHourOverview(){
+  if(_urView==='overzicht')_renderOverzicht();
+  else if(_urView==='lijst')_renderPersoneelLijst();
+}
+function _pgWatchHours(ref,next,onError){
+  const key=ref.id;
+  return onSnapshot(ref,{includeMetadataChanges:true},snap=>{
+    _pgHourLoad[key]=snap.metadata?.fromCache===true?'loading':'ready';
+    next(snap);
+    _pgRefreshHourOverview();
+  },error=>{
+    _pgHourLoad[key]='error';
+    onError?.(error);
+    _pgRefreshHourOverview();
+  });
+}
+let _pgReloadingHours=false;
+window.pgHerlaadUren=async function(){
+  if(_pgReloadingHours)return;
+  _pgReloadingHours=true;
+  try{
+    await _urFlushSaves();
+    if(_urSaveFout.size)throw Error('Sla eerst je openstaande uren op.');
+    for(const unsub of [_urUnsub,_urKlussenUnsub,_urStaffUnsub,_urPUnsub])unsub?.();
+    _urUnsub=_urKlussenUnsub=_urStaffUnsub=_urPUnsub=null;
+    for(const key of Object.keys(_pgHourLoad))_pgHourLoad[key]='loading';
+    const view=_urView;
+    window.startUrenListener();
+    await window.urGaNaar(view==='lijst'?'personeel':'overzicht');
+  }catch(e){showToast(e.message||'Opnieuw laden is niet gelukt.','error');}
+  finally{_pgReloadingHours=false;}
+};
+
 const afstandenCol = collection(db, 'afstanden');   // geleerde/berekende trajecten
 const _urConfigDoc = doc(db, 'config', 'uren');     // o.a. thuisadres
 const _dDashDoc = doc(db, 'config', 'dashboard');
@@ -7152,7 +7200,7 @@ window.startUrenListener = function() {
 
   // Klussenlijst listener (gedeeld voor eigen + personeel)
   if(!_urKlussenUnsub){
-    _urKlussenUnsub = onSnapshot(klussenCol, snap => {
+    _urKlussenUnsub = _pgWatchHours(klussenCol, snap => {
       _urKlussen = snap.docs.map(d => {
         const x = d.data();
         return {
@@ -7181,7 +7229,7 @@ window.startUrenListener = function() {
 
   renderUren();
   if (_urUnsub) return;
-  _urUnsub = onSnapshot(urenCol, snap => {
+  _urUnsub = _pgWatchHours(urenCol, snap => {
     _urData = {};
     snap.docs.forEach(d => {
       const x = d.data();
@@ -9786,7 +9834,7 @@ const _urPTimers = {};
 
 function _urpInit(){
   if(!_urStaffUnsub){
-    _urStaffUnsub = onSnapshot(personeelCol, snap => {
+    _urStaffUnsub = _pgWatchHours(personeelCol, snap => {
       _urStaff = snap.docs.map(d => {
         const x = d.data();
         return {
@@ -9805,7 +9853,7 @@ function _urpInit(){
     }, err => console.error('personeel:', err));
   }
   if(!_urPUnsub){
-    _urPUnsub = onSnapshot(urenPCol, snap => {
+    _urPUnsub = _pgWatchHours(urenPCol, snap => {
       _urPData = {};
       snap.docs.forEach(d => {
         const [sid, date] = d.id.split('__');
@@ -10387,6 +10435,28 @@ window.urKlusRijToggle = function(kid){
   haptic(6);
 };
 
+// Each new report uses confirmed server reads, independent of cached listeners.
+async function _pgPdfFreshSnapshot(){
+  let timer;
+  try{
+    const snapshots=await Promise.race([
+      Promise.all([urenCol,urenPCol,personeelCol,klussenCol].map(ref=>getDocsFromServer(ref))),
+      new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('De server reageert niet op tijd.')),12000);})
+    ]);
+    const [own,staffDays,staff,jobs]=snapshots;
+    const days={};
+    for(const d of staffDays.docs){
+      const split=d.id.indexOf('__');if(split<0)continue;
+      const id=d.id.slice(0,split),date=d.id.slice(split+2);
+      (days[id]||(days[id]={}))[date]=d.data();
+    }
+    return {sources:[{id:'owner',name:'Purgato Cleaning',label:'Eigen uren',days:Object.fromEntries(own.docs.map(d=>[d.id,d.data()]))},
+      ...staff.docs.map(d=>({id:d.id,name:d.data().naam||'Naamloos',days:days[d.id]||{}}))],
+      klussen:[...jobs.docs.map(d=>({...d.data(),id:d.id})),{...OVERIG_KLUS}]};
+  }catch(e){throw Error('De actuele uren konden niet volledig van de server worden opgehaald. Controleer je verbinding en probeer opnieuw.');}
+  finally{clearTimeout(timer);}
+}
+
 // Customer-facing PDF composer. This block lives in the existing Firebase module.
 let _pgPdfDialog, _pgPdfState, _pgPdfFocus, _pgPdfOverflow='', _pgPdfToken=0;
 const _pgPdf = window.PurgatoPDF;
@@ -10480,18 +10550,13 @@ window.urPdfExport = async function(){
     _urpInit();
     await _urFlushSaves();
     if(_urSaveFout.size)throw Error('Er zijn nog uren die niet zijn opgeslagen. Sluit dit venster en probeer eerst opnieuw op te slaan.');
-    const deadline=Date.now()+8000;
-    while(!_urFirstSnap.ur || !_urPFirstSnap || !_pgPdfStaffReady){
-      if(Date.now()>deadline)throw Error('De uren zijn nog niet volledig geladen. Controleer je verbinding en probeer opnieuw.');
-      await new Promise(resolve=>setTimeout(resolve,100));
-      if(token!==_pgPdfToken)return;
-    }
+    const fresh=await _pgPdfFreshSnapshot();
     if(token!==_pgPdfToken)return;
     const year=_urView==='eigen'?_urYear:_urpYear,month=_urView==='eigen'?_urMonth:_urpMonth;
     const start=year+'-'+String(month+1).padStart(2,'0')+'-01';
     const end=year+'-'+String(month+1).padStart(2,'0')+'-'+new Date(year,month+1,0).getDate();
-    const sources=_pgPdfPeople();
-    _pgPdfState={from:start,to:end,sources,jobs:new Set(),wholeJobs:new Set(),people:new Set(sources.map(p=>p.id)),showPeople:false,reference:'',rows:[],visibleJobs:[],busy:false};
+    const sources=fresh.sources;
+    _pgPdfState={from:start,to:end,sources,klussen:fresh.klussen,serverVerified:true,jobs:new Set(),wholeJobs:new Set(),people:new Set(sources.map(p=>p.id)),showPeople:false,reference:'',rows:[],visibleJobs:[],busy:false};
     _pgPdfForm();
   }catch(e){
     if(token!==_pgPdfToken)return;
@@ -10510,7 +10575,7 @@ function _pgPdfForm(){
 }
 function _pgPdfRecollect(){
   const s=_pgPdfState;
-  try{s.rows=_pgPdf.collect(s.sources,_urKlussen,s.from,s.to);s.error='';}
+  try{s.rows=_pgPdf.collect(s.sources,s.klussen||_urKlussen,s.from,s.to);s.error='';}
   catch(e){s.rows=[];s.error=e.message;}
   _pgPdfRenderJobs();_pgPdfSummary();
 }
@@ -10551,8 +10616,8 @@ function _pgPdfSummary(){
 }
 function _pgPdfPreview(){
   if(!_pgPdfState)return;
-  // Include registrations received while the selection window was open.
-  _pgPdfState.sources=_pgPdfPeople();
+  // Keep one verified dataset throughout selection, preview and download.
+  if(!_pgPdfState.serverVerified)_pgPdfState.sources=_pgPdfPeople();
   _pgPdfRecollect();
   const model=_pgPdfModel();if(!model.hours)return;
   _pgPdfState.model=model;
@@ -10630,6 +10695,7 @@ function _renderPersoneelLijst(){
   for(const id of ['ui-stickybar','ui-todayfab'])document.getElementById(id)?.classList.remove('show');
   const el = document.getElementById('ur-personeel');
   if(!el) return;
+  if(_pgHoursGate(el))return;
 
   // Per personeelslid deze-maand uren (voor context onder de naam)
   const staffTotalen = _urStaff.map(s => ({
@@ -10695,6 +10761,7 @@ function _renderOverzicht(){
   _urStaffSel = null;
   const el = document.getElementById('ur-overzicht');
   if(!el) return;
+  if(_pgHoursGate(el))return;
 
   // Bereken deze-maand uren voor jou + iedereen
   const eigenUren = _urUrenInMaand(_urData, _urpYear, _urpMonth);
@@ -12280,5 +12347,40 @@ if (_savedMod) {
 }
 startListener();
 </script>
-</body>
+<script>
+// An existing APK can keep a page alive. Check on return without discarding edits.
+(()=>{
+  const build=document.querySelector('meta[name="purgato-build"]')?.content;
+  if(!build||!/^https?:$/.test(location.protocol))return;
+  let lastCheck=0,busy=false,dismissed='',banner;
+  async function check(){
+    if(document.visibilityState==='hidden'||busy||Date.now()-lastCheck<60000)return;
+    busy=true;lastCheck=Date.now();
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
+    try{
+      const url=new URL(location.href);url.hash='';url.searchParams.set('_pg_check',String(Date.now()));
+      const response=await fetch(url,{cache:'no-store',credentials:'same-origin',signal:controller.signal});
+      if(!response.ok)return;
+      const doc=new DOMParser().parseFromString(await response.text(),'text/html');
+      const latest=doc.querySelector('meta[name="purgato-build"]')?.content;
+      if(!latest||latest===build||latest===dismissed)return;
+      if(!banner){
+        banner=document.createElement('aside');banner.className='pg-update-notice';banner.setAttribute('role','status');
+        banner.innerHTML='<strong>Een nieuwe versie staat klaar</strong><p>Sla je wijzigingen op voordat je de app opnieuw opent.</p><div><button data-update-open>Nieuwste versie openen</button><button data-update-later>Later</button></div>';
+        document.body.appendChild(banner);
+        banner.querySelector('[data-update-open]').addEventListener('click',()=>{const next=new URL(location.href);next.searchParams.delete('_pg_check');next.searchParams.set('_pg_v',String(Date.now()));location.assign(next.href);});
+        banner.querySelector('[data-update-later]').addEventListener('click',()=>{dismissed=banner.dataset.build;banner.hidden=true;});
+      }
+      banner.dataset.build=latest;banner.hidden=false;
+    }catch(e){/* A failed check must not pretend an update is available. */}
+    finally{clearTimeout(timer);busy=false;}
+  }
+  window.addEventListener('pageshow',check);
+  document.addEventListener('visibilitychange',check);
+  window.addEventListener('online',()=>{lastCheck=0;check();});
+  setInterval(check,300000);
+  check();
+})();
+
+</script></body>
 </html>
