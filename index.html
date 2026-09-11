@@ -5175,7 +5175,43 @@ html.pg-boot-leaving #pg-boot{animation:pg-boot-out .28s ease-out both}
 .n-modal{padding-bottom:180px}
 
 </style>
-<meta name="purgato-build" content="779c1415468d221e"></head>
+<meta name="purgato-build" content="8488e10e566f7671"><style>
+.pg-search-suppressed{display:none!important}
+.pg-search-panel{margin:0 0 22px;color:var(--text);min-width:0}
+.pg-search-hint,.pg-search-footnote{font-size:12px;line-height:1.65;color:var(--text2);text-align:center;padding:12px 16px}
+.pg-search-filters{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.pg-search-filters label{display:grid;gap:6px;font-size:12px;font-weight:600;color:var(--text2);min-width:0}
+.pg-search-filters select{width:100%;min-width:0;min-height:48px;border:1px solid var(--border2);border-radius:14px;padding:10px 12px;background:var(--surface);color:var(--text);font:inherit;font-size:14px}
+.pg-search-summary{padding:24px 16px;text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:22px;margin-bottom:20px}
+.pg-search-summary>span{font-size:12px;color:var(--text2)}
+.pg-search-summary>strong{display:block;font-size:38px;letter-spacing:-1px;font-weight:650;line-height:1.3;margin:5px 0}
+.pg-search-summary strong small{font-size:17px;letter-spacing:0}
+.pg-search-summary p{font-size:13px;line-height:1.6;margin:5px 0;color:var(--text)}
+.pg-search-summary>small{font-size:11px;color:var(--text2)}
+.pg-search-job{border:1px solid var(--border2);border-radius:20px;background:var(--surface);overflow:hidden;margin:14px 0}
+.pg-search-job-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.pg-search-job h3{font-size:16px;line-height:1.4;font-weight:650;overflow-wrap:anywhere;margin:0}
+.pg-search-job-head>strong{white-space:nowrap;font-size:16px;font-variant-numeric:tabular-nums}
+.pg-search-job small{font-size:11px;font-weight:500}
+.pg-search-row{display:flex;align-items:center;justify-content:space-between;width:100%;gap:14px;padding:16px 18px;border:0;border-bottom:1px solid var(--border);background:var(--surface);color:var(--text);text-align:left;font:inherit;cursor:pointer;min-height:76px}
+.pg-search-row:last-child{border-bottom:0}
+.pg-search-row-main{display:grid;gap:5px;min-width:0;overflow-wrap:anywhere}
+.pg-search-row-main>strong{font-size:14px;font-weight:600;line-height:1.45}
+.pg-search-row-main>span{font-size:12px;line-height:1.55;color:var(--text2)}
+.pg-search-row-main>.pg-search-note{font-size:11px}
+.pg-search-hours{display:flex;gap:4px;align-items:center;white-space:nowrap;font-weight:650;font-size:16px;font-variant-numeric:tabular-nums}
+.pg-search-hours svg{margin-left:4px;color:var(--text2);flex-shrink:0}
+.pg-search-row:disabled{cursor:default;opacity:1}.pg-search-row:disabled svg{display:none}
+.pg-search-row:focus-visible,.pg-search-more:focus-visible,.pg-search-filters select:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+@media(hover:hover){.pg-search-row:not(:disabled):hover{background:var(--surface2)}}
+.pg-search-more,.pg-search-message button{min-height:46px;padding:12px 18px;border:1px solid var(--border2);border-radius:14px;background:var(--surface2);color:var(--text);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.pg-search-more{display:block;margin:18px auto}
+.pg-search-message{text-align:center;padding:28px 18px}.pg-search-message h2{font-size:18px;font-weight:650;margin-bottom:8px}.pg-search-message p{font-size:13px;line-height:1.7;color:var(--text2);margin-bottom:12px}
+.ur-zoek-in::-webkit-search-cancel-button{display:none}
+.ur-zoek-in:focus-visible,.pg-search-filters select:focus-visible{outline-offset:-2px!important}
+@media(max-width:400px){.pg-search-row,.pg-search-job-head{padding:14px 12px}.pg-search-row{gap:8px}.pg-search-hours{font-size:14px}.pg-search-filters{gap:8px}.pg-search-row-main>span{font-size:11px}}
+
+</style></head>
 <body>
 <div class="pg-history"><button type="button" id="pg-history-button" onclick="pgHistoryUndo()" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 4-5 5 5 5M4 9h10a6 6 0 0 1 0 12"/></svg><strong>Ongedaan</strong><small></small><span>0</span></button><button type="button" id="pg-history-skip" onclick="pgHistorySkip()" hidden>Deze herstelstap overslaan</button></div>
 <div id="pg-boot" role="status" aria-live="polite" aria-label="Purgato wordt geopend">
@@ -6899,6 +6935,7 @@ function _pgHoursGate(el){
 function _pgRefreshHourOverview(){
   if(_urView==='overzicht')_renderOverzicht();
   else if(_urView==='lijst')_renderPersoneelLijst();
+  if(typeof _pgSearchRefresh==='function')_pgSearchRefresh();
 }
 function _pgWatchHours(ref,next,onError){
   const key=ref.id;
@@ -8378,6 +8415,7 @@ function _urSaveMislukt(prefix, iso, staffSnapshot, err){
   const timer = setTimeout(() => _urOpnieuwProberen(key), wacht);
   _urSaveFout.set(key, { prefix, iso, staff: staffSnapshot, pogingen, timer, err: String(err && err.message || err) });
   _urFoutBalkVul();
+  if(typeof _pgSearchRefresh==='function')_pgSearchRefresh();
 }
 
 function _urSaveGelukt(prefix, iso){
@@ -8390,6 +8428,7 @@ function _urSaveGelukt(prefix, iso){
   const kaart = document.getElementById(`dag-${prefix}-${iso}`);
   if(kaart) kaart.classList.remove('ur-niet-opgeslagen');
   _urFoutBalkVul();
+  if(typeof _pgSearchRefresh==='function')_pgSearchRefresh();
 }
 
 async function _urOpnieuwProberen(key){
@@ -8718,8 +8757,8 @@ function _uiSyncStickyTop(){
 // ── Welke prefix is actief in de uren-module? ──
 function _uiActievePrefix(){
   if(actModule !== 'uren') return null;
-  if(_urView === 'eigen') return 'ur';
-  if(_urView === 'detail') return 'urp';
+  if(_urView === 'eigen') return _urZoek.ur.trim()?null:'ur';
+  if(_urView === 'detail') return _urZoek.urp.trim()?null:'urp';
   return null;
 }
 
@@ -9585,6 +9624,7 @@ const _urZoekOpen = { ur: false, urp: false };
 // zodat gebruiker niet vanaf de 31e naar beneden hoeft te scrollen.
 const _urScrollToday = { ur: false, urp: false };
 function _urDoScrollToday(prefix){
+  if(_pgSearchJumping || _urZoek[prefix]?.trim()){_urScrollToday[prefix]=false;return;}
   if(!_urScrollToday[prefix]) return;
   _urScrollToday[prefix] = false;
   const today = _todayISO();
@@ -9732,199 +9772,169 @@ function _urDagMatch(prefix, iso, term){
   return false;
 }
 
-function _urZoekBar(prefix){
-  const term = _urZoek[prefix] || '';
-  const open = _urZoekOpen[prefix] || !!term;
-  const btnFn = `urZoekBtn('${prefix}')`;
-  return {
-    btnHtml: `<button class="ur-zoek-btn ${open?'on':''}" onclick="${btnFn}" aria-label="Zoeken">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    </button>`,
-    wrapHtml: `<div class="ur-zoek-wrap ${open?'open':''}" id="${prefix}-zoek-wrap">
-      <span class="ur-zoek-ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-      <input type="text" class="ur-zoek-in" id="${prefix}-zoek-in" placeholder="Zoek klus, locatie of notitie..." value="${term.replace(/"/g,'&quot;')}" oninput="urZoekIn('${prefix}', this.value)">
-      <button class="ur-zoek-x ${term?'on':''}" id="${prefix}-zoek-x" onclick="urZoekWis('${prefix}')" aria-label="Wissen">✕</button>
-    </div>`
+// Pure search model: all stored days, matching rows only, invoice hours in hundredths.
+const PurgatoSearch = (() => {
+  const norm = value => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('nl').trim();
+  const hours = value => {
+    const n = parseFloat(String(value ?? '').trim().replace(',','.').replace(/[^\d.\-]/g,''));
+    return Number.isFinite(n) ? Math.round(n * 100) : 0;
   };
-}
-
-window.urZoekBtn = function(prefix){
-  _urZoekOpen[prefix] = !_urZoekOpen[prefix];
-  if(!_urZoekOpen[prefix]) _urZoek[prefix] = '';
-  if(prefix === 'ur') renderUren();
-  else _renderPersoneelDetail();
-  // Focus in input als net geopend
-  if(_urZoekOpen[prefix]){
-    setTimeout(() => { const inp = document.getElementById(`${prefix}-zoek-in`); if(inp) inp.focus(); }, 50);
-  }
-};
-
-// Zoekt door de rijen van één dag; retourneert matches (voor externe resultaten)
-function _urRowMatches(r, q){
-  if((r.s || '').toLowerCase().includes(q)) return true;
-  const klus = _urKlussen.find(k => k.id === r.k);
-  return !!(klus && klus.naam.toLowerCase().includes(q));
-}
-
-// Verzamelt matches van andere personen (niet de huidige view)
-function _urGlobaleMatches(prefix, term){
-  const q = term.toLowerCase().trim();
-  if(!q) return [];
-  const results = [];
-
-  const scanDataset = (dataset, source, naam) => {
-    Object.entries(dataset).forEach(([iso, dag]) => {
-      if(!dag) return;
-      const rowsMatch = (dag.rijen || []).filter(r => _urRowMatches(r, q));
-      const notitieMatch = (dag.notitie || '').toLowerCase().includes(q);
-      const datumMatch = _urDagZoekStr(iso).includes(q);
-      if(rowsMatch.length || notitieMatch || datumMatch){
-        results.push({
-          iso, source, naam,
-          rijen: rowsMatch.length ? rowsMatch : (dag.rijen || []),
-          notitie: dag.notitie || '',
-          km: _parseNum(dag.km)
+  function collect({own,team,staff,jobs,term,scope='all',month=''}) {
+    const words = norm(term).split(/\s+/).filter(Boolean);
+    if(!words.length) return {rows:[],groups:[],total:0,own:0,team:0};
+    const names = new Map(staff.map(p=>[String(p.id),p.naam]));
+    const lookup = new Map(jobs.map(j=>[String(j.id),j.naam]));
+    const people = [{id:'ur',name:'Mij',days:own},...Object.entries(team||{}).map(([id,days])=>({id,name:names.get(id)||'Verwijderde medewerker',days}))];
+    const rows=[];
+    for(const person of people){
+      if(scope==='own' && person.id!=='ur' || scope==='team' && person.id==='ur' || scope.startsWith('person:') && person.id!==scope.slice(7))continue;
+      for(const [iso,day] of Object.entries(person.days||{})){
+        if(!/^\d{4}-\d{2}-\d{2}$/.test(iso) || month && !iso.startsWith(month))continue;
+        const [y,m,d]=iso.split('-'), date=new Date(+y,+m-1,+d);
+        if(date.getFullYear()!==+y || date.getMonth()!==+m-1 || date.getDate()!==+d)continue;
+        const dateText=[iso,`${d}-${m}-${y}`,`${d}/${m}/${y}`,`${+d}-${+m}-${y}`,date.toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long',year:'numeric'})].join(' ');
+        const note=String(day.notitie||'');
+        const entries=Array.isArray(day.rijen)?day.rijen:[];
+        const useful=entries.filter(r=>r && (r.k || r.s || hours(r.u)));
+        if(!useful.length && note)useful.push({});
+        useful.forEach((r,index)=>{
+          const kid=String(r.k||''), job=lookup.get(kid)||(kid?'Verwijderde klus ('+kid+')':note&&!entries.length?'Dagnotitie':'Zonder klus');
+          const loc=String(r.s||'').trim();
+          const haystack=norm([job,loc,note,dateText,person.name,person.id==='ur'?'eigen uren':'personeel'].join(' '));
+          if(!words.every(w=>haystack.includes(w)))return;
+          rows.push({iso,source:person.id,name:person.name,kid,job,loc,note,hours:hours(r.u),index,canOpen:person.id==='ur'||names.has(person.id)});
         });
       }
-    });
-  };
-
-  // Als we in staff-detail zijn: ook eigen (Mij) uren doorzoeken
-  if(prefix === 'urp'){
-    scanDataset(_urData, 'ur', 'Mij');
+    }
+    rows.sort((a,b)=>b.iso.localeCompare(a.iso)||a.job.localeCompare(b.job,'nl')||a.name.localeCompare(b.name,'nl')||a.index-b.index);
+    const byJob=new Map();
+    let ownTotal=0,teamTotal=0;
+    for(const row of rows){
+      if(!byJob.has(row.kid))byJob.set(row.kid,{id:row.kid,name:row.job,hours:0,rows:[]});
+      const group=byJob.get(row.kid); group.hours+=row.hours; group.rows.push(row);
+      if(row.source==='ur')ownTotal+=row.hours; else teamTotal+=row.hours;
+    }
+    return {rows,groups:[...byJob.values()].sort((a,b)=>a.name.localeCompare(b.name,'nl')),total:ownTotal+teamTotal,own:ownTotal,team:teamTotal};
   }
-  // Alle personeelsleden BEHALVE de huidige
-  Object.entries(_urPData).forEach(([staffId, days]) => {
-    if(prefix === 'urp' && staffId === _urStaffSel) return;
-    const staff = _urStaff.find(s => s.id === staffId);
-    if(staff) scanDataset(days, staffId, staff.naam);
-  });
+  return {collect,format:n=>(n/100).toLocaleString('nl-NL',{maximumFractionDigits:2})};
+})();
 
-  results.sort((a,b) => b.iso.localeCompare(a.iso));
-  return results;
+const _pgSearchState={ur:{scope:'all',period:'all',limit:60,rows:[]},urp:{scope:'all',period:'all',limit:60,rows:[]}};
+const _urZoekTimers={};
+let _pgSearchSaving=false;
+let _pgSearchJumping=false;
+function _urZoekBar(prefix){
+  const term=_urZoek[prefix]||'',open=_urZoekOpen[prefix]||!!term;
+  return {
+    btnHtml:`<button class="ur-zoek-btn ${open?'on':''}" onclick="urZoekBtn('${prefix}')" aria-label="Zoeken" aria-expanded="${!!open}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7.5"/><path d="m16 16 5 5"/></svg></button>`,
+    wrapHtml:`<div class="ur-zoek-wrap ${open?'open':''}" id="${prefix}-zoek-wrap"><span class="ur-zoek-ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="7.5"/><path d="m16 16 5 5"/></svg></span><input type="search" class="ur-zoek-in" id="${prefix}-zoek-in" aria-label="Zoek in eigen uren en personeel" placeholder="Klus, locatie of medewerker…" autocomplete="off" value="${_urEsc(term)}" oninput="urZoekIn('${prefix}',this.value)"><button class="ur-zoek-x ${term?'on':''}" id="${prefix}-zoek-x" onclick="urZoekWis('${prefix}')" aria-label="Zoekopdracht wissen">✕</button></div>`
+  };
 }
-
-// Rendert de "Ook gevonden bij anderen"-sectie onder de dagkaarten
-function _urRenderExternalResults(prefix, results){
-  const listId = prefix === 'ur' ? 'ur-list' : 'ur-personeel';
-  const list = document.getElementById(listId);
-  if(!list) return;
-  let wrap = document.getElementById(`${prefix}-zoek-ext`);
-  if(!results.length){
-    if(wrap) wrap.remove();
+window.urZoekBtn=async function(prefix){
+  _urZoekOpen[prefix]=!_urZoekOpen[prefix];
+  if(!_urZoekOpen[prefix])_urZoek[prefix]='';
+  const open=_urZoekOpen[prefix];
+  // Preserve the existing input and mobile keyboard while loading and saving.
+  document.getElementById(`${prefix}-zoek-wrap`)?.classList.toggle('open',open);
+  const btn=document.querySelector(`#${prefix==='ur'?'ur-list':'ur-personeel'} .ur-zoek-btn`);
+  btn?.classList.toggle('on',open);btn?.setAttribute('aria-expanded',String(open));
+  if(open){
+    _urpInit();
+    document.getElementById(`${prefix}-zoek-in`)?.focus();
+    _pgSearchSaving=true;
+    _urZoekApply(prefix);
+    try{await _urFlushSaves();}finally{_pgSearchSaving=false;_urZoekApply(prefix);}
+  }else{const input=document.getElementById(`${prefix}-zoek-in`);if(input)input.value='';_urZoekApply(prefix);}
+};
+function _pgSearchRefresh(){
+  const prefix=_urView==='eigen'?'ur':_urView==='detail'?'urp':null;
+  if(prefix && (_urZoekOpen[prefix]||_urZoek[prefix])){
+    _pgSearchState[prefix].refreshCalendar=true;
+    _urZoekApply(prefix);
+  }
+}
+function _urZoekApply(prefix){
+  const list=document.getElementById(prefix==='ur'?'ur-list':'ur-personeel');
+  const wrap=document.getElementById(`${prefix}-zoek-wrap`);
+  if(!list||!wrap)return;
+  const term=(_urZoek[prefix]||'').trim(),active=!!term;
+  const state=_pgSearchState[prefix];
+  const wasActive=list.classList.contains('pg-search-active');
+  list.classList.toggle('pg-search-active',active);
+  // A listener may have updated data while the search input kept the calendar
+  // from rerendering. Restore current day cards when leaving those results.
+  if(wasActive && !active && state.refreshCalendar && !_pgSearchSaving && !_urSaveFout.size){
+    state.refreshCalendar=false;
+    const refocus=document.activeElement===document.getElementById(`${prefix}-zoek-in`);
+    if(prefix==='ur')renderUren();else _renderPersoneelDetail();
+    if(refocus)document.getElementById(`${prefix}-zoek-in`)?.focus({preventScroll:true});
     return;
   }
-  if(!wrap){
-    wrap = document.createElement('div');
-    wrap.id = `${prefix}-zoek-ext`;
-    wrap.className = 'ur-ext-wrap';
-    list.appendChild(wrap);
+  _uiOnScroll();
+  document.getElementById(`${prefix}-zoek-x`)?.classList.toggle('on',active);
+  for(const el of list.children){
+    const keep=el.matches('.ur-nav-met-zoek,.ur-zoek-wrap,.pg-search-panel');
+    el.classList.toggle('pg-search-suppressed',active&&!keep);
   }
-  // Als resultaten al bestaan met dezelfde data, niet vervangen (voorkomt flicker)
-  const sig = JSON.stringify(results.map(r => [r.iso, r.source, r.rijen.length]));
-  if(wrap.dataset.sig === sig) return;
-  wrap.dataset.sig = sig;
-
-  const items = results.slice(0, 40).map(r => {
-    const klussenTxt = r.rijen.map(row => {
-      const klus = _urKlussen.find(k => k.id === row.k);
-      const naam = klus ? klus.naam : (row.k ? '(verwijderd)' : '—');
-      const loc = row.s && row.s !== '-' ? ` <span class="loc">/ ${_urEsc(row.s)}</span>` : '';
-      return `${_urEsc(naam)}${loc}`;
-    }).join(' · ');
-    let dagtot = 0;
-    r.rijen.forEach(row => { dagtot = _urRound2(dagtot + _parseNum(row.u)); });
-    const urenHtml = dagtot > 0 ? `<span class="ur-ext-uren">${_urFmtUren(dagtot)}</span>` : '';
-    return `<div class="ur-ext-item" onclick="klusNaarEntry('${r.iso}','${r.source}')">
-      <span class="ur-ext-datum">${_fmtDatumKort(r.iso)}</span>
-      <div class="ur-ext-mid">
-        <div><span class="ur-ext-persoon">${_urEsc(r.naam)}</span></div>
-        <div class="ur-ext-klus">${klussenTxt || _urEsc((r.notitie||'').slice(0,60))}</div>
-      </div>
-      ${urenHtml}
-      <svg class="ur-ext-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-    </div>`;
-  }).join('');
-
-  wrap.innerHTML = `<div class="ur-ext-hdr">
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M1 21v-2a4 4 0 0 1 3-3.87"/></svg>
-    Ook gevonden bij anderen
-    <span class="ur-ext-hdr-count">${results.length}</span>
-  </div>${items}`;
+  let panel=document.getElementById(`${prefix}-search-panel`);
+  if(!active && !_urZoekOpen[prefix]){panel?.remove();return;}
+  if(!panel){panel=document.createElement('section');panel.id=`${prefix}-search-panel`;panel.className='pg-search-panel';wrap.after(panel);}
+  if(!active){panel.innerHTML='<p class="pg-search-hint">Zoek in alle periodes, bij jezelf én je personeel. Ook op locatie, datum of notitie.</p>';return;}
+  _urpInit();
+  const monthYear=prefix==='ur'?[_urYear,_urMonth]:[_urpYear,_urpMonth];
+  if(!panel.querySelector('.pg-search-filters')){
+    panel.innerHTML=`<div class="pg-search-filters"><label>Wie<select id="${prefix}-search-scope" onchange="pgSearchFilter('${prefix}','scope',this.value)"></select></label><label>Periode<select id="${prefix}-search-period" onchange="pgSearchFilter('${prefix}','period',this.value)"><option value="all">Alle periodes</option><option value="month"></option></select></label></div><div class="pg-search-output"></div>`;
+  }
+  const scope=panel.querySelector(`#${prefix}-search-scope`);
+  const peopleOptions='<option value="all">Iedereen</option><option value="own">Mij</option><option value="team">Personeel</option>'+_urStaff.map(p=>`<option value="person:${_urEsc(p.id)}">${_urEsc(p.naam)}</option>`).join('');
+  if(scope.dataset.options!==peopleOptions){scope.innerHTML=peopleOptions;scope.dataset.options=peopleOptions;}
+  if(![...scope.options].some(o=>o.value===state.scope))state.scope='all';
+  scope.value=state.scope;
+  const period=panel.querySelector(`#${prefix}-search-period`);period.value=state.period;
+  period.options[1].textContent=`${_UR_MND_LBL[monthYear[1]]} ${monthYear[0]}`;
+  const output=panel.querySelector('.pg-search-output');
+  if(_pgSearchSaving || !_pgHourLoadReady() || _urSaveFout.size){
+    state.rows=[];
+    const failed=Object.values(_pgHourLoad).includes('error'),unsaved=_urSaveFout.size;
+    output.innerHTML=`<div class="pg-search-message" role="status"><h2>${unsaved?'Uren nog niet opgeslagen':failed?'Zoeken nog niet compleet':'Alle uren ophalen…'}</h2><p>${unsaved?'Sla je wijzigingen op om de juiste resultaten te zien.':failed?'Controleer je verbinding en probeer opnieuw.':'Je eigen uren, het personeel en alle klussen worden geladen.'}</p>${unsaved?'<button onclick="urNuOpslaan()">Uren opslaan</button>':failed?`<button onclick="pgSearchRetry('${prefix}')">Opnieuw proberen</button>`:''}</div>`;
+    return;
+  }
+  const model=PurgatoSearch.collect({own:_urData,team:_urPData,staff:_urStaff,jobs:_urKlussen,term,scope:state.scope,month:state.period==='month'?`${monthYear[0]}-${String(monthYear[1]+1).padStart(2,'0')}`:''});
+  state.rows=model.rows;
+  const fmt=PurgatoSearch.format;
+  const visible=new Map(model.rows.slice(0,state.limit).map((row,i)=>[row,i]));
+  const groups=model.groups.filter(g=>g.rows.some(r=>visible.has(r))).map(g=>`<section class="pg-search-job"><div class="pg-search-job-head"><h3>${_urEsc(g.name)}</h3><strong>${fmt(g.hours)} <small>uur</small></strong></div>${g.rows.filter(r=>visible.has(r)).map(r=>{
+    const date=r.iso.split('-').reverse().join('-'),future=r.iso>_todayISO();
+    return `<button type="button" class="pg-search-row" onclick="pgSearchOpen('${prefix}',${visible.get(r)})" ${r.canOpen?'':'disabled'}><span class="pg-search-row-main"><strong>${_urEsc(r.loc||'Zonder locatie')}</strong><span>${_urEsc(r.name)} · ${date}${future?' · Gepland':''}</span>${r.note?`<span class="pg-search-note">${_urEsc(r.note)}</span>`:''}${!r.canOpen?'<span>Medewerker verwijderd · alleen inzage</span>':''}</span><span class="pg-search-hours">${fmt(r.hours)} <small>uur</small><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></button>`;
+  }).join('')}</section>`).join('');
+  output.innerHTML=`<div class="pg-search-summary" role="status"><span>Ingevulde factuururen</span><strong>${fmt(model.total)} <small>uur</small></strong><p>Mij ${fmt(model.own)} uur <span aria-hidden="true">·</span> Personeel ${fmt(model.team)} uur</p><small>${model.rows.length} ${model.rows.length===1?'registratie':'registraties'} · ${model.groups.length} ${model.groups.length===1?'klus':'klussen'} · ${state.period==='all'?'alle periodes':_UR_MND_LBL[monthYear[1]]+' '+monthYear[0]}</small></div>${groups||'<div class="pg-search-message"><h2>Geen resultaten</h2><p>Probeer een andere naam, locatie of een ruimer filter.</p></div>'}${model.rows.length>state.limit?`<button class="pg-search-more" onclick="pgSearchMore('${prefix}')">Meer tonen (${Math.min(state.limit,model.rows.length)} van ${model.rows.length})</button>`:''}<p class="pg-search-footnote">${model.rows.length>state.limit?'De totalen bevatten ook de nog niet getoonde registraties. ':''}Uren zoals ingevuld bij de klus; toekomstige datums zijn gemarkeerd als gepland. Tik op een regel om de dag te openen.</p>`;
 }
-
-// Past het filter toe op de zichtbare dagkaarten ZONDER de zoekbalk opnieuw te renderen
-// (voorheen: renderUren() zou het input-veld vernietigen en het toetsenbord zou sluiten)
-function _urZoekApply(prefix){
-  const term = (_urZoek[prefix] || '').trim().toLowerCase();
-  const dagenAll = prefix === 'ur' ? _urDagenInMaand(_urYear, _urMonth) : _urDagenInMaand(_urpYear, _urpMonth);
-  let matchCount = 0;
-  dagenAll.forEach(iso => {
-    const el = document.getElementById(`dag-${prefix}-${iso}`);
-    if(!el) return;
-    const match = !term || _urDagMatch(prefix, iso, term);
-    el.style.display = match ? '' : 'none';
-    if(match) matchCount++;
-  });
-  // X-knop bij het zoekveld
-  const x = document.getElementById(`${prefix}-zoek-x`);
-  if(x) x.classList.toggle('on', !!term);
-  // Live resultaat-badge
-  let badge = document.getElementById(`${prefix}-zoek-count-live`);
-  if(!term){
-    if(badge) badge.remove();
-  } else {
-    if(!badge){
-      badge = document.createElement('div');
-      badge.className = 'ur-zoek-count';
-      badge.id = `${prefix}-zoek-count-live`;
-      const wrap = document.getElementById(`${prefix}-zoek-wrap`);
-      if(wrap && wrap.parentNode) wrap.parentNode.insertBefore(badge, wrap.nextSibling);
-    }
-    badge.textContent = `${matchCount} van ${dagenAll.length} ${dagenAll.length===1?'dag':'dagen'}`;
-  }
-  // "Geen resultaten"-melding
-  const listId = prefix === 'ur' ? 'ur-list' : 'ur-personeel';
-  const list = document.getElementById(listId);
-  let leeg = document.getElementById(`${prefix}-zoek-leeg`);
-  if(term && matchCount === 0){
-    if(!leeg && list){
-      leeg = document.createElement('div');
-      leeg.className = 'urp-leeg';
-      leeg.id = `${prefix}-zoek-leeg`;
-      leeg.innerHTML = `<div class="urp-leeg-ic"><svg class="pg-inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></div><div class="urp-leeg-t">Geen resultaten voor "${_urEsc(term)}"</div><div class="urp-leeg-s">Probeer een andere zoekterm</div>`;
-      const firstDag = list.querySelector('.ur-dag');
-      if(firstDag) list.insertBefore(leeg, firstDag);
-      else list.appendChild(leeg);
-    } else if(leeg){
-      leeg.querySelector('.urp-leeg-t').textContent = `Geen resultaten voor "${term}"`;
-    }
-  } else if(leeg){
-    leeg.remove();
-  }
-  // Externe resultaten (matches bij andere personen)
-  const externeResults = term ? _urGlobaleMatches(prefix, term) : [];
-  _urRenderExternalResults(prefix, externeResults);
-}
-
-// Debounce — voorkomt dat DOM-updates het mobiele toetsenbord destabiliseren
-const _urZoekTimers = {};
-window.urZoekIn = function(prefix, val){
-  _urZoek[prefix] = val || '';
-  _urZoekOpen[prefix] = true;
-  clearTimeout(_urZoekTimers[prefix]);
-  _urZoekTimers[prefix] = setTimeout(() => {
-    // Batch DOM-updates in één frame voor extra stabiliteit
-    requestAnimationFrame(() => _urZoekApply(prefix));
-  }, 220);
+window.urZoekIn=function(prefix,val){_urZoek[prefix]=val||'';_urZoekOpen[prefix]=true;_pgSearchState[prefix].limit=60;clearTimeout(_urZoekTimers[prefix]);_urZoekTimers[prefix]=setTimeout(()=>_urZoekApply(prefix),180);};
+window.urZoekWis=function(prefix){_urZoek[prefix]='';clearTimeout(_urZoekTimers[prefix]);const el=document.getElementById(`${prefix}-zoek-in`);if(el){el.value='';el.focus();}_urZoekApply(prefix);};
+window.pgSearchFilter=function(prefix,key,value){if(!['scope','period'].includes(key))return;_pgSearchState[prefix][key]=value;_pgSearchState[prefix].limit=60;_urZoekApply(prefix);};
+window.pgSearchMore=function(prefix){_pgSearchState[prefix].limit+=60;_urZoekApply(prefix);};
+window.pgSearchOpen=async function(prefix,index){
+  const row=_pgSearchState[prefix].rows[index];if(!row||!row.canOpen)return;
+  try{
+    await _urFlushSaves();if(_urSaveFout.size)throw Error('Sla eerst je openstaande uren op.');
+    const target=row.source==='ur'?'ur':'urp',[y,m]=row.iso.split('-').map(Number);
+    _urZoek[target]='';_urZoekOpen[target]=false;clearTimeout(_urZoekTimers[target]);
+    if(target==='ur'){_urYear=y;_urMonth=m-1;}else{_urpYear=y;_urpMonth=m-1;_urStaffSel=row.source;}
+    _urInitExpanded(target);
+    _urExpanded[target].add(row.iso);
+    _pgSearchJumping=true;
+    await urGaNaar(target==='ur'?'eigen':'personeel');
+    _urScrollToday[target]=false;
+    const day=document.getElementById(`dag-${target}-${row.iso}`);
+    if(day){day.setAttribute('tabindex','-1');day.focus({preventScroll:true});day.scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}
+  }catch(error){showToast(error.message||'Deze dag kon niet worden geopend.','error');}
+  finally{_pgSearchJumping=false;}
 };
-
-window.urZoekWis = function(prefix){
-  _urZoek[prefix] = '';
-  clearTimeout(_urZoekTimers[prefix]);
-  const inp = document.getElementById(`${prefix}-zoek-in`);
-  if(inp){ inp.value = ''; inp.focus(); }
-  _urZoekApply(prefix);
+window.pgSearchRetry=async function(prefix){
+  const view=_urView,staff=_urStaffSel,dates=[_urYear,_urMonth,_urpYear,_urpMonth];
+  await pgHerlaadUren();
+  [_urYear,_urMonth,_urpYear,_urpMonth]=dates;_urStaffSel=staff;
+  await urGaNaar(view==='eigen'?'eigen':'personeel');_urZoekApply(prefix);
 };
 
 function renderUren() {
@@ -9935,7 +9945,7 @@ function renderUren() {
   const term = _urZoek.ur || '';
   // Rows initialiseren voor alle dagen zodat matching + samenvatting werkt
   dagenAll.forEach(iso => { _urInitRows('ur', iso, (_urData[iso] || {}).rijen); });
-  const dagen = term ? dagenAll.filter(iso => _urDagMatch('ur', iso, term)) : dagenAll;
+  const dagen = dagenAll;
 
   const zoek = _urZoekBar('ur');
   // One UI grote titel (collapst bij scrollen)
@@ -9976,6 +9986,7 @@ function renderUren() {
   list.innerHTML = html;
   dagen.forEach(iso => _urResizeNot('ur', iso));
   _urUpdateTotalen('ur');
+  _urZoekApply('ur');
   _urDoScrollToday('ur');
   _uiAfterRender();
 }
@@ -11134,7 +11145,7 @@ function _renderPersoneelDetail(){
 
   // Rows initialiseren voor alle dagen zodat matching + samenvatting werkt
   dagenAll.forEach(iso => { _urInitRows('urp', iso, (data[iso] || {}).rijen); });
-  const dagen = term ? dagenAll.filter(iso => _urDagMatch('urp', iso, term)) : dagenAll;
+  const dagen = dagenAll;
 
   let ci = 0;
   const lijst = dagen.map(iso =>
@@ -11181,6 +11192,7 @@ function _renderPersoneelDetail(){
   `;
   dagen.forEach(iso => _urResizeNot('urp', iso));
   _urUpdateTotalen('urp');
+  _urZoekApply('urp');
   _urDoScrollToday('urp');
   _uiAfterRender();
 }
