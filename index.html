@@ -22,8 +22,7 @@ window.__pgBootStarted=performance.now();
 document.documentElement.classList.add('pg-booting');
 
 </script>
-<style id="purgato-base-layout">
-/* Basisregels staan in een lagere CSS-laag; app-opmaak heeft voorrang. */
+<style>
 @layer purgato-original {
 
 /* ── Design Tokens ── */
@@ -120,6 +119,39 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 #startscherm.open{display:flex;}
 
 /* Branding */
+.sm-brand{
+  text-align:center;margin-bottom:52px;
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;align-items:center;
+}
+.sm-purgato{
+  font-size:3.2rem;font-weight:900;color:#fff;
+  letter-spacing:0.22em;text-transform:uppercase;line-height:1;
+  text-shadow:0 0 60px rgba(74,222,128,0.35),0 2px 20px rgba(0,0,0,0.4);
+  overflow:hidden;white-space:nowrap;
+  display:inline-flex;align-items:center;
+}
+.sm-cursor{
+  display:inline-block;width:2px;height:0.85em;
+  background:rgba(255,255,255,0.7);border-radius:1px;
+  margin-left:3px;vertical-align:middle;
+  animation:sm-blink 0.7s step-end infinite;
+}
+.sm-cursor.hide{display:none;}
+@keyframes sm-blink{0%,100%{opacity:1}50%{opacity:0}}
+.sm-sub{
+  font-size:1.05rem;color:rgba(255,255,255,0.55);
+  letter-spacing:0.38em;text-transform:uppercase;margin-top:12px;
+  overflow:hidden;white-space:nowrap;
+  display:inline-flex;align-items:center;
+}
+.sm-sub-cursor{
+  display:inline-block;width:1.5px;height:0.75em;
+  background:rgba(255,255,255,0.4);border-radius:1px;
+  margin-left:2px;vertical-align:middle;
+  animation:sm-blink 0.7s step-end infinite;
+}
+.sm-sub-cursor.hide{display:none;}
 
 /* Grid */
 .sm-grid{
@@ -156,15 +188,24 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
     inset -1px 0 0 rgba(0,0,0,0.05);
 }
 .module-card:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 14px 36px rgba(0,0,0,0.45);}
-.module-card:active{box-shadow:0 4px 16px rgba(0,0,0,0.4);}
+.module-card:active{transform:scale(0.94);box-shadow:0 4px 16px rgba(0,0,0,0.4);}
 
 /* Identity gradients */
 .mc-glas{background:linear-gradient(145deg,#3a9fc8 0%,#1470aa 45%,#094d82 100%);}
 .mc-winst{background:linear-gradient(145deg,#e8aa18 0%,#c98800 40%,#a06600 100%);}
 .mc-uren{background:linear-gradient(145deg,#9575e8 0%,#6930c8 45%,#491aa0 100%);}
 .mc-extra{background:linear-gradient(145deg,#e8722e 0%,#cc4a00 45%,#a33800 100%);}
+.mc-notes{background:linear-gradient(145deg,#14c0d8 0%,#0098b4 40%,#007490 100%);}
 
 /* Icon */
+.mc-icon-wrap{
+  width:54px;height:54px;border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,0.22);
+  border:1px solid rgba(255,255,255,0.4);
+  box-shadow:0 4px 16px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.5);
+  flex-shrink:0;margin-bottom:14px;
+}
 .mc-text{display:flex;flex-direction:column;align-items:center;gap:4px;}
 .mc-name{font-size:0.88rem;font-weight:800;color:#fff;letter-spacing:-0.2px;line-height:1.2;}
 .mc-desc{font-size:0.58rem;color:rgba(255,255,255,0.6);font-weight:500;}
@@ -233,7 +274,7 @@ header{
 .icon-btn{
   width:32px;height:32px;
   background:var(--surface2);border:1px solid var(--border2);
-  border-radius:9px;
+  border-radius:9px;display:flex;align-items:center;justify-content:center;
   cursor:pointer;font-size:0.82rem;
   transition:all 0.2s var(--ease-out);
 }
@@ -252,9 +293,11 @@ header{
   padding:7px 12px;font-size:0.72rem;font-weight:700;color:var(--text3);
   cursor:pointer;white-space:nowrap;flex-shrink:0;
   position:relative;transition:color 0.2s var(--ease-out),background 0.2s var(--ease-out);
-  letter-spacing:0.01em;border-radius:99px;margin:5px 1px;gap:5px;
+  letter-spacing:0.01em;border-radius:99px;margin:5px 1px;
+  display:flex;align-items:center;gap:5px;
 }
 .nav-item.on{
+  color:var(--accent);
   background:rgba(45,107,58,0.1);
 }
 
@@ -283,7 +326,7 @@ header{
 .stat-card.s-soon{background:var(--soon-s);border-color:var(--soon-b);}
 .stat-card.s-ok{background:var(--ok-s);border-color:var(--ok-b);}
 .stat-shell:active .stat-card{transform:scale(0.96);}
-.stat-n{font-size:1.9rem;line-height:1;letter-spacing:-2px;}
+.stat-n{font-size:1.9rem;font-weight:900;line-height:1;letter-spacing:-2px;}
 .stat-l{font-size:0.56rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-top:4px;}
 
 /* ── Search ── */
@@ -299,7 +342,7 @@ header{
 .zoek-in:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow),var(--shadow);}
 .zoek-in::placeholder{color:var(--text3);}
 .zoek-ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:0.82rem;pointer-events:none;color:var(--text3);}
-.zoek-x{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text3);cursor:pointer;font-size:0.75rem;width:18px;height:18px;background:var(--surface3);border-radius:50%;display:none;align-items:center;justify-content:center;}
+.zoek-x{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text3);cursor:pointer;display:none;font-size:0.75rem;width:18px;height:18px;background:var(--surface3);border-radius:50%;display:none;align-items:center;justify-content:center;}
 
 /* ── Add card ── */
 .add-card{
@@ -397,7 +440,13 @@ header{
 .kr1{display:flex;align-items:flex-start;gap:10px;}
 .ki{flex:1;min-width:0;}
 .kn{font-size:0.88rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.2px;}
-.kp{font-size:0.67rem;color:var(--text3);margin-top:2px;}
+.kp{font-size:0.67rem;color:var(--text3);margin-top:2px;font-weight:500;}
+.k-avatar{
+  width:34px;height:34px;border-radius:9px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.68rem;font-weight:800;letter-spacing:-0.3px;color:#fff;
+  opacity:0.9;
+}
 .dtag{
   border-radius:9px;padding:5px 9px;font-size:0.71rem;font-weight:700;
   text-align:right;flex-shrink:0;cursor:pointer;
@@ -437,17 +486,17 @@ header{
   cursor:pointer;transition:all 0.2s var(--ease-out);
 }
 .b-done:active{transform:scale(0.96);background:var(--ok);color:#fff;}
-.b-note{
+.b-note,.b-map{
   background:var(--surface2);color:var(--text3);border:1px solid var(--border2);
-  border-radius:8px;padding:8px 10px;font-size:0.76rem;
+  border-radius:8px;padding:8px 10px;font-size:0.76rem;cursor:pointer;
   transition:all 0.2s var(--ease-out);
 }
 .b-del{
   background:var(--urgent-s);color:var(--urgent);border:1px solid var(--urgent-b);
-  border-radius:8px;padding:8px 9px;font-size:0.76rem;
+  border-radius:8px;padding:8px 9px;font-size:0.76rem;cursor:pointer;
   transition:all 0.2s var(--ease-out);
 }
-.b-note:active{transform:scale(0.94);}
+.b-note:active,.b-map:active{transform:scale(0.94);}
 .b-del:active{transform:scale(0.94);background:var(--urgent);color:#fff;}
 
 .groep-lbl{
@@ -464,19 +513,22 @@ header{
 
 /* ── 7-day banner ── */
 .b7{
-  background:var(--surface);border:1px solid var(--border);padding:13px 14px;margin-bottom:10px;box-shadow:var(--shadow);
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:13px 14px;margin-bottom:10px;box-shadow:var(--shadow);
 }
 .b7-title{
+  display:flex;align-items:center;gap:7px;
   font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;
   color:var(--text3);margin-bottom:10px;
 }
+.b7-title-dot{width:6px;height:6px;border-radius:50%;background:var(--soon);flex-shrink:0;}
 .b7-items{display:flex;flex-direction:column;gap:1px;}
 .b7-item{
   display:flex;align-items:center;gap:8px;padding:7px 0;
   border-bottom:1px solid var(--border);
 }
 .b7-item:last-child{border-bottom:none;}
-.b7-naam{font-size:0.82rem;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.b7-naam{font-size:0.82rem;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .b7-pl{font-size:0.65rem;color:var(--text3);flex-shrink:0;}
 .b7-badge{font-size:0.63rem;font-weight:700;padding:3px 9px;border-radius:99px;flex-shrink:0;}
 
@@ -502,6 +554,7 @@ header{
   box-shadow:var(--shadow);transition:transform 0.15s cubic-bezier(0.32,0.72,0,1);
   user-select:none;
 }
+.wk-day:active{transform:scale(0.93);}
 .wk-day-name{font-size:0.46rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-bottom:4px;}
 .wk-day-num{font-size:1rem;font-weight:900;color:var(--text);line-height:1;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;margin:0 auto;}
 .wk-day-dot{width:5px;height:5px;border-radius:50%;background:transparent;margin-top:4px;}
@@ -527,7 +580,7 @@ header{
 .wi-info{flex:1;min-width:0;}
 .wi-naam{font-size:0.84rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .wi-sub{font-size:0.65rem;color:var(--text3);margin-top:2px;font-weight:500;display:flex;align-items:center;gap:4px;}
-.wi-badge{font-size:0.67rem;font-weight:700;padding:3px 9px;flex-shrink:0;}
+.wi-badge{font-size:0.67rem;font-weight:700;padding:3px 9px;border-radius:99px;flex-shrink:0;}
 .week-leeg{text-align:center;padding:40px 20px;color:var(--text3);font-size:0.84rem;font-weight:600;}
 .wi-badge.urgent{background:var(--urgent-s);color:var(--urgent);}
 .wi-badge.soon{background:var(--soon-s);color:var(--soon);}
@@ -552,6 +605,7 @@ header{
   font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;
   color:rgba(255,255,255,0.7);margin-bottom:10px;
 }
+.omzet-eyebrow-dot{width:6px;height:6px;border-radius:50%;background:#6ee7a0;flex-shrink:0;}
 .omzet-bedrag{font-size:3rem;font-weight:900;letter-spacing:-3px;color:#fff;line-height:1;margin-bottom:4px;}
 .omzet-sub-lbl{font-size:0.68rem;color:rgba(255,255,255,0.45);font-weight:500;margin-bottom:18px;}
 .omzet-stats{display:flex;gap:8px;}
@@ -587,6 +641,7 @@ header{
   font-weight:700;color:var(--text);outline:none;text-align:right;
   transition:border-color 0.2s;position:relative;
 }
+.pinput:focus{border-color:var(--accent);}
 /* ── Save button ── */
 .btn-save-omzet{
   width:100%;
@@ -607,6 +662,24 @@ header{
 .btn-save-omzet:active .btn-save-ic{transform:scale(0.92);}
 
 /* ── Undo toast ── */
+.undo{
+  position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(120px);
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:14px;padding:10px 12px 10px 14px;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:var(--shadow2);z-index:50;
+  transition:transform 0.36s var(--ease-spring);
+  white-space:nowrap;max-width:92vw;
+}
+.undo.show{transform:translateX(-50%) translateY(0);}
+.undo span{font-size:0.74rem;color:var(--text2);font-weight:500;}
+.b-undo{
+  background:var(--accent);color:#fff;border:none;border-radius:8px;
+  padding:5px 12px;font-family:inherit;font-size:0.72rem;font-weight:700;cursor:pointer;
+  transition:all 0.2s var(--ease-out);
+}
+.b-undo:active{transform:scale(0.95);}
 
 /* ── Bottom sheet ── */
 .overlay{
@@ -622,11 +695,11 @@ header{
   animation:sheetUp 0.3s var(--ease-spring);
 }
 @keyframes sheetUp{from{transform:translateY(100%);opacity:0.5}to{transform:none;opacity:1}}
-.s-handle{width:32px;height:4px;margin:0 auto 18px;}
-.s-title{font-size:0.95rem;font-weight:800;margin-bottom:2px;}
+.s-handle{width:32px;height:4px;background:var(--border2);border-radius:99px;margin:0 auto 18px;}
+.s-title{font-size:0.95rem;font-weight:800;letter-spacing:-0.3px;margin-bottom:2px;}
 .s-sub{font-size:0.74rem;color:var(--text3);margin-bottom:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;}
 .s-tabs{
-  display:flex;margin-bottom:14px;
+  display:flex;gap:4px;margin-bottom:14px;
   background:var(--surface2);border:1px solid var(--border);
   border-radius:12px;padding:3px;
 }
@@ -672,6 +745,7 @@ header{
   display:flex;align-items:center;gap:8px;padding:8px 10px;
   background:var(--surface2);border-radius:9px;font-size:0.74rem;
 }
+.hi-dot{width:6px;height:6px;border-radius:50%;background:var(--ok);flex-shrink:0;}
 .hi-d{font-weight:700;}
 .hi-ago{color:var(--text3);margin-left:auto;font-size:0.67rem;}
 
@@ -734,6 +808,8 @@ header{
 .weer-refresh:active{background:var(--surface2);}
 
 /* ── Buienradar bar chart ── */
+.br-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 12px 10px;margin-bottom:10px;box-shadow:var(--shadow);}
+.br-titel{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:8px;}
 .br-sam{font-size:0.8rem;font-weight:700;color:var(--text2);margin-bottom:10px;}
 .br-chart{display:flex;align-items:flex-end;gap:2px;height:60px;overflow:hidden;}
 .br-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;flex:1;min-width:0;}
@@ -741,6 +817,10 @@ header{
 .br-lbl{font-size:0.52rem;color:var(--text3);margin-top:3px;white-space:nowrap;height:11px;line-height:11px;}
 
 /* ── Hourly strip ── */
+.uur-strip-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 12px 10px;margin-bottom:10px;box-shadow:var(--shadow);}
+.uur-strip-lbl{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:10px;}
+.uur-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
+.uur-strip::-webkit-scrollbar{display:none;}
 .uur-dag{flex-shrink:0;min-width:52px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:9px 5px;text-align:center;}
 .uur-dag.nu{background:var(--accent);border-color:var(--accent2);}
 .uur-dag.nu .uur-naam,.uur-dag.nu .uur-temp{color:#fff;}
@@ -754,22 +834,27 @@ header{
 /* ── Winstcalculator ── */
 .wc-mode-toggle{display:flex;gap:5px;margin-bottom:14px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:3px;}
 .wc-mode-btn{
-  flex:1;padding:9px;border-radius:9px;border:none;background:transparent;font-size:0.8rem;font-weight:700;color:var(--text3);transition:all 0.22s var(--ease-out);text-align:center;
+  flex:1;padding:9px;border-radius:9px;border:none;background:transparent;
+  font-family:inherit;font-size:0.8rem;font-weight:700;color:var(--text3);
+  cursor:pointer;transition:all 0.22s var(--ease-out);text-align:center;
 }
 .wc-mode-btn.on{background:var(--surface);color:var(--text);box-shadow:var(--shadow);}
 
 .wc-card{
+  background:var(--surface);border:1px solid var(--border);
   border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow);
 }
-.wc-card-title{font-size:0.6rem;font-weight:700;letter-spacing:0.12em;margin-bottom:13px;}
+.wc-card-title{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--text3);margin-bottom:13px;}
 .wc-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .wc-field{display:flex;flex-direction:column;gap:5px;}
 .wc-field.full{grid-column:1/-1;}
-.wc-field label{font-size:0.58rem;letter-spacing:0.09em;}
+.wc-field label{font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);}
 .wc-field-wrap{
-  display:flex;align-items:center;border-radius:10px;
+  display:flex;align-items:center;background:var(--surface2);
+  border:1px solid var(--border2);border-radius:10px;
   transition:border-color 0.2s,box-shadow 0.2s;
 }
+.wc-field-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
 .wc-field-prefix{padding:0 4px 0 10px;font-size:0.82rem;font-weight:700;color:var(--text3);pointer-events:none;flex-shrink:0;}
 .wc-field-suffix{padding:0 10px 0 4px;font-size:0.73rem;color:var(--text3);pointer-events:none;flex-shrink:0;}
 .wc-field input{
@@ -799,9 +884,9 @@ header{
 [data-theme="dark"] .wc-res-card.zwart{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.08);}
 .wc-res-card.wit{background:var(--ok-s);border-color:var(--ok-b);}
 .wc-res-card.verlies{background:var(--urgent-s);border-color:var(--urgent-b);}
-.wc-res-label{font-size:0.57rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:3px;}
-.wc-res-card.groen .wc-res-label{color:var(--ok);}
-.wc-res-card.rood .wc-res-label{color:var(--urgent);}
+.wc-res-label,.wc-res-title{font-size:0.57rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:3px;}
+.wc-res-card.groen .wc-res-label,.wc-res-card.wit .wc-res-title{color:var(--ok);}
+.wc-res-card.rood .wc-res-label,.wc-res-card.verlies .wc-res-title{color:var(--urgent);}
 .wc-res-card.oranje .wc-res-label{color:var(--soon);}
 .wc-res-card.geel .wc-res-label{color:#65a30d;}
 .wc-res-bedrag{font-size:1.45rem;font-weight:900;letter-spacing:-0.5px;line-height:1;}
@@ -831,7 +916,7 @@ header{
 .tarief-tabs{display:flex;gap:5px;margin-bottom:12px;}
 .tarief-tab{
   flex:1;padding:7px 4px;border-radius:10px;border:1px solid var(--border2);
-  background:var(--surface);font-family:inherit;font-size:0.7rem;
+  background:var(--surface);font-family:inherit;font-size:0.7rem;font-weight:700;
   color:var(--text3);cursor:pointer;text-align:center;transition:all 0.18s var(--ease-out);
   box-shadow:var(--shadow);
 }
@@ -840,7 +925,7 @@ header{
   background:var(--surface);border:1px solid var(--border);
   border-radius:16px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:12px;
 }
-.wc-tabel-hdr{padding:12px 14px;font-size:0.8rem;font-weight:700;border-bottom:1px solid var(--border);justify-content:space-between;}
+.wc-tabel-hdr{padding:12px 14px;font-size:0.8rem;font-weight:700;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .wc-tabel-sub{font-size:0.66rem;color:var(--text3);font-weight:500;}
 .wc-tabel{width:100%;border-collapse:collapse;font-size:0.74rem;}
 .wc-tabel th{background:var(--surface2);padding:7px 8px;text-align:center;font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);border-bottom:1px solid var(--border);}
@@ -853,9 +938,15 @@ header{
 .wc-tabel .cel-ok{color:var(--text);}
 .wc-tabel .cel-goed{background:var(--ok-s);color:var(--ok);}
 .wc-tabel tr.huidig td{outline:2px solid var(--accent);outline-offset:-1px;}
-.wc-info{background:var(--surface2);border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:0.72rem;color:var(--text3);line-height:1.65;}
+.wc-info{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:0.72rem;color:var(--text3);line-height:1.65;}
 .wc-info strong{color:var(--text2);font-weight:700;}
+.wc-row{display:flex;gap:8px;margin-bottom:10px;}
 .wc-hero{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow);}
+.wc-formule{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-top:10px;}
+.wc-formule-title{font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:6px;}
+.wc-formule-regel{font-size:0.72rem;color:var(--text2);padding:3px 0;display:flex;justify-content:space-between;border-bottom:1px solid var(--border);}
+.wc-formule-regel:last-child{border-bottom:none;font-weight:700;color:var(--text);}
+.wc-formule-regel span:last-child{font-weight:700;}
 
 /* ═══════════════════════════════════════════════════════
    PREMIUM MODULE UPGRADES
@@ -878,8 +969,8 @@ header{
 .ftag{border-radius:8px;padding:3px 9px;font-size:0.63rem;}
 .ptag{border-radius:8px;padding:3px 9px;font-size:0.63rem;font-weight:800;}
 .kacties{gap:6px;margin-top:12px;}
-.b-done{border-radius:10px;font-size:0.78rem;padding:10px 12px;}
-.b-note{border-radius:10px;padding:10px 12px;font-size:0.8rem;}
+.b-done{border-radius:10px;font-size:0.78rem;font-weight:800;padding:10px 12px;}
+.b-note,.b-map{border-radius:10px;padding:10px 12px;font-size:0.8rem;}
 .b-del{border-radius:10px;padding:10px 12px;font-size:0.8rem;}
 
 /* Search */
@@ -894,7 +985,7 @@ header{
 
 
 /* Week list items: left accent bar */
-.witem{padding:12px 15px;}
+.witem{border-radius:14px;padding:12px 15px;position:relative;overflow:hidden;}
 .witem::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px;background:var(--ok);}
 .wi-naam{font-size:0.86rem;font-weight:800;letter-spacing:-0.2px;}
 .wi-badge{border-radius:99px;padding:4px 11px;font-size:0.68rem;font-weight:800;}
@@ -914,13 +1005,15 @@ header{
 .wc-card{border-radius:18px;padding:18px;}
 .wc-card-title{
   font-size:0.62rem;letter-spacing:0.14em;margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
 }
+.wc-card-title::after{content:'';flex:1;height:1px;background:var(--border);}
 .wc-result-grid{gap:10px;margin-bottom:12px;}
 .wc-res-card{border-radius:16px;padding:16px 14px;}
 .wc-res-card.groot{padding:20px 16px;}
 .wc-res-bedrag{font-size:1.8rem;letter-spacing:-1px;}
 .wc-res-card.groot .wc-res-bedrag{font-size:2.5rem;letter-spacing:-2px;}
-.wc-res-label{font-size:0.58rem;letter-spacing:0.1em;margin-bottom:5px;}
+.wc-res-label,.wc-res-title{font-size:0.58rem;letter-spacing:0.1em;margin-bottom:5px;}
 .wc-res-sub{font-size:0.67rem;margin-top:5px;}
 .wc-breakdown{border-radius:14px;padding:14px 15px;}
 .wc-breakdown-title{font-size:0.6rem;letter-spacing:0.12em;margin-bottom:10px;}
@@ -929,9 +1022,9 @@ header{
 .wc-extra-badge{border-radius:14px;padding:12px 14px;margin-top:12px;}
 .wc-info{border-radius:14px;padding:15px 16px;margin-bottom:11px;line-height:1.75;}
 .tarief-tabs{gap:6px;}
-.tarief-tab{font-size:0.73rem;padding:9px 6px;}
-.wc-tabel-wrap{margin-bottom:14px;}
-.wc-tabel-hdr{padding:13px 16px;}
+.tarief-tab{border-radius:12px;font-size:0.73rem;padding:9px 6px;}
+.wc-tabel-wrap{border-radius:18px;margin-bottom:14px;}
+.wc-tabel-hdr{padding:13px 16px;font-size:0.82rem;font-weight:800;}
 
 /* Bottom sheet: more generous */
 .sheet{border-radius:28px 28px 0 0;padding:16px 18px max(48px,calc(20px + env(safe-area-inset-bottom)));}
@@ -978,13 +1071,25 @@ header{
 }
 
 /* Icon buttons: circulair */
-.b-note{flex-grow:0;
+.b-note,.b-map{
+  width:42px;height:42px;
+  border-radius:50%;
+  padding:0;
+  flex-shrink:0;flex-grow:0;
+  display:flex;align-items:center;justify-content:center;
   font-size:0.9rem;
+  transition:all 0.2s var(--ease-spring);
 }
-.b-del{flex-grow:0;
+.b-del{
+  width:42px;height:42px;
+  border-radius:50%;
+  padding:0;
+  flex-shrink:0;flex-grow:0;
+  display:flex;align-items:center;justify-content:center;
   font-size:0.9rem;
+  transition:all 0.2s var(--ease-spring);
 }
-.b-note:active,.b-del:active{transform:scale(0.88);}
+.b-note:active,.b-map:active,.b-del:active{transform:scale(0.88);}
 .kacties{align-items:center;}
 
 /* Gekleurde actie-buttons */
@@ -1026,6 +1131,8 @@ header{
 .b-del:active{transform:scale(0.88);box-shadow:0 1px 4px rgba(220,38,38,0.2);}
 
 /* Date tag: shadow voor urgency gevoel */
+.dtag.urgent{box-shadow:0 2px 8px rgba(220,38,38,0.18);}
+.dtag.soon{box-shadow:0 2px 8px rgba(217,119,6,0.18);}
 
 /* Stat numbers: subtiele glow */
 .stat-shell.s-urgent .stat-n{text-shadow:0 0 24px rgba(220,38,38,0.3);}
@@ -1035,13 +1142,16 @@ header{
 /* Winstcalculator: GROOT resultaatkaart = impact gradient */
 .wc-res-card.groen.groot{
   background:linear-gradient(145deg,#1a4d25,#2a7040);
+  border:none;
   box-shadow:0 10px 32px rgba(42,102,54,0.38);
 }
 .wc-res-card.groen.groot .wc-res-label{color:rgba(255,255,255,0.6);}
 .wc-res-card.groen.groot .wc-res-bedrag{color:#fff;text-shadow:0 2px 20px rgba(0,0,0,0.2);}
+.wc-res-card.groen.groot .wc-res-sub{color:rgba(255,255,255,0.55);}
 
 .wc-res-card.rood.groot{
   background:linear-gradient(145deg,#8b1717,#dc2626);
+  border:none;
   box-shadow:0 10px 32px rgba(220,38,38,0.38);
 }
 .wc-res-card.rood.groot .wc-res-label{color:rgba(255,255,255,0.6);}
@@ -1050,6 +1160,7 @@ header{
 
 .wc-res-card.oranje.groot{
   background:linear-gradient(145deg,#7c3400,#c2680a);
+  border:none;
   box-shadow:0 10px 32px rgba(217,119,6,0.38);
 }
 .wc-res-card.oranje.groot .wc-res-label{color:rgba(255,255,255,0.6);}
@@ -1073,6 +1184,7 @@ header{
 
 /* Winstcalculator inputs: sterker focus state */
 .wc-field-wrap:focus-within{
+  border-color:var(--accent);
   box-shadow:0 0 0 3px var(--accent-glow),0 2px 8px rgba(42,102,54,0.15);
 }
 
@@ -1083,6 +1195,11 @@ header{
 .s-handle{background:var(--border2);border-radius:99px;}
 
 /* Undo toast: glassy */
+.undo{
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  background:var(--glass-bg);
+  box-shadow:0 8px 32px rgba(0,0,0,0.18),0 1px 0 var(--border2);
+}
 
 /* Groeplabels: pill stijl */
 .groep-lbl{
@@ -1667,6 +1784,7 @@ header{
 .app-entering .zoek       { animation: entryUp 0.45s cubic-bezier(0.32,0.72,0,1) 0.04s both; }
 .app-entering .wc-hero-banner { animation: entryUp 0.45s cubic-bezier(0.32,0.72,0,1) 0.02s both; }
 .app-entering .wc-mode-toggle { animation: entryUp 0.45s cubic-bezier(0.32,0.72,0,1) 0.08s both; }
+.app-entering .wc-row         { animation: entryUp 0.45s cubic-bezier(0.32,0.72,0,1) 0.13s both; }
 .app-entering #wc-result-grid { animation: entryUp 0.45s cubic-bezier(0.32,0.72,0,1) 0.19s both; }
 .app-entering #wc-breakdown   { animation: entryUp 0.45s cubic-bezier(0.32,0.72,0,1) 0.24s both; }
 
@@ -1746,7 +1864,7 @@ header{
     box-shadow: 0 6px 20px rgba(42,102,54,0.35);
     transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
   }
-   [class*="btn-"]:hover:not(.btn-add) {
+  .btn-groen:hover, [class*="btn-"]:hover:not(.btn-add) {
     transform: translateY(-1px);
     filter: brightness(1.06);
     transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), filter 0.18s ease;
@@ -1787,7 +1905,7 @@ header{
   }
 
   /* Tarief knoppen */
-   [id^="tt-"]:hover {
+  .wc-tarief-btn:hover, [id^="tt-"]:hover {
     transform: scale(1.06);
     transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
   }
@@ -1799,6 +1917,11 @@ header{
   }
 
   /* Actie-icoon knoppen (edit/delete in sheets) */
+  .kac-btn:hover, .s-icon-btn:hover, .wkn-btn:hover {
+    transform: scale(1.15);
+    color: var(--accent);
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), color 0.15s ease;
+  }
 
   /* Link tekst */
   .klink:hover { opacity: 1; transition: opacity 0.15s ease; }
@@ -1990,13 +2113,25 @@ header{
 .d-day-lbl{font-size:11px;font-weight:600;color:var(--text3);margin-bottom:7px;letter-spacing:0.05em;}
 .d-nav-btn{background:var(--surface2);border:1px solid var(--border);border-radius:8px;width:32px;height:32px;cursor:pointer;color:var(--text);font-size:18px;display:flex;align-items:center;justify-content:center;font-family:inherit;}
 .d-emp-row{display:flex;align-items:center;gap:12px;padding:12px 14px;margin-bottom:8px;}
+.ur-week-sep{
+  display:flex;align-items:center;gap:10px;
+  padding:20px 2px 8px;
+}
+.ur-week-sep:first-child{padding-top:4px;}
+.ur-week-sep-lbl{
+  font-size:0.62rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.1em;color:var(--text3);white-space:nowrap;flex-shrink:0;
+}
+.ur-week-sep-line{flex:1;height:1px;background:var(--border);}
 .ur-dag{
-  border-radius:16px;margin-bottom:10px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;margin-bottom:10px;overflow:hidden;
   box-shadow:var(--shadow);
   border-left:3px solid transparent;
   animation:entryUp 0.32s cubic-bezier(0.32,0.72,0,1) both;
 }
 .ur-dag.today{
+  border-left-color:#7c3aed;
   background:linear-gradient(135deg,rgba(124,58,237,0.04) 0%,var(--surface) 60%);
 }
 .ur-dag.heeft-notitie{
@@ -2004,6 +2139,7 @@ header{
   background:linear-gradient(135deg,rgba(45,107,58,0.03) 0%,var(--surface) 50%);
 }
 .ur-dag.today.heeft-notitie{
+  border-left-color:#7c3aed;
   background:linear-gradient(135deg,rgba(124,58,237,0.05) 0%,var(--surface) 60%);
 }
 .ur-dag-hdr{
@@ -2011,25 +2147,28 @@ header{
   padding:12px 14px 8px;
 }
 .ur-dag-nr{
-  font-size:1.5rem;font-weight:800;letter-spacing:-1px;min-width:34px;
+  font-size:1.5rem;font-weight:800;line-height:1;letter-spacing:-1px;
+  color:var(--border2);min-width:34px;
 }
 .ur-dag.heeft-notitie .ur-dag-nr{color:var(--text2);}
+.ur-dag.today .ur-dag-nr{color:#7c3aed;}
 .ur-dag-info{flex:1;}
 .ur-dag-naam{
-  font-size:0.82rem;color:var(--text2);letter-spacing:-0.2px;
+  font-size:0.82rem;font-weight:800;color:var(--text2);letter-spacing:-0.2px;
 }
 .ur-dag.heeft-notitie .ur-dag-naam,.ur-dag.today .ur-dag-naam{color:var(--text);}
 .ur-dag.today .ur-dag-naam{color:#7c3aed;}
-.ur-dag-sub{font-size:0.62rem;margin-top:1px;}
+.ur-dag-sub{font-size:0.62rem;color:var(--text3);font-weight:600;margin-top:1px;}
 .ur-dag-pill{
-  font-size:0.58rem;text-transform:uppercase;letter-spacing:0.08em;
+  font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;
+  padding:3px 8px;border-radius:99px;
   background:rgba(124,58,237,0.1);color:#7c3aed;
   display:none;
 }
 .ur-dag.today .ur-dag-pill{display:inline-block;background:rgba(124,58,237,0.1);color:#7c3aed;}
 /* Toekomstige dagen — subtiel cyaan label */
 .ur-dag.toekomst .ur-dag-pill{display:inline-block;background:rgba(8,145,178,0.12);color:#0e7490;}
-.ur-dag.toekomst .ur-dag-nr{color:#0e7490;}
+.ur-dag.toekomst .ur-dag-nr{color:#0e7490;opacity:0.85;}
 .ur-dag.toekomst .ur-dag-naam{color:#0e7490;}
 .ur-dag.toekomst{border-left:3px dashed rgba(8,145,178,0.35);background:linear-gradient(135deg,rgba(8,145,178,0.03) 0%,var(--surface) 55%);}
 .ur-dag.toekomst.heeft-notitie{border-left:3px solid #0891b2;background:linear-gradient(135deg,rgba(8,145,178,0.06) 0%,var(--surface) 55%);}
@@ -2072,8 +2211,8 @@ header{
 .urp-card:active{transform:scale(0.98);}
 .urp-card-avatar{width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,#a78bfa,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.05rem;flex-shrink:0;}
 .urp-card-info{flex:1;min-width:0;}
-.urp-card-naam{font-size:0.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.urp-card-sub{font-size:0.66rem;margin-top:2px;font-weight:500;}
+.urp-card-naam{font-size:0.92rem;font-weight:800;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.urp-card-sub{font-size:0.66rem;color:var(--text3);margin-top:2px;font-weight:500;}
 /* Netto winst op het personeelskaartje */
 .urp-card-winst{
   flex-shrink:0;font-size:0.74rem;font-weight:900;
@@ -2092,14 +2231,18 @@ header{
 .urp-detail-naam-wrap{flex:1;min-width:0;}
 .urp-detail-naam-in{width:100%;background:transparent;border:none;outline:none;font-family:inherit;font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-0.3px;padding:4px 0;border-bottom:1px dashed transparent;transition:border-color 0.15s;}
 .urp-detail-naam-in:focus{border-bottom-color:var(--accent);}
-.urp-detail-sub{font-size:0.66rem;margin-top:1px;}
+.urp-detail-sub{font-size:0.66rem;color:var(--text3);font-weight:600;margin-top:1px;}
 .urp-del{background:var(--urgent-s);border:1px solid var(--urgent-b);color:var(--urgent);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
 .urp-del:active{transform:scale(0.9);}
 
 /* ── Uren klus-rijen ── */
 .ur-rijen{padding:4px 14px 0;display:flex;flex-direction:column;gap:6px;}
 .ur-rij{display:flex;gap:6px;align-items:center;}
-.ur-rij-uren{width:62px;flex-shrink:0;border:1px solid var(--border2);border-radius:9px;padding:8px 6px;font-family:inherit;font-size:0.8rem;font-weight:700;color:var(--text);text-align:center;outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
+.ur-rij-klus{flex:1.6;min-width:0;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;padding:8px 8px;font-family:inherit;font-size:0.76rem;font-weight:600;color:var(--text);outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
+.ur-rij-sub{flex:1.2;min-width:0;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;padding:8px 8px;font-family:inherit;font-size:0.74rem;font-weight:500;color:var(--text);outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
+.ur-rij-klus:focus,.ur-rij-sub:focus{border-color:#7c3aed;}
+.ur-rij-klus.leeg,.ur-rij-sub.leeg{color:var(--text3);font-weight:500;}
+.ur-rij-uren{width:62px;flex-shrink:0;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;padding:8px 6px;font-family:inherit;font-size:0.8rem;font-weight:700;color:var(--text);text-align:center;outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
 .ur-rij-prijs{width:54px;flex-shrink:0;background:var(--surface2);border:1px dashed var(--border2);border-radius:9px;padding:8px 4px;font-family:inherit;font-size:0.72rem;font-weight:700;color:var(--text2);text-align:center;outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
 .ur-rij-prijs::placeholder{color:var(--text3);font-weight:500;opacity:0.8;}
 /* Km per klus — smal vakje naast de prijs, in cyaan zodat het niet met € verwart */
@@ -2147,7 +2290,37 @@ header{
 }
 
 /* ── Ongedaan maken: zwevende knop linksonder ── */
+.ur-undo-fab{
+  position: fixed; z-index: 16;
+  left: 18px; bottom: max(22px, calc(18px + env(safe-area-inset-bottom)));
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 14px 9px 12px; border-radius: 99px;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border2);
+  box-shadow: 0 6px 22px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.1);
+  font-family: inherit; font-size: 0.74rem; font-weight: 800;
+  letter-spacing: -0.2px; cursor: pointer;
+  opacity: 0; transform: translateY(10px) scale(0.94);
+  pointer-events: none;
+  transition: opacity 0.22s var(--ease-out), transform 0.26s var(--ease-spring);
+}
+.ur-undo-fab.show{ opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.ur-undo-fab:active{ transform: scale(0.94); }
+.ur-undo-fab svg{ flex-shrink: 0; opacity: 0.75; }
+.ur-undo-n{
+  min-width: 17px; height: 17px; padding: 0 4px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--u-primary); color: #fff;
+  border-radius: 99px; font-size: 0.6rem; font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+[data-theme="dark"] .ur-undo-fab{ box-shadow: 0 6px 24px rgba(0,0,0,0.5); }
 /* Dag die zojuist is teruggezet even laten oplichten */
+@keyframes urUndoFlits{
+  0%,100%{ box-shadow: 0 0 0 0 transparent; }
+  30%    { box-shadow: 0 0 0 3px var(--u-primary-tint-2), 0 0 20px var(--u-primary-tint-2); }
+}
+.ur-undo-flits{ animation: urUndoFlits 0.9s ease; }
 
 /* ── Klus-rijen slepen om de volgorde te wijzigen ── */
 .ur-rij-drag{
@@ -2276,17 +2449,19 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 [data-theme="dark"] .ur-mp.winst.neg{background:#ef4444;}
 /* Het grote getal mag niet ingedrukt worden door de rest */
 .ur-mtot-val{flex-shrink:0;white-space:nowrap;}
+.ur-rij-uren:focus{border-color:#7c3aed;}
 .ur-rij-uren::placeholder{color:var(--text3);font-weight:500;}
-.ur-rij-label{flex:1;min-width:0;background:rgba(124,58,237,0.07);border-radius:9px;padding:8px 10px;font-size:0.78rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:background 0.15s;}
+.ur-rij-label{flex:1;min-width:0;background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.18);border-radius:9px;padding:8px 10px;font-size:0.78rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:background 0.15s;}
 .ur-rij-label:active{background:rgba(124,58,237,0.14);}
 .ur-rij-label .sub{color:var(--text2);font-weight:600;}
-.ur-rij-add{margin:2px auto 0;display:flex;align-items:center;justify-content:center;gap:5px;background:none;border-radius:9px;padding:6px 16px;font-family:inherit;font-size:0.68rem;font-weight:700;cursor:pointer;transition:all 0.15s;}
+.ur-rij-add{margin:2px auto 0;display:flex;align-items:center;justify-content:center;gap:5px;background:none;border:1px dashed var(--border2);border-radius:9px;padding:6px 16px;font-family:inherit;font-size:0.68rem;font-weight:700;color:var(--text3);cursor:pointer;transition:all 0.15s;}
 .ur-rij-add:active{background:var(--surface2);transform:scale(0.96);}
-.ur-dag-tot{display:flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:800;flex-shrink:0;}
-.ur-dag-tot.nul{font-weight:600;}
+.ur-dag-tot{display:flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:800;color:#7c3aed;flex-shrink:0;}
+.ur-dag-tot.nul{color:var(--text3);font-weight:600;}
 .ur-km-row{display:flex;align-items:center;gap:8px;padding:2px 14px 0;margin-top:6px;}
-.ur-km-lbl{font-weight:700;text-transform:uppercase;letter-spacing:0.09em;display:flex;align-items:center;gap:5px;}
-.ur-km-in{width:72px;border:1px solid var(--border2);border-radius:8px;padding:6px 8px;font-family:inherit;font-size:0.78rem;font-weight:700;color:var(--text);text-align:right;outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
+.ur-km-lbl{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);display:flex;align-items:center;gap:5px;}
+.ur-km-in{width:72px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:6px 8px;font-family:inherit;font-size:0.78rem;font-weight:700;color:var(--text);text-align:right;outline:none;-webkit-appearance:none;transition:border-color 0.15s;}
+.ur-km-in:focus{border-color:#0891b2;}
 .ur-km-in::placeholder{color:var(--text3);font-weight:500;}
 .ur-km-suf{font-size:0.7rem;font-weight:600;color:var(--text3);}
 /* Uitklap-detail voor km per klant/klus */
@@ -2299,6 +2474,7 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 .ur-km-details.open{display:flex;animation:fds 0.22s ease;}
 .ur-km-drij{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:4px 4px 4px 10px;}
 .ur-km-drij:focus-within{border-color:#0891b2;box-shadow:0 0 0 3px rgba(8,145,178,0.14);}
+.ur-km-drij-sel{flex:1;min-width:0;background:transparent;border:none;outline:none;font-family:inherit;font-size:0.78rem;font-weight:700;color:var(--text);padding:6px 24px 6px 0;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");background-repeat:no-repeat;background-position:right center;background-size:10px 10px;}
 .ur-km-drij-naam{flex:1;min-width:0;background:transparent;border:none;outline:none;font-family:inherit;font-size:0.78rem;font-weight:700;color:var(--text);padding:6px 0;}
 .ur-km-drij-naam::placeholder{color:var(--text3);font-weight:500;}
 .ur-km-drij-km{width:60px;background:transparent;border:none;outline:none;font-family:inherit;font-size:0.8rem;font-weight:800;color:var(--text);text-align:right;padding:6px 0;font-variant-numeric:tabular-nums;}
@@ -2311,6 +2487,7 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 /* Validatie-waarschuwing: amber outline + subtiele shake bij extreme waarden */
 .ur-rij-uren.warn,.ur-km-in.warn{border-color:#d97706;box-shadow:0 0 0 3px rgba(217,119,6,0.15);background:rgba(217,119,6,0.06);color:#d97706;}
 .ur-dag-tot.warn{color:#d97706;background:rgba(217,119,6,0.1);padding:2px 8px;border-radius:99px;border:1px solid rgba(217,119,6,0.25);}
+.ur-warn-tip{display:inline-flex;align-items:center;gap:3px;font-size:0.58rem;font-weight:700;color:#d97706;background:rgba(217,119,6,0.1);border:1px solid rgba(217,119,6,0.2);border-radius:6px;padding:2px 6px;margin-left:6px;}
 .ur-pdf-btn{width:100%;background:linear-gradient(145deg,#0f172a,#1e293b);color:#fff;border:none;border-radius:14px;padding:14px 16px;margin-bottom:14px;font-family:inherit;font-size:0.86rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 18px rgba(15,23,42,0.35),inset 0 1px 0 rgba(255,255,255,0.1);transition:transform 0.15s;}
 .ur-pdf-btn:active{transform:scale(0.98);}
 .ur-pdf-btn svg{flex-shrink:0;}
@@ -2318,23 +2495,23 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 .ur-mtot:active{transform:scale(0.985);}
 .ur-mtot-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .ur-mtot-lbl{font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);flex:1;min-width:0;}
-.ur-mtot-val{font-size:1.3rem;color:#7c3aed;letter-spacing:-0.5px;}
+.ur-mtot-val{font-size:1.3rem;font-weight:900;color:#7c3aed;letter-spacing:-0.5px;}
 .ur-mtot-chev{color:#7c3aed;opacity:0.55;transition:transform 0.25s cubic-bezier(0.34,1.4,0.64,1);flex-shrink:0;}
 .ur-mtot.open .ur-mtot-chev{transform:rotate(180deg);}
 .ur-mtot-details{display:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(124,58,237,0.15);flex-direction:column;gap:2px;}
 .ur-mtot.open .ur-mtot-details{display:flex;animation:fds 0.22s ease;}
 .ur-mtot-rij{display:flex;align-items:center;gap:8px;padding:7px 2px;border-bottom:1px dashed rgba(124,58,237,0.1);}
 .ur-mtot-rij:last-child{border-bottom:none;}
-.ur-mtot-rij-naam{flex:1;min-width:0;font-size:0.8rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ur-mtot-rij-naam{flex:1;min-width:0;font-size:0.8rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .ur-mtot-rij-bar{width:60px;height:5px;background:rgba(124,58,237,0.12);border-radius:99px;overflow:hidden;flex-shrink:0;}
 .ur-mtot-rij-fill{height:100%;background:linear-gradient(90deg,#a78bfa,#7c3aed);border-radius:99px;transition:width 0.4s cubic-bezier(0.32,0.72,0,1);}
-.ur-mtot-rij-uren{font-size:0.78rem;color:#7c3aed;flex-shrink:0;min-width:50px;text-align:right;}
+.ur-mtot-rij-uren{font-size:0.78rem;font-weight:800;color:#7c3aed;flex-shrink:0;min-width:50px;text-align:right;}
 .ur-mtot-leeg{font-size:0.72rem;color:var(--text3);text-align:center;padding:8px 0;font-weight:500;font-style:italic;}
 /* Iedereen-samen balk (personeel-lijst) */
 .ur-alles{background:linear-gradient(145deg,#7c3aed,#5b21b6);border:none;color:#fff;border-radius:16px;padding:16px 18px;margin-bottom:14px;cursor:pointer;user-select:none;box-shadow:0 6px 24px rgba(124,58,237,0.35);transition:transform 0.15s;}
 .ur-alles:active{transform:scale(0.985);}
 .ur-alles-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.ur-alles-lbl{font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.13em;flex:1;min-width:0;}
+.ur-alles-lbl{font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.13em;color:rgba(255,255,255,0.7);flex:1;min-width:0;}
 .ur-alles-val{font-size:1.7rem;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;}
 .ur-alles-chev{color:rgba(255,255,255,0.7);transition:transform 0.25s cubic-bezier(0.34,1.4,0.64,1);flex-shrink:0;}
 .ur-alles.open .ur-alles-chev{transform:rotate(180deg);}
@@ -2365,27 +2542,28 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 .ur-klus-entry{display:flex;align-items:center;gap:8px;padding:7px 4px;border-bottom:1px dashed rgba(255,255,255,0.12);cursor:pointer;border-radius:6px;transition:background 0.15s;}
 .ur-klus-entry:last-child{border-bottom:none;}
 .ur-klus-entry:active{background:rgba(255,255,255,0.1);}
-.ur-klus-entry-datum{font-size:0.7rem;color:#fff;flex-shrink:0;min-width:56px;}
+.ur-klus-entry-datum{font-size:0.7rem;font-weight:800;color:#fff;flex-shrink:0;min-width:56px;}
 .ur-klus-entry-mid{flex:1;min-width:0;}
-.ur-klus-entry-persoon{font-size:0.72rem;color:rgba(255,255,255,0.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ur-klus-entry-persoon{font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .ur-klus-entry-persoon .loc{color:rgba(255,255,255,0.55);font-weight:500;}
 .ur-klus-entry-uren{font-size:0.75rem;font-weight:800;color:#fff;flex-shrink:0;min-width:44px;text-align:right;}
 /* Klussen-varian: iets andere kleurtint (cyaan-blauw) */
 .ur-alles.klus{background:linear-gradient(145deg,#0891b2,#075985);box-shadow:0 6px 24px rgba(8,145,178,0.35);}
-.ur-notitie-klein{margin:6px 14px 0;width:calc(100% - 28px);border-radius:9px;padding:8px 10px;font-family:inherit;font-size:0.76rem;color:var(--text2);line-height:1.5;outline:none;resize:none;min-height:34px;box-sizing:border-box;overflow:hidden;transition:border-color 0.15s;}
+.ur-notitie-klein{margin:6px 14px 0;width:calc(100% - 28px);background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:8px 10px;font-family:inherit;font-size:0.76rem;color:var(--text2);line-height:1.5;outline:none;resize:none;min-height:34px;box-sizing:border-box;overflow:hidden;transition:border-color 0.15s;}
+.ur-notitie-klein:focus{border-color:var(--accent);}
 .ur-notitie-klein::placeholder{color:var(--text3);}
 
 /* ── Klussen beheer ── */
 .klus-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);border-left:3px solid #7c3aed;}
 .klus-card-top{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
-.klus-naam-in{flex:1;min-width:0;background:transparent;border:none;outline:none;font-family:inherit;font-size:0.94rem;color:var(--text);letter-spacing:-0.2px;padding:3px 0;border-bottom:1px dashed transparent;transition:border-color 0.15s;}
+.klus-naam-in{flex:1;min-width:0;background:transparent;border:none;outline:none;font-family:inherit;font-size:0.94rem;font-weight:800;color:var(--text);letter-spacing:-0.2px;padding:3px 0;border-bottom:1px dashed transparent;transition:border-color 0.15s;}
 .klus-naam-in:focus{border-bottom-color:#7c3aed;}
 .klus-del{background:var(--urgent-s);border:1px solid var(--urgent-b);color:var(--urgent);border-radius:9px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
 .klus-del:active{transform:scale(0.9);}
 .klus-subs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center;}
-.klus-sub-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);padding:4px 6px 4px 11px;font-size:0.7rem;font-weight:600;color:var(--text2);}
+.klus-sub-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:99px;padding:4px 6px 4px 11px;font-size:0.7rem;font-weight:600;color:var(--text2);}
 .klus-sub-x{width:16px;height:16px;border-radius:50%;background:rgba(124,58,237,0.12);border:none;color:#7c3aed;font-size:0.65rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
-.klus-sub-add{background:none;border:1px dashed var(--border2);padding:4px 12px;font-family:inherit;font-size:0.68rem;font-weight:700;color:var(--text3);cursor:pointer;transition:all 0.15s;}
+.klus-sub-add{background:none;border:1px dashed var(--border2);border-radius:99px;padding:4px 12px;font-family:inherit;font-size:0.68rem;font-weight:700;color:var(--text3);cursor:pointer;transition:all 0.15s;}
 .klus-sub-add:active{background:var(--surface2);}
 .klus-sub-in{flex:1;min-width:110px;background:var(--surface2);border:1px solid var(--border2);border-radius:99px;padding:5px 12px;font-family:inherit;font-size:0.72rem;font-weight:600;color:var(--text);outline:none;}
 .klus-sub-in:focus{border-color:#7c3aed;}
@@ -2409,6 +2587,7 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 /* Klussen zoekbalk */
 .klus-zoek{position:relative;margin:2px 0 12px;}
 .klus-zoek-in{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:10px 34px 10px 36px;font-family:inherit;font-size:0.84rem;color:var(--text);outline:none;box-shadow:var(--shadow);transition:border-color 0.15s;}
+.klus-zoek-in:focus{border-color:#7c3aed;}
 .klus-zoek-in::placeholder{color:var(--text3);}
 .klus-zoek-ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--text3);}
 .klus-zoek-x{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text3);background:var(--surface3);border:none;width:22px;height:22px;border-radius:50%;cursor:pointer;display:none;align-items:center;justify-content:center;padding:0;}
@@ -2423,9 +2602,9 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 .klus-hist-entry{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px dashed var(--border);cursor:pointer;border-radius:8px;transition:background 0.15s;}
 .klus-hist-entry:last-child{border-bottom:none;}
 .klus-hist-entry:active{background:var(--surface2);}
-.klus-hist-datum{font-size:0.74rem;color:var(--text);flex-shrink:0;min-width:66px;}
+.klus-hist-datum{font-size:0.74rem;font-weight:800;color:var(--text);flex-shrink:0;min-width:66px;}
 .klus-hist-mid{flex:1;min-width:0;}
-.klus-hist-persoon{font-size:0.72rem;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.klus-hist-persoon{font-size:0.72rem;font-weight:700;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .klus-hist-persoon .locatie{color:var(--text3);font-weight:500;}
 .klus-hist-uren{font-size:0.78rem;font-weight:800;color:#7c3aed;flex-shrink:0;min-width:44px;text-align:right;}
 .klus-hist-leeg{font-size:0.72rem;color:var(--text3);text-align:center;padding:10px 0;font-style:italic;font-weight:500;}
@@ -2516,6 +2695,7 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
   background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
   border: none;
   border-radius: 22px;
+  padding: 18px 22px;
   margin-bottom: 14px;
   box-shadow: 0 10px 32px rgba(124,58,237,0.32), inset 0 1px 0 rgba(255,255,255,0.15);
   color: #fff;
@@ -2528,6 +2708,7 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
   font-weight: 800;
 }
 .ur-mtot-val {
+  color: #fff;
   font-size: 1.8rem;
   letter-spacing: -1px;
   font-weight: 900;
@@ -2557,6 +2738,8 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
   border-radius: 22px;
   padding: 0;
   margin-bottom: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
   box-shadow: 0 2px 12px rgba(0,0,0,0.04);
   border-left-width: 4px;
   overflow: hidden;
@@ -2631,6 +2814,19 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 /* ── Rijen — modernere selects ── */
 .ur-rijen { padding: 6px 18px 4px; gap: 8px; }
 .ur-rij { gap: 8px; }
+.ur-rij-klus, .ur-rij-sub {
+  border-radius: 13px;
+  padding: 10px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ur-rij-klus:focus, .ur-rij-sub:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.14);
+}
 .ur-rij-uren {
   border-radius: 13px;
   width: 72px;
@@ -2714,6 +2910,15 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 }
 
 /* ── Week-scheidingsregel (Vandaag / Deze week / etc.) ── */
+.ur-week-sep {
+  padding: 24px 6px 10px;
+}
+.ur-week-sep-lbl {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  color: var(--text2);
+}
 
 /* ── Iedereen samen balk (paars) ── premium One UI ── */
 .ur-alles {
@@ -2931,6 +3136,77 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 .ur-dag[style*="display"] { animation: none; }
 
 /* ── Externe zoek-resultaten (van andere personen) ── */
+.ur-ext-wrap {
+  margin: 20px 0 6px;
+  padding: 14px 16px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+.ur-ext-hdr {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.6rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.13em;
+  color: var(--text3);
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.ur-ext-hdr-count {
+  background: var(--u-primary-tint-2);
+  color: var(--u-primary);
+  border-radius: 99px;
+  padding: 2px 8px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+[data-theme="dark"] .ur-ext-hdr-count { color: var(--u-primary-3); }
+.ur-ext-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 4px;
+  border-bottom: 1px dashed var(--border);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+.ur-ext-item:last-child { border-bottom: none; }
+.ur-ext-item:active { background: var(--surface2); }
+.ur-ext-datum {
+  font-size: 0.75rem; font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--text); flex-shrink: 0;
+  min-width: 70px;
+}
+.ur-ext-mid { flex: 1; min-width: 0; }
+.ur-ext-persoon {
+  font-size: 0.72rem; font-weight: 800;
+  color: var(--u-primary);
+  letter-spacing: -0.1px;
+  display: inline-block;
+  background: var(--u-primary-tint);
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--u-primary-border);
+  margin-bottom: 3px;
+}
+[data-theme="dark"] .ur-ext-persoon { color: var(--u-primary-3); }
+.ur-ext-klus {
+  font-size: 0.75rem; font-weight: 600;
+  color: var(--text2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ur-ext-klus .loc { color: var(--text3); font-weight: 500; }
+.ur-ext-uren {
+  font-size: 0.82rem; font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: var(--u-primary);
+  flex-shrink: 0; min-width: 46px; text-align: right;
+  letter-spacing: -0.3px;
+}
+[data-theme="dark"] .ur-ext-uren { color: var(--u-primary-3); }
+.ur-ext-chev { color: var(--text3); opacity: 0.5; flex-shrink: 0; }
 
 /* ── Personeel tariefinstellingen ── */
 .pt-card {
@@ -3121,13 +3397,108 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 .ur-nav-met-zoek { display: flex; gap: 10px; align-items: stretch; margin-bottom: 14px; }
 .ur-nav-met-zoek > .wk-nav { flex: 1; margin-bottom: 0; }
 /* Resultaat-badge onder de zoek */
+.ur-zoek-count {
+  font-size: 0.66rem; font-weight: 800; letter-spacing: 0.04em;
+  padding: 5px 10px; border-radius: 99px; margin-bottom: 10px;
+  background: rgba(124,58,237,0.08); color: #7c3aed;
+  border: 1px solid rgba(124,58,237,0.18);
+  display: inline-block;
+}
 /* Highlight matches in de dagkaart */
+.ur-match { background: rgba(124,58,237,0.22); border-radius: 3px; padding: 0 2px; }
 
 /* ═══════════════════════════════════════════════════════
    COLLAPSED-BY-DEFAULT DAY CARDS — cleaner UX
    Elke dag: compacte samenvatting, tik voor de volle bewerking.
    Alleen vandaag staat automatisch open.
    ═══════════════════════════════════════════════════════ */
+
+.ur-dag-mini {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--border);
+  border-radius: 18px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: transform 0.15s var(--ease-spring), box-shadow 0.2s, border-color 0.15s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+  animation: urCardIn 0.24s cubic-bezier(0.32,0.72,0,1) both;
+}
+.ur-dag-mini:active { transform: scale(0.98); }
+.ur-dag-mini.heeft-notitie {
+  border-left-color: #a78bfa;
+  background: linear-gradient(90deg, rgba(124,58,237,0.03) 0%, var(--surface) 30%);
+}
+.ur-dag-mini.today {
+  border-left-color: #7c3aed;
+}
+.ur-dag-mini.toekomst {
+  border-left: 4px dashed rgba(8,145,178,0.35);
+  opacity: 0.85;
+}
+.ur-dag-mini.toekomst.heeft-notitie {
+  border-left: 4px solid #0891b2;
+  opacity: 1;
+}
+
+.ur-mini-datum {
+  display: flex; flex-direction: column; align-items: center;
+  min-width: 40px; flex-shrink: 0;
+}
+.ur-mini-nr {
+  font-size: 1.5rem; font-weight: 900; line-height: 1;
+  letter-spacing: -1px;
+  color: var(--border2);
+}
+.ur-dag-mini.heeft-notitie .ur-mini-nr { color: var(--text); }
+.ur-dag-mini.today .ur-mini-nr { color: #7c3aed; }
+.ur-dag-mini.toekomst .ur-mini-nr { color: #0e7490; opacity: 0.85; }
+.ur-mini-lbl {
+  font-size: 0.56rem; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text3); margin-top: 4px;
+}
+.ur-dag-mini.today .ur-mini-lbl { color: #7c3aed; }
+
+.ur-mini-info {
+  flex: 1; min-width: 0;
+}
+.ur-mini-klussen {
+  font-size: 0.82rem; font-weight: 700;
+  color: var(--text); letter-spacing: -0.2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  line-height: 1.3;
+}
+.ur-mini-klussen.leeg {
+  color: var(--text3); font-weight: 500; font-style: italic;
+}
+.ur-mini-sub {
+  font-size: 0.68rem; color: var(--text3); font-weight: 600;
+  margin-top: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  display: flex; align-items: center; gap: 6px;
+}
+.ur-mini-sub .sep { color: var(--text3); opacity: 0.5; }
+.ur-mini-sub .heeft-not-ic { color: #a78bfa; }
+
+.ur-mini-tot {
+  font-size: 0.86rem; font-weight: 900;
+  padding: 6px 12px; border-radius: 99px;
+  background: rgba(124,58,237,0.09);
+  color: #7c3aed;
+  border: 1px solid rgba(124,58,237,0.16);
+  letter-spacing: -0.3px; flex-shrink: 0;
+}
+.ur-mini-tot.nul {
+  background: transparent; color: var(--text3);
+  border-color: var(--border); font-weight: 700;
+  font-size: 0.72rem;
+}
+.ur-mini-chev {
+  color: var(--text3); flex-shrink: 0;
+  opacity: 0.55;
+}
 
 /* Verzachte balken — minder overweldigend maar nog steeds premium */
 .ur-mtot {
@@ -3184,7 +3555,7 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 #app-uren .wk-nav, #ur-personeel .wk-nav {
   box-shadow: none;
 }
-
+.ur-topbar .ur-topbar-btn.on,
 .ur-zoek-btn.on {
   background: var(--u-primary);
   border-color: var(--u-primary);
@@ -3287,6 +3658,96 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 }
 
 /* Dagkaart-mini — verfijnder */
+.ur-dag-mini {
+  border-radius: 16px;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  border-left: 3px solid transparent;
+  background: var(--surface);
+  box-shadow: none;
+  margin-bottom: 6px;
+}
+.ur-dag-mini.heeft-notitie {
+  border-left-color: var(--u-primary-3);
+  background: var(--surface);
+}
+.ur-dag-mini.today {
+  border-left-color: var(--u-primary);
+  background: linear-gradient(90deg, var(--u-primary-tint) 0%, var(--surface) 40%);
+  border-color: var(--u-primary-border);
+}
+.ur-dag-mini.toekomst {
+  border-left: 3px dashed var(--u-planned-border);
+  opacity: 0.7;
+}
+.ur-dag-mini.toekomst.heeft-notitie {
+  border-left: 3px solid var(--u-planned);
+  opacity: 1;
+  background: linear-gradient(90deg, var(--u-planned-tint) 0%, var(--surface) 40%);
+}
+.ur-dag-mini:active { transform: scale(0.985); }
+
+.ur-mini-nr {
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--border2);
+  letter-spacing: -0.5px;
+}
+.ur-dag-mini.heeft-notitie .ur-mini-nr { color: var(--text); }
+.ur-dag-mini.today .ur-mini-nr { color: var(--u-primary); }
+.ur-dag-mini.toekomst .ur-mini-nr { color: var(--u-planned); opacity: 0.75; }
+.ur-mini-lbl {
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--text3);
+  margin-top: 4px;
+}
+.ur-dag-mini.today .ur-mini-lbl { color: var(--u-primary); opacity: 0.85; }
+
+.ur-mini-klussen {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.15px;
+}
+.ur-mini-klussen.leeg {
+  font-weight: 500;
+  font-style: normal;
+  color: var(--text3);
+  opacity: 0.7;
+}
+.ur-mini-sub {
+  font-size: 0.66rem;
+  color: var(--text3);
+  margin-top: 4px;
+  letter-spacing: 0.01em;
+}
+
+.ur-mini-tot {
+  font-size: 0.78rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  padding: 6px 11px;
+  background: var(--u-primary-tint-2);
+  color: var(--u-primary);
+  border: 1px solid var(--u-primary-border);
+  border-radius: 10px;
+  letter-spacing: -0.2px;
+}
+[data-theme="dark"] .ur-mini-tot { color: var(--u-primary-3); }
+.ur-mini-tot.nul {
+  background: transparent;
+  color: var(--text3);
+  border-color: var(--border);
+  font-weight: 600;
+  font-size: 0.68rem;
+}
+.ur-mini-chev {
+  color: var(--text3);
+  opacity: 0.35;
+}
 
 /* Uitgeklapte volle dagkaart — zelfde palette, verfijnder */
 .ur-dag {
@@ -3341,7 +3802,7 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 }
 
 /* Rijen focus — indigo i.p.v. paars */
- .ur-rij-uren:focus, .ur-km-in:focus, .ur-notitie-klein:focus, .klus-zoek-in:focus, .ur-zoek-in:focus {
+.ur-rij-klus:focus, .ur-rij-sub:focus, .ur-rij-uren:focus, .ur-km-in:focus, .ur-notitie-klein:focus, .klus-zoek-in:focus, .ur-zoek-in:focus {
   border-color: var(--u-primary);
   box-shadow: 0 0 0 3px var(--u-primary-tint-2);
 }
@@ -3359,12 +3820,18 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 }
 
 /* Maandtotaal pill: tabular numbers overal */
-.ur-dag-tot, .ur-mtot-val, .ur-alles-val, .ur-mtot-rij-uren, .ur-alles-rij-uren, .ur-klus-entry-uren, .ur-klus-entry-datum, .ur-dag-nr, .klus-hist-datum, .klus-hist-uren, .ur-rij-uren, .ur-km-in {
+.ur-dag-tot, .ur-mini-tot, .ur-mtot-val, .ur-alles-val, .ur-mtot-rij-uren, .ur-alles-rij-uren, .ur-klus-entry-uren, .ur-klus-entry-datum, .ur-mini-nr, .ur-dag-nr, .klus-hist-datum, .klus-hist-uren, .ur-rij-uren, .ur-km-in {
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
 }
 
 /* Zoek badge — indigo */
+.ur-zoek-count {
+  background: var(--u-primary-tint-2);
+  color: var(--u-primary);
+  border-color: var(--u-primary-border);
+}
+[data-theme="dark"] .ur-zoek-count { color: var(--u-primary-3); }
 
 /* Klussen-kaart accent — indigo */
 .klus-card {
@@ -3409,6 +3876,10 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 }
 
 /* Collapse-toggle knop — subtieler */
+.ur-collapse-toggle button {
+  color: var(--text2);
+  letter-spacing: 0.02em;
+}
 
 /* Klap-details in "Per werkgever" balk — slate ipv cyaan */
 .ur-klus-rij:active { background: rgba(255,255,255,0.05); }
@@ -3421,15 +3892,76 @@ body.ur-dragging .ur-rij-swipe{ opacity: 0; }
 }
 
 /* Toekomst-pill in mini card — slate */
+.ur-mini-sub span[style*="color:#0e7490"] {
+  color: var(--u-planned);
+}
 
 /* ── Scheidingslijn tussen "Nog te plannen" en "Vandaag & verleden" ── */
+.ur-sep {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 4px 12px;
+  font-size: 0.6rem; font-weight: 800;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text3);
+}
+.ur-sep::before, .ur-sep::after {
+  content: ''; flex: 1; height: 1px;
+  background: var(--border);
+}
+.ur-sep-ic {
+  display: flex; align-items: center; justify-content: center;
+  color: var(--u-planned); flex-shrink: 0;
+}
 /* Eerste keer sep: geen top-padding */
+.ur-sep:first-child { padding-top: 2px; }
 
 /* Kleine polish van mini-cards zelf */
+.ur-dag-mini {
+  transition: transform 0.15s var(--ease-spring), border-color 0.15s, background 0.15s;
+}
+.ur-dag-mini:hover {
+  border-color: var(--u-primary-border-2);
+}
+.ur-dag-mini.toekomst .ur-mini-tot {
+  background: var(--u-planned-tint);
+  color: var(--u-planned);
+  border-color: var(--u-planned-border);
+}
 
 /* Toolbar-strip bovenaan Mij + Personeel detail — cleaner */
+.ur-topbar {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 14px;
+}
+.ur-topbar .wk-nav { flex: 1; margin-bottom: 0; }
+.ur-topbar .ur-topbar-btn {
+  width: 44px; height: 44px; border-radius: 14px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text2); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  transition: all 0.15s var(--ease-spring);
+}
+.ur-topbar .ur-topbar-btn:active { transform: scale(0.9); }
+.ur-topbar .ur-topbar-btn.on {
+  background: linear-gradient(145deg, #a78bfa, #7c3aed);
+  color: #fff; border-color: #7c3aed;
+  box-shadow: 0 3px 12px rgba(124,58,237,0.32);
+}
 
 /* "Alles open/dicht" knop rechts van de balken */
+.ur-collapse-toggle {
+  display: flex; justify-content: flex-end; margin: -4px 4px 8px;
+}
+.ur-collapse-toggle button {
+  background: none; border: none;
+  font-family: inherit;
+  font-size: 0.68rem; font-weight: 700;
+  color: var(--text3); cursor: pointer;
+  padding: 6px 10px; border-radius: 8px;
+  display: flex; align-items: center; gap: 4px;
+  transition: background 0.15s;
+}
+.ur-collapse-toggle button:active { background: var(--surface2); }
 
 /* ═══════════════════════════════════════════════════════
    ONE UI — COLLAPSING HEADER, STICKY BAR, FAB, PICKER,
@@ -3806,6 +4338,10 @@ html, body{ max-width: 100%; overflow-x: clip; }
     linear-gradient(160deg, #0e2318 0%, #163824 30%, #1c4a2c 60%, #112a1c 100%);
 }
 /* Vignette-rand zodat het midden meer oplicht */
+.sm-vignet{
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(ellipse 85% 65% at 50% 45%, transparent 40%, rgba(0,0,0,0.34) 100%);
+}
 /* Langzaam driftende gloed-vlekken */
 #startscherm::after{
   inset: -22%;
@@ -3822,6 +4358,13 @@ html, body{ max-width: 100%; overflow-x: clip; }
 }
 
 /* ── Merk: iets meer glans ── */
+.sm-purgato{
+  text-shadow:
+    0 0 70px rgba(74,222,128,0.42),
+    0 0 24px rgba(255,255,255,0.14),
+    0 2px 24px rgba(0,0,0,0.5);
+}
+.sm-brand{ margin-bottom: 34px; }
 
 /* ── Begroeting + datum onder het merk ── */
 .sm-greet{
@@ -3859,7 +4402,21 @@ html, body{ max-width: 100%; overflow-x: clip; }
   to{ opacity: 1; transform: none; }
 }
 /* Diagonale glans die er periodiek overheen veegt */
+.mc-sheen{
+  position: absolute; top: 0; left: -140%;
+  width: 55%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,0.16), transparent);
+  transform: skewX(-18deg);
+  pointer-events: none; z-index: 2;
+  animation: smSheen 7s ease-in-out infinite;
+  animation-delay: var(--sd, 0s);
+}
+@keyframes smSheen{
+  0%       { left: -140%; }
+  26%, 100%{ left: 220%; }
+}
 @media (prefers-reduced-motion: reduce){
+  .mc-sheen{ display: none; }
   .module-card{ animation: none; }
 }
 .module-card:active{
@@ -3876,6 +4433,12 @@ html, body{ max-width: 100%; overflow-x: clip; }
   }
 }
 /* Icoon iets levendiger */
+.mc-icon-wrap{
+  background: rgba(255,255,255,0.24);
+  box-shadow:
+    0 6px 20px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.55);
+}
 .mc-name{ text-shadow: 0 1px 8px rgba(0,0,0,0.22); }
 
 
@@ -3938,7 +4501,7 @@ input,select,textarea{font-size:16px!important;min-width:0}
 ::selection{background:var(--surface3);color:var(--text)}
 .pg-skip{position:fixed;top:-70px;left:20px;z-index:1000;background:var(--surface);color:var(--text);padding:14px;border-radius:12px}
 .pg-skip:focus{top:12px}
-.stat-n,.omzet-bedrag,.wc-hero-amount,.d-kpi-v{font-variant-numeric:tabular-nums}
+.pg-num,.stat-n,.omzet-bedrag,.wc-hero-amount,.d-kpi-v{font-variant-numeric:tabular-nums}
 
 /* Home: four destinations, one quiet visual language. */
 #startscherm{background:var(--bg)!important;overflow-y:auto;overflow-x:hidden;justify-content:flex-start;padding:0;isolation:isolate}
@@ -3993,6 +4556,7 @@ input,select,textarea{font-size:16px!important;min-width:0}
  .pg-notes:hover{color:var(--accent)}
 }
 .module-card:active{transform:scale(.985)!important;box-shadow:none!important}
+@keyframes pg-arrive{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
 /* Shared chrome. Existing navigation actions and routing are retained. */
 #main-header{height:72px;padding:0 max(24px,calc((100vw - 1056px)/2));background:var(--glass-bg);border:0;box-shadow:none!important;gap:14px;backdrop-filter:blur(16px)}
@@ -4056,7 +4620,7 @@ body>#nav-notes>.nav-item{flex-direction:row}
 .knotitie{font-size:12px;line-height:1.6;font-style:normal;color:var(--text2);padding-top:3px}
 .kacties{gap:7px;margin-top:17px;padding-top:15px;border-top:1px solid var(--border)}
 .b-done{min-height:41px;border:0;background:var(--pg-feature);color:var(--accent);border-radius:12px;font-size:12px}
-.b-note,.b-del{border:0;border-radius:12px;min-width:38px;min-height:41px;display:grid;place-items:center;padding:9px;background:var(--surface2);color:var(--text2)}
+.b-note,.b-map,.b-del{border:0;border-radius:12px;min-width:38px;min-height:41px;display:grid;place-items:center;padding:9px;background:var(--surface2);color:var(--text2)}
 .b-del{color:var(--urgent);background:transparent}
 .groep-lbl{grid-column:1/-1;font-size:12px;letter-spacing:0;text-transform:none;padding:14px 0 2px}
 .filter-card{border-radius:20px;box-shadow:none}
@@ -4114,12 +4678,13 @@ body>#nav-notes>.nav-item{flex-direction:row}
 .wc-mode-btn .wc-mode-name,.wc-mode-btn.on .wc-mode-name{color:inherit!important}
 .wc-card,.wc-info-card,.wc-tabel-wrap{border:0!important;box-shadow:none!important;border-radius:24px!important;padding:24px;margin-bottom:20px;background:var(--surface)}
 .wc-card-title{font-size:15px;font-weight:650;letter-spacing:-.2px;text-transform:none;color:var(--text);margin-bottom:22px}
+.wc-card-title::after{display:none}
 .wc-field-grid{gap:20px 14px}
 .wc-field-wrap{border:1px solid var(--border)!important;border-radius:13px;background:var(--surface2);min-height:50px;box-shadow:none!important}
 .wc-field input{background:transparent;font-weight:600;min-height:50px}
 .wc-field select{min-height:50px;border-radius:13px}
 .wc-result-grid{gap:10px}.wc-res-card{box-shadow:none!important;border:0;border-radius:18px;padding:18px}
-.wc-res-label{font-size:11px;text-transform:none;letter-spacing:0;font-weight:550}
+.wc-res-label,.wc-res-title{font-size:11px;text-transform:none;letter-spacing:0;font-weight:550}
 .wc-res-bedrag{font-size:27px;font-weight:650;letter-spacing:-1px}.wc-res-sub{font-size:11px;line-height:1.5}
 .wc-res-card.groot{background:var(--pg-feature)!important;box-shadow:none!important;padding:24px}
 .wc-res-card.groot .wc-res-bedrag{font-size:38px;color:var(--accent)!important;text-shadow:none}
@@ -4141,32 +4706,39 @@ body>#nav-notes>.nav-item{flex-direction:row}
 .ui-bigtitle-h1{font-size:42px;font-weight:650;letter-spacing:-1.8px;line-height:1.1}
 .ui-bigtitle-sub{font-size:12px;font-weight:500;color:var(--text2);margin-top:10px}
 .ui-bigtitle.collapsed{max-height:0;padding:0}
+.ur-topbar{gap:10px;margin-bottom:22px}.ur-topbar-btn{background:var(--surface)!important;border:0!important;box-shadow:none!important}
+.ur-topbar .ur-topbar-btn.on{background:var(--pg-feature)!important;color:var(--accent)!important}
 .ur-mtot,.ur-alles,.ur-alles.klus,.ur-alles.winst{background:var(--pg-feature)!important;border:0!important;border-radius:26px!important;padding:26px!important;box-shadow:none!important;color:var(--text)!important}
 .ur-mtot-lbl,.ur-alles-lbl{font-size:11px!important;font-weight:550!important;text-transform:none!important;letter-spacing:0!important;color:var(--text2)!important}
 .ur-mtot-val,.ur-alles-val{font-size:38px!important;font-weight:600!important;letter-spacing:-1.5px!important;color:var(--pg-ink)!important}
 .ur-mtot-val span,.ur-alles-val span{color:inherit!important}
-.ur-alles-sub,.ur-alles-rij-naam,.ur-alles-rij-uren,.ur-mtot-rij-naam,.ur-mtot-rij-uren,.ur-klus-entry-uren,.ur-klus-entry-datum,.ur-klus-entry-persoon,.ur-winst-rij-naam,.ur-winst-rij-sub,.ur-winst-rij-bedrag,.ur-winst-nokosten,.ur-alles-rij-av{color:var(--text2)!important}
+.ur-mtot-sub,.ur-alles-sub,.ur-alles-rij-naam,.ur-alles-rij-uren,.ur-alles-rij-sub,.ur-mtot-rij-naam,.ur-mtot-rij-uren,.ur-klus-entry-uren,.ur-klus-entry-datum,.ur-klus-entry-persoon,.ur-winst-rij-naam,.ur-winst-rij-sub,.ur-winst-rij-bedrag,.ur-winst-nokosten,.ur-alles-rij-av{color:var(--text2)!important}
 .ur-alles-rij,.ur-mtot-rij,.ur-klus-rij,.ur-winst-rij{border-color:var(--ok-b)!important}
 .ur-alles.neg{background:var(--urgent-s)!important}.ur-alles.neg .ur-alles-val{color:var(--urgent)!important}
 .ui-spark{border-color:var(--ok-b)}.ui-spark-bar{background:var(--accent)!important;opacity:.6}
-.ur-dag{border:1px solid var(--border)!important;border-left-width:1px!important;border-radius:24px!important;padding:20px!important;background:var(--surface)!important;box-shadow:none!important;opacity:1!important;margin-bottom:12px!important}
-.ur-dag.today{border-color:var(--u-primary-border)!important;background:var(--surface)!important}
-.ur-dag.toekomst{border-left-style:solid!important}
-.ur-dag-nr{font-size:28px!important;font-weight:650!important;color:var(--text2)!important;letter-spacing:-1px!important;text-shadow:none!important}
-.ur-dag-naam{font-size:10px!important;font-weight:550!important;letter-spacing:0!important;text-transform:none!important}
-.ur-dag-tot{font-size:12px!important;font-weight:650!important;border:0!important;border-radius:10px!important}
+.ur-dag,.ur-dag-mini{border:1px solid var(--border)!important;border-left-width:1px!important;border-radius:24px!important;padding:20px!important;background:var(--surface)!important;box-shadow:none!important;opacity:1!important;margin-bottom:12px!important}
+.ur-dag.today,.ur-dag-mini.today{border-color:var(--u-primary-border)!important;background:var(--surface)!important;box-shadow:inset 4px 0 0 var(--accent)!important}
+.ur-dag.toekomst,.ur-dag-mini.toekomst{border-left-style:solid!important}
+.ur-mini-nr,.ur-dag-nr{font-size:28px!important;font-weight:650!important;color:var(--text2)!important;letter-spacing:-1px!important;text-shadow:none!important}
+.ur-mini-lbl,.ur-dag-naam{font-size:10px!important;font-weight:550!important;letter-spacing:0!important;text-transform:none!important}
+.ur-mini-klussen{font-size:14px!important;font-weight:600!important}.ur-mini-sub{font-size:11px!important;opacity:1!important}
+.ur-mini-klussen.leeg{opacity:1!important}
+.ur-mini-tot,.ur-dag-tot{font-size:12px!important;font-weight:650!important;border:0!important;border-radius:10px!important}
+.ur-mini-tot.nul{font-size:11px!important}
 .ur-rij,.ur-rij-inner{border:0!important;box-shadow:none!important}
 .ur-rij-label,.ui-pickbtn{border:0!important;background:var(--surface2)!important;border-radius:12px;font-size:12px;min-height:44px}
 .ur-rij-label .sub{font-size:11px}
 .ur-rij-uren,.ur-km-in{border:1px solid var(--border)!important;border-radius:10px!important;background:var(--surface2)!important;min-height:44px}
 .ur-notitie-klein{background:var(--surface2)!important;border:0!important;border-radius:14px!important;min-height:58px;padding:12px!important}
-.ur-rij-add{color:var(--accent)!important;box-shadow:none!important;min-height:36px}
+.ur-rij-add,.ur-dag-kopieer,.ur-km-det-add{color:var(--accent)!important;box-shadow:none!important;min-height:36px}
 .ur-dag-hdr{margin-bottom:18px!important}
+.ur-rij-del{min-height:38px;min-width:32px}
+.ur-sep{font-size:11px!important;letter-spacing:.02em!important;text-transform:none!important;padding:22px 0 14px!important;position:static!important;background:transparent!important}
 .ur-pdf-btn,.urp-add,.ui-todayfab{background:var(--accent)!important;color:var(--pg-inverse)!important;box-shadow:none!important;border:0!important;border-radius:16px!important;min-height:46px}
-.ur-pdf-btn{font-size:13px}
+.ur-pdf-btn{font-size:13px}.ur-pdf-sub{color:inherit!important;opacity:.8}
 .urp-card,.klus-card,.pt-card{border:1px solid var(--border)!important;border-left-width:1px!important;border-radius:24px!important;box-shadow:none!important;background:var(--surface)!important}
 .urp-card{padding:20px!important}.urp-card-naam{font-size:16px!important;letter-spacing:-.3px}.urp-card-sub{font-size:12px!important}
-.urp-card-avatar,.ur-winst-rij-av{background:var(--pg-feature)!important;color:var(--accent)!important;box-shadow:none!important;border-radius:16px!important}
+.urp-card-avatar,.urp-detail-avatar,.ur-winst-rij-av{background:var(--pg-feature)!important;color:var(--accent)!important;box-shadow:none!important;border-radius:16px!important}
 .klus-card{padding:20px}.klus-naam{font-size:16px!important}.klus-zoek-in,.ur-zoek-in,.n-search{min-height:50px;background:var(--surface2)!important;border:0!important;border-radius:15px!important;box-shadow:none!important}
 .klus-sub-chip,.klus-hist-btn{box-shadow:none!important;border:0!important;font-size:11px;min-height:30px}
 .pt-hdr{padding:20px}.pt-hdr-titel{font-size:14px}.pt-hdr-sub{font-size:11px}.pt-hdr-ic{background:var(--pg-feature);color:var(--accent)}
@@ -4175,16 +4747,18 @@ body>#nav-notes>.nav-item{flex-direction:row}
 .ui-stickybar{top:var(--ui-sticky-top,72px)!important;border:0;box-shadow:0 4px 15px #20352c08}
 .ui-stickybar-inner{max-width:1008px}.ui-stickybar-arrow{width:36px;height:36px;border:0}
 .ui-todayfab{position:fixed;bottom:calc(104px + env(safe-area-inset-bottom,0px))!important;right:max(20px,calc((100vw - 1008px)/2))}
+.ur-undo-fab{bottom:104px!important;left:max(20px,calc((100vw - 1008px)/2));background:var(--surface);box-shadow:var(--shadow-md)!important}
 .ur-savefout{bottom:104px!important}
 
 /* Dashboard, reporting and notes. */
 .d-card{border:0!important;border-radius:24px!important;background:var(--surface)!important;box-shadow:none!important;padding:22px!important}
-.d-grid-2{gap:16px!important}
+.d-grid-2{gap:16px!important}.d-grid-3,.d-grid-4{gap:14px!important}
 .d-kpi-lbl,.d-kpi-lbl2{color:var(--text2)!important;font-size:11px!important;text-transform:none!important;letter-spacing:0!important}
 .d-kpi-val,.d-kpi-v{color:var(--text)!important;letter-spacing:-1.3px!important;font-weight:650!important}
 .d-st{font-size:17px!important;letter-spacing:-.5px!important;color:var(--text)!important;font-weight:650!important;margin-top:26px!important}
-.d-row{border-color:var(--border)!important;padding-top:14px!important;padding-bottom:14px!important}
+.d-row,.d-list-item{border-color:var(--border)!important;padding-top:14px!important;padding-bottom:14px!important}
 .d-back{min-height:40px;background:var(--surface2)!important;border:0!important;border-radius:12px!important;color:var(--accent)!important}
+.d-btn{border-radius:12px!important;box-shadow:none!important;min-height:42px}
 .n-toolbar{margin-bottom:20px}.n-chip{min-height:36px;font-size:12px;padding:8px 14px;border:0;box-shadow:none}
 .n-chip.on{background:var(--pg-feature)!important;color:var(--accent)!important;box-shadow:none!important}
 .n-grid{gap:16px}.n-card{border:0!important;border-radius:24px!important;box-shadow:none!important;background:var(--surface)!important;min-height:160px}
@@ -4195,8 +4769,10 @@ body>#nav-notes>.nav-item{flex-direction:row}
 .n-empty,.urp-leeg{background:var(--surface);border-radius:26px;padding:45px 24px}.n-empty-t,.urp-leeg-t{font-size:18px;font-weight:650}.n-empty-s,.urp-leeg-s{font-size:12px;line-height:1.8;color:var(--text2)}
 
 /* Weather and modal surfaces. */
-.weer-wrap{gap:18px!important}.weer-temp{font-weight:550!important;letter-spacing:-3px!important}
-.weer-dag{border-color:var(--border)!important}.weer-refresh{border-radius:14px!important;background:var(--surface2)!important;color:var(--accent)!important;min-height:44px}
+.weer-wrap{gap:18px!important}.weer-hero,.weer-card{border:0!important;border-radius:26px!important;box-shadow:none!important}
+.weer-hero{background:var(--pg-feature)!important;color:var(--pg-ink)!important}
+.weer-hero *{text-shadow:none!important}.weer-temp{font-weight:550!important;letter-spacing:-3px!important}
+.weer-uur,.weer-dag{border-color:var(--border)!important}.weer-refresh{border-radius:14px!important;background:var(--surface2)!important;color:var(--accent)!important;min-height:44px}
 .overlay,.n-overlay,.ui-picker-ov{background:#132a2555!important;backdrop-filter:blur(7px)!important}
 .sheet,.n-modal,.ui-picker{border:0!important;border-radius:32px 32px 0 0!important;background:var(--surface)!important;box-shadow:var(--shadow2)!important}
 .sheet{padding:16px 24px max(28px,env(safe-area-inset-bottom));max-width:580px}
@@ -4209,6 +4785,10 @@ body>#nav-notes>.nav-item{flex-direction:row}
 .n-modal-title{font-size:26px!important}.n-modal-content{font-size:16px!important;line-height:1.8}
 .n-modal-save{background:var(--accent)!important;color:var(--pg-inverse)!important;box-shadow:none!important;border-radius:13px}
 .toast{bottom:108px!important;background:var(--text)!important;color:var(--bg)!important;box-shadow:var(--shadow2)!important;border:0!important;border-radius:18px!important}
+.undo{bottom:108px!important;border:0;border-radius:18px;box-shadow:var(--shadow2);padding:16px 20px;width:min(520px,calc(100% - 32px));max-width:calc(100% - 32px);box-sizing:border-box}
+.undo span{font-size:12px;min-width:0;flex:1;white-space:normal;overflow-wrap:anywhere}.b-undo{min-height:44px;white-space:nowrap;flex-shrink:0}
+.ur-undo-fab{min-height:44px}
+.b-undo:disabled,.ur-undo-fab:disabled{opacity:.6;cursor:wait}
 
 @media(min-width:850px){
  #tab-klanten .list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
@@ -4259,7 +4839,7 @@ body>#nav-notes>.nav-item{flex-direction:row}
  .wc-mode-desc{font-size:8px!important}
  .omzet-top{padding:26px}.omzet-bedrag{font-size:44px;letter-spacing:-2px}
  .ui-bigtitle-h1{font-size:36px;letter-spacing:-1.5px}.ui-bigtitle{padding:22px 0 25px}
- .ur-dag{padding:17px!important;border-radius:22px!important}
+ .ur-dag,.ur-dag-mini{padding:17px!important;border-radius:22px!important}
  .ui-stickybar{top:var(--ui-sticky-top,64px)!important}.ui-stickybar-inner{max-width:640px}
  .ur-mtot-val,.ur-alles-val{font-size:34px!important}
  #nav-extra{justify-content:flex-start;padding-right:10px!important}
@@ -4295,14 +4875,14 @@ html .stat-n{font-size:34px!important;font-weight:650!important;letter-spacing:-
 html[data-theme] .kkaart:is(.urgent,.soon,.ok){background:var(--surface)!important;border-color:var(--border)!important;box-shadow:none!important}
 html .kkaart::before{box-shadow:none!important}
 html .b-done{background:var(--pg-feature)!important;color:var(--accent)!important;box-shadow:none!important;border-radius:12px!important;font-weight:650!important}
-html :is(.b-note,.b-loc,.b-copy,.b-del){width:38px!important;height:41px!important;border-radius:12px!important;min-width:0!important;background:var(--surface2)!important;color:var(--text2)!important;box-shadow:none!important;border:0!important}
+html :is(.b-note,.b-map,.b-loc,.b-copy,.b-del){width:38px!important;height:41px!important;border-radius:12px!important;min-width:0!important;background:var(--surface2)!important;color:var(--text2)!important;box-shadow:none!important;border:0!important}
 html .b-del{color:var(--urgent)!important;background:transparent!important}
-.s-toast{visibility:hidden;pointer-events:none}
-.s-toast.show{visibility:visible;pointer-events:auto}
+.undo,.s-toast{visibility:hidden;pointer-events:none}
+.undo.show,.s-toast.show{visibility:visible;pointer-events:auto}
 .s-toast{bottom:108px!important;background:var(--text)!important;color:var(--bg)!important;border:0!important;box-shadow:var(--shadow2)!important;border-radius:17px!important}
 .s-toast{width:max-content;max-width:calc(100vw - 32px);white-space:normal!important}
 .s-toast-ic{flex-shrink:0}
-.n-fab:not(.visible),.ui-stickybar:not(.show),.ui-todayfab:not(.show){visibility:hidden}
+.n-fab:not(.visible),.ui-stickybar:not(.show),.ur-undo-fab:not(.show),.ui-todayfab:not(.show){visibility:hidden}
 .d-kpi-orb{display:none}.d-kpi-val{margin-top:8px!important;font-size:29px!important}
 .d-st{text-transform:none!important;margin-top:0!important;margin-bottom:18px!important}
 .d-avatar{background:var(--pg-feature)!important;color:var(--accent)!important;border-radius:13px;box-shadow:none}
@@ -4314,6 +4894,7 @@ html .b-del{color:var(--urgent)!important;background:transparent!important}
 .ui-pickbtn.leeg{padding:10px 12px;text-align:left}
 .ui-spark-col.leeg{padding:0;background:transparent;border-radius:0;min-width:0}
 .ui-spark-col.vandaag .ui-spark-bar{box-shadow:none}
+.ur-mini-klussen.leeg{padding:0;text-align:left;background:none}
 html .witem:is(.urgent,.soon,.ok){background:var(--surface)!important;box-shadow:none!important;border:0!important;border-radius:18px!important}
 html .wi-badge:is(.urgent,.soon,.ok){box-shadow:none!important;border:0!important;border-radius:9px!important}
 html .wi-badge.urgent{background:var(--urgent-s)!important;color:var(--urgent)!important}
@@ -4334,7 +4915,7 @@ html .wi-badge.ok{background:var(--ok-s)!important;color:var(--ok)!important}
 .ur-dag.today{border-left-width:1px!important;box-shadow:inset 4px 0 0 var(--accent)!important}
 .ur-dag-nr{width:auto!important;min-width:32px!important}.ur-dag-info{min-width:0}
 .ur-nav-met-zoek{padding:0;margin-bottom:18px}.ur-nav-met-zoek .wk-nav{margin-bottom:0}
-html .b-save{background:var(--accent)!important;color:var(--pg-inverse)!important;box-shadow:none!important;border-radius:14px!important;min-height:48px;font-weight:650!important}
+html .b-save,html .n-save-btn{background:var(--accent)!important;color:var(--pg-inverse)!important;box-shadow:none!important;border-radius:14px!important;min-height:48px;font-weight:650!important}
 .b-cancel{border:0!important;background:var(--surface2)!important;border-radius:14px!important;min-height:48px;box-shadow:none!important}
 .sheet{max-height:90dvh;overflow-y:auto}.s-lbl{font-size:11px;letter-spacing:0;text-transform:none;margin:15px 0 7px}
 .s-input{border:0!important;border-radius:12px!important;min-height:47px}.s-res{background:var(--pg-feature)!important;border:0!important;border-radius:14px!important;box-shadow:none!important}
@@ -4353,7 +4934,7 @@ html .b-save{background:var(--accent)!important;color:var(--pg-inverse)!importan
 #app-extra>.pg-section-intro{padding-bottom:24px}
 #extra-list>.d-hdr:has(.d-hdr-sub){display:none}
 .ui-bigtitle.collapsed{max-height:160px;padding:25px 0 30px;visibility:hidden}
-.ur-dag{scroll-margin-top:10px}
+.ur-dag,.ur-dag-mini{scroll-margin-top:10px}
 #app-extra:not(:has(#extra-list .d-hdr-sub))>.pg-section-intro{display:none}
 #extra-list>.d-hdr:not(:has(.d-hdr-sub)){padding:24px 0 16px}
 #extra-list>.d-hdr:not(:has(.d-hdr-sub)) .d-hdr-title{font-size:36px;letter-spacing:-1.4px}
@@ -4366,7 +4947,7 @@ html .b-save{background:var(--accent)!important;color:var(--pg-inverse)!importan
 .wc-hero-amount.verlies{color:var(--urgent)!important}
 .wc-hero-amount.laag{color:var(--soon)!important}
 .weer-ic-big .pg-inline-icon{width:58px;height:58px;color:var(--accent);vertical-align:middle}
-.weer-dag-ic .pg-inline-icon{width:25px;height:25px;color:var(--accent)}
+.weer-dag-ic .pg-inline-icon,.weer-uur-ic .pg-inline-icon{width:25px;height:25px;color:var(--accent)}
 html[data-theme] .weer-dag.vandaag .weer-dag-rain{color:var(--accent)!important}
 .pg-home-top,.pg-home-intro{animation:none}
 .sheet .s-lbl{display:block}
@@ -4404,7 +4985,7 @@ input,textarea{caret-color:var(--accent)}
 .uur-dag.nu :is(.uur-naam,.uur-temp,.uur-ic){color:var(--accent)!important}
 
 /* Calm transitions inside the app. */
-.app-entering :is(.stat-shell,.add-card,.zoek,.wc-hero-banner,.wc-mode-toggle,#wc-result-grid,#wc-breakdown){animation:none!important}
+.app-entering :is(.stat-shell,.add-card,.zoek,.wc-hero-banner,.wc-mode-toggle,.wc-row,#wc-result-grid,#wc-breakdown){animation:none!important}
 @keyframes pg-module-enter{from{opacity:.88;transform:translateY(4px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){
   .app-entering{animation:none!important}
@@ -4426,11 +5007,11 @@ input,textarea{caret-color:var(--accent)}
 #extra-list .d-hdr{justify-content:center;text-align:center}
 .pg-section-intro p{margin-left:auto;margin-right:auto}
 .stat-card{text-align:center}
-.toolbar,.add-toggle,.wc-mode-toggle{justify-content:center}
+.toolbar,.add-toggle,.wc-mode-toggle,.wc-tabs{justify-content:center}
 .toolbar{flex-wrap:wrap;overflow:visible}.toolbar .chip.sort{margin-left:0}
-.add-toggle{position:relative;gap:12px}
+.add-toggle{position:relative;gap:12px}.add-toggle>.add-chev{position:absolute;right:16px}
 .omzet-top,.wc-hero-banner{text-align:center}
-.omzet-eyebrow{justify-content:center}
+.omzet-eyebrow,.omzet-meta{justify-content:center}
 .urp-hdr{position:relative;justify-content:center;min-height:48px}
 .urp-hdr-titel{text-align:center}
 .urp-hdr>.urp-add{position:absolute;right:0}
@@ -4579,34 +5160,22 @@ html.pg-boot-leaving #pg-boot{animation:pg-boot-out .28s ease-out both}
 .pg-calendar-footer span{font-size:11px;color:var(--text2)}
 .pg-calendar-footer button{padding:0 14px;background:var(--surface2);color:var(--accent);font-size:13px;font-weight:650}
 @media(max-width:380px){.pg-calendar{padding:16px}.pg-export-dates{grid-template-columns:1fr}}
-/* Undo belongs to the header; its 44px hit area stays stable when unavailable. */
-.pg-header-brand{display:flex;align-items:center;gap:2px;flex-shrink:0}
-.pg-history-button{display:grid;place-items:center;width:44px;height:44px;flex-shrink:0;padding:0;border:0;border-radius:50%;background:transparent;color:var(--accent);cursor:pointer;touch-action:manipulation}
-.pg-history-button svg{width:22px;height:22px;pointer-events:none}
-.pg-history-button:enabled:hover{background:var(--surface2)}
-.pg-history-button:disabled{opacity:.35;cursor:default}
-.pg-history-button[aria-busy="true"]{opacity:.6;cursor:wait}
-.pg-home-top>.pg-history-button{position:absolute;left:0;top:0}
-#pg-history-skip{position:fixed;top:80px;left:max(16px,calc((100vw - 1008px)/2));z-index:960;max-width:calc(100vw - 32px);min-height:44px;padding:10px 14px;border:1px solid var(--border2);border-radius:14px;background:var(--surface);color:var(--text);box-shadow:var(--shadow-md);font:inherit;font-size:12px;cursor:pointer}
-#pg-history-skip[hidden]{display:none}
-@media(max-width:480px){
- #main-header>.pg-header-title{flex-direction:column;max-width:calc(100% - 220px)}
- .pg-header-title>.h-badge{position:static;padding:1px 6px;font-size:9px;line-height:1.4}
- #main-header .h-title{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
- #main-header .h-right{gap:3px}
- #main-header #h-share{width:36px;height:44px}
-}
-@media(max-width:374px){
- #main-header{padding-left:12px;padding-right:12px}
- #main-header .h-logo{width:32px}
- #main-header>.pg-header-title{max-width:calc(100% - 204px)}
- #main-header .theme-switch{min-height:44px;padding:5px 8px}
- #main-header .th-icon{display:none}
-}
+
+#undo,#ur-undo{display:none!important}
+.pg-history{position:fixed;left:max(16px,calc((100vw - 1008px)/2));bottom:max(104px,calc(env(safe-area-inset-bottom) + 94px));z-index:960;max-width:calc(100vw - 32px);display:flex;flex-direction:column;align-items:flex-start;gap:8px;pointer-events:none}
+.pg-history button{pointer-events:auto;border:1px solid var(--border2);background:var(--surface);color:var(--text);border-radius:17px;box-shadow:var(--shadow-md);cursor:pointer;font:inherit}
+#pg-history-button{display:grid;grid-template-columns:24px minmax(0,1fr) auto;align-items:center;column-gap:9px;text-align:left;padding:10px 14px;max-width:100%;min-height:52px}
+#pg-history-button svg{grid-row:1/3;width:21px;height:21px;color:var(--accent)}
+#pg-history-button strong{font-size:12px;line-height:1.4;font-weight:650}
+#pg-history-button small{grid-column:2;max-width:190px;font-size:10px;line-height:1.5;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pg-history-button span{grid-column:3;grid-row:1/3;min-width:24px;height:24px;padding:0 5px;border-radius:8px;background:var(--surface2);display:grid;place-items:center;font-size:11px;font-variant-numeric:tabular-nums}
+#pg-history-button:disabled{opacity:.7;cursor:wait}
+#pg-history-button[hidden],#pg-history-skip[hidden]{display:none}
+#pg-history-skip{font-size:11px;padding:10px 14px;min-height:44px}
 .n-modal{padding-bottom:180px}
 
 </style>
-<meta name="purgato-build" content="9048364726dc078d"><style>
+<meta name="purgato-build" content="8488e10e566f7671"><style>
 .pg-search-suppressed{display:none!important}
 .pg-search-panel{margin:0 0 22px;color:var(--text);min-width:0}
 .pg-search-hint,.pg-search-footnote{font-size:12px;line-height:1.65;color:var(--text2);text-align:center;padding:12px 16px}
@@ -4644,7 +5213,7 @@ html.pg-boot-leaving #pg-boot{animation:pg-boot-out .28s ease-out both}
 
 </style></head>
 <body>
-<button type="button" id="pg-history-skip" onclick="pgHistorySkip()" hidden>Deze herstelstap overslaan</button>
+<div class="pg-history"><button type="button" id="pg-history-button" onclick="pgHistoryUndo()" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 4-5 5 5 5M4 9h10a6 6 0 0 1 0 12"/></svg><strong>Ongedaan</strong><small></small><span>0</span></button><button type="button" id="pg-history-skip" onclick="pgHistorySkip()" hidden>Deze herstelstap overslaan</button></div>
 <div id="pg-boot" role="status" aria-live="polite" aria-label="Purgato wordt geopend">
   <div class="pg-boot-identity" aria-hidden="true">
     <svg class="pg-boot-mark" viewBox="0 0 40 46" fill="none"><path d="M7 40V7h14c9 0 14 5 14 13s-5 13-14 13h-6" stroke="currentColor" stroke-width="5.5" stroke-linecap="round"/><path d="M15 13v12h6c4 0 6-2 6-6s-2-6-6-6" fill="currentColor" opacity=".24"/></svg>
@@ -4709,7 +5278,6 @@ html.pg-boot-leaving #pg-boot{animation:pg-boot-out .28s ease-out both}
 <div id="startscherm" class="open">
   <div class="pg-home">
     <div class="pg-home-top">
-      <button type="button" id="pg-history-home-button" class="pg-history-button" onclick="pgHistoryUndo()" aria-label="Niets om ongedaan te maken" title="Niets om ongedaan te maken" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 4-5 5 5 5M4 9h10a6 6 0 0 1 0 12"/></svg></button>
       <div class="pg-brand">
         <svg class="pg-brand-mark" viewBox="0 0 40 46" fill="none" aria-hidden="true"><path d="M7 40V7h14c9 0 14 5 14 13s-5 13-14 13h-6" stroke="currentColor" stroke-width="5.5" stroke-linecap="round"/><path d="M15 13v12h6c4 0 6-2 6-6s-2-6-6-6" fill="currentColor" opacity=".24"/></svg>
         <div><div class="pg-brand-name" id="sm-p-text">PURGATO</div><div class="pg-brand-sub" id="sm-s-text">Cleaning</div></div>
@@ -4763,10 +5331,7 @@ html.pg-boot-leaving #pg-boot{animation:pg-boot-out .28s ease-out both}
 
 <!-- Header -->
 <header id="main-header" style="display:none;">
-  <div class="pg-header-brand">
   <button class="h-logo" onclick="naarStart()" title="Beginscherm" aria-label="Naar het beginscherm"><svg viewBox="0 0 40 46" fill="none" aria-hidden="true"><path d="M7 40V7h14c9 0 14 5 14 13s-5 13-14 13h-6" stroke="currentColor" stroke-width="5.5" stroke-linecap="round"/><path d="M15 13v12h6c4 0 6-2 6-6s-2-6-6-6" fill="currentColor" opacity=".24"/></svg></button>
-    <button type="button" id="pg-history-button" class="pg-history-button" onclick="pgHistoryUndo()" aria-label="Niets om ongedaan te maken" title="Niets om ongedaan te maken" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 4-5 5 5 5M4 9h10a6 6 0 0 1 0 12"/></svg></button>
-  </div>
   <div class="pg-header-title" style="display:flex;align-items:center;gap:6px">
     <div class="h-title" id="h-title">Purgato Planner</div>
     <div class="h-badge" id="h-totaal" style="display:none">0</div>
@@ -5174,6 +5739,13 @@ html.pg-boot-leaving #pg-boot{animation:pg-boot-out .28s ease-out both}
   <button onclick="urNuOpslaan()">Opnieuw</button>
 </div>
 
+<!-- Uren: ongedaan maken -->
+<button class="ur-undo-fab" id="ur-undo" onclick="urUndo()" aria-label="Ongedaan maken">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+  Ongedaan
+  <span class="ur-undo-n" id="ur-undo-n">0</span>
+</button>
+
 <!-- Uren: terug naar vandaag -->
 <button class="ui-todayfab" id="ui-todayfab" aria-label="Terug naar vandaag">
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -5207,6 +5779,12 @@ html.pg-boot-leaving #pg-boot{animation:pg-boot-out .28s ease-out both}
 <div class="s-toast" id="s-toast">
   <span class="s-toast-ic">✓</span>
   <span id="s-toast-t">Opgeslagen</span>
+</div>
+
+<!-- Undo toast -->
+<div class="undo" id="undo">
+  <span id="undo-t">Opgeslagen</span>
+  <button class="b-undo" onclick="undo()">↩ Ongedaan</button>
 </div>
 
 <!-- Bottom sheet -->
@@ -6389,10 +6967,10 @@ window.pgHerlaadUren=async function(){
 };
 
 const afstandenCol = collection(db, 'afstanden');   // geleerde/berekende trajecten
-     // o.a. thuisadres
+const _urConfigDoc = doc(db, 'config', 'uren');     // o.a. thuisadres
 const _dDashDoc = doc(db, 'config', 'dashboard');
 
-let kl = [], vK = null, actF = 'all', actN = null, sId = null, actST = 'gedaan', si = 0, wo = 0, navTab = 'klanten', selectedWDag = null;
+let kl = [], vK = null, actF = 'all', actN = null, sId = null, actST = 'gedaan', uT = null, si = 0, wo = 0, navTab = 'klanten', selectedWDag = null;
 // Uitgebreide klantenfilter state
 let filterOpen = false;
 let filterPlaatsen = new Set();
@@ -6469,7 +7047,7 @@ function natSort(a,b){return a.localeCompare(b,"nl",{numeric:true,sensitivity:"b
 // ═══════════════════════════════════════════
 
 // vK bevat nu een actie: { soort, id, klant?, oudeNotitie?, gezetteNotitie? }
-
+window.slaOp=function(){};
 window.deelWhatsApp=function(){window.open('https://wa.me/?text='+encodeURIComponent('Purgato Planner app: https://jbloesberg99.github.io/Glasbewassing'),'_blank');}
 window.openMaps=function(id){const x=kl.find(x=>x.id===id);if(!x)return;window.open('https://maps.google.com/?q='+encodeURIComponent(x.naam+' '+(x.plaats||'')),'_blank');}
 // HTML escape helper — voorkomt XSS bij user-gegenereerde content in innerHTML
@@ -6725,7 +7303,7 @@ window.voegToe=async function(){
     if(!confirm(msg)) return;
   }
   const nieuw={id:Date.now()*100+Math.floor(Math.random()*100),naam,plaats,freq,laatste:lVV(vd,freq),notitie:'',prijs,historie:[]};
-  kl.push(nieuw);
+  slaOp(`"${naam}" toegevoegd`, { soort:'toevoegen', id:nieuw.id, gemaakt:{...nieuw} });kl.push(nieuw);
   document.getElementById('n-naam').value='';document.getElementById('n-datum').value='';
   document.getElementById('n-plaats').value='';document.getElementById('n-prijs').value='';
   renderK();
@@ -6736,12 +7314,13 @@ window.togN=function(id){actN=actN===id?null:id;renderK();}
 window.kopieer=async function(id){
   const x=kl.find(x=>x.id===id);if(!x)return;
   const nieuw={...x,id:Date.now()*100+Math.floor(Math.random()*100),naam:x.naam+" (kopie)",notitie:"",historie:[]};
-  kl.push(nieuw);renderK();
+  slaOp(`"${x.naam}" gekopieerd`, { soort:'toevoegen', id:nieuw.id, gemaakt:{...nieuw} });kl.push(nieuw);renderK();
   await window.fbProbeer(()=>window.fbSave(nieuw));
 }
 window.slaNotitie=async function(id,val){
-
-  
+  const vorige = kl.find(x=>x.id===id);
+  const oudeNotitie = vorige ? (vorige.notitie||'') : '';
+  slaOp('Notitie gewijzigd', { soort:'notitie', id, oudeNotitie, gezetteNotitie:val });
   kl=kl.map(x=>x.id===id?{...x,notitie:val}:x);
   await window.fbProbeer(()=>window.fbSave(kl.find(x=>x.id===id)));
 }
@@ -6749,7 +7328,7 @@ window.del=async function(id){
   const x=kl.find(x=>x.id===id);
   if(!x){renderK();return;} // al verwijderd op ander apparaat
   if(!confirm(`"${x.naam}" verwijderen?`))return;
-  kl=kl.filter(x=>x.id!==id);renderK();
+  slaOp(`"${x.naam}" verwijderd`, { soort:'verwijderen', id, klant:JSON.parse(JSON.stringify(x)) });kl=kl.filter(x=>x.id!==id);renderK();
   await window.fbProbeer(()=>window.fbDelete(id));
 }
 window.openSheet=function(id){
@@ -7089,7 +7668,16 @@ function _urInitRows(prefix, iso, saved){
   return rows;
 }
 
-
+function _urKlusOpties(sel){
+  let html = `<option value="">— klus —</option>`;
+  let found = false;
+  _urKlussen.forEach(k => {
+    if(k.id === sel) found = true;
+    html += `<option value="${k.id}" ${k.id===sel?'selected':''}>${_urEsc(k.naam)}</option>`;
+  });
+  if(sel && !found) html += `<option value="${_urEsc(sel)}" selected>(verwijderde klus)</option>`;
+  return html;
+}
 
 function _urRijHtml(prefix, iso, idx, row){
   const klus = _urKlussen.find(k => k.id === row.k);
@@ -7418,10 +8006,10 @@ const OVERIG_KLUS = {
 function _isOverig(klusId){ return klusId === OVERIG_ID; }
 
 const THUIS = '__THUIS__';
-
+let _urThuisAdres = '';
 let _urAfstanden = {};          // 'A||B' (gesorteerd) -> { km, bron }
-
-
+let _urAfstandenUnsub = null;
+let _urConfigUnsub = null;
 
 // Unieke sleutel van een stop
 function _stopId(klusId, locatie){
@@ -7437,7 +8025,16 @@ function _stopNaam(id){
   const knaam = k ? k.naam : '(verwijderd)';
   return loc ? `${knaam} — ${loc}` : knaam;
 }
-
+// Adres dat bij een stop hoort
+function _stopAdres(id){
+  if(id === THUIS) return _urThuisAdres || '';
+  if(!id) return '';
+  const [kid, loc] = String(id).split('::');
+  const k = _urKlussen.find(x => x.id === kid);
+  if(!k) return '';
+  if(loc) return (k.subAdressen && k.subAdressen[loc]) || k.adres || '';
+  return k.adres || '';
+}
 // Trajectsleutel — richting maakt niet uit, dus altijd gesorteerd
 function _trajectKey(a, b){
   return [String(a), String(b)].sort().join('||');
@@ -7560,14 +8157,39 @@ function _urRouteVul(prefix, iso){
   if(el) el.innerHTML = _urRouteHtml(prefix, iso);
 }
 
-
+// Luisteraars voor afstanden + thuisadres
+function _urRouteInit(){
+  if(!_urAfstandenUnsub){
+    _urAfstandenUnsub = onSnapshot(afstandenCol, snap => {
+      _urAfstanden = {};
+      snap.docs.forEach(d => { _urAfstanden[d.id] = { km: _parseNum(d.data().km), bron: d.data().bron || 'handmatig' }; });
+      // Zichtbare routes bijwerken
+      document.querySelectorAll('[id^="ur-route-"],[id^="urp-route-"]').forEach(el => {
+        const m = el.id.match(/^(ur|urp)-route-(\d{4}-\d{2}-\d{2})$/);
+        if(m && !_urActiveInside(el.id)) el.innerHTML = _urRouteHtml(m[1], m[2]);
+      });
+    }, err => console.error('afstanden:', err));
+  }
+  if(!_urConfigUnsub){
+    _urConfigUnsub = onSnapshot(_urConfigDoc, snap => {
+      _urThuisAdres = (snap.exists() && snap.data().thuisAdres) || '';
+      const inp = document.getElementById('ur-thuis-in');
+      if(inp && document.activeElement !== inp) inp.value = _urThuisAdres;
+    }, err => console.error('config uren:', err));
+  }
+}
 
 // ═══ Km-details per dag: welke uitgeklapt zijn + live-bewerkstate ═══
 const _urKmDetOpen = new Set();
 const _urKmDet = {}; // key -> [{naam, km}]
 
-
-
+// ═══════════════════════════════════════════
+// ONGEDAAN MAKEN (meerdere stappen terug)
+// Voor elke ingrijpende actie leggen we de héle dag vast. Ongedaan maken
+// zet die dag exact terug — inclusief rijen, km, notitie en losse ritten.
+// ═══════════════════════════════════════════
+function _undoPush(){}
+function _undoKnopVul(){if(typeof _pgHistoryPaint==='function')_pgHistoryPaint();}
 function _urKmDetInit(prefix, iso, saved){
   const key = _urKey(prefix, iso);
   if(_urKmDet[key]) return _urKmDet[key]; // al geïnitialiseerd — behoud live-bewerkstate
@@ -7893,7 +8515,7 @@ window.urKmIn = function(prefix, iso, val){
 window.urKlusSel = function(prefix, iso, idx, val){
   const rows = _urRows[_urKey(prefix, iso)];
   if(!rows || !rows[idx]) return;
-  
+  _undoPush(prefix, iso, 'klus wijzigen');
   rows[idx].k = val;
   rows[idx].s = '';
   const klus = _urKlussen.find(k => k.id === val);
@@ -7920,7 +8542,7 @@ window.urKlusSel = function(prefix, iso, idx, val){
 window.urSubSel = function(prefix, iso, idx, val){
   const rows = _urRows[_urKey(prefix, iso)];
   if(!rows || !rows[idx]) return;
-  
+  _undoPush(prefix, iso, 'locatie wijzigen');
   if(val === '__vrij__'){
     // Geen vaste locatie: tekstveld openen zodat je zelf kunt typen
     rows[idx]._sVrij = true;
@@ -8036,7 +8658,7 @@ window.urUpToggle = function(prefix, iso, idx){
 window.urRijToevoegen = function(prefix, iso){
   const rows = _urRows[_urKey(prefix, iso)];
   if(!rows) return;
-  
+  _undoPush(prefix, iso, 'rij toevoegen');
   rows.push({ k:'', s:'', u:'', up:'', p:'', h:false, km:'' });
   const cont = document.getElementById(`${prefix}-rijen-${iso}`);
   if(cont) cont.innerHTML = _urRijenHtml(prefix, iso);
@@ -8170,7 +8792,7 @@ function _uiOnScroll(){
 }
 
 function _uiScrollTick(){
-    _pgHistoryPaint();
+    _undoKnopVul();
     const prefix = _uiActievePrefix();
     const sticky = document.getElementById('ui-stickybar');
     const fab    = document.getElementById('ui-todayfab');
@@ -8415,7 +9037,7 @@ window.urRijVerplaats = function(prefix, iso, van, naar){
   const rows = _urRows[key];
   if(!rows || van === naar) return;
   if(van < 0 || van >= rows.length || naar < 0 || naar >= rows.length) return;
-  
+  _undoPush(prefix, iso, 'volgorde wijzigen');
   const [eruit] = rows.splice(van, 1);
   rows.splice(naar, 0, eruit);
   const cont = document.getElementById(`${prefix}-rijen-${iso}`);
@@ -8524,7 +9146,7 @@ window.urRijVerwijder = function(prefix, iso, idx){
   const key = _urKey(prefix, iso);
   const rows = _urRows[key];
   if(!rows || !rows[idx]) return;
-  
+  _undoPush(prefix, iso, 'rij verwijderen');
   rows.splice(idx, 1);
   // Altijd minimaal het standaard aantal lege rijen behouden
   while(rows.length < _UR_DEFAULT_RIJEN) rows.push({ k:'', s:'', u:'', up:'', p:'', h:false, km:'' });
@@ -8717,7 +9339,7 @@ window.uiDagActies = function(prefix, iso){
 window.uiDagWissen = function(prefix, iso){
   const { dagNaam, dag, maand } = _urFmtDate(iso);
   if(!confirm(`Alle invullingen van ${dagNaam} ${dag} ${maand} wissen?`)) return;
-  
+  _undoPush(prefix, iso, 'dag leegmaken');
   const key = _urKey(prefix, iso);
   _urRows[key] = [];
   while(_urRows[key].length < _UR_DEFAULT_RIJEN) _urRows[key].push({ k:'', s:'', u:'', up:'', p:'', h:false, km:'' });
@@ -8795,7 +9417,7 @@ window.urKopieerVorige = function(prefix, iso){
   const staffSel = _urStaffSel;
   const bron = prefix === 'ur' ? _urData[prevIso] : ((_urPData[staffSel]||{})[prevIso]);
   if(!bron) return;
-  
+  _undoPush(prefix, iso, 'vorige dag kopiëren');
   const key = _urKey(prefix, iso);
   const currentRows = _urRows[key] || [];
   const heeftData = currentRows.some(r => r.k || _parseNum(r.u) > 0);
@@ -9048,18 +9670,107 @@ window.urDagToggle = function(prefix, iso){
   haptic(6);
 };
 
+window.urAllesOpenDicht = function(prefix, alles){
+  const dagen = prefix === 'ur' ? _urDagenInMaand(_urYear, _urMonth) : _urDagenInMaand(_urpYear, _urpMonth);
+  _urExpanded[prefix].clear();
+  if(alles) dagen.forEach(iso => _urExpanded[prefix].add(iso));
+  if(prefix === 'ur') renderUren();
+  else _renderPersoneelDetail();
+};
 
+// Rendert een compacte 1-lijn samenvatting van een dag (ingeklapt)
+function _urDagMiniHtml(prefix, iso, dagData){
+  const today = _todayISO();
+  const isToday = iso === today;
+  const isFuture = iso > today;
+  const { dagNaam, dag } = _urFmtDate(iso);
+  const dagKort = dagNaam.slice(0,2);
+  const notitie = (dagData.notitie || '').trim();
+  const km = _parseNum(dagData.km);
+  const rows = _urRows[_urKey(prefix, iso)] || dagData.rijen || [];
+  const rowsInVoll = rows.filter(r => r.k || _parseNum(r.u) > 0);
+  let tot = 0;
+  rowsInVoll.forEach(r => { tot = _urRound2(tot + _parseNum(r.u)); });
+  const heeftInhoud = tot > 0 || notitie || rowsInVoll.length || km > 0;
 
+  // Klussen samenvatting: naam(s) gescheiden door · (max 3, dan +N)
+  let klussenTxt = '';
+  if(rowsInVoll.length){
+    const namen = rowsInVoll.map(r => {
+      const k = _urKlussen.find(x => x.id === r.k);
+      return k ? k.naam : (r.k ? '(verwijderd)' : '—');
+    });
+    const uniek = [...new Set(namen)];
+    if(uniek.length <= 3) klussenTxt = uniek.join(' · ');
+    else klussenTxt = `${uniek.slice(0,2).join(' · ')} +${uniek.length-2}`;
+  }
 
+  const subParts = [];
+  if(km > 0) subParts.push(`🚗 ${_urFmtKm(km)}`);
+  if(notitie) subParts.push(`<span class="heeft-not-ic"><svg class="pg-inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M14 3H5v18h14V8ZM14 3v6h5M8 13h8m-8 4h6"/></svg></span> notitie`);
+  if(isFuture) subParts.push(`<span style="color:#0e7490;font-weight:800">GEPLAND</span>`);
+  const subHtml = subParts.length ? subParts.map((p,i) => i > 0 ? `<span class="sep">·</span>${p}` : p).join(' ') : '';
 
+  const totHtml = tot > 0
+    ? `<div class="ur-mini-tot">${_urFmtUren(tot)}</div>`
+    : `<div class="ur-mini-tot nul">${isFuture?'gepland':'—'}</div>`;
 
+  return `<div class="ur-dag-mini${isToday?' today':''}${heeftInhoud?' heeft-notitie':''}${isFuture?' toekomst':''}" id="dag-${prefix}-${iso}" onclick="urDagToggle('${prefix}','${iso}')">
+    <div class="ur-mini-datum">
+      <div class="ur-mini-nr">${dag}</div>
+      <div class="ur-mini-lbl">${_urEsc(dagKort)}</div>
+    </div>
+    <div class="ur-mini-info">
+      <div class="ur-mini-klussen${klussenTxt?'':' leeg'}">${klussenTxt || 'Nog niets ingevuld'}</div>
+      ${subHtml ? `<div class="ur-mini-sub">${subHtml}</div>` : ''}
+    </div>
+    ${totHtml}
+    <svg class="ur-mini-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+  </div>`;
+}
 
+// Rendert een collapse/expand toolbar (compact)
+function _urCollapseToggleHtml(prefix){
+  const dagen = prefix === 'ur' ? _urDagenInMaand(_urYear, _urMonth) : _urDagenInMaand(_urpYear, _urpMonth);
+  const aantalOpen = dagen.filter(iso => _urExpanded[prefix].has(iso)).length;
+  const allesOpen = aantalOpen === dagen.length;
+  return `<div class="ur-collapse-toggle">
+    <button onclick="urAllesOpenDicht('${prefix}', ${!allesOpen})">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${allesOpen ? '<polyline points="18 15 12 9 6 15"/>' : '<polyline points="6 9 12 15 18 9"/>'}</svg>
+      ${allesOpen ? 'Alles inklappen' : 'Alles openklappen'}
+    </button>
+  </div>`;
+}
+
+// Bepaalt of een dag matcht met de zoekterm (klus-naam, locatie, notitie)
+// Datum-zoekstring bouwer — zodat "8 aug", "augustus", "vrijdag", "8-8" etc. allemaal matchen
+const _MND_LANG_L = ['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
 const _MND_KORT_L = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+const _DAG_LANG_L = ['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
+const _DAG_KORT_L = ['zo','ma','di','wo','do','vr','za'];
+function _urDagZoekStr(iso){
+  const [y, m, d] = iso.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  const wd = dt.getDay();
+  // Meerdere formaten om flexibel te zoeken
+  return `${d} ${_MND_LANG_L[m-1]} ${d} ${_MND_KORT_L[m-1]} ${y} ${_DAG_LANG_L[wd]} ${_DAG_KORT_L[wd]} ${d}-${m} ${d}-${m}-${y} ${d}/${m} ${d}/${m}/${y} ${iso}`;
+}
 
-
-
-
-
+function _urDagMatch(prefix, iso, term){
+  if(!term) return true;
+  const q = term.toLowerCase();
+  // Datum-check (bijv. "8 aug", "vrijdag", "18-8-2026")
+  if(_urDagZoekStr(iso).includes(q)) return true;
+  const bron = prefix === 'ur' ? (_urData[iso] || {}) : ((_urPData[_urStaffSel] || {})[iso] || {});
+  const rows = _urRows[_urKey(prefix, iso)] || bron.rijen || [];
+  if((bron.notitie || '').toLowerCase().includes(q)) return true;
+  for(const r of rows){
+    if((r.s || '').toLowerCase().includes(q)) return true;
+    const klus = _urKlussen.find(k => k.id === r.k);
+    if(klus && klus.naam.toLowerCase().includes(q)) return true;
+  }
+  return false;
+}
 
 // Pure search model: all stored days, matching rows only, invoice hours in hundredths.
 const PurgatoSearch = (() => {
@@ -9231,6 +9942,7 @@ function renderUren() {
   if (!list) return;
   _urInitExpanded('ur');
   const dagenAll = _urDagenInMaand(_urYear, _urMonth);
+  const term = _urZoek.ur || '';
   // Rows initialiseren voor alle dagen zodat matching + samenvatting werkt
   dagenAll.forEach(iso => { _urInitRows('ur', iso, (_urData[iso] || {}).rijen); });
   const dagen = dagenAll;
@@ -9244,7 +9956,9 @@ function renderUren() {
   </div>`;
   html += `<div class="ur-nav-met-zoek">${_urMonthNavHtml(_urYear, _urMonth, 'urMaandPrev()', 'urMaandNext()')}${zoek.btnHtml}</div>`;
   html += zoek.wrapHtml;
-
+  if(term){
+    html += `<div class="ur-zoek-count">${dagen.length} van ${dagenAll.length} ${dagenAll.length===1?'dag':'dagen'}</div>`;
+  }
   // Week-samenvatting bovenaan (deze kalenderweek)
   html += _urWeekSumHtml(_urData);
   html += `<div class="ur-mtot" id="ur-mtot-box" onclick="urMtotToggle('ur')">
@@ -9257,6 +9971,9 @@ function renderUren() {
     ${_uiSparkHtml('ur')}
     <div class="ur-mtot-details" id="ur-mtot-details"></div>
   </div>`;
+  if(term && !dagen.length){
+    html += `<div class="urp-leeg"><div class="urp-leeg-ic"><svg class="pg-inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></div><div class="urp-leeg-t">Geen resultaten voor "${_urEsc(term)}"</div><div class="urp-leeg-s">Probeer een andere zoekterm</div></div>`;
+  }
   // Skeleton zolang de eerste Firebase-snapshot nog niet binnen is
   if(!_urFirstSnap.ur && !Object.keys(_urData).length){
     list.innerHTML = html + _uiSkeletonHtml(6);
@@ -9285,7 +10002,7 @@ let _urPData = {};              // { staffId: { date: notitie } }
 let _urStaffUnsub = null;
 let _urPUnsub = null;
 let _urPFirstSnap = false; // eerste snapshot moet altijd renderen
-
+const _urPTimers = {};
 
 function _urpInit(){
   if(!_urStaffUnsub){
@@ -10424,6 +11141,7 @@ function _renderPersoneelDetail(){
   const dagenAll = _urDagenInMaand(_urpYear, _urpMonth);
   const data = _urPData[_urStaffSel] || {};
   const voornaam = _urEsc(staff.naam.split(' ')[0]);
+  const term = _urZoek.urp || '';
 
   // Rows initialiseren voor alle dagen zodat matching + samenvatting werkt
   dagenAll.forEach(iso => { _urInitRows('urp', iso, (data[iso] || {}).rijen); });
@@ -10457,6 +11175,7 @@ function _renderPersoneelDetail(){
     ${_urPtCardHtml(staff)}
     <div class="ur-nav-met-zoek">${_urMonthNavHtml(_urpYear, _urpMonth, 'urpMaandPrev()', 'urpMaandNext()')}${zoek.btnHtml}</div>
     ${zoek.wrapHtml}
+    ${term ? `<div class="ur-zoek-count">${dagen.length} van ${dagenAll.length} ${dagenAll.length===1?'dag':'dagen'}</div>` : ''}
     ${_urWeekSumHtml(data, staff)}
     <div class="ur-mtot" id="urp-mtot-box" onclick="urMtotToggle('urp')">
       <div class="ur-mtot-top">
@@ -10468,6 +11187,7 @@ function _renderPersoneelDetail(){
       ${_uiSparkHtml('urp')}
       <div class="ur-mtot-details" id="urp-mtot-details"></div>
     </div>
+    ${term && !dagen.length ? `<div class="urp-leeg"><div class="urp-leeg-ic"><svg class="pg-inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></div><div class="urp-leeg-t">Geen resultaten voor "${_urEsc(term)}"</div><div class="urp-leeg-s">Probeer een andere zoekterm</div></div>` : ''}
     ${lijst}
   `;
   dagen.forEach(iso => _urResizeNot('urp', iso));
@@ -10533,7 +11253,7 @@ window.urpToevoegenOk = async function(){
   }catch(e){ console.error('personeel add:', e); }
 };
 
-
+let _urpNaamTimer = null;
 // ═══ Personeel tariefinstellingen ═══
 // Bepaalt effectief uurloon voor een personeelslid + klus (met override of default)
 function _urLoonVoor(staff, klusId){
@@ -11841,15 +12561,14 @@ function _pgHistoryCaptureAfter(group,args){
   _pgHistoryKeep(group);
 }
 function _pgHistoryPaint(){
+  const button=document.getElementById('pg-history-button');if(!button)return;
   const step=[...new Set([..._pgHistory,..._pgHistoryWorking])].sort((a,b)=>a.id-b.id).at(-1);
-  const busy=_pgHistoryBusy||!!step?.pending.size;
-  const label=_pgHistoryBusy?'Ongedaan maken…':step?.pending.size?'Wijziging opslaan…':step?'Ongedaan maken: '+step.label:'Niets om ongedaan te maken';
-  for(const button of document.querySelectorAll('.pg-history-button')){
-    button.disabled=!step||busy;
-    button.setAttribute('aria-label',label);
-    button.setAttribute('aria-busy',String(busy));
-    button.title=label;
-  }
+  button.hidden=!step;button.disabled=_pgHistoryBusy||!!step?.pending.size;
+  button.setAttribute('aria-label',step?'Ongedaan maken: '+step.label:'Ongedaan maken');
+  button.title=step?'Ongedaan maken: '+step.label:'';
+  button.querySelector('strong').textContent=_pgHistoryBusy?'Bezig…':step?.pending.size?'Opslaan…':'Ongedaan';
+  button.querySelector('small').textContent=step?.label||'';
+  button.querySelector('span').textContent=String(new Set([..._pgHistory,..._pgHistoryWorking]).size);
 }
 function _pgHistoryApply(path,value){
   const [collection,id]=path.split('/');
